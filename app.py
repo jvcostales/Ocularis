@@ -8,7 +8,7 @@ app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres", password="moonarete16", port=5432)
+conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
 
 cur = conn.cursor()
 
@@ -43,7 +43,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres", password="moonarete16", port=5432)
+    conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
     cur = conn.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
@@ -59,8 +59,7 @@ def signup():
         username = request.form['username']
         password = generate_password_hash(request.form['password'])
 
-        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres", password="moonarete16", port=5432)
-        cur = conn.cursor()
+        conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
         try:
             cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
             conn.commit()
@@ -78,7 +77,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres", password="moonarete16", port=5432)
+        conn = psycopg2.connect(hhost="dpg-cs146g68ii6s73cv89q0-a", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cur.fetchone()
