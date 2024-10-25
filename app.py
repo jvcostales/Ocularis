@@ -67,7 +67,6 @@ def signup():
             return redirect(url_for('login'))
         except Exception as e:
             print(f"Error: {e}")
-            conn.rollback()
         finally:
             cur.close()
             conn.close()
@@ -91,8 +90,6 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             return 'Invalid username or password'
-        
-    return render_template('login.html')
 
 @app.route('/dashboard')
 @login_required
