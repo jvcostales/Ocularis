@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
 from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -128,14 +129,14 @@ def upload_image():
         if file and allowed_file(file.filename):
             # Secure the filename and save the image
             filename = secure_filename(file.filename)
-            file_path = os.path.join('path/to/store/images', filename)  # Change this to your directory on Render
+            file_path = os.path.join('/var/data', filename)  # Change this to your directory on Render
             file.save(file_path)
 
             # Prepare the image URL (this depends on your Render URL structure)
-            image_url = f"https://<your-service-name>.onrender.com/path/to/store/images/{filename}"
+            image_url = f"https://<your-service-name>.onrender.com//var/data/{filename}"
 
             # Store the image URL in PostgreSQL
-            conn = psycopg2.connect(host="your_host", dbname="ocular_db", user="ocular_db_user", password="your_password", port=5432)
+            conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
             cur = conn.cursor()
             cur.execute("INSERT INTO images (user_id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
             conn.commit()
@@ -143,7 +144,6 @@ def upload_image():
             conn.close()
 
             return redirect(url_for('feed'))  # Redirect to feed after upload
-
     return render_template('upload.html')
 
 if __name__ == '__main__':
