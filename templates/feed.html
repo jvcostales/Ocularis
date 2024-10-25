@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ocular Log In</title>
+</head>
+
+<body>
+Welcome, {{ current_user.username }}!
+
+<a href="{{ url_for('upload_image') }}">Upload</a>
+<a href="{{ url_for('logout') }}">Log Out</a>
+</body>
+
+</html>

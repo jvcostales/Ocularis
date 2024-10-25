@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ocular Upload</title>
+</head>
+
+<body>
+    <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" id="image" name="image">
+        <input type="submit">
+      </form>
+</body>
+
+</html>
