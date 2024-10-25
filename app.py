@@ -133,12 +133,12 @@ def upload_image():
             file.save(file_path)
 
             # Prepare the image URL (this depends on your Render URL structure)
-            image_url = f"https://<your-service-name>.onrender.com//var/data/{filename}"
+            image_url = f"https://ocular-zmcu.onrender.com/var/data/{filename}"
 
             # Store the image URL in PostgreSQL
             conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
             cur = conn.cursor()
-            cur.execute("INSERT INTO images (id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
+            cur.execute("INSERT INTO images (user_id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
             conn.commit()
             cur.close()
             conn.close()
