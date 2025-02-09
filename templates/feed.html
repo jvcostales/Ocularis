@@ -12,9 +12,9 @@ Welcome, {{ current_user.username }}!
 <a href="{{ url_for('upload_image') }}">Upload</a>
 <a href="{{ url_for('logout') }}">Log Out</a>
 
-<div>
+{% for image in images %}
     <img src="{{ image }}" width="100">
-</div>
+{% endfor %}
 </body>
 
 </html>
