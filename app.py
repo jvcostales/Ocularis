@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -116,6 +116,10 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/images/<filename>')
+def serve_images(filename):
+    return send_from_directory('/var/data', filename)
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_image():
@@ -133,7 +137,7 @@ def upload_image():
             file_path = os.path.join('/var/data', filename)
             file.save(file_path)
 
-            image_url = f"https://ocular-zmcu.onrender.com/var/data/{filename}"
+            image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
 
             conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
             cur = conn.cursor()
