@@ -99,24 +99,16 @@ def login():
 def feed():
     conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
     cur = conn.cursor()
-    cur.execute("""
-        SELECT EXISTS (
-            SELECT FROM information_schema.tables 
-            WHERE table_name = 'images'
-        )
-    """)
-    table_exists = cur.fetchone()[0]
 
-    if not table_exists:
+    try:
+        cur.execute("SELECT image_url FROM images ORDER BY created_at DESC")
+        images = cur.fetchall()
+    except psycopg2.errors.UndefinedTable:
+        images = []
+    finally:
         cur.close()
         conn.close()
-        return "No images table found. Please create it first."
 
-    cur.execute("SELECT image_url FROM images ORDER BY created_at DESC")
-    images = cur.fetchall()
-    cur.close()
-    conn.close()
-    
     return render_template('feed.html', images=[img[0] for img in images])
 
 @app.route('/logout')
