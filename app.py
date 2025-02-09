@@ -45,7 +45,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
     cur = conn.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
@@ -61,7 +61,7 @@ def signup():
         username = request.form['username']
         password = generate_password_hash(request.form['password'])
 
-        conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
+        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
         try:
             cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
@@ -80,7 +80,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
+        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cur.fetchone()
@@ -129,7 +129,7 @@ def upload_image():
 
             image_url = f"https://ocular-zmcu.onrender.com/var/data/{filename}"
 
-            conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
+            conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
             cur = conn.cursor()
             cur.execute("INSERT INTO images (id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
             conn.commit()
