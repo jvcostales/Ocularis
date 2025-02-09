@@ -10,7 +10,7 @@ app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
+conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
 
 cur = conn.cursor()
 
@@ -105,10 +105,8 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# Define the allowed extensions for the uploaded files
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Function to check if the file has an allowed extension
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -116,26 +114,21 @@ def allowed_file(filename):
 @login_required
 def upload_image():
     if request.method == 'POST':
-        # Check if the post request has the file part
         if 'image' not in request.files:
             return 'No file part'
         
         file = request.files['image']
         
-        # If the user does not select a file, the browser submits an empty file without a filename
         if file.filename == '':
             return 'No selected file'
         
         if file and allowed_file(file.filename):
-            # Secure the filename and save the image
             filename = secure_filename(file.filename)
-            file_path = os.path.join('/var/data', filename)  # Change this to your directory on Render
+            file_path = os.path.join('/var/data', filename)
             file.save(file_path)
 
-            # Prepare the image URL (this depends on your Render URL structure)
             image_url = f"https://ocular-zmcu.onrender.com/var/data/{filename}"
 
-            # Store the image URL in PostgreSQL
             conn = psycopg2.connect(host="dpg-cs146g68ii6s73cv89q0-a.oregon-postgres.render.com", dbname="ocular_db", user="ocular_db_user", password="j9nq5DjPbFZSJ8HhQmdbFRmF1s86fRui", port=5432)
             cur = conn.cursor()
             cur.execute("INSERT INTO images (id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
@@ -143,7 +136,7 @@ def upload_image():
             cur.close()
             conn.close()
 
-            return redirect(url_for('feed'))  # Redirect to feed after upload
+            return redirect(url_for('feed'))
     return render_template('upload.html')
 
 if __name__ == '__main__':
