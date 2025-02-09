@@ -13,8 +13,14 @@ Welcome, {{ current_user.username }}!
 <a href="{{ url_for('logout') }}">Log Out</a>
 
 {% for image in images %}
-    <img src="{{ image }}" width="100">
+    <div>
+        <img src="{{ image[1] }}" alt="Image">
+        <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+            <button type="submit">❤️ Like ({{ image[2] }})</button>
+        </form>
+    </div>
 {% endfor %}
+
 </body>
 
 </html>

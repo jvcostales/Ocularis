@@ -32,6 +32,18 @@ CREATE TABLE IF NOT EXISTS images (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS likes (
+    like_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    image_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE,
+    UNIQUE (user_id, image_id)
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -97,19 +109,28 @@ def login():
 @app.route('/feed')
 @login_required
 def feed():
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                            dbname="ocularis_db", 
+                            user="ocularis_db_user", 
+                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                            port=5432)
     cur = conn.cursor()
-
+    
     try:
-        cur.execute("SELECT image_url FROM images ORDER BY created_at DESC")
+        cur.execute("""
+            SELECT images.image_id, images.image_url, 
+                   COALESCE(like_count, 0) 
+            FROM images 
+            LEFT JOIN (SELECT image_id, COUNT(*) AS like_count FROM likes GROUP BY image_id) AS likes 
+            ON images.image_id = likes.image_id
+            ORDER BY images.created_at DESC
+        """)
         images = cur.fetchall()
-    except psycopg2.errors.UndefinedTable:
-        images = []
     finally:
         cur.close()
         conn.close()
 
-    return render_template('feed.html', images=[img[0] for img in images])
+    return render_template('feed.html', images=images)
 
 @app.route('/logout')
 @login_required
@@ -154,6 +175,36 @@ def upload_image():
 
             return redirect(url_for('feed'))
     return render_template('upload.html')
+
+
+@app.route('/like/<int:image_id>', methods=['POST'])
+@login_required
+def like_image(image_id):
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                            dbname="ocularis_db", 
+                            user="ocularis_db_user", 
+                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                            port=5432)
+    cur = conn.cursor()
+
+    try:
+        # Check if the user has already liked the image
+        cur.execute("SELECT * FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
+        existing_like = cur.fetchone()
+
+        if existing_like:
+            # Unlike the image
+            cur.execute("DELETE FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
+        else:
+            # Like the image
+            cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
+
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('feed'))
 
 if __name__ == '__main__':
     app.run(debug=True)
