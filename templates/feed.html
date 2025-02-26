@@ -7,19 +7,33 @@
 </head>
 
 <body>
-Welcome, {{ current_user.username }}!
+    Welcome, {{ current_user.username }}!
 
-<a href="{{ url_for('upload_image') }}">Upload</a>
-<a href="{{ url_for('logout') }}">Log Out</a>
+    <a href="{{ url_for('upload_image') }}">Upload</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
 
-{% for image in images %}
-    <div>
-        <img src="{{ image[1] }}" width="300">
-        <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
-            <button type="submit">Like ({{ image[2] }})</button>
+    {% for image in images %}
+    <div class="post">
+        <img src="{{ image[1] }}" alt="Image">
+        <p>Likes: {{ image[2] }}</p>
+
+        <!-- Comment Section -->
+        <div class="comments">
+            {% for comment in comments %}
+            {% if comment[0] == image[0] %}
+            <p><strong>{{ comment[1] }}:</strong> {{ comment[2] }}</p>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Add a Comment -->
+        <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
+            <input type="text" name="comment" placeholder="Write a comment..." required>
+            <button type="submit">Post</button>
         </form>
     </div>
-{% endfor %}
+    {% endfor %}
+
 
 </body>
 

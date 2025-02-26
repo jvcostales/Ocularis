@@ -44,6 +44,18 @@ CREATE TABLE IF NOT EXISTS likes (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS comments (
+    comment_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    image_id INT NOT NULL,
+    comment_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -126,11 +138,20 @@ def feed():
             ORDER BY images.created_at DESC
         """)
         images = cur.fetchall()
+
+        cur.execute("""
+            SELECT comments.image_id, users.username, comments.comment_text, comments.created_at
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            ORDER BY comments.created_at ASC
+        """)
+        comments = cur.fetchall()
+
     finally:
         cur.close()
         conn.close()
 
-    return render_template('feed.html', images=images)
+    return render_template('feed.html', images=images, comments=comments)
 
 @app.route('/logout')
 @login_required
@@ -204,6 +225,31 @@ def like_image(image_id):
         cur.close()
         conn.close()
 
+    return redirect(url_for('feed'))
+
+@app.route('/comment/<int:image_id>', methods=['POST'])
+@login_required
+def post_comment(image_id):
+    comment_text = request.form['comment']
+    
+    if not comment_text.strip():
+        return redirect(url_for('feed'))
+
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                            dbname="ocularis_db", 
+                            user="ocularis_db_user", 
+                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                            port=5432)
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s)", 
+                    (current_user.id, image_id, comment_text))
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
+    
     return redirect(url_for('feed'))
 
 if __name__ == '__main__':
