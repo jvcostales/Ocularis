@@ -15,11 +15,6 @@
     {% for image in images %}
     <div class="post">
         <img src="{{ image[1] }}" alt="Image">
-
-        <!-- Like Button -->
-        <form action="{{ url_for('like', image_id=image[0]) }}" method="POST">
-            <button type="submit">Like ❤️</button>
-        </form>
         <p>Likes: {{ image[2] }}</p>
 
         <!-- Comment Section -->
