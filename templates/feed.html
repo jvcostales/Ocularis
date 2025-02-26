@@ -7,34 +7,19 @@
 </head>
 
 <body>
-    Welcome, {{ current_user.username }}!
+Welcome, {{ current_user.username }}!
 
-    <a href="{{ url_for('upload_image') }}">Upload</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
+<a href="{{ url_for('upload_image') }}">Upload</a>
+<a href="{{ url_for('logout') }}">Log Out</a>
 
-    {% for image in images %}
+{% for image in images %}
     <div>
         <img src="{{ image[1] }}" width="300">
         <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
             <button type="submit">Like ({{ image[2] }})</button>
         </form>
-
-        <!-- Comment Section -->
-        <form action="{{ url_for('add_comment', image_id=image[0]) }}" method="post">
-            <input type="text" name="comment" placeholder="Add a comment..." required>
-            <button type="submit">Comment</button>
-        </form>
-
-        <div>
-            <strong>Comments:</strong>
-            <ul>
-                {% for comment in image[3] %}
-                <li><strong>{{ comment[0] }}</strong>: {{ comment[1] }}</li>
-                {% endfor %}
-            </ul>
-        </div>
     </div>
-    {% endfor %}
+{% endfor %}
 
 </body>
 
