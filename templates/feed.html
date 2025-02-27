@@ -11,6 +11,7 @@
 
     <a href="{{ url_for('upload_image') }}">Upload</a>
     <a href="{{ url_for('logout') }}">Log Out</a>
+    <div height="50"></div>
 
     {% for image in images %}
     <div class="post">
@@ -42,6 +43,7 @@
             <input type="text" name="comment" placeholder="Write a comment..." required>
             <button type="submit">Post</button>
         </form>
+        <div height="50"></div>
     </div>
     {% endfor %}
 
