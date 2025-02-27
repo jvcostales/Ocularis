@@ -252,5 +252,41 @@ def post_comment(image_id):
     
     return redirect(url_for('feed'))
 
+@app.route('/delete/<int:image_id>', methods=['POST'])
+@login_required
+def delete_post(image_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Check if the user owns the image
+        cur.execute("SELECT id, image_url FROM images WHERE image_id = %s", (image_id,))
+        image = cur.fetchone()
+
+        if image and image[0] == current_user.id:
+            # Delete the image file from storage (optional)
+            filename = image[1].split('/')[-1]
+            file_path = os.path.join('/var/data', filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+            # Delete image entry from database (likes & comments will be removed automatically)
+            cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
+            conn.commit()
+        else:
+            return "Unauthorized to delete this post", 403
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('feed'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
