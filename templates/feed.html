@@ -55,6 +55,23 @@
     </div>
     {% endfor %}
 
+    <h2>Notifications</h2>
+    <ul>
+        {% for note in notifications %}
+        <li>
+            {% if note[2] == 'like' %}
+            <strong>{{ note[1] }}</strong> liked your <a href="{{ url_for('view_post', post_id=note[3]) }}">post</a>.
+            {% elif note[2] == 'comment' %}
+            <strong>{{ note[1] }}</strong> commented on your <a
+                href="{{ url_for('view_post', post_id=note[3]) }}">post</a>.
+            {% endif %}
+            <span style="color:gray;">({{ note[6].strftime('%b %d, %Y %I:%M %p') }})</span>
+        </li>
+        {% else %}
+        <li>No notifications yet.</li>
+        {% endfor %}
+    </ul>
+
 </body>
 
 </html>
