@@ -56,6 +56,18 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS comment_likes (
+    comment_like_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    comment_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
+    UNIQUE (user_id, comment_id) -- prevent duplicate likes
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -140,9 +152,15 @@ def feed():
         images = cur.fetchall()
 
         cur.execute("""
-            SELECT comments.image_id, users.username, comments.comment_text, comments.created_at
+            SELECT comments.comment_id, comments.image_id, users.username, comments.comment_text, comments.created_at,
+                COALESCE(like_count, 0) as like_count
             FROM comments
             JOIN users ON comments.user_id = users.id
+            LEFT JOIN (
+                SELECT comment_id, COUNT(*) as like_count
+                FROM comment_likes
+                GROUP BY comment_id
+            ) as cl ON comments.comment_id = cl.comment_id
             ORDER BY comments.created_at ASC
         """)
         comments = cur.fetchall()
@@ -280,6 +298,34 @@ def delete_image(image_id):
         else:
             return "Unauthorized action", 403
 
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('feed'))
+
+@app.route('/comment/like/<int:comment_id>', methods=['POST'])
+@login_required
+def like_comment(comment_id):
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                            dbname="ocularis_db", 
+                            user="ocularis_db_user", 
+                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                            port=5432)
+    cur = conn.cursor()
+    try:
+        # Check if the user already liked the comment
+        cur.execute("SELECT * FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
+                    (current_user.id, comment_id))
+        existing_like = cur.fetchone()
+
+        if existing_like:
+            cur.execute("DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
+                        (current_user.id, comment_id))
+        else:
+            cur.execute("INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)", 
+                        (current_user.id, comment_id))
+        conn.commit()
     finally:
         cur.close()
         conn.close()
