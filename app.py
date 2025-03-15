@@ -71,17 +71,14 @@ CREATE TABLE IF NOT EXISTS comment_likes (
 cur.execute(""" 
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    sender_id INT NOT NULL,
-    post_id INT,
-    comment_id INT,
-    notification_type VARCHAR(50) NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
+    recipient_id INT NOT NULL,
+    actor_id INT NOT NULL,
+    image_id INT NOT NULL,
+    action_type VARCHAR(50) NOT NULL, -- 'like' or 'comment'
     created_at TIMESTAMP DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES images(image_id) ON DELETE CASCADE,
-    FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
+    FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
 );
 """)
 
@@ -236,11 +233,13 @@ def upload_image():
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
 def like_image(image_id):
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
     cur = conn.cursor()
 
     try:
@@ -255,16 +254,16 @@ def like_image(image_id):
             # Like the image
             cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
 
-            # Get the owner of the image
-            cur.execute("SELECT user_id FROM images WHERE image_id = %s", (image_id,))
-            owner_id = cur.fetchone()[0]
+            # Get the image owner
+            cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
+            owner = cur.fetchone()
 
-            # Insert notification if the owner is not the liker
-            if owner_id != current_user.id:
+            # Create notification if the liker is not the owner
+            if owner and owner[0] != current_user.id:
                 cur.execute("""
-                    INSERT INTO notifications (user_id, sender_id, post_id, notification_type)
+                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
                     VALUES (%s, %s, %s, 'like')
-                """, (owner_id, current_user.id, image_id))
+                """, (owner[0], current_user.id, image_id))
 
         conn.commit()
     finally:
@@ -281,31 +280,30 @@ def post_comment(image_id):
     if not comment_text.strip():
         return redirect(url_for('feed'))
 
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
     
     try:
-        # Insert comment and get comment_id
-        cur.execute("""
-            INSERT INTO comments (user_id, image_id, comment_text)
-            VALUES (%s, %s, %s) RETURNING comment_id
-        """, (current_user.id, image_id, comment_text))
-        comment_id = cur.fetchone()[0]
+        # Insert the comment
+        cur.execute("INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s)", 
+                    (current_user.id, image_id, comment_text))
 
-        # Get post owner
-        cur.execute("SELECT user_id FROM images WHERE image_id = %s", (image_id,))
-        owner_id = cur.fetchone()[0]
+        # Get the image owner
+        cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
+        owner = cur.fetchone()
 
-        # Insert notification if the commenter is not the owner
-        if owner_id != current_user.id:
+        # Create a notification if commenter is not the owner
+        if owner and owner[0] != current_user.id:
             cur.execute("""
-                INSERT INTO notifications (user_id, sender_id, post_id, comment_id, notification_type)
-                VALUES (%s, %s, %s, %s, 'comment')
-            """, (owner_id, current_user.id, image_id, comment_id))
+                INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
+                VALUES (%s, %s, %s, 'comment')
+            """, (owner[0], current_user.id, image_id))
 
         conn.commit()
     finally:
@@ -386,18 +384,21 @@ def notifications():
                             password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
                             port=5432)
     cur = conn.cursor()
-    cur.execute("""
-        SELECT n.notification_id, u.username, n.notification_type, n.post_id, n.comment_id, n.is_read, n.created_at
-        FROM notifications n
-        JOIN users u ON n.sender_id = u.id
-        WHERE n.user_id = %s
-        ORDER BY n.created_at DESC
-    """, (current_user.id,))
-    notifications = cur.fetchall()
-    cur.close()
-    conn.close()
 
-    return render_template('notifications.html', notifications=notifications)
+    try:
+        cur.execute("""
+            SELECT users.username, notifications.action_type, notifications.image_id, notifications.created_at
+            FROM notifications
+            JOIN users ON notifications.actor_id = users.id
+            WHERE notifications.recipient_id = %s
+            ORDER BY notifications.created_at DESC
+        """, (current_user.id,))
+        notifs = cur.fetchall()
+    finally:
+        cur.close()
+        conn.close()
+
+    return render_template('notifications.html', notifications=notifs)
 
 
 if __name__ == '__main__':

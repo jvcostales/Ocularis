@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notifications</title>
+</head>
+<body>
+    <h1>Notifications</h1>
+    <ul>
+        {% for username, action, image_id, created_at in notifications %}
+            <li>
+                {{ username }} 
+                {% if action == 'like' %}
+                    liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>
+                {% elif action == 'comment' %}
+                    commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>
+                {% endif %}
+                ({{ created_at.strftime('%Y-%m-%d %H:%M:%S') }})
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('feed') }}">Back to Feed</a>
+</body>
+</html>
