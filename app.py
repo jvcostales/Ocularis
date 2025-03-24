@@ -3,26 +3,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
 import os
-from itsdangerous import URLSafeTimedSerializer
-
 
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'jvcostales@up.edu.ph'
-app.config['MAIL_PASSWORD'] = 'cbed hgxp qchv xiob'
-
-mail = Mail(app)
-
-s = URLSafeTimedSerializer(app.secret_key)
 
 conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
 
@@ -196,62 +183,6 @@ def login():
         else:
             return 'Invalid email or password'
     return render_template('login.html')
-
-def generate_token(email):
-    return s.dumps(email, salt='password-reset-salt')
-
-def confirm_token(token, expiration=3600):
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=expiration)
-    except Exception:
-        return False
-    return email
-
-@app.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form['email']
-        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-
-        if user:
-            token = generate_token(email)
-            reset_url = url_for('reset_password', token=token, _external=True)
-            msg = Message("Ocularis Password Reset", sender='jvcostales@up.edu.ph', recipients=[email])
-            msg.body = f"Hi! To reset your password, click the link below:\n{reset_url}\nThis link expires in 1 hour."
-            mail.send(msg)
-            flash("Password reset link sent to your email.", "info")
-        else:
-            flash("Email not found.", "danger")
-        return redirect(url_for('forgot_password'))
-    return render_template('forgot_password.html')
-
-@app.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    email = confirm_token(token)
-    if not email:
-        flash("The password reset link is invalid or has expired.", "danger")
-        return redirect(url_for('forgot_password'))
-
-    if request.method == 'POST':
-        password = request.form['password']
-        hashed_password = generate_password_hash(password)
-
-        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
-        cur = conn.cursor()
-        cur.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_password, email))
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        flash("Your password has been updated!", "success")
-        return redirect(url_for('login'))
-
-    return render_template('reset_password.html', token=token)
 
 @app.route('/feed')
 @login_required
