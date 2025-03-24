@@ -34,16 +34,15 @@
         <!-- Comment Section -->
         <div class="comments">
             {% for comment in comments %}
-            {% if comment[1] == image[0] %}
-            <div class="comment">
-                <strong>{{ comment[2] }}</strong>: {{ comment[3] }}
-                <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post"
-                    style="display:inline;">
-                    <button type="submit">❤️</button>
-                    {{ comment[5] }} likes
-                </form>
-            </div>
-            {% endif %}
+                {% if comment[1] == image[0] %}
+                    <div class="comment">
+                        <strong>{{ comment[2] }}</strong>: {{ comment[3] }}
+                        <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post" style="display:inline;">
+                            <button type="submit">❤️</button>
+                            {{ comment[5] }} likes
+                        </form>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
 
