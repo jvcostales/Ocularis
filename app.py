@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT,
-    reset_token VARCHAR
+    reset_token TEXT
 );
 """)
 
