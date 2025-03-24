@@ -163,34 +163,44 @@ def login():
 @app.route('/feed')
 @login_required
 def feed():
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
     
     try:
+        # Fetch images and like counts
         cur.execute("""
             SELECT images.image_id, images.image_url, 
-                COALESCE(like_count, 0), images.id
+                   COALESCE(like_count, 0), images.id
             FROM images 
-            LEFT JOIN (SELECT image_id, COUNT(*) AS like_count FROM likes GROUP BY image_id) AS likes 
+            LEFT JOIN (
+                SELECT image_id, COUNT(*) AS like_count 
+                FROM likes 
+                GROUP BY image_id
+            ) AS likes 
             ON images.image_id = likes.image_id
             ORDER BY images.created_at DESC
         """)
         images = cur.fetchall()
 
+        # Fetch comments and display name (first + last)
         cur.execute("""
-            SELECT comments.comment_id, comments.image_id, users.username, comments.comment_text, comments.created_at,
-                COALESCE(like_count, 0) as like_count
+            SELECT comments.comment_id, comments.image_id, 
+                   users.first_name || ' ' || users.last_name AS display_name, 
+                   comments.comment_text, comments.created_at,
+                   COALESCE(like_count, 0) AS like_count
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
-                SELECT comment_id, COUNT(*) as like_count
+                SELECT comment_id, COUNT(*) AS like_count
                 FROM comment_likes
                 GROUP BY comment_id
-            ) as cl ON comments.comment_id = cl.comment_id
+            ) AS cl ON comments.comment_id = cl.comment_id
             ORDER BY comments.created_at ASC
         """)
         comments = cur.fetchall()
@@ -200,6 +210,7 @@ def feed():
         conn.close()
 
     return render_template('feed.html', images=images, comments=comments)
+
 
 @app.route('/logout')
 @login_required
