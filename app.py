@@ -438,7 +438,7 @@ def notifications():
 
     try:
         cur.execute("""
-            SELECT users.username, notifications.action_type, notifications.image_id, notifications.created_at
+            SELECT users.first_name || ' ' || users.last_name AS display_name, notifications.action_type, notifications.image_id, notifications.created_at
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
