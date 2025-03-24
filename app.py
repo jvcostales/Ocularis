@@ -117,7 +117,7 @@ def load_user(user_id):
 from flask import session  # Make sure this is imported
 
 def send_verification_email(recipient_email, token):
-    verification_link = f"https://ocular-zmcu.onrender.com/verify-email/{token}"  # Replace with your domain
+    verification_link = f"https://ocular-zmcu.onrender.com/verify-email/{token}"
     subject = "Verify your email for Ocularis"
     body = f"Hi there! Please click the link below to verify your email:\n{verification_link}"
 
@@ -127,29 +127,75 @@ def send_verification_email(recipient_email, token):
     msg["To"] = recipient_email
 
     try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:  # Adjust for your email provider
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
-            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")
+            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")  # 🔒 Consider using an app password or env variable
             server.send_message(msg)
     except Exception as e:
         app.logger.error(f"Failed to send email: {e}")
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        raw_password = request.form['password']
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        raw_password = request.form.get('password')
 
-        if len(raw_password) < 6:
-            return "Password must be at least 6 characters long."
+        # Basic validation
         if not first_name or not last_name or not email or not raw_password:
             return "All fields are required."
+        if len(raw_password) < 6:
+            return "Password must be at least 6 characters long."
 
         password = generate_password_hash(raw_password)
-        token = secrets.token_urlsafe(24)  # Secure random token
+        token = secrets.token_urlsafe(24)
 
+        try:
+            conn = psycopg2.connect(
+                host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+                dbname="ocularis_db",
+                user="ocularis_db_user",
+                password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+                port=5432
+            )
+            cur = conn.cursor()
+
+            # Check if email already exists
+            cur.execute("SELECT 1 FROM users WHERE email = %s", (email,))
+            if cur.fetchone():
+                return "Email already exists."
+
+            # Insert user
+            cur.execute("""
+                INSERT INTO users (first_name, last_name, email, password, verification_token, verified)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """, (first_name, last_name, email, password, token, False))
+
+            user_id = cur.fetchone()[0]
+            conn.commit()
+
+            # Now send email
+            send_verification_email(email, token)
+
+            return "Check your email to verify your account."
+        except Exception as e:
+            app.logger.error(f"Signup error: {e}")
+            return "An error occurred. Please try again."
+        finally:
+            if 'cur' in locals():
+                cur.close()
+            if 'conn' in locals():
+                conn.close()
+
+    return render_template('signup.html')
+
+
+@app.route('/verify-email/<token>')
+def verify_email(token):
+    try:
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
             dbname="ocularis_db",
@@ -158,53 +204,30 @@ def signup():
             port=5432
         )
         cur = conn.cursor()
-        try:
-            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-            if cur.fetchone():
-                return "Email already exists."
 
-            cur.execute(
-                "INSERT INTO users (first_name, last_name, email, password, verification_token, verified) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
-                (first_name, last_name, email, password, token, False)
-            )
-            user_id = cur.fetchone()[0]
-            conn.commit()
-
-            send_verification_email(email, token)
-            return "Check your email to verify your account."
-        except Exception as e:
-            app.logger.error(f"Signup error: {e}")
-            return "An error occurred. Please try again."
-        finally:
-            cur.close()
-            conn.close()
-    return render_template('signup.html')
-
-@app.route('/verify-email/<token>')
-def verify_email(token):
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-    try:
+        # Check token
         cur.execute("SELECT id FROM users WHERE verification_token = %s", (token,))
-        result = cur.fetchone()
-        if not result:
+        user = cur.fetchone()
+        if not user:
             return "Invalid or expired token."
 
-        cur.execute("UPDATE users SET verified = TRUE, verification_token = NULL WHERE id = %s", (result[0],))
+        # Mark as verified
+        cur.execute("""
+            UPDATE users
+            SET verified = TRUE, verification_token = NULL
+            WHERE id = %s
+        """, (user[0],))
         conn.commit()
         return "Email verified! You can now log in."
     except Exception as e:
         app.logger.error(f"Verification error: {e}")
         return "An error occurred during verification."
     finally:
-        cur.close()
-        conn.close()
+        if 'cur' in locals():
+            cur.close()
+        if 'conn' in locals():
+            conn.close()
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
