@@ -17,7 +17,9 @@ cur = conn.cursor()
 cur.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 """)
@@ -88,37 +90,51 @@ cur.close()
 conn.close()
 
 class User(UserMixin):
-    def __init__(self, id, username, password):
+    def __init__(self, id, first_name, last_name, email, password):
         self.id = id
-        self.username = username
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
         self.password = password
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+    conn = psycopg2.connect(host=..., dbname=..., user=..., password=..., port=...)
     cur = conn.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
     cur.close()
     conn.close()
     if user:
-        return User(id=user[0], username=user[1], password=user[2])
+        return User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
     return None
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
         password = generate_password_hash(request.form['password'])
+
+        if not first_name or not last_name or not email or not password:
+            return "All fields are required."
 
         conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
         try:
-            cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+            # Ensure email is unique
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            if cur.fetchone():
+                return "Email already exists."
+            
+            cur.execute("INSERT INTO users (first_name, last_name, email, password) VALUES (%s, %s, %s, %s)",
+                        (first_name, last_name, email, password))
             conn.commit()
             return redirect(url_for('login'))
         except Exception as e:
             print(f"Error: {e}")
+            return "An error occurred. Please try again."
         finally:
             cur.close()
             conn.close()
@@ -127,21 +143,21 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
         conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cur.fetchone()
         cur.close()
         conn.close()
 
-        if user and check_password_hash(user[2], password):
-            login_user(User(id=user[0], username=user[1], password=user[2]))
+        if user and check_password_hash(user[4], password):  # password is now at index 4
+            login_user(User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4]))
             return redirect(url_for('feed'))
         else:
-            return 'Invalid username or password'
+            return 'Invalid email or password'
     return render_template('login.html')
 
 @app.route('/feed')
