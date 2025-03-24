@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT
+    reset_token VARCHAR;
 );
 """)
 
@@ -129,7 +130,7 @@ def send_verification_email(recipient_email, token):
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
-            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")  # 🔒 Consider using an app password or env variable
+            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")
             server.send_message(msg)
     except Exception as e:
         app.logger.error(f"Failed to send email: {e}")
@@ -150,7 +151,7 @@ def signup():
             return "Password must be at least 6 characters long."
 
         password = generate_password_hash(raw_password)
-        token = secrets.token_urlsafe(24)
+        token = secrets.token_urlsafe(32)
 
         try:
             conn = psycopg2.connect(
@@ -248,6 +249,69 @@ def login():
         else:
             return 'Invalid email or password'
     return render_template('login.html')
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        conn = psycopg2.connect(...)  # your db params
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+
+        if user:
+            token = secrets.token_urlsafe(32)
+            # Store token
+            cur.execute("UPDATE users SET reset_token = %s WHERE email = %s", (token, email))
+            conn.commit()
+
+            reset_link = url_for('reset_password', token=token, _external=True)
+            send_reset_email(email, reset_link)
+
+        cur.close()
+        conn.close()
+        return "If your email exists, a reset link has been sent."
+    return render_template('forgot_password.html')
+
+def send_reset_email(to_email, reset_link):
+    sender_email = "your_email@example.com"
+    sender_password = "your_email_password"  # Or use environment variables
+
+    msg = MIMEText(f'Click the link to reset your password: {reset_link}')
+    msg['Subject'] = 'Password Reset - Ocularis'
+    msg['From'] = sender_email
+    msg['To'] = to_email
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, to_email, msg.as_string())
+    except Exception as e:
+        print(f"Email failed: {e}")
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if request.method == 'POST':
+        new_password = request.form['password']
+        hashed = generate_password_hash(new_password)
+
+        conn = psycopg2.connect(...)  # your db params
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE reset_token = %s", (token,))
+        user = cur.fetchone()
+
+        if user:
+            cur.execute("UPDATE users SET password = %s, reset_token = NULL WHERE reset_token = %s",
+                        (hashed, token))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return redirect(url_for('login'))  # or wherever your login route is
+
+        cur.close()
+        conn.close()
+        return "Invalid or expired token."
+    return render_template('reset_password.html')
 
 @app.route('/feed')
 @login_required
