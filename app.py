@@ -123,13 +123,13 @@ def send_verification_email(recipient_email, token):
 
     msg = MIMEText(body)
     msg["Subject"] = subject
-    msg["From"] = "jvcostales@up.edu.ph"
+    msg["From"] = "jadynicolecostales2@gmail.com"
     msg["To"] = recipient_email
 
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:  # Adjust for your email provider
             server.starttls()
-            server.login("jvcostales@up.edu.ph", "ewwi xfvp ykxg vzcy")
+            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")
             server.send_message(msg)
     except Exception as e:
         print(f"Failed to send email: {e}")
