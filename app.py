@@ -132,7 +132,7 @@ def send_verification_email(recipient_email, token):
             server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")
             server.send_message(msg)
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        app.logger.error(f"Failed to send email: {e}")
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -148,7 +148,7 @@ def signup():
             return "All fields are required."
 
         password = generate_password_hash(raw_password)
-        token = secrets.token_urlsafe(32)  # Secure random token
+        token = secrets.token_urlsafe(24)  # Secure random token
 
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -173,7 +173,7 @@ def signup():
             send_verification_email(email, token)
             return "Check your email to verify your account."
         except Exception as e:
-            print(f"Error: {e}")
+            app.logger.error(f"Signup error: {e}")
             return "An error occurred. Please try again."
         finally:
             cur.close()
@@ -200,7 +200,7 @@ def verify_email(token):
         conn.commit()
         return "Email verified! You can now log in."
     except Exception as e:
-        print(f"Verification error: {e}")
+        app.logger.error(f"Verification error: {e}")
         return "An error occurred during verification."
     finally:
         cur.close()
