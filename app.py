@@ -108,6 +108,7 @@ def load_user(user_id):
     if user:
         return User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
     return None
+from flask import session  # Make sure this is imported
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -115,12 +116,23 @@ def signup():
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         email = request.form['email']
-        password = generate_password_hash(request.form['password'])
+        raw_password = request.form['password']
 
-        if not first_name or not last_name or not email or not password:
+        if len(raw_password) < 6:
+            return "Password must be at least 6 characters long."
+
+        password = generate_password_hash(raw_password)
+
+        if not first_name or not last_name or not email or not raw_password:
             return "All fields are required."
 
-        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+            dbname="ocularis_db",
+            user="ocularis_db_user",
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            port=5432
+        )
         cur = conn.cursor()
         try:
             # Ensure email is unique
@@ -128,10 +140,20 @@ def signup():
             if cur.fetchone():
                 return "Email already exists."
             
-            cur.execute("INSERT INTO users (first_name, last_name, email, password) VALUES (%s, %s, %s, %s)",
-                        (first_name, last_name, email, password))
+            # Insert new user
+            cur.execute(
+                "INSERT INTO users (first_name, last_name, email, password) VALUES (%s, %s, %s, %s) RETURNING id",
+                (first_name, last_name, email, password)
+            )
+            user_id = cur.fetchone()[0]
             conn.commit()
-            return redirect(url_for('login'))
+
+            # Log the user in by storing session info
+            session['user_id'] = user_id
+            session['email'] = email
+            session['first_name'] = first_name
+
+            return redirect(url_for('feed'))  # Redirect to feed after signup
         except Exception as e:
             print(f"Error: {e}")
             return "An error occurred. Please try again."
@@ -139,6 +161,7 @@ def signup():
             cur.close()
             conn.close()
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
