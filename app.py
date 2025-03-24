@@ -254,7 +254,7 @@ def login():
 def forgot_password():
     if request.method == 'POST':
         email = request.form['email']
-        conn = psycopg2.connect(...)  # your db params
+        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
         cur.execute("SELECT id FROM users WHERE email = %s", (email,))
         user = cur.fetchone()
@@ -274,8 +274,8 @@ def forgot_password():
     return render_template('forgot_password.html')
 
 def send_reset_email(to_email, reset_link):
-    sender_email = "your_email@example.com"
-    sender_password = "your_email_password"  # Or use environment variables
+    sender_email = "jadynicolecostales2@gmail.com"
+    sender_password = "erxt hevv irmn rjyy"
 
     msg = MIMEText(f'Click the link to reset your password: {reset_link}')
     msg['Subject'] = 'Password Reset - Ocularis'
@@ -295,7 +295,7 @@ def reset_password(token):
         new_password = request.form['password']
         hashed = generate_password_hash(new_password)
 
-        conn = psycopg2.connect(...)  # your db params
+        conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
         cur = conn.cursor()
         cur.execute("SELECT id FROM users WHERE reset_token = %s", (token,))
         user = cur.fetchone()
@@ -306,7 +306,7 @@ def reset_password(token):
             conn.commit()
             cur.close()
             conn.close()
-            return redirect(url_for('login'))  # or wherever your login route is
+            return redirect(url_for('login'))
 
         cur.close()
         conn.close()
