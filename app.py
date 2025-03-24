@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, render_template_string
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
 from werkzeug.utils import secure_filename
 import os
+import smtplib
+from email.mime.text import MIMEText
+from flask import Flask, request, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -182,6 +185,27 @@ def login():
         else:
             return 'Invalid email or password'
     return render_template('login.html')
+
+def send_password_reset_email(recipient_email, reset_link):
+    sender_email = "jvcostales@up.edu.ph"
+    sender_password = "your_email_password_or_app_password"  # Be careful—store this securely
+
+    msg = MIMEText(f"Hi! Click the link below to reset your password:\n\n{reset_link}")
+    msg["Subject"] = "Ocularis Password Reset"
+    msg["From"] = sender_email
+    msg["To"] = recipient_email
+
+    with smtplib.SMTP_SSL("smtp.up.edu.ph", 465) as server:
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+
+@app.route('/send-password-reset', methods=['POST'])
+def send_reset():
+    user_email = request.form['email']
+    reset_link = f"https://ocularis.app/reset-password?email={user_email}"  # Customize this as needed
+
+    send_password_reset_email(user_email, reset_link)
+    return "A password reset link has been sent to your email."
 
 @app.route('/feed')
 @login_required
