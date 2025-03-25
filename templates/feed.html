@@ -49,7 +49,7 @@
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
                 <button type="submit">Like</button>
             </form>
-            <a onclick="showLikesPopup('{{ image.image_id }}')">{{ image[3] }} Likes</a>
+            <a onclick="showLikesPopup({{ image.image_id }})">{{ image[3] }} Likes</a>
         </div>
 
         <!-- Delete Button (Only for Post Owner) -->
