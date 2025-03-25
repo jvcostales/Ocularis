@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS images (
     image_id SERIAL PRIMARY KEY,
     id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
-    caption TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
+    caption TEXT
 );
 """)
 
@@ -327,9 +327,9 @@ def feed():
     cur = conn.cursor()
     
     try:
-        # Fetch images and like counts
+        # Fetch images with their captions and like counts
         cur.execute("""
-            SELECT images.image_id, images.image_url, 
+            SELECT images.image_id, images.image_url, images.caption,
                    COALESCE(like_count, 0), images.id
             FROM images 
             LEFT JOIN (
