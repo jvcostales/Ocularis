@@ -384,11 +384,12 @@ def serve_images(filename):
 @login_required
 def upload_image():
     if request.method == 'POST':
-        if 'image' not in request.files:
-            return 'No file part'
-        
+        if 'image' not in request.files or 'caption' not in request.form:
+            return 'Missing file or caption'
+
         file = request.files['image']
-        
+        caption = request.form['caption'][:2200]  # Enforce 2,200 character limit
+
         if file.filename == '':
             return 'No selected file'
         
@@ -399,14 +400,20 @@ def upload_image():
 
             image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
 
-            conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+            conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                                    dbname="ocularis_db", 
+                                    user="ocularis_db_user", 
+                                    password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                                    port=5432)
             cur = conn.cursor()
-            cur.execute("INSERT INTO images (id, image_url) VALUES (%s, %s)", (current_user.id, image_url))
+            cur.execute("INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s)", 
+                        (current_user.id, image_url, caption))
             conn.commit()
             cur.close()
             conn.close()
 
             return redirect(url_for('feed'))
+    
     return render_template('upload.html')
 
 

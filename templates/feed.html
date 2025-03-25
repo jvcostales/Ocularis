@@ -4,6 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Ocularis Log In</title>
+    <script>
+        function toggleCaption(id) {
+            var fullCaption = document.getElementById("full-caption-" + id);
+            var shortCaption = document.getElementById("short-caption-" + id);
+            var toggleBtn = document.getElementById("toggle-btn-" + id);
+
+            if (fullCaption.style.display === "none") {
+                fullCaption.style.display = "inline";
+                shortCaption.style.display = "none";
+                toggleBtn.innerText = "See less";
+            } else {
+                fullCaption.style.display = "none";
+                shortCaption.style.display = "inline";
+                toggleBtn.innerText = "See more";
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -18,16 +35,29 @@
     <div class="post">
         <div>
             <img src="{{ image[1] }}" width="300">
+
+            <!-- Caption Display with Truncation -->
+            {% set caption = image[4] if image|length > 4 else "" %}
+            <p>
+                {% if caption|length > 125 %}
+                    <span id="short-caption-{{ image[0] }}">{{ caption[:125] }}...</span>
+                    <span id="full-caption-{{ image[0] }}" style="display:none;">{{ caption }}</span>
+                    <a href="javascript:void(0);" id="toggle-btn-{{ image[0] }}" onclick="toggleCaption('{{ image[0] }}')">See more</a>
+                {% else %}
+                    {{ caption }}
+                {% endif %}
+            </p>
+
+            <!-- Like Button -->
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
                 <button type="submit">Like ({{ image[2] }})</button>
             </form>
         </div>
 
         <!-- Delete Button (Only for Post Owner) -->
-        {% if image[3] == current_user.id %} <!-- Assuming image[3] holds the user_id of the owner -->
+        {% if image[3] == current_user.id %}
         <form action="{{ url_for('delete_image', image_id=image[0]) }}" method="POST">
-            <button type="submit"
-                onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
         </form>
         {% endif %}
 
