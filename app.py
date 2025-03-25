@@ -478,20 +478,21 @@ def get_likes(image_id):
     try:
         # Get the list of users who liked the image
         cur.execute("""
-            SELECT users.id, users.username 
-            FROM likes 
-            JOIN users ON likes.user_id = users.id 
+            SELECT users.id, users.first_name, users.last_name
+            FROM likes
+            JOIN users ON likes.user_id = users.id
             WHERE likes.image_id = %s
         """, (image_id,))
         
-        likes = cur.fetchall()  # Fetch list of (user_id, username)
+        likes = cur.fetchall()  # Fetch list of (user_id, first_name, last_name)
 
     finally:
         cur.close()
         conn.close()
 
-    # Return the list as JSON
-    return jsonify([{"id": user[0], "username": user[1]} for user in likes])
+    # Return the list as JSON (full name instead of username)
+    return jsonify([{"id": user[0], "name": f"{user[1]} {user[2]}"} for user in likes])
+
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
