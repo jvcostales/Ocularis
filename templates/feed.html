@@ -17,10 +17,10 @@
     {% for image in images %}
     <div class="post">
         <div>
-            <p>{{ image[5] }}</p>             
+            <p>{{ image[2] }}</p>             
             <img src="{{ image[1] }}" width="300">
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
-                <button type="submit">Like ({{ image[2] }})</button>
+                <button type="submit">Like ({{ image[3] }})</button>
             </form>
         </div>
 
