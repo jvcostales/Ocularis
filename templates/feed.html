@@ -47,7 +47,7 @@
                 </form>
 
                 <!-- Delete Button (Only for Comment Owner) -->
-                {% if comment[2] == current_user.id %} <!-- Assuming comment[4] is the user_id of the commenter -->
+                {% if comment[6] == current_user.id %}
                 <form action="{{ url_for('delete_comment', comment_id=comment[0]) }}" method="POST"
                     style="display:inline;">
                     <button type="submit"

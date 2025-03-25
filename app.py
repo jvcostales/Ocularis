@@ -347,7 +347,7 @@ def feed():
             SELECT comments.comment_id, comments.image_id, 
                    users.first_name || ' ' || users.last_name AS display_name, 
                    comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count
+                   COALESCE(like_count, 0) AS like_count, comments.user_id
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
