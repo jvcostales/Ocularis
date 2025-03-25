@@ -33,7 +33,6 @@
         {% endif %}
 
         <!-- Comment Section -->
-        <!-- Comment Section -->
         <div class="comments">
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
@@ -48,7 +47,7 @@
                 </form>
 
                 <!-- Delete Button (Only for Comment Owner) -->
-                {% if comment[4] == current_user.id %} <!-- Assuming comment[4] is the user_id of the commenter -->
+                {% if comment[2] == current_user.id %} <!-- Assuming comment[4] is the user_id of the commenter -->
                 <form action="{{ url_for('delete_comment', comment_id=comment[0]) }}" method="POST"
                     style="display:inline;">
                     <button type="submit"
@@ -59,7 +58,6 @@
             {% endif %}
             {% endfor %}
         </div>
-
 
         <!-- Add a Comment -->
         <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
