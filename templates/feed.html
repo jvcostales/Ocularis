@@ -4,33 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Ocularis Log In</title>
-    <style>
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            text-align: center;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
@@ -44,12 +17,11 @@
     {% for image in images %}
     <div class="post">
         <div>
-            <p>{{ image[2] }}</p>
+            <p>{{ image[2] }}</p>             
             <img src="{{ image[1] }}" width="300">
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
-                <button type="submit">Like</button>
+                <button type="submit">Like ({{ image[3] }})</button>
             </form>
-            <button class="like-btn" data-image-id="{{ image.image_id }}">{{ image[3] }} Likes</button>
         </div>
 
         <!-- Delete Button (Only for Post Owner) -->
@@ -63,16 +35,15 @@
         <!-- Comment Section -->
         <div class="comments">
             {% for comment in comments %}
-            {% if comment[1] == image[0] %}
-            <div class="comment">
-                <strong>{{ comment[2] }}</strong>: {{ comment[3] }}
-                <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post"
-                    style="display:inline;">
-                    <button type="submit">❤️</button>
-                    {{ comment[5] }} likes
-                </form>
-            </div>
-            {% endif %}
+                {% if comment[1] == image[0] %}
+                    <div class="comment">
+                        <strong>{{ comment[2] }}</strong>: {{ comment[3] }}
+                        <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post" style="display:inline;">
+                            <button type="submit">❤️</button>
+                            {{ comment[5] }} likes
+                        </form>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
 
@@ -85,46 +56,6 @@
     </div>
     {% endfor %}
 
-    <div id="likes-popup" class="popup">
-        <div class="popup-content">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            <div id="likes-popup-body">Loading...</div>
-        </div>
-    </div>
-
-
-
-    <script>
-        function showLikesPopup(imageId) {
-            fetch(`/likes/${imageId}`)
-                .then(response => response.json())
-                .then(data => {
-                    let popupContent = "<h3>People who liked this image:</h3><ul>";
-
-                    if (data.length === 0) {
-                        popupContent += "<li>No likes yet</li>";
-                    } else {
-                        data.forEach(user => {
-                            popupContent += `<li>${user.username}</li>`;
-                        });
-                    }
-
-                    popupContent += "</ul>";
-
-                    // Show the popup
-                    let popup = document.getElementById("likes-popup");
-                    let popupBody = document.getElementById("likes-popup-body");
-                    popupBody.innerHTML = popupContent;
-                    popup.style.display = "block";
-                })
-                .catch(error => console.error("Error fetching likes:", error));
-        }
-
-        // Close popup function
-        function closePopup() {
-            document.getElementById("likes-popup").style.display = "none";
-        }
-    </script>
 </body>
 
 </html>
