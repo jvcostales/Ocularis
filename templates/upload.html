@@ -8,9 +8,10 @@
 
 <body>
     <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data">
-        <input type="file" id="image" name="image">
-        <input type="submit">
-      </form>
+        <input type="file" id="image" name="image" required>
+        <input type="text" id="caption" name="caption" placeholder="Enter caption">
+        <input type="submit" value="Upload">
+    </form>
 </body>
 
 </html>
