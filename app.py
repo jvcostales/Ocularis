@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS images (
     image_id SERIAL PRIMARY KEY,
     id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
+    caption TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -384,12 +385,12 @@ def serve_images(filename):
 @login_required
 def upload_image():
     if request.method == 'POST':
-        if 'image' not in request.files or 'caption' not in request.form:
-            return 'Missing file or caption'
-
+        if 'image' not in request.files:
+            return 'No file part'
+        
         file = request.files['image']
-        caption = request.form['caption'][:2200]  # Enforce 2,200 character limit
-
+        caption = request.form.get('caption', '')  # Get the caption, default to empty string
+        
         if file.filename == '':
             return 'No selected file'
         
@@ -413,8 +414,8 @@ def upload_image():
             conn.close()
 
             return redirect(url_for('feed'))
-    
     return render_template('upload.html')
+
 
 
 @app.route('/like/<int:image_id>', methods=['POST'])
