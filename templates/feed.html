@@ -34,9 +34,7 @@
     {% for image in images %}
     <div class="post">
         <div>
-            <img src="{{ image[1] }}" width="300">
-
-            <!-- Caption Display with Truncation -->
+            <!-- Caption Display ABOVE the Image -->
             {% set caption = image[4] if image|length > 4 else "" %}
             <p>
                 {% if caption|length > 125 %}
@@ -47,6 +45,9 @@
                     {{ caption }}
                 {% endif %}
             </p>
+
+            <!-- Image -->
+            <img src="{{ image[1] }}" width="300">
 
             <!-- Like Button -->
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
