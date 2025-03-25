@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -459,6 +459,39 @@ def like_image(image_id):
         conn.close()
 
     return redirect(url_for('feed'))
+
+
+from flask import jsonify
+
+@app.route('/likes/<int:image_id>', methods=['GET'])
+@login_required
+def get_likes(image_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Get the list of users who liked the image
+        cur.execute("""
+            SELECT users.id, users.username 
+            FROM likes 
+            JOIN users ON likes.user_id = users.id 
+            WHERE likes.image_id = %s
+        """, (image_id,))
+        
+        likes = cur.fetchall()  # Fetch list of (user_id, username)
+
+    finally:
+        cur.close()
+        conn.close()
+
+    # Return the list as JSON
+    return jsonify([{"id": user[0], "username": user[1]} for user in likes])
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
