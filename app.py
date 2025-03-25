@@ -116,7 +116,6 @@ def load_user(user_id):
     if user:
         return User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
     return None
-from flask import session  # Make sure this is imported
 
 def send_verification_email(recipient_email, token):
     verification_link = f"https://ocular-zmcu.onrender.com/verify-email/{token}"
@@ -330,8 +329,9 @@ def feed():
         # Fetch images with their captions and like counts
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
-                   COALESCE(like_count, 0), images.id
+                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name
             FROM images 
+            JOIN users ON images.id = users.id
             LEFT JOIN (
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
