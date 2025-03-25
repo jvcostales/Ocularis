@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -460,40 +460,6 @@ def like_image(image_id):
 
     return redirect(url_for('feed'))
 
-
-from flask import jsonify
-
-@app.route('/likes/<int:image_id>', methods=['GET'])
-@login_required
-def get_likes(image_id):
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    try:
-        # Get the list of users who liked the image
-        cur.execute("""
-            SELECT users.id, users.first_name, users.last_name
-            FROM likes
-            JOIN users ON likes.user_id = users.id
-            WHERE likes.image_id = %s
-        """, (image_id,))
-        
-        likes = cur.fetchall()  # Fetch list of (user_id, first_name, last_name)
-
-    finally:
-        cur.close()
-        conn.close()
-
-    # Return the list as JSON (full name instead of username)
-    return jsonify([{"id": user[0], "name": f"{user[1]} {user[2]}"} for user in likes])
-
-
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
 def post_comment(image_id):
@@ -534,6 +500,34 @@ def post_comment(image_id):
     
     return redirect(url_for('feed'))
 
+@app.route('/comment/delete/<int:comment_id>', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+    
+    try:
+        # Ensure only the author can delete their comment
+        cur.execute("SELECT user_id FROM comments WHERE comment_id = %s", (comment_id,))
+        comment = cur.fetchone()
+
+        if comment and comment[0] == current_user.id:
+            cur.execute("DELETE FROM comments WHERE comment_id = %s", (comment_id,))
+            conn.commit()
+        else:
+            return "Unauthorized action", 403
+
+    finally:
+        cur.close()
+        conn.close()
+    
+    return redirect(url_for('feed'))
 
 @app.route('/delete/<int:image_id>', methods=['POST'])
 @login_required
