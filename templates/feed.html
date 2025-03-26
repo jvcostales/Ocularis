@@ -18,7 +18,7 @@
     {% for image in images %}
     <div class="post">
         <div>
-            <p><strong>{{ image[5] }} {{ image[6] }}</strong></p>
+            <p><strong><a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a></strong></p>
             <p>{{ image[2] }}</p>
             <img src="{{ image[1] }}" width="300">
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
@@ -39,7 +39,7 @@
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
             <div class="comment">
-                <strong>{{ comment[2] }}</strong>: {{ comment[3] }}
+                <a href="{{ url_for('profile', user_id=comment[6]) }}"><strong>{{ comment[2] }}</strong></a>: {{ comment[3] }}
 
                 <!-- Like Comment Button -->
                 <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post"
