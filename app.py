@@ -92,6 +92,14 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE image_tags (
+    id SERIAL PRIMARY KEY,
+    image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
+    tag VARCHAR(50) NOT NULL
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -384,12 +392,19 @@ def serve_images(filename):
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_image():
+    tags = [
+        "Architecture", "Art Direction", "Branding", "Fashion", "Graphic Design",
+        "Illustration", "Industrial Design", "Interaction Design", "Logo Design",
+        "Motion Graphics", "Photography", "UI/UX", "Web Design"
+    ]
+
     if request.method == 'POST':
         if 'image' not in request.files:
             return 'No file part'
         
         file = request.files['image']
         caption = request.form.get('caption', '')  # Get the caption, default to empty string
+        selected_tags = request.form.getlist('tags')  # Get selected tags as a list
         
         if file.filename == '':
             return 'No selected file'
@@ -407,16 +422,23 @@ def upload_image():
                                     password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
                                     port=5432)
             cur = conn.cursor()
-            cur.execute("INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s)", 
+
+            # Insert image into images table
+            cur.execute("INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING id", 
                         (current_user.id, image_url, caption))
+            image_id = cur.fetchone()[0]  # Get the inserted image's ID
+
+            # Insert tags into image_tags table
+            for tag in selected_tags:
+                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
+
             conn.commit()
             cur.close()
             conn.close()
 
             return redirect(url_for('feed'))
-    return render_template('upload.html')
 
-
+    return render_template('upload.html', tags=tags)
 
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
