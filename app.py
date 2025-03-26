@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 cur.execute(""" 
 CREATE TABLE image_tags (
     id SERIAL PRIMARY KEY,
-    image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
+    image_id INTEGER REFERENCES images(image_id) ON DELETE CASCADE,
     tag VARCHAR(50) NOT NULL
 );
 """)
