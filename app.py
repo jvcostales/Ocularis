@@ -616,6 +616,53 @@ def notifications():
 
     return render_template('notifications.html', notifications=notifs)
 
+@app.route('/profile/<int:user_id>')
+@login_required
+def profile(user_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+    
+    # Fetch user details
+    cur.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
+    user = cur.fetchone()
+
+    # Fetch user's posts
+    cur.execute("""
+        SELECT images.image_id, images.image_url, images.caption, 
+               (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count,
+               images.id, users.first_name, users.last_name
+        FROM images
+        JOIN users ON images.id = users.id
+        WHERE images.id = %s
+        ORDER BY images.created_at DESC
+    """, (user_id,))
+    
+    images = cur.fetchall()
+
+    # Fetch comments for all user's posts
+    cur.execute("""
+        SELECT comments.comment_id, comments.image_id, users.first_name, 
+               comments.comment_text, comments.created_at, 
+               (SELECT COUNT(*) FROM comment_likes WHERE comment_likes.comment_id = comments.comment_id) AS like_count,
+               comments.user_id
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
+        ORDER BY comments.created_at ASC
+    """, (user_id,))
+    
+    comments = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template("profile.html", user=user, images=images, comments=comments)
 
 if __name__ == '__main__':
     app.run(debug=True)
