@@ -23,7 +23,7 @@
     {% for image in images %}
     <div class="post">
         <div>
-            <p><strong><a href="{{ url_for('profile', user_id=image[3]) }}">{{ image[4] }} {{ image[5] }}</a></strong>
+            <p><strong><a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a></strong>
             </p>
             <p>{{ image[2] }}</p>
             <img src="{{ image[1] }}" width="300">

@@ -4,47 +4,60 @@ import psycopg2
 # Create a Flask Blueprint for search
 search_bp = Blueprint('search', __name__)
 
-# Connect to PostgreSQL
-conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
-cur = conn.cursor()
 
 @search_bp.route('/search')
 def search_results():
-    query = request.args.get('query', '').strip()
+    query = request.args.get('query', '')
 
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
     cur = conn.cursor()
 
-    # Search users by first name or last name
-    cur.execute("""
-        SELECT id, first_name, last_name 
-        FROM users 
-        WHERE first_name ILIKE %s OR last_name ILIKE %s
-    """, (f"%{query}%", f"%{query}%"))
-    users = cur.fetchall()
+    try:
+        # Search for users by first or last name
+        cur.execute("""
+            SELECT id, first_name, last_name 
+            FROM users 
+            WHERE first_name ILIKE %s OR last_name ILIKE %s
+        """, (f"%{query}%", f"%{query}%"))
+        users = cur.fetchall()
 
-    # Search posts by caption or tags, including user info
-    cur.execute("""
-    SELECT images.image_id, images.image_url, images.caption, 
-            users.id AS user_id, users.first_name, users.last_name,
-            (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count
-        FROM images
-        JOIN users ON images.id = users.id
-        LEFT JOIN image_tags ON images.image_id = image_tags.image_id
-        WHERE images.caption ILIKE %s OR image_tags.tag ILIKE %s
-    """, (f"%{query}%", f"%{query}%"))
-    images = cur.fetchall()
+        # Search for images by caption or tag
+        cur.execute("""
+            SELECT images.image_id, images.image_url, images.caption, 
+                   COALESCE(likes.like_count, 0), users.id AS user_id, 
+                   users.first_name, users.last_name
+            FROM images 
+            JOIN users ON images.id = users.id
+            LEFT JOIN (
+                SELECT image_id, COUNT(*) AS like_count 
+                FROM likes 
+                GROUP BY image_id
+            ) AS likes ON images.image_id = likes.image_id
+            LEFT JOIN image_tags ON images.image_id = image_tags.image_id
+            WHERE images.caption ILIKE %s OR image_tags.tag ILIKE %s
+        """, (f"%{query}%", f"%{query}%"))
+        images = cur.fetchall()
 
-    # Search comments related to retrieved images
-    image_ids = tuple(img[0] for img in images) if images else (0,)  # Ensure valid query if no images found
-    cur.execute("""
-        SELECT comments.comment_id, comments.image_id, users.first_name, users.last_name, 
-               comments.comment_text, comments.user_id 
-        FROM comments 
-        JOIN users ON comments.user_id = users.id 
-        WHERE comments.image_id IN %s
-    """, (image_ids,))
-    comments = cur.fetchall()
+        # Search for comments that contain the query
+        cur.execute("""
+            SELECT comments.comment_id, comments.image_id, 
+                   users.first_name || ' ' || users.last_name AS display_name, 
+                   comments.comment_text, comments.created_at,
+                   COALESCE(cl.like_count, 0) AS like_count, comments.user_id
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            LEFT JOIN (
+                SELECT comment_id, COUNT(*) AS like_count
+                FROM comment_likes
+                GROUP BY comment_id
+            ) AS cl ON comments.comment_id = cl.comment_id
+            WHERE comments.comment_text ILIKE %s
+            ORDER BY comments.created_at ASC
+        """, (f"%{query}%",))
+        comments = cur.fetchall()
 
-    cur.close()
+        return render_template("results.html", query=query, users=users, images=images, comments=comments)
 
-    return render_template("results.html", query=query, users=users, images=images, comments=comments)
+    finally:
+        cur.close()
+        conn.close()
