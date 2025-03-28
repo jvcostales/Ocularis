@@ -23,9 +23,10 @@ def search_results():
 
         # Search for images by caption or tag
         cur.execute("""
-            SELECT images.image_id, images.image_url, images.caption, 
-                   COALESCE(likes.like_count, 0), users.id AS user_id, 
-                   users.first_name, users.last_name
+            SELECT DISTINCT ON (images.image_id)
+                images.image_id, images.image_url, images.caption, 
+                COALESCE(likes.like_count, 0), users.id AS user_id, 
+                users.first_name, users.last_name
             FROM images 
             JOIN users ON images.id = users.id
             LEFT JOIN (
@@ -35,6 +36,7 @@ def search_results():
             ) AS likes ON images.image_id = likes.image_id
             LEFT JOIN image_tags ON images.image_id = image_tags.image_id
             WHERE images.caption ILIKE %s OR image_tags.tag ILIKE %s
+            ORDER BY images.image_id
         """, (f"%{query}%", f"%{query}%"))
         images = cur.fetchall()
 
