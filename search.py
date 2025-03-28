@@ -9,7 +9,13 @@ search_bp = Blueprint('search', __name__)
 def search_results():
     query = request.args.get('query', '')
 
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
 
     try:
@@ -40,23 +46,27 @@ def search_results():
         """, (f"%{query}%", f"%{query}%"))
         images = cur.fetchall()
 
-        # Search for comments that contain the query
-        cur.execute("""
-            SELECT comments.comment_id, comments.image_id, 
-                   users.first_name || ' ' || users.last_name AS display_name, 
-                   comments.comment_text, comments.created_at,
-                   COALESCE(cl.like_count, 0) AS like_count, comments.user_id
-            FROM comments
-            JOIN users ON comments.user_id = users.id
-            LEFT JOIN (
-                SELECT comment_id, COUNT(*) AS like_count
-                FROM comment_likes
-                GROUP BY comment_id
-            ) AS cl ON comments.comment_id = cl.comment_id
-            WHERE comments.comment_text ILIKE %s
-            ORDER BY comments.created_at ASC
-        """, (f"%{query}%",))
-        comments = cur.fetchall()
+        # Fetch comments **only for images that matched the search**
+        image_ids = tuple(img[0] for img in images)  # Extract image IDs from search results
+
+        comments = []
+        if image_ids:  # Only run query if there are matching images
+            cur.execute(f"""
+                SELECT comments.comment_id, comments.image_id, 
+                    users.first_name || ' ' || users.last_name AS display_name, 
+                    comments.comment_text, comments.created_at,
+                    COALESCE(cl.like_count, 0) AS like_count, comments.user_id
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+                LEFT JOIN (
+                    SELECT comment_id, COUNT(*) AS like_count
+                    FROM comment_likes
+                    GROUP BY comment_id
+                ) AS cl ON comments.comment_id = cl.comment_id
+                WHERE comments.image_id IN %s
+                ORDER BY comments.created_at ASC
+            """, (image_ids,))
+            comments = cur.fetchall()
 
         return render_template("results.html", query=query, users=users, images=images, comments=comments)
 
