@@ -24,8 +24,9 @@ def search_results():
 
     # Search posts by caption or tags, including user info
     cur.execute("""
-        SELECT images.image_id, images.image_url, images.caption, 
-               images.id AS user_id, users.first_name, users.last_name 
+    SELECT images.image_id, images.image_url, images.caption, 
+            users.id AS user_id, users.first_name, users.last_name,
+            (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count
         FROM images
         JOIN users ON images.id = users.id
         LEFT JOIN image_tags ON images.image_id = image_tags.image_id
