@@ -7,10 +7,11 @@ import os
 import smtplib
 import secrets
 from email.mime.text import MIMEText
-
+from search import search_bp
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
+app.register_blueprint(search_bp)
 login_manager = LoginManager()
 login_manager.init_app(app)
 

@@ -14,6 +14,11 @@
 <body>
     Welcome, {{ current_user.first_name }} {{ current_user.last_name }}!
 
+    <form action="{{ url_for('search.search_results') }}" method="GET">
+        <input type="text" name="query" placeholder="Search..." required>
+        <button type="submit">Search</button>
+    </form>
+
     <a href="{{ url_for('upload_image') }}">Upload</a>
     <a href="{{ url_for('notifications') }}">Notifs</a>
     <a href="{{ url_for('profile', user_id=current_user.id) }}">Profile</a>
