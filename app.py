@@ -831,10 +831,11 @@ def reject_request(request_id):
     flash("Friend request rejected.")
     return redirect('/requests')
 
-
 @app.route('/requests')
 def view_requests():
     user_id = session.get('user_id')
+    print(f"Logged in user ID: {user_id}")  # Add this line to check session data
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -851,6 +852,8 @@ def view_requests():
         WHERE fr.receiver_id = %s AND fr.status = 'pending';
     """, (user_id,))
     requests = cur.fetchall()
+
+    print(f"Requests fetched: {requests}")  # Add this line to check if the query is returning data
 
     cur.close()
     conn.close()
