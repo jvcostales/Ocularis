@@ -101,16 +101,6 @@ CREATE TABLE IF NOT EXISTS image_tags (
 );
 """)
 
-cur.execute(""" 
-CREATE TABLE IF NOT EXISTS friendships (
-    id SERIAL PRIMARY KEY,
-    requester_id INTEGER REFERENCES users(id),
-    addressee_id INTEGER REFERENCES users(id),
-    status VARCHAR(20) CHECK (status IN ('pending', 'accepted', 'declined')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-""")
-
 conn.commit()
 
 cur.close()
@@ -696,40 +686,6 @@ def profile(user_id):
     conn.close()
 
     return render_template("profile.html", user=user, images=images, comments=comments)
-
-@app.route('/send_friend_request/<int:user_id>')
-@login_required
-def send_friend_request(user_id):
-    cur.execute("""
-        INSERT INTO friendships (requester_id, addressee_id, status)
-        VALUES (%s, %s, 'pending') ON CONFLICT DO NOTHING
-    """, (current_user.id, user_id))
-    conn.commit()
-    return redirect(url_for('profile', user_id=user_id))
-
-
-@app.route('/respond_friend_request/<int:request_id>/<string:action>')
-@login_required
-def respond_friend_request(request_id, action):
-    if action in ['accepted', 'declined']:
-        cur.execute("""
-            UPDATE friendships SET status = %s WHERE id = %s AND addressee_id = %s
-        """, (action, request_id, current_user.id))
-        conn.commit()
-    return redirect(url_for('friend_requests'))
-
-
-@app.route('/friend_requests')
-@login_required
-def friend_requests():
-    cur.execute("""
-        SELECT friendships.id, users.first_name, users.last_name, users.id AS user_id
-        FROM friendships
-        JOIN users ON friendships.requester_id = users.id
-        WHERE friendships.addressee_id = %s AND friendships.status = 'pending'
-    """, (current_user.id,))
-    requests = cur.fetchall()
-    return render_template('friend_requests.html', requests=requests)
 
 if __name__ == '__main__':
     app.run(debug=True)
