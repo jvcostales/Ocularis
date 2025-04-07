@@ -667,7 +667,7 @@ def notifications():
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
-    current_user_id = session['user_id']
+    current_user_id = session.get('user_id')
     
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -739,7 +739,7 @@ def profile(user_id):
 
 @app.route('/send_request/<int:receiver_id>')
 def send_request(receiver_id):
-    sender_id = session['user_id']
+    sender_id = session.get('user_id')
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -771,7 +771,7 @@ def send_request(receiver_id):
 
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
-    receiver_id = session['user_id']
+    receiver_id = session.get('user_id')
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -813,7 +813,7 @@ def accept_request(request_id):
 
 @app.route('/reject_request/<int:request_id>')
 def reject_request(request_id):
-    receiver_id = session['user_id']
+    receiver_id = session.get('user_id')
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -838,7 +838,7 @@ def reject_request(request_id):
 
 @app.route('/requests')
 def view_requests():
-    user_id = session['user_id']
+    user_id = session.get('user_id')
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
