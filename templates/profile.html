@@ -9,7 +9,21 @@
 
 <body>
     <h1>{{ user[0] }} {{ user[1] }}</h1>
-    <h2>Your Posts</h2>
+
+    {% if not is_own_profile %}
+    {% if is_friend %}
+    <p>You are friends.</p>
+    {% elif request_status %}
+    {% if request_status[0] == 'pending' %}
+    <p>Friend request sent (pending).</p>
+    {% elif request_status[0] == 'rejected' %}
+    <p>Friend request was rejected.</p>
+    <a href="/send_request/{{ user_id }}">Send Again</a>
+    {% endif %}
+    {% else %}
+    <a href="/send_request/{{ user_id }}">Add Friend</a>
+    {% endif %}
+    {% endif %}
 
     {% for image in images %}
     <div class="post">

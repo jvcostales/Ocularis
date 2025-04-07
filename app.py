@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -98,6 +98,31 @@ CREATE TABLE IF NOT EXISTS image_tags (
     id SERIAL PRIMARY KEY,
     image_id INT REFERENCES images(image_id) ON DELETE CASCADE,
     tag VARCHAR(50) NOT NULL
+);
+""")
+
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS friend_requests (
+    request_id SERIAL PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    status VARCHAR(10) CHECK (status IN ('pending', 'accepted', 'rejected')) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (sender_id, receiver_id)
+);
+""")
+
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS friends (
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    friended_at TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (user1_id, user2_id),
+    FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE,
+    CHECK (user1_id <> user2_id)
 );
 """)
 
@@ -642,6 +667,8 @@ def notifications():
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    current_user_id = session['user_id']
+    
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -665,10 +692,9 @@ def profile(user_id):
         WHERE images.id = %s
         ORDER BY images.created_at DESC
     """, (user_id,))
-    
     images = cur.fetchall()
 
-    # Fetch comments for all user's posts
+    # Fetch comments on the user's posts
     cur.execute("""
         SELECT comments.comment_id, comments.image_id, users.first_name, 
                comments.comment_text, comments.created_at, 
@@ -679,13 +705,160 @@ def profile(user_id):
         WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
         ORDER BY comments.created_at ASC
     """, (user_id,))
-    
     comments = cur.fetchall()
+
+    # Check friend status
+    cur.execute("""
+        SELECT 1 FROM friends 
+        WHERE (user1_id = %s AND user2_id = %s)
+           OR (user1_id = %s AND user2_id = %s);
+    """, (current_user_id, user_id, user_id, current_user_id))
+    is_friend = cur.fetchone() is not None
+
+    # Check if a friend request is already sent
+    cur.execute("""
+        SELECT status FROM friend_requests
+        WHERE sender_id = %s AND receiver_id = %s;
+    """, (current_user_id, user_id))
+    request_status = cur.fetchone()
 
     cur.close()
     conn.close()
 
-    return render_template("profile.html", user=user, images=images, comments=comments)
+    return render_template(
+        "profile.html",
+        user=user,
+        images=images,
+        comments=comments,
+        user_id=user_id,
+        is_friend=is_friend,
+        request_status=request_status,
+        is_own_profile=(current_user_id == user_id)
+    )
+
+
+@app.route('/send_request/<int:receiver_id>')
+def send_request(receiver_id):
+    sender_id = session['user_id']
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT * FROM friend_requests 
+        WHERE sender_id = %s AND receiver_id = %s;
+    """, (sender_id, receiver_id))
+    if cur.fetchone():
+        flash("Friend request already sent.")
+        return redirect('/users')
+
+    cur.execute("""
+        INSERT INTO friend_requests (sender_id, receiver_id)
+        VALUES (%s, %s);
+    """, (sender_id, receiver_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash("Friend request sent.")
+    return redirect('/users')
+
+
+@app.route('/accept_request/<int:request_id>')
+def accept_request(request_id):
+    receiver_id = session['user_id']
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    # Fetch sender from request
+    cur.execute("""
+        SELECT sender_id FROM friend_requests 
+        WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+    """, (request_id, receiver_id))
+    row = cur.fetchone()
+    if not row:
+        flash("Request not found.")
+        return redirect('/requests')
+    
+    sender_id = row[0]
+
+    # Update request status
+    cur.execute("""
+        UPDATE friend_requests SET status = 'accepted'
+        WHERE request_id = %s;
+    """, (request_id,))
+
+    # Add to friends
+    cur.execute("""
+        INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);
+    """, (min(sender_id, receiver_id), max(sender_id, receiver_id)))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash("Friend request accepted.")
+    return redirect('/requests')
+
+
+@app.route('/reject_request/<int:request_id>')
+def reject_request(request_id):
+    receiver_id = session['user_id']
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        UPDATE friend_requests 
+        SET status = 'rejected' 
+        WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+    """, (request_id, receiver_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash("Friend request rejected.")
+    return redirect('/requests')
+
+
+@app.route('/requests')
+def view_requests():
+    user_id = session['user_id']
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT fr.request_id, u.first_name, u.last_name 
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending';
+    """, (user_id,))
+    requests = cur.fetchall()
+
+    cur.close()
+    conn.close()
+    return render_template('requests.html', requests=requests)
 
 if __name__ == '__main__':
     app.run(debug=True)
