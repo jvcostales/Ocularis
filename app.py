@@ -668,7 +668,7 @@ def notifications():
 @login_required
 def profile(user_id):
     current_user_id = session.get('user_id')
-    
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -677,7 +677,7 @@ def profile(user_id):
         port=5432
     )
     cur = conn.cursor()
-    
+
     # Fetch user details
     cur.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
@@ -688,8 +688,8 @@ def profile(user_id):
                (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count,
                images.id, users.first_name, users.last_name
         FROM images
-        JOIN users ON images.id = users.id
-        WHERE images.id = %s
+        JOIN users ON images.user_id = users.id  -- Fixed the JOIN to use correct user_id for images
+        WHERE images.user_id = %s
         ORDER BY images.created_at DESC
     """, (user_id,))
     images = cur.fetchall()
@@ -702,12 +702,12 @@ def profile(user_id):
                comments.user_id
         FROM comments
         JOIN users ON comments.user_id = users.id
-        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
+        WHERE comments.image_id IN (SELECT image_id FROM images WHERE user_id = %s)
         ORDER BY comments.created_at ASC
     """, (user_id,))
     comments = cur.fetchall()
 
-    # Check friend status
+    # Check if the current user and the profile user are friends
     cur.execute("""
         SELECT 1 FROM friends 
         WHERE (user1_id = %s AND user2_id = %s)
@@ -715,16 +715,17 @@ def profile(user_id):
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Check if a friend request is already sent
+    # Check if a friend request is already sent or pending
     cur.execute("""
         SELECT status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s;
+        WHERE sender_id = %s AND receiver_id = %s
     """, (current_user_id, user_id))
     request_status = cur.fetchone()
 
     cur.close()
     conn.close()
 
+    # Pass the required data to the template
     return render_template(
         "profile.html",
         user=user,
@@ -755,21 +756,35 @@ def send_request(receiver_id):
     )
     cur = conn.cursor()
 
-    # Optional: prevent duplicate pending requests
+    # Prevent sending a request if already friends
+    cur.execute("""
+        SELECT * FROM friends
+        WHERE (user1_id = %s AND user2_id = %s)
+           OR (user1_id = %s AND user2_id = %s);
+    """, (sender_id, receiver_id, receiver_id, sender_id))
+    already_friends = cur.fetchone()
+
+    if already_friends:
+        flash("You are already friends with this user.")
+        cur.close()
+        conn.close()
+        return redirect(url_for('profile', user_id=receiver_id))
+
+    # Prevent duplicate pending requests
     cur.execute("""
         SELECT * FROM friend_requests
         WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (sender_id, receiver_id))
-    existing = cur.fetchone()
+    existing_request = cur.fetchone()
 
-    if existing:
+    if existing_request:
         flash("Friend request already sent.")
     else:
-        # Insert friend request into the database
+        # Insert new friend request
         cur.execute("""
             INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-            VALUES (%s, %s, %s, NOW())
-        """, (sender_id, receiver_id, 'pending'))
+            VALUES (%s, %s, 'pending', NOW());
+        """, (sender_id, receiver_id))
         conn.commit()
         flash("Friend request sent.")
 
@@ -777,7 +792,6 @@ def send_request(receiver_id):
     conn.close()
 
     return redirect(url_for('profile', user_id=receiver_id))
-
 
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
