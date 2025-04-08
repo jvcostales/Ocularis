@@ -736,11 +736,16 @@ def profile(user_id):
         is_own_profile=(current_user_id == user_id)
     )
 
-
 @app.route('/send_request/<int:receiver_id>', methods=['GET'])
 @login_required
 def send_request(receiver_id):
-    sender_id = current_user.id  # Use current user's ID
+    sender_id = current_user.id
+
+    # Prevent sending a request to yourself
+    if sender_id == receiver_id:
+        flash("You cannot send a friend request to yourself.")
+        return redirect(url_for('profile', user_id=receiver_id))
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -749,25 +754,34 @@ def send_request(receiver_id):
         port=5432
     )
     cur = conn.cursor()
-    
-    # Insert friend request into the database
+
+    # Optional: prevent duplicate pending requests
     cur.execute("""
-        INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-        VALUES (%s, %s, %s, NOW())
-    """, (sender_id, receiver_id, 'pending'))
-    
-    conn.commit()
+        SELECT * FROM friend_requests
+        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+    """, (sender_id, receiver_id))
+    existing = cur.fetchone()
+
+    if existing:
+        flash("Friend request already sent.")
+    else:
+        # Insert friend request into the database
+        cur.execute("""
+            INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
+            VALUES (%s, %s, %s, NOW())
+        """, (sender_id, receiver_id, 'pending'))
+        conn.commit()
+        flash("Friend request sent.")
+
     cur.close()
     conn.close()
 
-    # Redirect or return some response
     return redirect(url_for('profile', user_id=receiver_id))
-
 
 
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
-    receiver_id = session.get('user_id')
+    receiver_id = current_user.id
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -809,7 +823,7 @@ def accept_request(request_id):
 
 @app.route('/reject_request/<int:request_id>')
 def reject_request(request_id):
-    receiver_id = session.get('user_id')
+    receiver_id = current_user.id
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
