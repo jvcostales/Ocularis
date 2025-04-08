@@ -17,6 +17,9 @@
 <body>
     <h1>{{ user[0] }} {{ user[1] }}</h1>
 
+    <p><strong>is_friend:</strong> {{ is_friend }}</p>
+    <p><strong>request_status:</strong> {{ request_status }}</p>
+
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
