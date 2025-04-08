@@ -728,6 +728,9 @@ def profile(user_id):
     # Add a flag to indicate if the "Add Friend" button should be disabled
     disable_add_friend = is_friend or current_user_id == user_id
 
+    print("is_friend:", is_friend)
+    print("request_status:", request_status)
+
     return render_template(
         "profile.html",
         user=user,
