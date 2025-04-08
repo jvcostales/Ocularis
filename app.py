@@ -725,6 +725,9 @@ def profile(user_id):
     cur.close()
     conn.close()
 
+    # Add a flag to indicate if the "Add Friend" button should be disabled
+    disable_add_friend = is_friend or current_user_id == user_id
+
     return render_template(
         "profile.html",
         user=user,
@@ -733,7 +736,8 @@ def profile(user_id):
         user_id=user_id,
         is_friend=is_friend,
         request_status=request_status,
-        is_own_profile=(current_user_id == user_id)
+        is_own_profile=(current_user_id == user_id),
+        disable_add_friend=disable_add_friend  # Passing the flag to the template
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['GET'])
