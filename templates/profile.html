@@ -18,14 +18,17 @@
     <p>Friend request sent (pending).</p>
     {% elif request_status[0] == 'rejected' %}
     <p>Friend request was rejected.</p>
-    <a href="/send_request/{{ user_id }}">Send Again</a>
     {% endif %}
-    {% else %}
-    <form action="/send_request/{{ user_id }}" method="get">
-        <button type="submit" {% if is_friend %}disabled{% endif %}>Add Friend</button>
-    </form> {% endif %}
     {% endif %}
 
+    <form action="/send_request/{{ user_id }}" method="get">
+        <button type="submit" {% if is_friend or (request_status and request_status[0]=='pending' ) %}disabled{% endif
+            %}>
+            Add Friend
+        </button>
+    </form>
+    {% endif %}
+    
     {% for image in images %}
     <div class="post">
         <div>
