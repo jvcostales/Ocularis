@@ -668,7 +668,7 @@ def notifications():
 @login_required
 def profile(user_id):
     current_user_id = session.get('user_id')
-
+    
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -677,7 +677,7 @@ def profile(user_id):
         port=5432
     )
     cur = conn.cursor()
-
+    
     # Fetch user details
     cur.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
@@ -688,8 +688,8 @@ def profile(user_id):
                (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count,
                images.id, users.first_name, users.last_name
         FROM images
-        JOIN users ON images.user_id = users.id  -- Fixed the JOIN to use correct user_id for images
-        WHERE images.user_id = %s
+        JOIN users ON images.id = users.id
+        WHERE images.id = %s
         ORDER BY images.created_at DESC
     """, (user_id,))
     images = cur.fetchall()
@@ -702,12 +702,12 @@ def profile(user_id):
                comments.user_id
         FROM comments
         JOIN users ON comments.user_id = users.id
-        WHERE comments.image_id IN (SELECT image_id FROM images WHERE user_id = %s)
+        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
         ORDER BY comments.created_at ASC
     """, (user_id,))
     comments = cur.fetchall()
 
-    # Check if the current user and the profile user are friends
+    # Check friend status
     cur.execute("""
         SELECT 1 FROM friends 
         WHERE (user1_id = %s AND user2_id = %s)
@@ -715,17 +715,16 @@ def profile(user_id):
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Check if a friend request is already sent or pending
+    # Check if a friend request is already sent
     cur.execute("""
         SELECT status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s
+        WHERE sender_id = %s AND receiver_id = %s;
     """, (current_user_id, user_id))
     request_status = cur.fetchone()
 
     cur.close()
     conn.close()
 
-    # Pass the required data to the template
     return render_template(
         "profile.html",
         user=user,
