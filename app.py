@@ -759,42 +759,52 @@ def send_request(receiver_id):
     )
     cur = conn.cursor()
 
-    # Prevent sending a request if already friends
-    cur.execute("""
-        SELECT * FROM friends
-        WHERE (user1_id = %s AND user2_id = %s)
-           OR (user1_id = %s AND user2_id = %s);
-    """, (sender_id, receiver_id, receiver_id, sender_id))
-    already_friends = cur.fetchone()
+    try:
+        # Prevent sending a request if already friends
+        cur.execute("""
+            SELECT * FROM friends
+            WHERE (user1_id = %s AND user2_id = %s)
+               OR (user1_id = %s AND user2_id = %s);
+        """, (sender_id, receiver_id, receiver_id, sender_id))
+        already_friends = cur.fetchone()
 
-    if already_friends:
-        flash("You are already friends with this user.")
+        if already_friends:
+            flash("You are already friends with this user.")
+            return redirect(url_for('profile', user_id=receiver_id))
+
+        # Prevent sending a duplicate pending request
+        cur.execute("""
+            SELECT * FROM friend_requests
+            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+        """, (sender_id, receiver_id))
+        existing_request = cur.fetchone()
+
+        if existing_request:
+            flash("Friend request already sent.")
+        else:
+            # Handle rejected request and allow sending a new one
+            cur.execute("""
+                DELETE FROM friend_requests
+                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
+            """, (sender_id, receiver_id))
+            conn.commit()
+
+            # Insert new friend request
+            cur.execute("""
+                INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
+                VALUES (%s, %s, 'pending', NOW());
+            """, (sender_id, receiver_id))
+            conn.commit()
+            flash("Friend request sent.")
+    except Exception as e:
+        flash(f"An error occurred: {e}")
+        conn.rollback()
+    finally:
         cur.close()
         conn.close()
-        return redirect(url_for('profile', user_id=receiver_id))
-
-    # Prevent duplicate pending requests
-    cur.execute("""
-        SELECT * FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-    """, (sender_id, receiver_id))
-    existing_request = cur.fetchone()
-
-    if existing_request:
-        flash("Friend request already sent.")
-    else:
-        # Insert new friend request
-        cur.execute("""
-            INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-            VALUES (%s, %s, 'pending', NOW());
-        """, (sender_id, receiver_id))
-        conn.commit()
-        flash("Friend request sent.")
-
-    cur.close()
-    conn.close()
 
     return redirect(url_for('profile', user_id=receiver_id))
+
 
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
