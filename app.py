@@ -667,8 +667,8 @@ def notifications():
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
-    current_user_id = session.get('user_id')
-    
+    current_user_id = current_user.id
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
@@ -711,7 +711,7 @@ def profile(user_id):
     cur.execute("""
         SELECT 1 FROM friends 
         WHERE (user1_id = %s AND user2_id = %s)
-           OR (user1_id = %s AND user2_id = %s);
+            OR (user1_id = %s AND user2_id = %s);
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
