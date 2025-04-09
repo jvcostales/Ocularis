@@ -772,7 +772,7 @@ def send_request(receiver_id):
             flash("You are already friends with this user.")
             return redirect(url_for('profile', user_id=receiver_id))
 
-        # Check if there's already a pending request
+        # Prevent sending a duplicate pending request
         cur.execute("""
             SELECT * FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
@@ -780,15 +780,16 @@ def send_request(receiver_id):
         existing_request = cur.fetchone()
 
         if existing_request:
-            # If a pending request exists, cancel it
+            flash("Friend request already sent.")
+        else:
+            # Handle rejected request and allow sending a new one
             cur.execute("""
                 DELETE FROM friend_requests
-                WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
             """, (sender_id, receiver_id))
             conn.commit()
-            flash("Friend request canceled.")
-        else:
-            # If no pending request, send a new one
+
+            # Insert new friend request
             cur.execute("""
                 INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
                 VALUES (%s, %s, 'pending', NOW());
@@ -803,6 +804,7 @@ def send_request(receiver_id):
         conn.close()
 
     return redirect(url_for('profile', user_id=receiver_id))
+
 
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
