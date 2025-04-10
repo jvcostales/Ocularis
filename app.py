@@ -8,6 +8,8 @@ import smtplib
 import secrets
 from email.mime.text import MIMEText
 from search import search_bp
+from recommender import get_similar_users
+import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -958,6 +960,41 @@ def view_requests():
     cur.close()
     conn.close()
     return render_template('requests.html', requests=requests)
+
+@app.route('/recommendations', methods=['GET'])
+@login_required
+def recommendations():
+    # Fetch all users from DB
+    conn = psycopg2.connect(...)
+    cur = conn.cursor()
+    cur.execute("SELECT id, skills, preferences, experience_level FROM users")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    # Convert to DataFrame format for the recommender
+    users_data = []
+    for row in rows:
+        uid, skills, prefs, level = row
+        row_data = {'user': uid}
+        for cat in ["Typography", "Branding", "Advertising", "Graphic Design", "Illustration", 
+                    "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"]:
+            row_data[f"{cat}_skill"] = int(cat in (skills or []))
+            row_data[f"{cat}_pref"] = int(cat in (prefs or []))
+        row_data["Experience_Level"] = level or 0
+        users_data.append(row_data)
+
+    df = pd.DataFrame(users_data)
+
+    # Skip if user hasn't set up their profile yet
+    if current_user.id not in df["user"].values:
+        return "Please complete your profile to get recommendations."
+
+    target_index = df[df['user'] == current_user.id].index[0]
+    similar_users = get_similar_users(target_index, df)
+
+    return render_template("recommendations.html", users=similar_users.to_dict(orient='records'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
