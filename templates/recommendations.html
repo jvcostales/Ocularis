@@ -9,11 +9,19 @@
 
 <body>
     <h2>Match</h2>
-    <ul>
-      {% for user in users %}
-        <li>User ID: {{ user.user }}</li>
-      {% endfor %}
-    </ul>
+    <form action="{{ url_for('recommendations') }}" method="get">
+        <button type="submit">Find Someone Like Me</button>
+      </form>
+      
+      {% if users %}
+        <h3>Your Closest Match</h3>
+        <ul>
+          {% for user in users %}
+            <li>{{ user.name }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      
 </body>
 
 </html>

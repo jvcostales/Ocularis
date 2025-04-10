@@ -996,11 +996,38 @@ def recommendations():
     if current_user.id not in df["user"].values:
         return "Please complete your profile to get recommendations."
 
+    # Get index of current user
     target_index = df[df['user'] == current_user.id].index[0]
-    similar_users = get_similar_users(target_index, df)
+    similar_users_df = get_similar_users(target_index, df)
 
-    return render_template("recommendations.html", users=similar_users.to_dict(orient='records'))
+    if similar_users_df.empty:
+        return render_template("recommendations.html", users=[])
 
+    # Fetch names for recommended users
+    user_ids = similar_users_df['user'].tolist()
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT id, first_name, last_name FROM users WHERE id = ANY(%s)", (user_ids,))
+    name_rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    # Map ID → Full Name
+    name_map = {row[0]: f"{row[1]} {row[2]}" for row in name_rows}
+
+    # Attach names to each user dict
+    users_list = []
+    for user in similar_users_df.to_dict(orient='records'):
+        user["name"] = name_map.get(user["user"], "Unknown")
+        users_list.append(user)
+
+    return render_template("recommendations.html", users=users_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
