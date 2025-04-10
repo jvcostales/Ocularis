@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Setup Profile</title>
+</head>
+<body>
+    <h1>Set Up Your Profile</h1>
+
+    <form method="POST">
+        <h2>Your Skills</h2>
+        {% for category in categories %}
+            <label>
+                <input type="checkbox" name="skills" value="{{ category }}">
+                {{ category }}
+            </label><br>
+        {% endfor %}
+
+        <h2>Your Preferences</h2>
+        {% for category in categories %}
+            <label>
+                <input type="checkbox" name="preferences" value="{{ category }}">
+                {{ category }}
+            </label><br>
+        {% endfor %}
+
+        <h2>Experience Level</h2>
+        <label for="experience_level">Select your level:</label><br>
+        <select name="experience_level" id="experience_level" required>
+            {% for value, label in experience_levels %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Save Profile</button>
+    </form>
+</body>
+</html>
