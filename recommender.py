@@ -31,7 +31,7 @@ def get_similar_users(target_user, all_users_df):
     ], axis=1)
 
     # KNN
-    knn = NearestNeighbors(n_neighbors=3, metric='cosine')
+    knn = NearestNeighbors(n_neighbors=2, metric='cosine')
     knn.fit(X_combined)
 
     distances, indices = knn.kneighbors(X_combined.loc[[target_user]])
