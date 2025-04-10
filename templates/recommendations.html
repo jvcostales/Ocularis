@@ -8,11 +8,7 @@
 </head>
 
 <body>
-    <h2>Match</h2>
-    <form action="{{ url_for('recommendations') }}" method="get">
-        <button type="submit">Find Someone Like Me</button>
-      </form>
-      
+    <h2>Match</h2>  
       {% if users %}
         <h3>Your Closest Match</h3>
         <ul>
