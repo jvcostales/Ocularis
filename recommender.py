@@ -30,10 +30,22 @@ def get_similar_users(target_user, all_users_df):
         pd.DataFrame(exp_weighted, columns=experience_col)
     ], axis=1)
 
-    # KNN
-    knn = NearestNeighbors(n_neighbors=2, metric='cosine')
+    # Not enough users to recommend anyone else
+    if len(all_users_df) < 2:
+        return pd.DataFrame()
+
+    # Fit KNN model (asking for more than 1 to handle ties)
+    n_neighbors = min(5, len(all_users_df))  # flexible neighbor count
+    knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
     knn.fit(X_combined)
 
-    distances, indices = knn.kneighbors(X_combined.loc[[target_user]])
+    _, indices = knn.kneighbors(X_combined.iloc[[target_user]])
 
-    return all_users_df.iloc[indices.flatten()[1:]]  # Exclude the user themself
+    # Exclude the user themself
+    similar_indices = [i for i in indices.flatten() if i != target_user]
+
+    # Return the top match (if available)
+    if similar_indices:
+        return all_users_df.iloc[[similar_indices[0]]]
+    else:
+        return pd.DataFrame()
