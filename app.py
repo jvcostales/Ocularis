@@ -965,7 +965,13 @@ def view_requests():
 @login_required
 def recommendations():
     # Fetch all users from DB
-    conn = psycopg2.connect(...)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
     cur.execute("SELECT id, skills, preferences, experience_level FROM users")
     rows = cur.fetchall()
