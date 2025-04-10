@@ -266,43 +266,6 @@ def verify_email(token):
         if 'conn' in locals():
             conn.close()
 
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-            port=5432
-        )
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-
-        if user and check_password_hash(user[4], password):  # password is at index 4
-            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
-            login_user(user_obj)
-
-            # New logic: Check if profile is incomplete
-            skills = user[8]  # Assuming skills is at index 8
-            preferences = user[9]  # Preferences at index 9
-            experience_level = user[10]  # Experience level at index 10
-
-            if not skills or not preferences or experience_level is None:
-                return redirect(url_for('setup_profile'))
-
-            return redirect(url_for('feed'))
-        else:
-            return 'Invalid email or password'
-
-    return render_template('login.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
