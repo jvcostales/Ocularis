@@ -289,6 +289,10 @@ a {
         padding-bottom: 24px;
     }
 
+    .no-caption {
+        padding: 0;
+    }
+
     .image-post {
         width: 100%;
         border-radius: 10px;
