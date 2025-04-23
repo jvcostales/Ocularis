@@ -673,6 +673,14 @@ a {
 
     .overlay-tagline {
         font-size: 1rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        border: none;
+        outline: none;
+    }
+
+    .overlay-tagline::placeholder {
+        font-size: 1rem;
         color: #c4c4c4;
         margin-bottom: 24px;
         border: none;
@@ -1691,6 +1699,14 @@ a {
 
     .overlay-tagline {
         font-size: 1rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        border: none;
+        outline: none;
+    }
+
+    .overlay-tagline::placeholder {
+        font-size: 1rem;
         color: #c4c4c4;
         margin-bottom: 24px;
         border: none;
@@ -2627,6 +2643,14 @@ a {
     }
 
     .overlay-tagline {
+        font-size: 1rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        border: none;
+        outline: none;
+    }
+
+    .overlay-tagline::placeholder {
         font-size: 1rem;
         color: #c4c4c4;
         margin-bottom: 24px;
