@@ -1093,7 +1093,7 @@ body {
         justify-content: space-between;
     }
 
-    .tagline-comment {
+    .tagline-comment::placeholder {
         color: #c4c4c4;
     }
 
