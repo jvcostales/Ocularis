@@ -287,9 +287,9 @@
                 <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                         id="closeOverlayComments">close</span></button>
                 <div class="overlay-title">Comments</div>
-                {% for comment in comments %}
-                {% if comment[1] == image[0] %}
                 <div class="scrollable-div-comments" id="scrollableDivComments">
+                    {% for comment in comments %}
+                    {% if comment[1] == image[0] %}
                     <div class="profile-comment-wrapper">
                         <div class="profile-more-wrapper">
                             <div class="profile-post-comments">
@@ -322,18 +322,18 @@
                         </div>
                     </div>
                     <div class="line-comments"></div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
-                {% endif %}
-                {% endfor %}
                 <div class="comment-bar">
                     <img src="pfp.jpg" class="pfp">
-                    <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-                        <div class="comment-text">
-                            <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment"
-                                required>
-                            <button class="send-button" type="submit">Send</button>
-                        </div>
-                    </form>
+                    <div class="comment-text">
+                        <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST"></form>
+                        <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment"
+                            required>
+                        <button class="send-button" type="submit">Send</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
