@@ -152,65 +152,6 @@
                 </div>
             </div>
         </div>
-        {% endfor %}
-        <div class="right-sidebar-container">
-            <div class="right-sidebar">
-                <div class="pfp-frame-wrapper">
-                    <div id="pfp"><img src="pfp.jpg" class="pfp right"></div>
-                    <div class="frame2" id="frame2">
-                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
-                        <div class="line"></div>
-                        <div class="saved">Saved</div>
-                        <div class="settings">Settings</div>
-                    </div>
-                </div>
-                <div class="notifs">
-                    <div class="notifs-title">
-                        Notifs
-                    </div>
-                    <!--
-                    <div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">There’s nothing to show here at the moment.</div>
-                    </div>
-                    -->
-                    <div class="notif-bar">
-                        <img src="pfp.jpg" class="pfp img-notif-request">
-                        <div class="notif-details">
-                            <div class="notif-text">
-                                Jane Doe liked your post.
-                            </div>
-                            <div class="notif-date">
-                                Jan 1
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="requests">
-                    <div class="requests-title">
-                        Requests
-                    </div>
-                    <div class="request-bar">
-                        <img src="pfp.jpg" class="pfp img-notif-request">
-                        <div class="request-details">
-                            <div class="request-text">
-                                Jane Doe sent you a friend request.
-                            </div>
-                            <div class="request-date">
-                                Jan 1
-                            </div>
-                            <div class="request-icons">
-                                <button class="circled-icon-1"><span
-                                        class="material-symbols-outlined close-symbol">close</span></button>
-                                <button class="circled-icon-2"><span
-                                        class="material-symbols-outlined check-symbol">check</span></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
             <div class="overlay-content">
                 <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
@@ -416,6 +357,65 @@
                         <div class="link">https://ocularis.app/post/123</div>
                         <button class="link-button"><span
                                 class="material-symbols-outlined link-symbol">content_copy</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="right-sidebar-container">
+            <div class="right-sidebar">
+                <div class="pfp-frame-wrapper">
+                    <div id="pfp"><img src="pfp.jpg" class="pfp right"></div>
+                    <div class="frame2" id="frame2">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+                <div class="notifs">
+                    <div class="notifs-title">
+                        Notifs
+                    </div>
+                    <!--
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">There’s nothing to show here at the moment.</div>
+                    </div>
+                    -->
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="requests">
+                    <div class="requests-title">
+                        Requests
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
