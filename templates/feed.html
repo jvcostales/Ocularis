@@ -3,84 +3,773 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Ocularis Log In</title>
-    <style>
-        .post {
-            padding-bottom: 100px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocularis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
 <body>
-    Welcome, {{ current_user.first_name }} {{ current_user.last_name }}!
 
-    <form action="{{ url_for('search.search_results') }}" method="GET">
-        <input type="text" name="query" placeholder="Search..." required>
-        <button type="submit">Search</button>
-    </form>
-
-    <a href="{{ url_for('upload_image') }}">Upload</a>
-    <a href="{{ url_for('notifications') }}">Notifs</a>
-    <a href="{{ url_for('view_requests') }}">Requests</a>
-    <a href="{{ url_for('recommendations') }}">Match</a>
-    <a href="{{ url_for('profile', user_id=current_user.id) }}">Profile</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
-    <div height="50"></div>
-
-    {% for image in images %}
-    <div class="post">
-        <div>
-            <p><strong><a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a></strong></p>
-            <p>{{ image[2] }}</p>
-            <img src="{{ image[1] }}" width="300">
-            <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
-                <button type="submit">Like ({{ image[3] }})</button>
-            </form>
-        </div>
-
-        <!-- Delete Button (Only for Post Owner) -->
-        {% if image[4] == current_user.id %} <!-- Assuming image[3] holds the user_id of the owner -->
-        <form action="{{ url_for('delete_image', image_id=image[0]) }}" method="POST">
-            <button type="submit"
-                onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
-        </form>
-        {% endif %}
-
-        <!-- Comment Section -->
-        <div class="comments">
-            {% for comment in comments %}
-            {% if comment[1] == image[0] %}
-            <div class="comment">
-                <a href="{{ url_for('profile', user_id=comment[6]) }}"><strong>{{ comment[2] }}</strong></a>: {{ comment[3] }}
-
-                <!-- Like Comment Button -->
-                <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post"
-                    style="display:inline;">
-                    <button type="submit">❤️</button>
-                    {{ comment[5] }} likes
-                </form>
-
-                <!-- Delete Button (Only for Comment Owner) -->
-                {% if comment[6] == current_user.id %}
-                <form action="{{ url_for('delete_comment', comment_id=comment[0]) }}" method="POST"
-                    style="display:inline;">
-                    <button type="submit"
-                        onclick="return confirm('Are you sure you want to delete this comment?');">Delete</button>
-                </form>
-                {% endif %}
+    <div class="container">
+        <div class="left-sidebar-container">
+            <div class="left-sidebar">
+                <div class="namelogo">
+                    <img src="Logo.png" class="logo">
+                    <div class="name">Ocularis</div>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a>
+                            <div class="icon-text-wrapper current">
+                                <span class="material-symbols-outlined sidebar-symbol">newspaper</span>
+                                <div>Feed</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('recommendations') }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">group</span>
+                                <div>Match</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">person</span>
+                                <div>Profile</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('logout') }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">logout</span>
+                                <div>Logout</div>
+                            </div>
+                        </a></li>
+                </ul>
             </div>
-            {% endif %}
-            {% endfor %}
         </div>
-
-        <!-- Add a Comment -->
-        <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-            <input type="text" name="comment" placeholder="Write a comment..." required>
-            <button type="submit">Post</button>
-        </form>
-        <div height="50"></div>
+        <div class="header">
+            <form class="search-wrapper hide-mobile" action="{{ url_for('search.search_results') }}" method="GET">
+                <input class="search" type="text" placeholder="Search" name="query" required>
+                <button class="search-button" type="submit"><span
+                        class="material-symbols-outlined search-symbol">search</span></button>
+            </form>
+            <div class="hide-pfp">
+                <button class="notifs-button"><span
+                        class="material-symbols-outlined notifs-symbol">notifications</span></button>
+                <div class="pfp-frame-wrapper">
+                    <div id="pfp3"><img src="pfp.jpg" class="pfp right"></div>
+                    <div class="frame3" id="frame3">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-only">
+            <img src="Logo.png" class="logo">
+            <div class="button-pfp-wrapper">
+                <button class="search-button"><span
+                        class="material-symbols-outlined search-symbol">search</span></button>
+                <button class="notifs-button"><span
+                        class="material-symbols-outlined notifs-symbol">notifications</span></button>
+                <div class="pfp-frame-wrapper">
+                    <div id="pfp4"><img src="pfp.jpg" class="pfp right"></div>
+                    <div class="frame4" id="frame4">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feed">
+            <div class="post">
+                <div class="post-title">Post</div>
+                <div class="tagline-wrapper">
+                    <div class="tagline-wrapper-2">
+                        <img src="pfp.jpg" class="pfp">
+                        <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
+                    </div>
+                    <button class="image-button" id="openOverlay"><span
+                            class="material-symbols-outlined image">image</span></button>
+                </div>
+            </div>
+            <!--bakit naka-center ung post 1 kapag un lang ung content-->
+            <!--fix class names-->
+            {% for image in images %}
+            <div class="post1">
+                <div class="profile-more-wrapper">
+                    <div class="profile-post">
+                        <img src="pfp.jpg" class="pfp">
+                        <div class="profile-name-date">
+                            <div class="username"><a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{
+                                    image[6] }}</a></div>
+                            <div class="date">Jan 1</div>
+                        </div>
+                    </div>
+                    <div class="more-frame-wrapper">
+                        <span class="material-symbols-outlined more-symbol" id="moreBtn">more_horiz</span>
+                        <div class="frame1" id="frame1">
+                            <div class="save">Save</div>
+                            <div class="hide">Hide</div>
+                            <div class="report">Report</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="caption">
+                    {{ image[2] }}
+                </div>
+                <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
+                <div class="interactions">
+                    <div class="lcs">
+                        <div class="partner like-button">
+                            <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+                                <button type="submit">
+                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="partner" id="openOverlayComments">
+                            <span class="material-symbols-outlined lcs-symbol">comment</span>
+                            <div class="partner-label">Comment</div>
+                        </div>
+                        <div class="partner" id="openOverlayShare">
+                            <span class="material-symbols-outlined lcs-symbol">share</span>
+                            <div class="partner-label">Share</div>
+                        </div>
+                    </div>
+                    <div class="metrics" id="openOverlayLikes">
+                        25 Likes
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-sidebar-container">
+            <div class="right-sidebar">
+                <div class="pfp-frame-wrapper">
+                    <div id="pfp"><img src="pfp.jpg" class="pfp right"></div>
+                    <div class="frame2" id="frame2">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+                <div class="notifs">
+                    <div class="notifs-title">
+                        Notifs
+                    </div>
+                    <!--
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">There’s nothing to show here at the moment.</div>
+                    </div>
+                    -->
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notif-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                Jane Doe liked your post.
+                            </div>
+                            <div class="notif-date">
+                                Jan 1
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="requests">
+                    <div class="requests-title">
+                        Requests
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="request-bar">
+                        <img src="pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                Jane Doe sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
+            <div class="overlay-content">
+                <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                        id="closeOverlay">close</span></button>
+                <div class="overlay-title">Post</div>
+                <div class="scrollable-div" id="scrollableDiv">
+                    <div class="profile-post">
+                        <img src="pfp.jpg" class="pfp">
+                        <div class="profile-name-date">
+                            <div class="username">Lorem ipsum dolor</div>
+                            <div class="date">Jan 1</div>
+                        </div>
+                    </div>
+                    <div class="overlay-tagline">
+                        Do you mind sharing your work?
+                    </div>
+                    <div class="upload">
+                        <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
+                        <div class="drop">Drop your images here or browse</div>
+                        <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
+                        <button class="browse-file">Browse File</button>
+                    </div>
+                    <div class="image-button-wrapper">
+                        <div class="image-container-overlay"><img src="samplepost2.png" class="image-post"></div>
+                        <button class="circled-icon-1-overlay-version"><span
+                                class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
+                    </div>
+                </div>
+                <button class="post-button">Post</button>
+            </div>
+        </div>
+        <div class="overlayLikes" id="overlayLikes">
+            <div class="overlay-content-likes">
+                <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                        id="closeOverlayLikes">close</span></button>
+                <div class="overlay-title">Likes</div>
+                <div class="scrollable-div-likes" id="scrollableDivLikes">
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="overlayComments" id="overlayComments">
+            <div class="overlay-content-comments">
+                <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                        id="closeOverlayComments">close</span></button>
+                <div class="overlay-title">Comments</div>
+                <div class="scrollable-div-comments" id="scrollableDivComments">
+                    <div class="profile-comment-wrapper">
+                        <div class="profile-more-wrapper">
+                            <div class="profile-post-comments">
+                                <img src="pfp.jpg" class="pfp">
+                                <div class="profile-name-date">
+                                    <div class="username">Lorem ipsum dolor</div>
+                                    <div class="date">Jan 1</div>
+                                </div>
+                            </div>
+                            <div class="more-frame-wrapper">
+                                <span class="material-symbols-outlined more-symbol" id="moreBtn">more_horiz</span>
+                            </div>
+                        </div>
+                        <div class="comment-like-wrapper">
+                            <div class="comment">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                                ut aliquip ex ea commodo</div>
+                            <div class="like-metrics-wrapper">
+                                <div class="partner like-button"> <span
+                                        class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                                <div class="metrics" id="openOverlayLikes">
+                                    25 Likes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="line-comments"></div>
+                    <div class="profile-comment-wrapper">
+                        <div class="profile-more-wrapper">
+                            <div class="profile-post-comments">
+                                <img src="pfp.jpg" class="pfp">
+                                <div class="profile-name-date">
+                                    <div class="username">Lorem ipsum dolor</div>
+                                    <div class="date">Jan 1</div>
+                                </div>
+                            </div>
+                            <div class="more-frame-wrapper">
+                                <span class="material-symbols-outlined more-symbol" id="moreBtn">more_horiz</span>
+                            </div>
+                        </div>
+                        <div class="comment-like-wrapper">
+                            <div class="comment">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                                ut aliquip ex ea commodo</div>
+                            <div class="like-metrics-wrapper">
+                                <div class="partner like-button">
+                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                                <div class="metrics" id="openOverlayLikes">
+                                    25 Likes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="line-comments"></div>
+                    <div class="profile-comment-wrapper">
+                        <div class="profile-more-wrapper">
+                            <div class="profile-post-comments">
+                                <img src="pfp.jpg" class="pfp">
+                                <div class="profile-name-date">
+                                    <div class="username">Lorem ipsum dolor</div>
+                                    <div class="date">Jan 1</div>
+                                </div>
+                            </div>
+                            <div class="more-frame-wrapper">
+                                <span class="material-symbols-outlined more-symbol" id="moreBtn">more_horiz</span>
+                            </div>
+                        </div>
+                        <div class="comment-like-wrapper">
+                            <div class="comment">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                                ut aliquip ex ea commodo</div>
+                            <div class="like-metrics-wrapper">
+                                <div class="partner like-button"> <span
+                                        class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                                <div class="metrics" id="openOverlayLikes">
+                                    25 Likes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-bar">
+                    <img src="pfp.jpg" class="pfp">
+                    <div class="comment-text">
+                        <div class="tagline-comment">Enter your comment</div>
+                        <button class="send-button">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="overlayShare" id="overlayShare">
+            <div class="overlay-content-share">
+                <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                        id="closeOverlayShare">close</span></button>
+                <div class="overlay-title">Share</div>
+                <div class="share-wrapper">
+                    <div class="share-via">Share via</div>
+                    <div class="icon-grid">
+                        <img src="fb.png" class="fb">
+                        <img src="ig.png" class="ig">
+                        <img src="x.png" class="x">
+                        <img src="gmail.png" class="gmail">
+                        <img src="linkedin.png" class="linkedin">
+                        <img src="telegram.png" class="telegram">
+                    </div>
+                    <div class="or-copy-link">or copy link</div>
+                    <div class="link-wrapper">
+                        <div class="link">https://ocularis.app/post/123</div>
+                        <button class="link-button"><span
+                                class="material-symbols-outlined link-symbol">content_copy</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endfor %}
+
+    <script>
+        let scrollPosition = 0;
+
+        function setupOverlay(overlaySelector, openBtnId, closeBtnId) {
+            const overlay = document.querySelector(overlaySelector);
+            const openBtn = document.getElementById(openBtnId);
+            const closeBtn = document.getElementById(closeBtnId);
+
+            openBtn.addEventListener('click', () => {
+                scrollPosition = window.scrollY;
+                document.body.style.top = `-${scrollPosition}px`;
+                document.body.classList.add('no-scroll');
+                overlay.classList.add('active');
+            });
+
+            function closeOverlay() {
+                overlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+                document.body.style.top = '';
+                window.scrollTo(0, scrollPosition);
+            }
+
+            closeBtn.addEventListener('click', closeOverlay);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeOverlay();
+                }
+            });
+        }
+
+        setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+        setupOverlay('.overlayLikes', 'openOverlayLikes', 'closeOverlayLikes');
+        setupOverlay('.overlayComments', 'openOverlayComments', 'closeOverlayComments');
+        setupOverlay('.overlayShare', 'openOverlayShare', 'closeOverlayShare');
+
+        const moreBtn = document.getElementById('moreBtn');
+        const frame1 = document.getElementById('frame1');
+        const pfp = document.getElementById('pfp');
+        const frame2 = document.getElementById('frame2');
+        const pfp3 = document.getElementById('pfp3');
+        const frame3 = document.getElementById('frame3');
+        const pfp4 = document.getElementById('pfp4');
+        const frame4 = document.getElementById('frame4');
+
+        // Hide all initially
+        frame1.style.display = 'none';
+        frame2.style.display = 'none';
+        frame3.style.display = 'none';
+        frame4.style.display = 'none';
+
+        // Add flags to track manual open state
+        let isFrame234Open = false;
+
+        moreBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame1.style.display === 'block';
+            frame1.style.display = isOpen ? 'none' : 'block';
+            frame2.style.display = 'none';
+            frame3.style.display = 'none';
+            frame4.style.display = 'none';
+            isFrame234Open = false;
+        });
+
+        pfp.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame2.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                frame1.style.display = 'none';
+                isFrame234Open = true;
+            }
+        });
+
+        pfp3.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame3.style.display === 'block';
+            if (isOpen) {
+                frame4.style.display = 'none';
+                frame3.style.display = 'none';
+                frame2.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame4.style.display = 'block';
+                frame3.style.display = 'block';
+                frame2.style.display = 'block';
+                frame1.style.display = 'none';
+                isFrame234Open = true;
+            }
+        });
+
+        pfp4.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame4.style.display === 'block';
+            if (isOpen) {
+                frame4.style.display = 'none';
+                frame3.style.display = 'none';
+                frame2.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame4.style.display = 'block';
+                frame3.style.display = 'block';
+                frame2.style.display = 'block';
+                frame1.style.display = 'none';
+                isFrame234Open = true;
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!frame1.contains(event.target) && event.target !== moreBtn) {
+                frame1.style.display = 'none';
+            }
+            if (!frame2.contains(event.target) && event.target !== pfp) {
+                frame2.style.display = 'none';
+            }
+            if (!frame3.contains(event.target) && event.target !== pfp3) {
+                frame3.style.display = 'none';
+            }
+            if (!frame4.contains(event.target) && event.target !== pfp4) {
+                frame4.style.display = 'none';
+            }
+
+            // If both are closed by outside click, set flag to false
+            const frame2Visible = window.getComputedStyle(frame2).display !== 'none';
+            const frame3Visible = window.getComputedStyle(frame3).display !== 'none';
+            const frame4Visible = window.getComputedStyle(frame4).display !== 'none';
+            if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                isFrame234Open = false;
+            }
+        });
+
+        // This handles syncing on screen resize
+        window.addEventListener('resize', function () {
+            if (isFrame234Open) {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+            }
+        });
+
+        function checkScrollbar() {
+            const div = document.getElementById('scrollableDiv');
+            const div1 = document.getElementById('scrollableDivLikes');
+            const div2 = document.getElementById('scrollableDivComments');
+
+
+            div.classList.remove('no-scroll', 'has-scroll');
+
+            if (div.scrollHeight > div.clientHeight) {
+                div.classList.add('has-scroll');
+            } else {
+                div.classList.add('no-scroll');
+            }
+
+            if (div1.scrollHeight > div1.clientHeight) {
+                div1.classList.add('has-scroll');
+            } else {
+                div1.classList.add('no-scroll');
+            }
+
+            if (div2.scrollHeight > div2.clientHeight) {
+                div2.classList.add('has-scroll');
+            } else {
+                div2.classList.add('no-scroll');
+            }
+        }
+
+        window.onload = checkScrollbar;
+
+
+        const likeButtons = document.querySelectorAll(".like-button");
+
+        likeButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                button.classList.toggle("liked");
+            });
+        });
+
+        function setFullHeight() {
+            document.querySelector('.right-sidebar').style.height = window.innerHeight + 'px';
+            document.querySelector('.left-sidebar').style.height = window.innerHeight + 'px';
+        }
+        window.addEventListener('resize', setFullHeight);
+        window.addEventListener('load', setFullHeight);
+
+    </script>
 
 </body>
 
