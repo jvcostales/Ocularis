@@ -328,7 +328,7 @@
                 <div class="comment-bar">
                     <img src="pfp.jpg" class="pfp">
                     <div class="comment-text">
-                        <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST"></form>
+                        <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
                         <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment"
                             required>
                         <button class="send-button" type="submit">Send</button>
