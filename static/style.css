@@ -175,7 +175,6 @@ a {
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
-        margin-bottom: 16px;
     }
 
     .pfp {
@@ -246,6 +245,7 @@ a {
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
+        margin-top: 16px;
     }
 
     .profile-more-wrapper {
@@ -1515,6 +1515,7 @@ a {
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
+        margin-top: 16px;
     }
 
     .profile-more-wrapper {
@@ -2448,6 +2449,7 @@ a {
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
+        margin-top: 16px;
     }
 
     .profile-more-wrapper {
