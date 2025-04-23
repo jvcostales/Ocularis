@@ -677,6 +677,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: min-content;
     }
 
     .scrollable-div {
@@ -1690,10 +1691,11 @@ a {
 
     .overlay-tagline {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: #c4c4c4 !important;
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: min-content;
     }
 
     .scrollable-div {
@@ -2630,6 +2632,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: min-content;
     }
 
     .scrollable-div {
