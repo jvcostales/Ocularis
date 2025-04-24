@@ -677,6 +677,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -685,7 +686,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: min-content;
+        width: 250px;
     }
 
     .scrollable-div {
@@ -1704,6 +1705,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -1712,7 +1714,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: min-content;
+        width: 250px;
     }
 
     .scrollable-div {
