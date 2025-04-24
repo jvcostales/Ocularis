@@ -410,9 +410,60 @@ def reset_password(token):
         return "Invalid or expired token."
     return render_template('reset_password.html')
 
-@app.route('/feed')
+@app.route('/feed', methods=['GET', 'POST'])
 @login_required
 def feed():
+    tags = [
+        "Architecture", "Art Direction", "Branding", "Fashion", "Graphic Design",
+        "Illustration", "Industrial Design", "Interaction Design", "Logo Design",
+        "Motion Graphics", "Photography", "UI/UX", "Web Design"
+    ]
+
+    if request.method == 'POST':
+        if 'image' not in request.files:
+            return 'No file part'
+        
+        file = request.files['image']
+        caption = request.form.get('caption', '')
+        selected_tags = request.form.getlist('tags')
+        
+        if file.filename == '':
+            return 'No selected file'
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('/var/data', filename)
+            file.save(file_path)
+
+            image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
+
+            conn = psycopg2.connect(
+                host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                dbname="ocularis_db", 
+                user="ocularis_db_user", 
+                password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                port=5432
+            )
+            cur = conn.cursor()
+
+            # Insert into images
+            cur.execute(
+                "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id", 
+                (current_user.id, image_url, caption)
+            )
+            image_id = cur.fetchone()[0]
+
+            # Insert tags
+            for tag in selected_tags:
+                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return redirect(url_for('feed'))
+
+    # Fetch feed content after upload or on GET
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -423,7 +474,7 @@ def feed():
     cur = conn.cursor()
     
     try:
-        # Fetch images with their captions and like counts
+        # Fetch images
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
                    COALESCE(like_count, 0), images.id, users.first_name, users.last_name
@@ -439,7 +490,7 @@ def feed():
         """)
         images = cur.fetchall()
 
-        # Fetch comments and display name (first + last)
+        # Fetch comments
         cur.execute("""
             SELECT comments.comment_id, comments.image_id, 
                    users.first_name || ' ' || users.last_name AS display_name, 
@@ -460,8 +511,7 @@ def feed():
         cur.close()
         conn.close()
 
-    return render_template('feed.html', images=images, comments=comments)
-
+    return render_template('feed.html', tags=tags, images=images, comments=comments)
 
 @app.route('/logout')
 @login_required
@@ -477,57 +527,6 @@ def allowed_file(filename):
 @app.route('/images/<filename>')
 def serve_images(filename):
     return send_from_directory('/var/data', filename)
-
-@app.route('/upload', methods=['GET', 'POST'])
-@login_required
-def upload_image():
-    tags = [
-        "Architecture", "Art Direction", "Branding", "Fashion", "Graphic Design",
-        "Illustration", "Industrial Design", "Interaction Design", "Logo Design",
-        "Motion Graphics", "Photography", "UI/UX", "Web Design"
-    ]
-
-    if request.method == 'POST':
-        if 'image' not in request.files:
-            return 'No file part'
-        
-        file = request.files['image']
-        caption = request.form.get('caption', '')  # Get the caption, default to empty string
-        selected_tags = request.form.getlist('tags')  # Get selected tags as a list
-        
-        if file.filename == '':
-            return 'No selected file'
-        
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join('/var/data', filename)
-            file.save(file_path)    
-
-            image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
-
-            conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                                    dbname="ocularis_db", 
-                                    user="ocularis_db_user", 
-                                    password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                                    port=5432)
-            cur = conn.cursor()
-
-            # Insert image into images table
-            cur.execute("INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING id", 
-                        (current_user.id, image_url, caption))
-            image_id = cur.fetchone()[0]  # Get the inserted image's ID
-
-            # Insert tags into image_tags table
-            for tag in selected_tags:
-                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
-
-            conn.commit()
-            cur.close()
-            conn.close()
-
-            return redirect(url_for('feed'))
-
-    return render_template('upload.html', tags=tags)
 
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
