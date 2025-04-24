@@ -1577,6 +1577,11 @@ a {
         border-radius: 10px;
     }
 
+    .image-post,
+    #closeButton {
+        display: none;
+    }
+
     .image-container {
         padding-bottom: 24px;
     }

@@ -616,6 +616,7 @@
 
         const imageInputPreview = document.getElementById('image');
         const imagePreview = document.getElementById('uploadedImagePreview');
+        const closeButton = document.getElementById('closeButton');
 
         imageInputPreview.addEventListener('change', function () {
             const file = this.files[0];
@@ -624,14 +625,25 @@
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
-                    imagePreview.src = e.target.result; // Show the selected image
-                    imagePreview.style.display = 'block'; // Show the image (if it was hidden)
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    closeButton.style.display = 'block';
                 };
 
-                reader.readAsDataURL(file); // Convert file to base64 URL
+                reader.readAsDataURL(file);
             } else {
-                imagePreview.style.display = 'none'; // Hide the image if invalid file or no file selected
+                imagePreview.style.display = 'none';
+                closeButton.style.display = 'none';
+                imagePreview.src = ''; // optional: clear the image
             }
+        });
+
+        closeButton.addEventListener('click', function (e) {
+            e.preventDefault(); // prevent default button behavior if needed
+            imagePreview.src = '';
+            imagePreview.style.display = 'none';
+            closeButton.style.display = 'none';
+            imageInputPreview.value = ''; // reset the file input
         });
 
     </script>
