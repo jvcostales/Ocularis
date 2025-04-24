@@ -392,17 +392,22 @@
                         <div class="nothing">There’s nothing to show here at the moment.</div>
                     </div>
                     -->
+                    {% for username, action, image_id, created_at in notifications %}
                     <div class="notif-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">
                             <div class="notif-text">
-                                Jane Doe liked your post.
+                                {{ username }}
+                                {% if action == 'like' %}
+                                liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                {% endif %}
                             </div>
                             <div class="notif-date">
-                                Jan 1
+                                {{ created_at.strftime('%b %-d') }}
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
                 <div class="requests">
                     <div class="requests-title">
