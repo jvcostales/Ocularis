@@ -157,7 +157,7 @@
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlay">close</span></button>
                     <div class="overlay-title">Post</div>
-                    <div class="scrollable-div" id="scrollableDiv">
+                    <div class="scrollable-div no-scroll" id="scrollableDiv">
                         <div class="profile-post">
                             <img src="..\static\pfp.jpg" class="pfp">
                             <div class="profile-name-date">
@@ -173,13 +173,15 @@
                                 <div class="drop">Drop your images here or browse</div>
                                 <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
                                 <button class="browse-file"><label for="image">Browse File</label></button>
-                                <input type="file" id="image" name="image" style="display: none;" required>
+                                <input type="file" id="image" name="image" accept="image/*" style="display: none;"
+                                    required>
                             </div>
-                                <!--<div class="image-button-wrapper">
-                                <div class="image-container-overlay"><img src="samplepost2.png" class="image-post"></div>
+                            <div class="image-button-wrapper">
+                                <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview">
+                                </div>
                                 <button class="circled-icon-1-overlay-version"><span
-                                class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
-                                </div>-->
+                                        class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
+                            </div>
                     </div>
                     <input type="submit" value="Post" class="post-button">
                     </form>
@@ -577,34 +579,24 @@
             }
         });
 
-        function checkScrollbar() {
-            const div = document.getElementById('scrollableDiv');
-            const div1 = document.getElementById('scrollableDivLikes');
-            const div2 = document.getElementById('scrollableDivComments');
+        const div = document.getElementById('scrollableDiv');
+        const imageInput = document.getElementById('image');
 
-
+        function toggleScrollBasedOnInput() {
             div.classList.remove('no-scroll', 'has-scroll');
 
-            if (div.scrollHeight > div.clientHeight) {
+            if (imageInput.files.length > 0) {
                 div.classList.add('has-scroll');
             } else {
                 div.classList.add('no-scroll');
             }
-
-            if (div1.scrollHeight > div1.clientHeight) {
-                div1.classList.add('has-scroll');
-            } else {
-                div1.classList.add('no-scroll');
-            }
-
-            if (div2.scrollHeight > div2.clientHeight) {
-                div2.classList.add('has-scroll');
-            } else {
-                div2.classList.add('no-scroll');
-            }
         }
 
-        window.onload = checkScrollbar;
+        // Run on input change
+        imageInput.addEventListener('change', toggleScrollBasedOnInput);
+
+        // Optionally run on page load
+        window.onload = toggleScrollBasedOnInput;
 
 
         const likeButtons = document.querySelectorAll(".like-button");
@@ -621,6 +613,26 @@
         }
         window.addEventListener('resize', setFullHeight);
         window.addEventListener('load', setFullHeight);
+
+        const imageInputPreview = document.getElementById('image');
+        const imagePreview = document.getElementById('uploadedImagePreview');
+
+        imageInputPreview.addEventListener('change', function () {
+            const file = this.files[0];
+
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result; // Show the selected image
+                    imagePreview.style.display = 'block'; // Show the image (if it was hidden)
+                };
+
+                reader.readAsDataURL(file); // Convert file to base64 URL
+            } else {
+                imagePreview.style.display = 'none'; // Hide the image if invalid file or no file selected
+            }
+        });
 
     </script>
 

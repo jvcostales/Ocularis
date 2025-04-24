@@ -689,17 +689,18 @@ a {
     }
 
     .scrollable-div {
-        height: 398.4px;
         padding-left: 24px;
-        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
+        height: min-content;
     }
 
     .scrollable-div.has-scroll {
+        height: 400px;
         padding-right: 6.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
@@ -1715,17 +1716,18 @@ a {
     }
 
     .scrollable-div {
-        height: 398.4px;
         padding-left: 24px;
-        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
+        height: min-content;
     }
 
     .scrollable-div.has-scroll {
+        height: 400px;
         padding-right: 6.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
@@ -2436,7 +2438,7 @@ a {
         outline: none;
         color: #1a1a1a;
         width: 250px;
-        /*note sure*/
+        /*not sure*/
     }
 
     .post-tagline::placeholder {
@@ -2648,6 +2650,7 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -2656,21 +2659,22 @@ a {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: min-content;
+        width: 250px;
     }
 
     .scrollable-div {
-        height: 398.4px;
         padding-left: 24px;
-        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
+        height: min-content;
     }
 
     .scrollable-div.has-scroll {
+        height: 400px;
         padding-right: 6.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
