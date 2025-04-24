@@ -446,14 +446,12 @@ def feed():
             )
             cur = conn.cursor()
 
-            # Insert into images
             cur.execute(
                 "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id", 
                 (current_user.id, image_url, caption)
             )
             image_id = cur.fetchone()[0]
 
-            # Insert tags
             for tag in selected_tags:
                 cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
 
@@ -463,7 +461,7 @@ def feed():
 
             return redirect(url_for('feed'))
 
-    # Fetch feed content after upload or on GET
+    # Fetch feed content, comments, and notifications
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -472,7 +470,7 @@ def feed():
         port=5432
     )
     cur = conn.cursor()
-    
+
     try:
         # Fetch images
         cur.execute("""
@@ -507,11 +505,28 @@ def feed():
         """)
         comments = cur.fetchall()
 
+        # Fetch notifications
+        cur.execute("""
+            SELECT users.first_name || ' ' || users.last_name AS display_name,
+                   notifications.action_type, notifications.image_id, notifications.created_at
+            FROM notifications
+            JOIN users ON notifications.actor_id = users.id
+            WHERE notifications.recipient_id = %s
+            ORDER BY notifications.created_at DESC
+        """, (current_user.id,))
+        notifications = cur.fetchall()
+
     finally:
         cur.close()
         conn.close()
 
-    return render_template('feed.html', tags=tags, images=images, comments=comments)
+    return render_template(
+        'feed.html',
+        tags=tags,
+        images=images,
+        comments=comments,
+        notifications=notifications
+    )
 
 @app.route('/logout')
 @login_required
@@ -700,31 +715,6 @@ def like_comment(comment_id):
         conn.close()
 
     return redirect(url_for('feed'))
-
-@app.route('/notifications')
-@login_required
-def notifications():
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
-    cur = conn.cursor()
-
-    try:
-        cur.execute("""
-            SELECT users.first_name || ' ' || users.last_name AS display_name, notifications.action_type, notifications.image_id, notifications.created_at
-            FROM notifications
-            JOIN users ON notifications.actor_id = users.id
-            WHERE notifications.recipient_id = %s
-            ORDER BY notifications.created_at DESC
-        """, (current_user.id,))
-        notifs = cur.fetchall()
-    finally:
-        cur.close()
-        conn.close()
-
-    return render_template('notifications.html', notifications=notifs)
 
 @app.route('/profile/<int:user_id>')
 @login_required

@@ -392,19 +392,24 @@
                         <div class="nothing">There’s nothing to show here at the moment.</div>
                     </div>
                     -->
-                    <ul>
-                        {% for username, action, image_id, created_at in notifications %}
-                        <li>
-                            {{ username }}
-                            {% if action == 'like' %}
-                            liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>
-                            {% elif action == 'comment' %}
-                            commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>
-                            {% endif %}
-                            ({{ created_at.strftime('%Y-%m-%d %H:%M:%S') }})
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    {% for username, action, image_id, created_at in notifications %}
+                    <div class="notif-bar">
+                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                {{ username }}
+                                {% if action == 'like' %}
+                                liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                {% elif action == 'comment' %}
+                                commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                {% endif %}
+                            </div>
+                            <div class="notif-date">
+                                {{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 <div class="requests">
                     <div class="requests-title">
