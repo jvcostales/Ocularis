@@ -373,8 +373,8 @@
         <div class="right-sidebar-container">
             <div class="right-sidebar">
                 <div class="pfp-frame-wrapper">
-                    <div id="pfp-{{ loop.index }}"><img src="..\static\pfp.jpg" class="pfp right"></div>
-                    <div class="frame2" id="frame2-{{ loop.index }}">
+                    <div id="pfp"><img src="..\static\pfp.jpg" class="pfp right"></div>
+                    <div class="frame2" id="frame2">
                         <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
                         <div class="line"></div>
                         <div class="saved">Saved</div>
@@ -482,103 +482,136 @@
             setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
         });
 
+        // Get all 'more' buttons and corresponding frame1s
+        const moreBtns = document.querySelectorAll('.more-symbol');
+        const allFrames1 = document.querySelectorAll('.frame1');
+
+        const pfp = document.getElementById('pfp');
+        const frame2 = document.getElementById('frame2');
+        const pfp3 = document.getElementById('pfp3');
+        const frame3 = document.getElementById('frame3');
+        const pfp4 = document.getElementById('pfp4');
+        const frame4 = document.getElementById('frame4');
+
         // Hide all frames initially
-        document.querySelectorAll('[id^="frame"]').forEach((frame) => {
-            frame.style.display = 'none';
-        });
+        allFrames1.forEach(frame => frame.style.display = 'none');
+        frame2.style.display = 'none';
+        frame3.style.display = 'none';
+        frame4.style.display = 'none';
 
-        // Track manually opened sets (frames 2–4)
-        let isFrame234Open = {};
+        let isFrame234Open = false;
 
-        // Setup for dynamic frame1 toggles (e.g., frame1-1, frame1-2...)
-        document.querySelectorAll('[id^="moreBtn-"]').forEach((moreBtn) => {
-            const index = moreBtn.id.split('-')[1];
-            const frame1 = document.getElementById(frame1 - ${ index });
-
-            moreBtn.addEventListener('click', function (e) {
+        // Add event listener to each "more" button
+        moreBtns.forEach((btn, index) => {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const isOpen = frame1.style.display === 'block';
-                frame1.style.display = isOpen ? 'none' : 'block';
+                const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                const isOpen = currentFrame.style.display === 'block';
 
-                // Close frames 2–4 if open
-                for (let i in isFrame234Open) {
-                    if (isFrame234Open[i]) {
-                        ['2', '3', '4'].forEach(n => {
-                            const f = document.getElementById(frame${ n } - ${ i });
-                            if (f) f.style.display = 'none';
-                        });
-                        isFrame234Open[i] = false;
-                    }
-                }
+                // Close all frame1 elements
+                allFrames1.forEach(frame => frame.style.display = 'none');
+
+                // Toggle the current one
+                currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                // Close other frames
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
             });
         });
 
-        // Setup for frames 2–4 (pfp, pfp3, pfp4)
-        document.querySelectorAll('[id^="pfp"]').forEach((pfp) => {
-            const index = pfp.id.replace(/[^\d]/g, '');
-            const frame2 = document.getElementById(frame2 - ${ index });
-            const frame3 = document.getElementById(frame3 - ${ index });
-            const frame4 = document.getElementById(frame4 - ${ index });
-            const frame1 = document.getElementById(frame1 - ${ index });
-
-            pfp.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const isOpen = frame2 && frame2.style.display === 'block';
-
-                if (isOpen) {
-                    if (frame2) frame2.style.display = 'none';
-                    if (frame3) frame3.style.display = 'none';
-                    if (frame4) frame4.style.display = 'none';
-                    isFrame234Open[index] = false;
-                } else {
-                    if (frame2) frame2.style.display = 'block';
-                    if (frame3) frame3.style.display = 'block';
-                    if (frame4) frame4.style.display = 'block';
-                    if (frame1) frame1.style.display = 'none';
-                    isFrame234Open[index] = true;
-                }
-            });
-        });
-
-        // Close frames on outside click
-        document.addEventListener('click', function (event) {
-            document.querySelectorAll('[id^="frame1-"]').forEach((frame1) => {
-                const index = frame1.id.split('-')[1];
-                const btn = document.getElementById(moreBtn - ${ index });
-                if (!frame1.contains(event.target) && event.target !== btn) {
-                    frame1.style.display = 'none';
-                }
-            });
-
-            document.querySelectorAll('[id^="frame2-"]').forEach((frame2) => {
-                const index = frame2.id.split('-')[1];
-                const frame3 = document.getElementById(frame3 - ${ index });
-                const frame4 = document.getElementById(frame4 - ${ index });
-                const pfp = document.getElementById(pfp${ index === '1' ? '' : index});
-
-            if (
-                !frame2.contains(event.target) &&
-                !frame3.contains(event.target) &&
-                !frame4.contains(event.target) &&
-                event.target !== pfp
-            ) {
-                if (frame2) frame2.style.display = 'none';
-                if (frame3) frame3.style.display = 'none';
-                if (frame4) frame4.style.display = 'none';
-                isFrame234Open[index] = false;
+        // Frame 2 toggle
+        pfp.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame2.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
             }
         });
+
+        // Frame 3 toggle
+        pfp3.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame3.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
+            }
         });
 
-        // Sync on window resize
-        window.addEventListener('resize', function () {
-            for (let index in isFrame234Open) {
-                if (isFrame234Open[index]) {
-                    ['2', '3', '4'].forEach(n => {
-                        const frame = document.getElementById(frame${ n } - ${ index });
-                        if (frame) frame.style.display = 'block';
-                    });
+        // Frame 4 toggle
+        pfp4.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame4.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
+            }
+        });
+
+        // Click anywhere outside to close all
+        document.addEventListener('click', function (event) {
+            // Close all frame1s
+            moreBtns.forEach((btn, index) => {
+                const frame = document.getElementById(`frame1-${index + 1}`);
+                if (!frame.contains(event.target) && event.target !== btn) {
+                    frame.style.display = 'none';
                 }
+            });
+
+            // Close frame2–4
+            if (!frame2.contains(event.target) && event.target !== pfp) {
+                frame2.style.display = 'none';
+            }
+            if (!frame3.contains(event.target) && event.target !== pfp3) {
+                frame3.style.display = 'none';
+            }
+            if (!frame4.contains(event.target) && event.target !== pfp4) {
+                frame4.style.display = 'none';
+            }
+
+            const frame2Visible = window.getComputedStyle(frame2).display !== 'none';
+            const frame3Visible = window.getComputedStyle(frame3).display !== 'none';
+            const frame4Visible = window.getComputedStyle(frame4).display !== 'none';
+
+            if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                isFrame234Open = false;
+            }
+        });
+
+        // Reshow frame2–4 on resize if they were open
+        window.addEventListener('resize', function () {
+            if (isFrame234Open) {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
             }
         });
 
