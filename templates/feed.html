@@ -400,6 +400,8 @@
                                 {{ username }}
                                 {% if action == 'like' %}
                                 liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                {% elif action == 'comment' %}
+                                commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
