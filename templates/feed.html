@@ -415,23 +415,29 @@
                     <div class="requests-title">
                         Requests
                     </div>
+                    {% for req in requests %}
                     <div class="request-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="request-details">
                             <div class="request-text">
-                                Jane Doe sent you a friend request.
+                                {{ req[1] }} {{ req[2] }} sent you a friend request.
                             </div>
                             <div class="request-date">
                                 Jan 1
                             </div>
                             <div class="request-icons">
-                                <button class="circled-icon-1"><span
-                                        class="material-symbols-outlined close-symbol">close</span></button>
-                                <button class="circled-icon-2"><span
-                                        class="material-symbols-outlined check-symbol">check</span></button>
+                                <form action="/reject_request/{{ req[0] }}" method="post">
+                                    <button type="submit" class="circled-icon-1"><span
+                                            class="material-symbols-outlined close-symbol">close</span></button>
+                                </form>
+                                <form action="/accept_request/{{ req[0] }}" method="post">
+                                    <button type="submit" class="circled-icon-2"><span
+                                            class="material-symbols-outlined check-symbol">check</span></button>
+                                </form>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
