@@ -415,17 +415,25 @@
                     <div class="requests-title">
                         Requests
                     </div>
-                    {% if requests %}
-                    <ul>
-                        {% for req in requests %}
-                        <li>
-                            {{ req[1] }} {{ req[2] }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    <p>No pending requests.</p>
-                    {% endif %}
+                    {% for req in requests %}
+                    <div class="request-bar">
+                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                {{ req[1] }} {{ req[2] }} sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                Jan 1
+                            </div>
+                            <div class="request-icons">
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
