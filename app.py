@@ -888,7 +888,7 @@ def accept_request(request_id):
     row = cur.fetchone()
     if not row:
         flash("Request not found.")
-        return redirect('/requests')
+        return redirect(url_for('feed'))
     
     sender_id = row[0]
 
@@ -908,6 +908,7 @@ def accept_request(request_id):
     conn.close()
     flash("Friend request accepted.")
     return redirect(url_for('feed'))
+
 
 @app.route('/reject_request/<int:request_id>')
 def reject_request(request_id):
