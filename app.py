@@ -461,7 +461,7 @@ def feed():
 
             return redirect(url_for('feed'))
 
-    # Fetch feed content, comments, and notifications
+    # Fetch feed content, comments, notifications, and friend requests
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -516,6 +516,15 @@ def feed():
         """, (current_user.id,))
         notifications = cur.fetchall()
 
+        # Fetch friend requests
+        cur.execute("""
+            SELECT fr.request_id, u.first_name, u.last_name 
+            FROM friend_requests fr
+            JOIN users u ON fr.sender_id = u.id
+            WHERE fr.receiver_id = %s AND fr.status = 'pending';
+        """, (current_user.id,))
+        friend_requests = cur.fetchall()
+
     finally:
         cur.close()
         conn.close()
@@ -525,7 +534,8 @@ def feed():
         tags=tags,
         images=images,
         comments=comments,
-        notifications=notifications
+        notifications=notifications,
+        friend_requests=friend_requests
     )
 
 @app.route('/logout')
@@ -897,8 +907,7 @@ def accept_request(request_id):
     cur.close()
     conn.close()
     flash("Friend request accepted.")
-    return redirect('/requests')
-
+    return redirect(url_for('feed'))
 
 @app.route('/reject_request/<int:request_id>')
 def reject_request(request_id):
@@ -922,33 +931,7 @@ def reject_request(request_id):
     cur.close()
     conn.close()
     flash("Friend request rejected.")
-    return redirect('/requests')
-
-
-@app.route('/requests')
-@login_required
-def view_requests():
-    user_id = current_user.id
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT fr.request_id, u.first_name, u.last_name 
-        FROM friend_requests fr
-        JOIN users u ON fr.sender_id = u.id
-        WHERE fr.receiver_id = %s AND fr.status = 'pending';
-    """, (user_id,))
-    requests = cur.fetchall()
-
-    cur.close()
-    conn.close()
-    return render_template('requests.html', requests=requests)
+    return redirect(url_for('feed'))
 
 @app.route('/recommendations', methods=['GET'])
 @login_required

@@ -415,7 +415,6 @@
                     <div class="requests-title">
                         Requests
                     </div>
-                    {% if requests %}
                     {% for req in requests %}
                     <div class="request-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
@@ -439,9 +438,6 @@
                         </div>
                     </div>
                     {% endfor %}
-                    {% else %}
-                    <p>No pending requests.</p>
-                    {% endif %}
                 </div>
             </div>
         </div>
