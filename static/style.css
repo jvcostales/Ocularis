@@ -1108,6 +1108,10 @@ a {
         position: relative;
     }
 
+    .comment-bar form {
+        flex: 1;
+    }
+
     .comment-text {
         background-color: #f6f6f6;
         padding: 16px;
@@ -1124,11 +1128,13 @@ a {
         color: #1a1a1a;
         border: none;
         outline: none;
+        background-color: #f6f6f6;
     }
 
     .tagline-comment::placeholder {
         color: #c4c4c4;
         font-size: 1rem;
+        background-color: #f6f6f6;
     }
 
     .send-button {
@@ -2143,6 +2149,11 @@ a {
         gap: 16px;
         margin-top: 24px;
         padding: 0 24px;
+        position: relative;
+    }
+
+    .comment-bar form {
+        flex: 1;
     }
 
     .comment-text {
@@ -2161,11 +2172,13 @@ a {
         color: #1a1a1a;
         border: none;
         outline: none;
+        background-color: #f6f6f6;
     }
 
     .tagline-comment::placeholder {
         color: #c4c4c4;
         font-size: 1rem;
+        background-color: #f6f6f6;
     }
 
     .send-button {
@@ -3100,6 +3113,11 @@ a {
         gap: 16px;
         margin-top: 24px;
         padding: 0 24px;
+        position: relative;
+    }
+
+    .comment-bar form {
+        flex: 1;
     }
 
     .comment-text {
@@ -3118,11 +3136,13 @@ a {
         color: #1a1a1a;
         border: none;
         outline: none;
+        background-color: #f6f6f6;
     }
 
     .tagline-comment::placeholder {
-        font-size: 1rem;
         color: #c4c4c4;
+        font-size: 1rem;
+        background-color: #f6f6f6;
     }
 
     .send-button {
