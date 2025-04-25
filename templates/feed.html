@@ -415,13 +415,19 @@
                     <div class="requests-title">
                         Requests
                     </div>
-                    {% for req in requests %}
-                    <div class="test-block">
-                        <p>{{ req[0] }} - {{ req[1] }} {{ req[2] }}</p>
-                        <p><a href="/accept_request/{{ req[0] }}">ACCEPT</a></p>
-                        <p><a href="/reject_request/{{ req[0] }}">REJECT</a></p>
-                    </div>
-                    {% endfor %}
+                    {% if requests %}
+                    <ul>
+                        {% for req in requests %}
+                        <li>
+                            {{ req[1] }} {{ req[2] }}
+                            <a href="/accept_request/{{ req[0] }}">Accept</a>
+                            <a href="/reject_request/{{ req[0] }}">Reject</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No pending requests.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
