@@ -334,13 +334,13 @@
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
-                        <div class="comment-text">
                             <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
+                                                        <div class="comment-text">
                                 <input class="tagline-comment" type="text" name="comment"
                                     placeholder="Enter your comment" required>
                                 <button class="send-button" type="submit">Send</button>
+                            </div>
                             </form>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -425,8 +425,6 @@
                             <div class="request-date">
                                 Jan 1
                             </div>
-                            <a href="/accept_request/{{ req[0] }}">Accept</a>
-                            <a href="/reject_request/{{ req[0] }}">Reject</a>
                             <div class="request-icons">
                                 <button class="circled-icon-1"><span
                                         class="material-symbols-outlined close-symbol" onclick="window.location.href='/reject_request/{{ req[0] }}'">close</span></button>

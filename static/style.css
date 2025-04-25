@@ -762,7 +762,6 @@ a {
         border: none;
         background-color: transparent;
         background: none;
-        border: none;
         padding: 0;
         margin: 0;
         display: inline-flex;
@@ -1120,8 +1119,16 @@ a {
         justify-content: space-between;
     }
 
+    .tagline-comment {
+        font-size: 1rem;
+        color: #1a1a1a;
+        border: none;
+        outline: none;
+    }
+
     .tagline-comment::placeholder {
         color: #c4c4c4;
+        font-size: 1rem;
     }
 
     .send-button {
@@ -2150,7 +2157,15 @@ a {
     }
 
     .tagline-comment {
+        font-size: 1rem;
+        color: #1a1a1a;
+        border: none;
+        outline: none;
+    }
+
+    .tagline-comment::placeholder {
         color: #c4c4c4;
+        font-size: 1rem;
     }
 
     .send-button {
@@ -3099,6 +3114,14 @@ a {
     }
 
     .tagline-comment {
+        font-size: 1rem;
+        color: #1a1a1a;
+        border: none;
+        outline: none;
+    }
+
+    .tagline-comment::placeholder {
+        font-size: 1rem;
         color: #c4c4c4;
     }
 
