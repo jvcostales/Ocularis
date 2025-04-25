@@ -429,9 +429,9 @@
                             <a href="/reject_request/{{ req[0] }}">Reject</a>
                             <div class="request-icons">
                                 <button class="circled-icon-1"><span
-                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                        class="material-symbols-outlined close-symbol" onclick="window.location.href='/reject_request/{{ req[0] }}'">close</span></button>
                                 <button class="circled-icon-2"><span
-                                        class="material-symbols-outlined check-symbol">check</span></button>
+                                        class="material-symbols-outlined check-symbol" onclick="window.location.href='/accept_request/{{ req[0] }}'">check</span></button>
                             </div>
                         </div>
                     </div>
