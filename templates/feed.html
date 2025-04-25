@@ -334,13 +334,11 @@
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
-                            <form action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-                                                        <div class="comment-text">
+                        <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
                                 <input class="tagline-comment" type="text" name="comment"
                                     placeholder="Enter your comment" required>
                                 <button class="send-button" type="submit">Send</button>
-                            </div>
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -426,10 +424,10 @@
                                 Jan 1
                             </div>
                             <div class="request-icons">
-                                <button class="circled-icon-1"><span
-                                        class="material-symbols-outlined close-symbol" onclick="window.location.href='/reject_request/{{ req[0] }}'">close</span></button>
-                                <button class="circled-icon-2"><span
-                                        class="material-symbols-outlined check-symbol" onclick="window.location.href='/accept_request/{{ req[0] }}'">check</span></button>
+                                <button class="circled-icon-1"><span class="material-symbols-outlined close-symbol"
+                                        onclick="window.location.href='/reject_request/{{ req[0] }}'">close</span></button>
+                                <button class="circled-icon-2"><span class="material-symbols-outlined check-symbol"
+                                        onclick="window.location.href='/accept_request/{{ req[0] }}'">check</span></button>
                             </div>
                         </div>
                     </div>

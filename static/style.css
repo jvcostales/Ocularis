@@ -1108,10 +1108,6 @@ a {
         position: relative;
     }
 
-    .comment-bar form {
-        flex: 1;
-    }
-
     .comment-text {
         background-color: #f6f6f6;
         padding: 16px;
@@ -2152,10 +2148,6 @@ a {
         position: relative;
     }
 
-    .comment-bar form {
-        flex: 1;
-    }
-
     .comment-text {
         background-color: #f6f6f6;
         padding: 16px;
@@ -3114,10 +3106,6 @@ a {
         margin-top: 24px;
         padding: 0 24px;
         position: relative;
-    }
-
-    .comment-bar form {
-        flex: 1;
     }
 
     .comment-text {
