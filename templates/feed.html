@@ -425,14 +425,16 @@
                             <div class="request-date">
                                 Jan 1
                             </div>
+                            <!--
                             <div class="request-icons">
-                                <button class="circled-icon-1" onclick="location.href='/reject_request/{{ req[0] }}'">
-                                    <span class="material-symbols-outlined close-symbol">close</span>
-                                </button>
-                                <button class="circled-icon-1" onclick="location.href='/accept_request/{{ req[0] }}'">
-                                    <span class="material-symbols-outlined close-symbol">close</span>
-                                </button>
+                                <button class="circled-icon-1"><span
+                                        class="material-symbols-outlined close-symbol">close</span></button>
+                                <button class="circled-icon-2"><span
+                                        class="material-symbols-outlined check-symbol">check</span></button>
                             </div>
+                            -->
+                            <a href="/accept_request/{{ req[0] }}">Accept</a>
+                            <a href="/reject_request/{{ req[0] }}">Reject</a>
                         </div>
                     </div>
                     {% endfor %}
