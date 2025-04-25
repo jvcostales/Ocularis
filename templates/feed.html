@@ -420,8 +420,6 @@
                         {% for req in requests %}
                         <li>
                             {{ req[1] }} {{ req[2] }}
-                            <a href="/accept_request/{{ req[0] }}">Accept</a>
-                            <a href="/reject_request/{{ req[0] }}">Reject</a>
                         </li>
                         {% endfor %}
                     </ul>
