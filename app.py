@@ -523,7 +523,7 @@ def feed():
             JOIN users u ON fr.sender_id = u.id
             WHERE fr.receiver_id = %s AND fr.status = 'pending';
         """, (current_user.id,))
-        friend_requests = cur.fetchall()
+        requests = cur.fetchall()
 
     finally:
         cur.close()
@@ -535,8 +535,9 @@ def feed():
         images=images,
         comments=comments,
         notifications=notifications,
-        friend_requests=friend_requests
+        requests=requests
     )
+
 
 @app.route('/logout')
 @login_required
@@ -888,7 +889,7 @@ def accept_request(request_id):
     row = cur.fetchone()
     if not row:
         flash("Request not found.")
-        return redirect(url_for('feed'))
+        return redirect('/requests')
     
     sender_id = row[0]
 
@@ -907,7 +908,7 @@ def accept_request(request_id):
     cur.close()
     conn.close()
     flash("Friend request accepted.")
-    return redirect(url_for('feed'))
+    return redirect('/feed')
 
 
 @app.route('/reject_request/<int:request_id>')
@@ -932,7 +933,7 @@ def reject_request(request_id):
     cur.close()
     conn.close()
     flash("Friend request rejected.")
-    return redirect(url_for('feed'))
+    return redirect('/feed')
 
 @app.route('/recommendations', methods=['GET'])
 @login_required
