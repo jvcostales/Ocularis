@@ -422,7 +422,7 @@
                                 {{ req[1] }} {{ req[2] }} sent you a friend request.
                             </div>
                             <div class="request-date">
-                                Jan 1
+                                {{ created_at.strftime('%b %#d') }}
                             </div>
                             <div class="request-icons">
                                 <button class="circled-icon-1"><span class="material-symbols-outlined close-symbol"
