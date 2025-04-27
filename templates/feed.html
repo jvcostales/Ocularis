@@ -334,10 +334,11 @@
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
-                        <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-                                <input class="tagline-comment" type="text" name="comment"
-                                    placeholder="Enter your comment" required>
-                                <button class="send-button" type="submit">Send</button>
+                        <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}"
+                            method="POST">
+                            <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment"
+                                required>
+                            <button class="send-button" type="submit">Send</button>
                         </form>
                     </div>
                 </div>
@@ -622,25 +623,34 @@
             }
         });
 
-        const div = document.getElementById('scrollableDiv');
-        const imageInput = document.getElementById('image');
+        function checkScrollbar() {
+            const div = document.getElementById('scrollableDiv');
+            const div1 = document.getElementById('scrollableDivLikes');
+            const div2 = document.getElementById('scrollableDivComments');
 
-        function toggleScrollBasedOnInput() {
+
             div.classList.remove('no-scroll', 'has-scroll');
 
-            if (imageInput.files.length > 0) {
+            if (div.scrollHeight > div.clientHeight) {
                 div.classList.add('has-scroll');
             } else {
                 div.classList.add('no-scroll');
             }
+
+            if (div1.scrollHeight > div1.clientHeight) {
+                div1.classList.add('has-scroll');
+            } else {
+                div1.classList.add('no-scroll');
+            }
+
+            if (div2.scrollHeight > div2.clientHeight) {
+                div2.classList.add('has-scroll');
+            } else {
+                div2.classList.add('no-scroll');
+            }
         }
 
-        // Run on input change
-        imageInput.addEventListener('change', toggleScrollBasedOnInput);
-
-        // Optionally run on page load
-        window.onload = toggleScrollBasedOnInput;
-
+        window.onload = checkScrollbar;
 
         const likeButtons = document.querySelectorAll(".like-button");
 
