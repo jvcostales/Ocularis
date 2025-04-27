@@ -1055,10 +1055,6 @@ a {
         padding-right: 24px;
     }
 
-    .scrollable-div-comments.has-scroll {
-        padding-right: 6.4px;
-    }
-
     .scrollable-div-comments::-webkit-scrollbar {
         width: 18px;
         opacity: 0;
@@ -2103,10 +2099,6 @@ a {
         padding-right: 24px;
     }
 
-    .scrollable-div-comments.has-scroll {
-        padding-right: 6.4px;
-    }
-
     .scrollable-div-comments::-webkit-scrollbar {
         width: 18px;
         opacity: 0;
@@ -3069,10 +3061,6 @@ a {
 
     .scrollable-div-comments.no-scroll {
         padding-right: 24px;
-    }
-
-    .scrollable-div-comments.has-scroll {
-        padding-right: 6.4px;
     }
 
     .scrollable-div-comments::-webkit-scrollbar {
