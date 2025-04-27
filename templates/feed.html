@@ -295,6 +295,7 @@
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Comments</div>
                     <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+                        {% if comments %}
                         {% for comment in comments %}
                         {% if comment[1] == image[0] %}
                         <div class="profile-comment-wrapper">
@@ -331,6 +332,13 @@
                         <div class="line-comments"></div>
                         {% endif %}
                         {% endfor %}
+                        {% else %}
+                        <div class="notifs-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show<div class="space"></div>here at the moment.</div>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
@@ -384,13 +392,7 @@
                     <div class="notifs-title">
                         Notifs
                     </div>
-                    <!--
-                    <div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">There’s nothing to show here at the moment.</div>
-                    </div>
-                    -->
+                    {% if notifications %}
                     {% for username, action, image_id, created_at in notifications %}
                     <div class="notif-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
@@ -409,11 +411,19 @@
                         </div>
                     </div>
                     {% endfor %}
+                    {% else %}
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show<div class="space"></div>here at the moment.</div>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="requests">
                     <div class="requests-title">
                         Requests
                     </div>
+                    {% if requests %}
                     {% for request_id, first_name, last_name, created_at in requests %}
                     <div class="request-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
@@ -433,6 +443,13 @@
                         </div>
                     </div>
                     {% endfor %}
+                    {% else %}
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show<div class="space"></div>here at the moment.</div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -427,8 +427,11 @@ a {
     .nothing {
         font-size: 1rem;
         color: #c4c4c4;
-        ;
         text-align: center;
+    }
+
+    .space {
+        height: 4px;
     }
 
     .notifs::-webkit-scrollbar {
@@ -505,7 +508,7 @@ a {
     .notif-text {
         color: #1a1a1a;
         font-size: 1rem;
-        padding-bottom: 8px;
+        padding-bottom: 4px;
     }
 
     .notif-date {
@@ -527,7 +530,7 @@ a {
     .request-text {
         color: #1a1a1a;
         font-size: 1rem;
-        padding-bottom: 8px;
+        padding-bottom: 4px;
     }
 
     .request-date {
@@ -1105,7 +1108,11 @@ a {
     }
 
     .scrollable-div-comments .line-comments:last-of-type {
-        display: none;
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
+        box-sizing: border-box;
     }
 
     .comment-bar {
@@ -2152,7 +2159,7 @@ a {
         box-sizing: border-box;
     }
 
-    .scrollable-div-comments .profile-comment-wrapper:last-of-type + .line-comments {
+    .scrollable-div-comments .profile-comment-wrapper:last-of-type+.line-comments {
         display: none;
     }
 
