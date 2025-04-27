@@ -511,23 +511,28 @@
             setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
         });
 
-        // Function to handle adding new event listeners dynamically
-        function addMoreBtnEventListeners() {
-            // Get all 'more' buttons and corresponding frame1s
-            const moreBtns = document.querySelectorAll('.more-symbol');
-            const allFrames1 = document.querySelectorAll('.frame1');
+        // Get all 'more' buttons and corresponding frame1s
+        const moreBtns = document.querySelectorAll('.more-symbol');
+        const allFrames1 = document.querySelectorAll('.frame1');
 
-            // Add event listener to each "more" button
-            moreBtns.forEach((btn, index) => {
-                // Remove any existing event listener before adding a new one
-                btn.removeEventListener('click', handleMoreBtnClick);
-                btn.addEventListener('click', handleMoreBtnClick(index, allFrames1));
-            });
-        }
+        const pfp = document.getElementById('pfp');
+        const frame2 = document.getElementById('frame2');
+        const pfp3 = document.getElementById('pfp3');
+        const frame3 = document.getElementById('frame3');
+        const pfp4 = document.getElementById('pfp4');
+        const frame4 = document.getElementById('frame4');
 
-        // Event handler for "more" button click
-        function handleMoreBtnClick(index, allFrames1) {
-            return function (e) {
+        // Hide all frames initially
+        allFrames1.forEach(frame => frame.style.display = 'none');
+        frame2.style.display = 'none';
+        frame3.style.display = 'none';
+        frame4.style.display = 'none';
+
+        let isFrame234Open = false;
+
+        // Add event listener to each "more" button
+        moreBtns.forEach((btn, index) => {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const currentFrame = document.getElementById(`frame1-${index + 1}`);
                 const isOpen = currentFrame.style.display === 'block';
@@ -543,47 +548,62 @@
                 frame3.style.display = 'none';
                 frame4.style.display = 'none';
                 isFrame234Open = false;
-            };
-        }
-
-        // Initialize frames and hide them initially
-        const allFrames1 = document.querySelectorAll('.frame1');
-        const frame2 = document.getElementById('frame2');
-        const frame3 = document.getElementById('frame3');
-        const frame4 = document.getElementById('frame4');
-
-        // Hide all frames initially
-        allFrames1.forEach(frame => frame.style.display = 'none');
-        frame2.style.display = 'none';
-        frame3.style.display = 'none';
-        frame4.style.display = 'none';
-
-        let isFrame234Open = false;
-
-        // Add event listener to frame2, frame3, frame4 toggle
-        function toggleFrame2To4(frameToToggle, pfpElement) {
-            pfpElement.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const isOpen = frameToToggle.style.display === 'block';
-                if (isOpen) {
-                    frame2.style.display = 'none';
-                    frame3.style.display = 'none';
-                    frame4.style.display = 'none';
-                    isFrame234Open = false;
-                } else {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    isFrame234Open = true;
-                }
             });
-        }
+        });
 
-        // Attach toggling functionality for frames 2, 3, and 4
-        toggleFrame2To4(frame2, document.getElementById('pfp'));
-        toggleFrame2To4(frame3, document.getElementById('pfp3'));
-        toggleFrame2To4(frame4, document.getElementById('pfp4'));
+        // Frame 2 toggle
+        pfp.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame2.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
+            }
+        });
+
+        // Frame 3 toggle
+        pfp3.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame3.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
+            }
+        });
+
+        // Frame 4 toggle
+        pfp4.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = frame4.style.display === 'block';
+            if (isOpen) {
+                frame2.style.display = 'none';
+                frame3.style.display = 'none';
+                frame4.style.display = 'none';
+                isFrame234Open = false;
+            } else {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                isFrame234Open = true;
+            }
+        });
 
         // Click anywhere outside to close all
         document.addEventListener('click', function (event) {
@@ -596,13 +616,13 @@
             });
 
             // Close frame2–4
-            if (!frame2.contains(event.target) && event.target !== document.getElementById('pfp')) {
+            if (!frame2.contains(event.target) && event.target !== pfp) {
                 frame2.style.display = 'none';
             }
-            if (!frame3.contains(event.target) && event.target !== document.getElementById('pfp3')) {
+            if (!frame3.contains(event.target) && event.target !== pfp3) {
                 frame3.style.display = 'none';
             }
-            if (!frame4.contains(event.target) && event.target !== document.getElementById('pfp4')) {
+            if (!frame4.contains(event.target) && event.target !== pfp4) {
                 frame4.style.display = 'none';
             }
 
@@ -623,19 +643,6 @@
                 frame4.style.display = 'block';
             }
         });
-
-        // Initialize event listeners for all existing "more" buttons
-        addMoreBtnEventListeners();
-
-        // Watch for new posts being added or deleted dynamically
-        const observer = new MutationObserver(() => {
-            addMoreBtnEventListeners(); // Reattach event listeners after new posts
-        });
-
-        // Observe the container of posts (replace `.posts-container` with the actual container)
-        const postsContainer = document.querySelector('.posts-container');
-        observer.observe(postsContainer, { childList: true, subtree: true });
-
 
         function checkScrollbar() {
             const div = document.getElementById('scrollableDiv');
