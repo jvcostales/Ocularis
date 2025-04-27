@@ -294,7 +294,7 @@
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Comments</div>
-                    <div class="scrollable-div-comments {% if not has_comment %}empty{% endif %}" id="scrollableDivComments-{{ loop.index }}">
+                    <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
                         {% for comment in comments %}
                         {% if comment[1] == image[0] %}
                         <div class="profile-comment-wrapper">
