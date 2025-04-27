@@ -953,7 +953,7 @@ a {
     }
 
     .scrollable-div-likes {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 466.4px;
         overflow-y: auto;
     }
@@ -1042,7 +1042,7 @@ a {
     }
 
     .scrollable-div-comments {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 310.4px;
         overflow-y: auto;
     }
@@ -2002,7 +2002,7 @@ a {
     }
 
     .scrollable-div-likes {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 466.4px;
         overflow-y: auto;
     }
@@ -2090,7 +2090,7 @@ a {
     }
 
     .scrollable-div-comments {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 310.4px;
         overflow-y: auto;
     }
@@ -2152,7 +2152,7 @@ a {
         box-sizing: border-box;
     }
 
-    .scrollable-div-comments .line-comments:last-of-type {
+    .scrollable-div-comments .profile-comment-wrapper:last-of-type + .line-comments {
         display: none;
     }
 
@@ -2969,7 +2969,7 @@ a {
     }
 
     .scrollable-div-likes {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 466.4px;
         overflow-y: auto;
     }
@@ -3058,7 +3058,7 @@ a {
     }
 
     .scrollable-div-comments {
-        padding-left: 24px;
+        padding: 0 24px;
         max-height: 310.4px;
         overflow-y: auto;
     }
