@@ -1177,7 +1177,7 @@ a {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding-right: 18px;
+        padding: 50px;
     }
 
     .empty-symbol {
