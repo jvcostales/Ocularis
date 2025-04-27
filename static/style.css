@@ -399,6 +399,15 @@ a {
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notifs-empty-wrapper {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .notifs-empty {
@@ -428,10 +437,6 @@ a {
         font-size: 1rem;
         color: #c4c4c4;
         text-align: center;
-    }
-
-    .space {
-        height: 4px;
     }
 
     .notifs::-webkit-scrollbar {

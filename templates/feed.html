@@ -295,9 +295,10 @@
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Comments</div>
                     <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
-                        {% if comments %}
+                        {% set found = false %}
                         {% for comment in comments %}
                         {% if comment[1] == image[0] %}
+                        {% set found = true %}
                         <div class="profile-comment-wrapper">
                             <div class="profile-more-wrapper">
                                 <div class="profile-post-comments">
@@ -332,7 +333,7 @@
                         <div class="line-comments"></div>
                         {% endif %}
                         {% endfor %}
-                        {% else %}
+                        {% if not found %}
                         <div class="notifs-empty">
                             <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                             <div class="oops">Oops!</div>
@@ -447,7 +448,7 @@
                     <div class="notifs-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show<div class="space"></div>here at the moment.</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
                     </div>
                     {% endif %}
                 </div>
