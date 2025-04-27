@@ -399,7 +399,7 @@ a {
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
-        display: flex;
+        display: absolute;
         flex-direction: column;
     }
 
