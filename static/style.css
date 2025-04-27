@@ -1104,6 +1104,10 @@ a {
         box-sizing: border-box;
     }
 
+    .scrollable-div-comments .profile-comment-wrapper:last-of-type + .line-comments {
+        display: none;
+    }
+
     .comment-bar {
         display: flex;
         gap: 16px;
@@ -2148,6 +2152,10 @@ a {
         box-sizing: border-box;
     }
 
+    .scrollable-div-comments .profile-comment-wrapper:last-of-type + .line-comments {
+        display: none;
+    }
+
     .comment-bar {
         display: flex;
         gap: 16px;
@@ -3110,6 +3118,10 @@ a {
         margin-top: 16px;
         margin-bottom: 24px;
         box-sizing: border-box;
+    }
+
+    .scrollable-div-comments .profile-comment-wrapper:last-of-type + .line-comments {
+        display: none;
     }
 
     .comment-bar {
