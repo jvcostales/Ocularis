@@ -414,7 +414,7 @@
                     <div class="requests-title">
                         Requests
                     </div>
-                    {% for req in requests %}
+                    {% for req, created_at in requests %}
                     <div class="request-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="request-details">
