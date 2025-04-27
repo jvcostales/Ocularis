@@ -410,7 +410,7 @@ a {
         justify-content: center;
         align-items: center;
         padding-right: 18px;
-        padding-top: -24px;
+        margin-top: -24px;
     }
 
     .empty-symbol {
