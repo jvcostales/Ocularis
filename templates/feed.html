@@ -294,7 +294,13 @@
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Comments</div>
-                    <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+                    {% set has_comment = false %}
+                    {% for comment in comments %}
+                    {% if comment[1] == image[0] %}
+                    {% set has_comment = true %}
+                    {% endif %}
+                    {% endfor %}
+                    <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}" style="height: {% if has_comment %}310.4px{% else %}0{% endif %};">
                         {% for comment in comments %}
                         {% if comment[1] == image[0] %}
                         <div class="profile-comment-wrapper">
@@ -334,10 +340,11 @@
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
-                        <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-                                <input class="tagline-comment" type="text" name="comment"
-                                    placeholder="Enter your comment" required>
-                                <button class="send-button" type="submit">Send</button>
+                        <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}"
+                            method="POST">
+                            <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment"
+                                required>
+                            <button class="send-button" type="submit">Send</button>
                         </form>
                     </div>
                 </div>
