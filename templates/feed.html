@@ -610,19 +610,19 @@
             // Close all frame1s
             moreBtns.forEach((btn, index) => {
                 const frame = document.getElementById(`frame1-${index + 1}`);
-                if (!frame.contains(event.target) && event.target !== btn) {
+                if (frame && !frame.contains(event.target) && event.target !== btn) {
                     frame.style.display = 'none';
                 }
             });
 
             // Close frame2–4
-            if (!frame2.contains(event.target) && event.target !== pfp) {
+            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
                 frame2.style.display = 'none';
             }
-            if (!frame3.contains(event.target) && event.target !== pfp3) {
+            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
                 frame3.style.display = 'none';
             }
-            if (!frame4.contains(event.target) && event.target !== pfp4) {
+            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
                 frame4.style.display = 'none';
             }
 
