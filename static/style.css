@@ -3043,17 +3043,16 @@ a {
 
     .scrollable-div-comments {
         padding: 0 24px;
+        max-height: 310.4px;
         overflow-y: auto;
     }
 
     .scrollable-div-comments.no-scroll {
         padding-right: 24px;
-        height: min-content;
     }
 
     .scrollable-div-comments.has-scroll {
         padding-right: 6.4px;
-        height: 310.4px;
     }
 
     .scrollable-div-comments::-webkit-scrollbar {
