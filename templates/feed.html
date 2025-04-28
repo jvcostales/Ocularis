@@ -616,10 +616,18 @@
             // For the main div
             if (div) {
                 div.classList.remove('no-scroll', 'has-scroll');
-                if (div.scrollHeight > div.clientHeight) {
+
+                // Reset height fully first
+                div.style.height = 'auto';
+
+                const naturalHeight = div.scrollHeight;
+
+                if (naturalHeight > div.clientHeight) {
                     div.classList.add('has-scroll');
+                    div.style.height = `${naturalHeight}px`;
                 } else {
                     div.classList.add('no-scroll');
+                    div.style.height = 'min-content';
                 }
             }
 
