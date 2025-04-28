@@ -531,7 +531,7 @@ def feed():
         for image in images:
             image_id = image[0]
             cur.execute("""
-                SELECT u.username, u.profile_picture, l.created_at
+                SELECT u.first_name || ' ' || u.last_name AS display_name, u.profile_picture, l.created_at
                 FROM likes l
                 JOIN users u ON l.user_id = u.id
                 WHERE l.image_id = %s
