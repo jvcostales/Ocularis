@@ -534,10 +534,7 @@
         moreBtns.forEach((btn, index) => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-
-                // Adjust frame number depending on index
-                const frameNumber = index < 2 ? index + 1 : index + 2;
-                const currentFrame = document.getElementById(`frame1-${frameNumber}`);
+                const currentFrame = document.getElementById(`frame1-${index}`);
                 const isOpen = currentFrame.style.display === 'block';
 
                 // Close all frame1 elements
@@ -546,7 +543,7 @@
                 // Toggle the current one
                 currentFrame.style.display = isOpen ? 'none' : 'block';
 
-                // Close other frames (frame2, frame3, frame4)
+                // Close other frames
                 frame2.style.display = 'none';
                 frame3.style.display = 'none';
                 frame4.style.display = 'none';
@@ -612,8 +609,7 @@
         document.addEventListener('click', function (event) {
             // Close all frame1s
             moreBtns.forEach((btn, index) => {
-                const frameNumber = index < 2 ? index + 1 : index + 2;
-                const frame = document.getElementById(`frame1-${frameNumber}`);
+                const frame = document.getElementById(`frame1-${index}`);
                 if (!frame.contains(event.target) && event.target !== btn) {
                     frame.style.display = 'none';
                 }
@@ -734,5 +730,4 @@
     </script>
 
 </body>
-
 </html>
