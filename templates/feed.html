@@ -224,8 +224,8 @@
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Likes</div>
+                    <p>Comment: {{ comment }}</p>
                     <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
-                        {% for comment in comments %}
                         {% if comment_likes_data[comment[0]] %}
                         {% for comment_like in comment_likes_data[comment[0]] %}
                         <div class="profile-follow-wrapper">
@@ -246,7 +246,6 @@
                             <div class="nothing">Nothing to show here at the moment.</div>
                         </div>
                         {% endif %}
-                        {% endfor %}
                     </div>
                 </div>
             </div>
