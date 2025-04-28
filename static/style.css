@@ -334,6 +334,17 @@ a {
         gap: 24px;
     }
 
+    .lcs form {
+        display: flex;
+        align-items: center;
+    }
+
+    .lcs form,
+    .lcs form button {
+        margin: 0;
+        padding: 0;
+    }
+
     span.lcs-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
@@ -701,6 +712,7 @@ a {
 
     .scrollable-div {
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
@@ -709,7 +721,6 @@ a {
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -1794,6 +1805,7 @@ a {
 
     .scrollable-div {
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
@@ -1802,7 +1814,6 @@ a {
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -2804,6 +2815,7 @@ a {
 
     .scrollable-div {
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
@@ -2812,7 +2824,6 @@ a {
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
