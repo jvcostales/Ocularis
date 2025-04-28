@@ -540,6 +540,20 @@ def feed():
             likes = cur.fetchall()
             likes_data[image_id] = likes
 
+        # Fetch likes for each comment
+        comment_likes_data = {}
+        for comment in comments:
+            comment_id = comment[0]
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+                FROM comment_likes cl
+                JOIN users u ON cl.user_id = u.id
+                WHERE cl.comment_id = %s
+                ORDER BY cl.created_at DESC
+            """, (comment_id,))
+            comment_likes = cur.fetchall()
+            comment_likes_data[comment_id] = comment_likes
+
     finally:
         cur.close()
         conn.close()
@@ -551,7 +565,8 @@ def feed():
         comments=comments,
         notifications=notifications,
         requests=requests,
-        likes_data=likes_data
+        likes_data=likes_data,
+        comment_likes_data=comment_likes_data
     )
 
 
