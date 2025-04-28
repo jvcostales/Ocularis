@@ -2219,8 +2219,12 @@ a {
         box-sizing: border-box;
     }
 
-    .scrollable-div-comments .profile-comment-wrapper:last-of-type+.line-comments {
-        display: none;
+    .scrollable-div-comments .line-comments:last-of-type {
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
+        box-sizing: border-box;
     }
 
     .comment-bar {
@@ -3231,7 +3235,11 @@ a {
     }
 
     .scrollable-div-comments .line-comments:last-of-type {
-        display: none;
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
+        box-sizing: border-box;
     }
 
     .comment-bar {

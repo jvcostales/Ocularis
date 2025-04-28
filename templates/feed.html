@@ -291,9 +291,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="line-comments"></div>
                         {% endif %}
                         {% endfor %}
-                        <div class="line-comments"></div>
                         {% if not ns.has_comments %}
                         <div class="comments-empty">
                             <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
@@ -616,10 +616,16 @@
             // For the main div
             if (div) {
                 div.classList.remove('no-scroll', 'has-scroll');
-                if (div.scrollHeight > div.clientHeight) {
+                div.style.height = 'auto';
+
+                const naturalHeight = div.scrollHeight;
+
+                if (naturalHeight > 399.4) {
                     div.classList.add('has-scroll');
+                    div.style.height = '399.4px';
                 } else {
                     div.classList.add('no-scroll');
+                    div.style.height = 'min-content';
                 }
             }
 
