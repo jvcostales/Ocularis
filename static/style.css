@@ -709,6 +709,7 @@ a {
     }
 
     .scrollable-div.has-scroll {
+        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -1801,6 +1802,7 @@ a {
     }
 
     .scrollable-div.has-scroll {
+        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -2810,6 +2812,7 @@ a {
     }
 
     .scrollable-div.has-scroll {
+        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
