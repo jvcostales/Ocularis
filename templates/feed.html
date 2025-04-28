@@ -225,8 +225,8 @@
                             id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Likes</div>
                     <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
-                        {% if comment_likes_data[image[0]] %}
-                        {% for comment_like in comment_likes_data[image[0]] %}
+                        {% if comment_likes_data[comment_id] %}
+                        {% for comment_like in comment_likes_data[comment_id] %}
                         <div class="profile-follow-wrapper">
                             <div class="profile-post-likes">
                                 <img src="..\static\pfp.jpg" class="pfp">
