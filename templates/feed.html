@@ -462,7 +462,7 @@
 
         document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
             const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`);
+            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`);
         });
 
         document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
@@ -634,16 +634,6 @@
                 }
             });
 
-            // For all comment likes divs
-            commentLikeDivs.forEach(div1 => {
-                div1.classList.remove('no-scroll', 'has-scroll');
-                if (div1.scrollHeight > div1.clientHeight) {
-                    div1.classList.add('has-scroll');
-                } else {
-                    div1.classList.add('no-scroll');
-                }
-            });
-
             // For all comments divs
             commentDivs.forEach(div2 => {
                 div2.classList.remove('no-scroll', 'has-scroll');
@@ -651,6 +641,16 @@
                     div2.classList.add('has-scroll');
                 } else {
                     div2.classList.add('no-scroll');
+                }
+            });
+
+            // For all comment likes divs
+            commentLikeDivs.forEach(div3 => {
+                div3.classList.remove('no-scroll', 'has-scroll');
+                if (div3.scrollHeight > div3.clientHeight) {
+                    div3.classList.add('has-scroll');
+                } else {
+                    div3.classList.add('no-scroll');
                 }
             });
         }
