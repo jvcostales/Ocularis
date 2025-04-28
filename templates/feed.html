@@ -261,7 +261,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="line-comments"></div>
                         <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                             <div class="overlay-content-likes">
                                 <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
@@ -294,7 +293,7 @@
                         </div>
                         {% endif %}
                         {% endfor %}
-
+                        <div class="line-comments"></div>
                         {% if not ns.has_comments %}
                         <div class="comments-empty">
                             <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
@@ -302,7 +301,6 @@
                             <div class="nothing">Nothing to show here at the moment.</div>
                         </div>
                         {% endif %}
-
                     </div>
                     <div class="comment-bar">
                         <img src="..\static\pfp.jpg" class="pfp">
