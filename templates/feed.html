@@ -130,9 +130,9 @@
                 <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
                 <div class="interactions">
                     <div class="lcs">
-                        <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+                        <form class="partner like-button" action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
                             <button type="submit" style="all: unset;">
-                                <div class="partner like-button">
+                                <div>
                                     <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
                                     <div class="partner-label">Like</div>
                                 </div>
@@ -140,7 +140,7 @@
                         </form>
                         <div class="partner" id="openOverlayComments-{{ loop.index }}">
                             <span class="material-symbols-outlined lcs-symbol">comment</span>
-                            <div class="partner-label">Comment</div>
+                            <div class="partner-label">Respond</div>
                         </div>
                         <div class="partner" id="openOverlayShare-{{ loop.index }}">
                             <span class="material-symbols-outlined lcs-symbol">share</span>
@@ -223,7 +223,7 @@
                 <div class="overlay-content-comments">
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
-                    <div class="overlay-title">Comments</div>
+                    <div class="overlay-title">Responses</div>
                     <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
                         {% set ns = namespace(has_comments=false) %}
 
@@ -364,7 +364,7 @@
                                 {% if action == 'like' %}
                                 liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
                                 {% elif action == 'comment' %}
-                                commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                responded to your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
