@@ -130,7 +130,8 @@
                 <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
                 <div class="interactions">
                     <div class="lcs">
-                        <form class="partner like-button" action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+                        <form class="partner like-button" action="{{ url_for('like_image', image_id=image[0]) }}"
+                            method="post">
                             <button type="submit" style="all: unset;">
                                 <div>
                                     <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
@@ -148,7 +149,7 @@
                         </div>
                     </div>
                     <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
-                        {{ image[3] }} Likes
+                        {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
                     </div>
                 </div>
             </div>
@@ -256,7 +257,7 @@
                                         </button>
                                     </form>
                                     <div class="metrics" id="openOverlayCommentLikes-{{ loop.index }}">
-                                        {{ comment[5] }} Likes
+                                        {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
                                     </div>
                                 </div>
                             </div>
