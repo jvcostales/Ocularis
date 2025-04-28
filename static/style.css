@@ -1180,6 +1180,15 @@ a {
         padding: 50px;
     }
 
+    .likes-empty {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
+    }
+
     .empty-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 56px !important;
@@ -2258,6 +2267,15 @@ a {
         padding-right: 18px;
     }
 
+    .comments-empty {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
+    }
+
     .empty-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 56px !important;
@@ -3254,6 +3272,15 @@ a {
         justify-content: center;
         align-items: center;
         padding-right: 18px;
+    }
+
+    .comments-empty {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
     }
 
     .empty-symbol {
