@@ -534,7 +534,7 @@
         moreBtns.forEach((btn, index) => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const currentFrame = document.getElementById(`frame1-${index}`);
+                const currentFrame = document.getElementById(`frame1-${index + 1}`);
                 const isOpen = currentFrame.style.display === 'block';
 
                 // Close all frame1 elements
@@ -609,7 +609,7 @@
         document.addEventListener('click', function (event) {
             // Close all frame1s
             moreBtns.forEach((btn, index) => {
-                const frame = document.getElementById(`frame1-${index}`);
+                const frame = document.getElementById(`frame1-${index + 1}`);
                 if (!frame.contains(event.target) && event.target !== btn) {
                     frame.style.display = 'none';
                 }
