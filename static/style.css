@@ -320,6 +320,10 @@ a {
         color: #1C46F5 !important;
     }
 
+    .comment-like-button.liked {
+        color: #1C46F5 !important;
+    }
+
     .partner-label {
         font-size: 1rem;
     }
@@ -1665,6 +1669,10 @@ a {
         color: #1C46F5 !important;
     }
 
+    .comment-like-button.liked {
+        color: #1C46F5 !important;
+    }
+
     .partner-label {
         font-size: 1rem;
     }
@@ -2668,6 +2676,10 @@ a {
     }
 
     .like-button.liked {
+        color: #1C46F5 !important;
+    }
+
+    .comment-like-button.liked {
         color: #1C46F5 !important;
     }
 
