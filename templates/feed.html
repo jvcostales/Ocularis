@@ -534,7 +534,10 @@
         moreBtns.forEach((btn, index) => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const currentFrame = document.getElementById(`frame1-${index + 1}`);
+
+                // Adjust frame number depending on index
+                const frameNumber = index < 2 ? index + 1 : index + 2;
+                const currentFrame = document.getElementById(`frame1-${frameNumber}`);
                 const isOpen = currentFrame.style.display === 'block';
 
                 // Close all frame1 elements
@@ -543,7 +546,7 @@
                 // Toggle the current one
                 currentFrame.style.display = isOpen ? 'none' : 'block';
 
-                // Close other frames
+                // Close other frames (frame2, frame3, frame4)
                 frame2.style.display = 'none';
                 frame3.style.display = 'none';
                 frame4.style.display = 'none';
@@ -609,20 +612,21 @@
         document.addEventListener('click', function (event) {
             // Close all frame1s
             moreBtns.forEach((btn, index) => {
-                const frame = document.getElementById(`frame1-${index + 1}`);
-                if (frame && !frame.contains(event.target) && event.target !== btn) {
+                const frameNumber = index < 2 ? index + 1 : index + 2;
+                const frame = document.getElementById(`frame1-${frameNumber}`);
+                if (!frame.contains(event.target) && event.target !== btn) {
                     frame.style.display = 'none';
                 }
             });
 
             // Close frame2–4
-            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+            if (!frame2.contains(event.target) && event.target !== pfp) {
                 frame2.style.display = 'none';
             }
-            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+            if (!frame3.contains(event.target) && event.target !== pfp3) {
                 frame3.style.display = 'none';
             }
-            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+            if (!frame4.contains(event.target) && event.target !== pfp4) {
                 frame4.style.display = 'none';
             }
 
