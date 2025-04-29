@@ -420,7 +420,7 @@
     <script>
         let scrollPosition = 0;
 
-        function setupOverlay(overlaySelector, openBtnId, closeBtnId) {
+        function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
             const overlay = document.querySelector(overlaySelector);
             const openBtn = document.getElementById(openBtnId);
             const closeBtn = document.getElementById(closeBtnId);
@@ -428,17 +428,21 @@
             if (!overlay || !openBtn || !closeBtn) return;
 
             openBtn.addEventListener('click', () => {
-                scrollPosition = window.scrollY;
-                document.body.style.top = `-${scrollPosition}px`;
-                document.body.classList.add('no-scrolling');
+                if (!isNested) {
+                    scrollPosition = window.scrollY;
+                    document.body.style.top = `-${scrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                }
                 overlay.classList.add('active');
             });
 
             function closeOverlay() {
                 overlay.classList.remove('active');
-                document.body.classList.remove('no-scrolling');
-                document.body.style.top = '';
-                window.scrollTo(0, scrollPosition);
+                if (!isNested) {
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollPosition);
+                }
             }
 
             closeBtn.addEventListener('click', closeOverlay);
@@ -461,7 +465,7 @@
 
         document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
             const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`);
+            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
         });
 
         document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
