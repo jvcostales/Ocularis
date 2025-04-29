@@ -27,6 +27,10 @@ with open('data/states.json') as f:
 with open('data/cities.json') as f:
     cities = json.load(f)
 
+app.config['COUNTRIES'] = countries
+app.config['STATES'] = states
+app.config['CITIES'] = cities
+
 conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
 
 cur = conn.cursor()
@@ -326,25 +330,19 @@ def setup_profile():
         prefs = request.form.getlist('preferences')
         level = int(request.form['experience_level'])
 
-        country = request.form['country']
-        state = request.form['state']
-        city = request.form['city']
-
         # Update the DB
         conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            host="your_host",
+            dbname="your_dbname",
+            user="your_user",
+            password="your_password",
             port=5432
         )
         cur = conn.cursor()
         cur.execute("""
-            UPDATE users
-            SET skills = %s, preferences = %s, experience_level = %s,
-                country = %s, state = %s, city = %s
+            UPDATE users SET skills = %s, preferences = %s, experience_level = %s
             WHERE id = %s
-        """, (skills, prefs, level, country, state, city, current_user.id))
+        """, (skills, prefs, level, current_user.id))
         conn.commit()
         cur.close()
         conn.close()
@@ -362,10 +360,11 @@ def setup_profile():
         (3, "Advanced"),
         (4, "Expert")
     ]
-
+    
+    # Pass the data from config to the template
     return render_template(
-        'setup_profile.html',
-        categories=categories,
+        'setup_profile.html', 
+        categories=categories, 
         experience_levels=experience_levels,
         countries=app.config['COUNTRIES'],
         states=app.config['STATES'],
