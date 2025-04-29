@@ -657,8 +657,23 @@
             });
         }
 
-        window.onload = checkScrollbar;
+        window.onload = () => {
+            checkScrollbar();
 
+            // Optional: re-check on window resize
+            window.addEventListener('resize', checkScrollbar);
+
+            // Observe changes inside the scrollableDiv
+            const div = document.getElementById('scrollableDiv');
+            if (div) {
+                const observer = new MutationObserver(checkScrollbar);
+                observer.observe(div, {
+                    childList: true,
+                    subtree: true,
+                });
+            }
+        };
+        
         const likeButtons = document.querySelectorAll(".like-button");
 
         likeButtons.forEach(button => {
