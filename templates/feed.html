@@ -608,56 +608,46 @@
         });
 
         function checkScrollbar() {
+            const imageInput = document.getElementById('image');
             const div = document.getElementById('scrollableDiv');
             const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
             const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
             const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
 
-            // For the main div
-            if (div) {
-                console.log('scrollHeight:', div.scrollHeight);
-                console.log('clientHeight:', div.clientHeight);
-
+            // Main image scrollable div
+            if (imageInput && div) {
                 div.classList.remove('no-scroll', 'has-scroll');
-                if (div.scrollHeight > div.clientHeight) {
+                if (imageInput.files.length > 0) {
                     div.classList.add('has-scroll');
                 } else {
                     div.classList.add('no-scroll');
                 }
             }
 
-            // For all likes divs
-            likeDivs.forEach(div1 => {
-                div1.classList.remove('no-scroll', 'has-scroll');
-                if (div1.scrollHeight > div1.clientHeight) {
-                    div1.classList.add('has-scroll');
-                } else {
-                    div1.classList.add('no-scroll');
-                }
-            });
+            // Generic scrollbar check for any list of divs
+            const checkScrollState = (divList) => {
+                divList.forEach(el => {
+                    el.classList.remove('no-scroll', 'has-scroll');
+                    if (el.scrollHeight > el.clientHeight) {
+                        el.classList.add('has-scroll');
+                    } else {
+                        el.classList.add('no-scroll');
+                    }
+                });
+            };
 
-            // For all comments divs
-            commentDivs.forEach(div2 => {
-                div2.classList.remove('no-scroll', 'has-scroll');
-                if (div2.scrollHeight > div2.clientHeight) {
-                    div2.classList.add('has-scroll');
-                } else {
-                    div2.classList.add('no-scroll');
-                }
-            });
-
-            // For all comment likes divs
-            commentLikeDivs.forEach(div3 => {
-                div3.classList.remove('no-scroll', 'has-scroll');
-                if (div3.scrollHeight > div3.clientHeight) {
-                    div3.classList.add('has-scroll');
-                } else {
-                    div3.classList.add('no-scroll');
-                }
-            });
+            checkScrollState(likeDivs);
+            checkScrollState(commentDivs);
+            checkScrollState(commentLikeDivs);
         }
 
-        window.onload = checkScrollbar;
+        window.addEventListener('load', () => {
+            const imageInput = document.getElementById('image');
+            if (imageInput) {
+                imageInput.addEventListener('change', checkScrollbar);
+            }
+            checkScrollbar(); // Initial check on load
+        });
 
         const likeButtons = document.querySelectorAll(".like-button");
 
