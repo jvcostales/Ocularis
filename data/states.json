@@ -35200,6 +35200,17 @@
         "longitude": "124.41982430"
     },
     {
+        "id": 1348,
+        "name": "Maguindanao del Sur",
+        "country_id": 174,
+        "country_code": "PH",
+        "country_name": "Philippines",
+        "state_code": "MDS",
+        "type": "province",
+        "latitude": "6.730076",
+        "longitude": "124.303947"
+    },
+    {
         "id": 1329,
         "name": "Marinduque",
         "country_id": 174,
@@ -35231,17 +35242,6 @@
         "type": "province",
         "latitude": "14.60905370",
         "longitude": "121.02225650"
-    },
-    {
-        "id": 5324,
-        "name": "Metro Manila(National Capital Region)",
-        "country_id": 174,
-        "country_code": "PH",
-        "country_name": "Philippines",
-        "state_code": "00",
-        "type": "region",
-        "latitude": "14.56807070",
-        "longitude": "120.85583270"
     },
     {
         "id": 1299,
