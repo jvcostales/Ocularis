@@ -657,8 +657,21 @@
             });
         }
 
-        window.onload = checkScrollbar;
+        window.onload = function () {
+            checkScrollbar();  // Run it once when page loads
 
+            const scrollableDiv = document.getElementById('scrollableDiv');
+            if (scrollableDiv) {
+                const observer = new MutationObserver(() => {
+                    checkScrollbar();
+                });
+
+                observer.observe(scrollableDiv, { childList: true, subtree: true });
+            }
+
+            setFullHeight();  // Also your sidebar height adjustment
+        };
+        
         const likeButtons = document.querySelectorAll(".like-button");
 
         likeButtons.forEach(button => {
