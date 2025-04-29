@@ -639,7 +639,7 @@
             // For all comments divs
             commentDivs.forEach(div2 => {
                 div2.classList.remove('no-scroll', 'has-scroll');
-                if (div2.scrollHeight > div2.clientHeight) {
+                if (div2.scrollHeight >= div2.clientHeight) {
                     div2.classList.add('has-scroll');
                 } else {
                     div2.classList.add('no-scroll');
@@ -657,21 +657,8 @@
             });
         }
 
-        window.onload = function () {
-            checkScrollbar();  // Run it once when page loads
+        window.onload = checkScrollbar;
 
-            const scrollableDiv = document.getElementById('scrollableDiv');
-            if (scrollableDiv) {
-                const observer = new MutationObserver(() => {
-                    checkScrollbar();
-                });
-
-                observer.observe(scrollableDiv, { childList: true, subtree: true });
-            }
-
-            setFullHeight();  // Also your sidebar height adjustment
-        };
-        
         const likeButtons = document.querySelectorAll(".like-button");
 
         likeButtons.forEach(button => {
