@@ -615,6 +615,9 @@
 
             // For the main div
             if (div) {
+                console.log('scrollHeight:', div.scrollHeight);
+                console.log('clientHeight:', div.clientHeight);
+
                 div.classList.remove('no-scroll', 'has-scroll');
                 if (div.scrollHeight > div.clientHeight) {
                     div.classList.add('has-scroll');
