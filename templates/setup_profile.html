@@ -39,7 +39,6 @@
         <input type="text" id="role" name="role" maxlength="100" required><br><br>
 
         <h2>Location</h2>
-
         <label for="country">Country:</label><br>
         <select id="country" name="country" required>
             <option value="">Select Country</option>
@@ -58,12 +57,28 @@
             <option value="">Select City</option>
         </select><br><br>
 
+        <h2>Social Media Links</h2>
+        <label for="facebook">Facebook:</label><br>
+        <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/yourprofile"><br><br>
+
+        <label for="instagram">Instagram:</label><br>
+        <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/yourprofile"><br><br>
+
+        <label for="x">X (Twitter):</label><br>
+        <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
+
+        <label for="linkedin">LinkedIn:</label><br>
+        <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile"><br><br>
+
+        <label for="telegram">Telegram:</label><br>
+        <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
+
         <button type="submit">Save Profile</button>
     </form>
 
     <script>
-        const allStates = {{ states| tojson }};
-        const allCities = {{ cities| tojson }};
+        const allStates = {{ states | tojson }};
+        const allCities = {{ cities | tojson }};
 
         document.getElementById('country').addEventListener('change', function () {
             const iso = this.options[this.selectedIndex].dataset.iso;

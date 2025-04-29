@@ -48,10 +48,15 @@ CREATE TABLE IF NOT EXISTS users (
     skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
     experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
-    country TEXT,
-    state TEXT,
-    city TEXT,
-    role VARCHAR(100)
+    country TEXT NOT NULL,
+    state TEXT NOT NULL,
+    city TEXT NOT NULL,
+    role VARCHAR(100) NOT NULL,
+    facebook VARCHAR(100),
+    instagram VARCHAR(100),
+    x VARCHAR(100),
+    linkedin VARCHAR(100),
+    telegram VARCHAR(100),
 );
 """)
 
@@ -331,6 +336,11 @@ def setup_profile():
         prefs = request.form.getlist('preferences')
         level = int(request.form['experience_level'])
         role = request.form['role']
+        facebook = request.form['facebook']
+        instagram = request.form['instagram']
+        x = request.form['x']
+        linkedin = request.form['linkedin']
+        telegram = request.form['telegram']
 
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -342,9 +352,17 @@ def setup_profile():
         cur = conn.cursor()
         cur.execute("""
             UPDATE users
-            SET skills = %s, preferences = %s, experience_level = %s, role = %s
+            SET skills = %s,
+                preferences = %s,
+                experience_level = %s,
+                role = %s,
+                facebook = %s,
+                instagram = %s,
+                x = %s,
+                linkedin = %s,
+                telegram = %s
             WHERE id = %s
-        """, (skills, prefs, level, role, current_user.id))
+        """, (skills, prefs, level, role, facebook, instagram, x, linkedin, telegram, current_user.id))
         conn.commit()
         cur.close()
         conn.close()
