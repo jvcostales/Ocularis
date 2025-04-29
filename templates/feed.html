@@ -140,7 +140,7 @@
                         </form>
                         <div class="partner" id="openOverlayComments-{{ loop.index }}">
                             <span class="material-symbols-outlined lcs-symbol">comment</span>
-                            <div class="partner-label">Respond</div>
+                            <div class="partner-label">Comment</div>
                         </div>
                         <div class="partner" id="openOverlayShare-{{ loop.index }}">
                             <span class="material-symbols-outlined lcs-symbol">share</span>
@@ -223,7 +223,7 @@
                 <div class="overlay-content-comments">
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                             id="closeOverlayComments-{{ loop.index }}">close</span></button>
-                    <div class="overlay-title">Responses</div>
+                    <div class="overlay-title">Comment</div>
                     <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
                         {% set ns = namespace(has_comments=false) %}
 
@@ -364,7 +364,7 @@
                                 {% if action == 'like' %}
                                 liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
                                 {% elif action == 'comment' %}
-                                responded to your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
