@@ -713,6 +713,7 @@ a {
     .scrollable-div {
         padding-left: 24px;
         height: 399.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
@@ -721,7 +722,6 @@ a {
 
     .scrollable-div.has-scroll {
         padding-right: 6.4px;
-        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
@@ -1805,6 +1805,7 @@ a {
     .scrollable-div {
         padding-left: 24px;
         height: 399.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
@@ -1813,7 +1814,6 @@ a {
 
     .scrollable-div.has-scroll {
         padding-right: 6.4px;
-        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
@@ -2818,6 +2818,7 @@ a {
     .scrollable-div {
         padding-left: 24px;
         height: 399.4px;
+        overflow-y: auto;
     }
 
     .scrollable-div.no-scroll {
@@ -2826,7 +2827,6 @@ a {
 
     .scrollable-div.has-scroll {
         padding-right: 6.4px;
-        overflow-y: auto;
     }
 
     .scrollable-div::-webkit-scrollbar {
