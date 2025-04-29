@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS users (
     instagram VARCHAR(100),
     x VARCHAR(100),
     linkedin VARCHAR(100),
-    telegram VARCHAR(100),
+    telegram VARCHAR(100)
 );
 """)
 
