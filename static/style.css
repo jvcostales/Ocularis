@@ -711,17 +711,15 @@ a {
     }
 
     .scrollable-div {
-        height: 399.4px;
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
-        height: min-content;
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -1805,17 +1803,15 @@ a {
     }
 
     .scrollable-div {
-        height: 399.4px;
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
-        height: min-content;
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
@@ -2820,17 +2816,15 @@ a {
     }
 
     .scrollable-div {
-        height: 399.4px;
         padding-left: 24px;
+        height: 399.4px;
     }
 
     .scrollable-div.no-scroll {
         padding-right: 24px;
-        height: min-content;
     }
 
     .scrollable-div.has-scroll {
-        height: 399.4px;
         padding-right: 6.4px;
         overflow-y: auto;
     }
