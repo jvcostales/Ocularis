@@ -1,38 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Setup Profile</title>
 </head>
+
 <body>
     <h1>Set Up Your Profile</h1>
 
     <form method="POST">
         <h2>Your Skills</h2>
         {% for category in categories %}
-            <label>
-                <input type="checkbox" name="skills" value="{{ category }}">
-                {{ category }}
-            </label><br>
+        <label>
+            <input type="checkbox" name="skills" value="{{ category }}">
+            {{ category }}
+        </label><br>
         {% endfor %}
 
         <h2>Your Preferences</h2>
         {% for category in categories %}
-            <label>
-                <input type="checkbox" name="preferences" value="{{ category }}">
-                {{ category }}
-            </label><br>
+        <label>
+            <input type="checkbox" name="preferences" value="{{ category }}">
+            {{ category }}
+        </label><br>
         {% endfor %}
 
         <h2>Experience Level</h2>
         <label for="experience_level">Select your level:</label><br>
         <select name="experience_level" id="experience_level" required>
             {% for value, label in experience_levels %}
-                <option value="{{ value }}">{{ label }}</option>
+            <option value="{{ value }}">{{ label }}</option>
             {% endfor %}
+        </select><br><br>
+
+        <h2>Location</h2>
+
+        <label for="country">Country:</label><br>
+        <select id="country" name="country" required>
+            <option value="">Select Country</option>
+            {% for country in countries %}
+            <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="state">State/Region:</label><br>
+        <select id="state" name="state" required>
+            <option value="">Select State</option>
+        </select><br><br>
+
+        <label for="city">City:</label><br>
+        <select id="city" name="city" required>
+            <option value="">Select City</option>
         </select><br><br>
 
         <button type="submit">Save Profile</button>
     </form>
+
+    <script>
+        const allStates = {{ states| tojson }};
+        const allCities = {{ cities| tojson }};
+
+        document.getElementById('country').addEventListener('change', function () {
+            const iso = this.options[this.selectedIndex].dataset.iso;
+            const filteredStates = allStates.filter(state => state.country_code === iso);
+
+            const stateSelect = document.getElementById('state');
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            filteredStates.forEach(state => {
+                stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
+            });
+
+            document.getElementById('city').innerHTML = '<option value="">Select City</option>';
+        });
+
+        document.getElementById('state').addEventListener('change', function () {
+            const stateId = this.options[this.selectedIndex].dataset.id;
+            const filteredCities = allCities.filter(city => city.state_id == stateId);
+
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            filteredCities.forEach(city => {
+                citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
+            });
+        });
+    </script>
 </body>
+
 </html>

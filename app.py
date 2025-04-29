@@ -10,12 +10,22 @@ from email.mime.text import MIMEText
 from search import search_bp
 from recommender import get_similar_users
 import pandas as pd
+import json
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 app.register_blueprint(search_bp)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+with open('data/countries.json') as f:
+    countries = json.load(f)
+
+with open('data/states.json') as f:
+    states = json.load(f)
+
+with open('data/cities.json') as f:
+    cities = json.load(f)
 
 conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
 
@@ -33,7 +43,10 @@ CREATE TABLE IF NOT EXISTS users (
     reset_token TEXT,
     skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
-    experience_level INT      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
+    experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
+    country TEXT,
+    state TEXT,
+    city TEXT
 );
 """)
 
@@ -313,6 +326,10 @@ def setup_profile():
         prefs = request.form.getlist('preferences')
         level = int(request.form['experience_level'])
 
+        country = request.form['country']
+        state = request.form['state']
+        city = request.form['city']
+
         # Update the DB
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -323,9 +340,11 @@ def setup_profile():
         )
         cur = conn.cursor()
         cur.execute("""
-            UPDATE users SET skills = %s, preferences = %s, experience_level = %s
+            UPDATE users
+            SET skills = %s, preferences = %s, experience_level = %s,
+                country = %s, state = %s, city = %s
             WHERE id = %s
-        """, (skills, prefs, level, current_user.id))
+        """, (skills, prefs, level, country, state, city, current_user.id))
         conn.commit()
         cur.close()
         conn.close()
@@ -344,7 +363,14 @@ def setup_profile():
         (4, "Expert")
     ]
 
-    return render_template('setup_profile.html', categories=categories, experience_levels=experience_levels)
+    return render_template(
+        'setup_profile.html',
+        categories=categories,
+        experience_levels=experience_levels,
+        countries=app.config['COUNTRIES'],
+        states=app.config['STATES'],
+        cities=app.config['CITIES']
+    )
 
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
