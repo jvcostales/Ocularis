@@ -619,7 +619,7 @@
                 console.log('clientHeight:', div.clientHeight);
 
                 div.classList.remove('no-scroll', 'has-scroll');
-                if (div.scrollHeight > div.clientHeight) {
+                if (div.scrollHeight >= div.clientHeight) {
                     div.classList.add('has-scroll');
                 } else {
                     div.classList.add('no-scroll');
@@ -639,7 +639,7 @@
             // For all comments divs
             commentDivs.forEach(div2 => {
                 div2.classList.remove('no-scroll', 'has-scroll');
-                if (div2.scrollHeight >= div2.clientHeight) {
+                if (div2.scrollHeight > div2.clientHeight) {
                     div2.classList.add('has-scroll');
                 } else {
                     div2.classList.add('no-scroll');
