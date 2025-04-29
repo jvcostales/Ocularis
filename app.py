@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS users (
     experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
     country TEXT,
     state TEXT,
-    city TEXT
+    city TEXT,
+    role VARCHAR(100)
 );
 """)
 
@@ -329,8 +330,8 @@ def setup_profile():
         skills = request.form.getlist('skills')
         prefs = request.form.getlist('preferences')
         level = int(request.form['experience_level'])
+        role = request.form['role']
 
-        # Update the DB
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
             dbname="ocularis_db",
@@ -340,9 +341,10 @@ def setup_profile():
         )
         cur = conn.cursor()
         cur.execute("""
-            UPDATE users SET skills = %s, preferences = %s, experience_level = %s
+            UPDATE users
+            SET skills = %s, preferences = %s, experience_level = %s, role = %s
             WHERE id = %s
-        """, (skills, prefs, level, current_user.id))
+        """, (skills, prefs, level, role, current_user.id))
         conn.commit()
         cur.close()
         conn.close()
@@ -361,7 +363,6 @@ def setup_profile():
         (4, "Expert")
     ]
     
-    # Pass the data from config to the template
     return render_template(
         'setup_profile.html', 
         categories=categories, 
