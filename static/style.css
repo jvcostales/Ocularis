@@ -3,7 +3,7 @@ body {
     margin: 0;
     background-color: #f6f6f6;
 }
-/*
+
 #modalContainer {
     position: fixed;
     top: 0;
@@ -33,15 +33,6 @@ body {
 .modal-step:first-child {
     display: block;
 }
-
-a:visited {
-    color: inherit;
-}
-
-a {
-    text-decoration: none;
-}
-    */
 
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
