@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS users (
     instagram VARCHAR(100),
     x VARCHAR(100),
     linkedin VARCHAR(100),
-    telegram VARCHAR(100)
+    telegram VARCHAR(100),
+    is_profile_complete BOOLEAN DEFAULT FALSE
 );
 """)
 
@@ -328,10 +329,9 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/setup-profile', methods=['GET', 'POST'])
+@app.route('/api/setup-profile', methods=['POST'])
 @login_required
-def setup_profile():
-    if request.method == 'POST':
+def api_setup_profile():
         skills = request.form.getlist('skills')
         prefs = request.form.getlist('preferences')
         level = int(request.form['experience_level'])
@@ -367,28 +367,8 @@ def setup_profile():
         cur.close()
         conn.close()
 
-        return redirect(url_for('feed'))
+        return jsonify({'success': True})
 
-    categories = [
-        "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
-        "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
-    ]
-
-    experience_levels = [
-        (1, "Beginner"),
-        (2, "Intermediate"),
-        (3, "Advanced"),
-        (4, "Expert")
-    ]
-    
-    return render_template(
-        'setup_profile.html', 
-        categories=categories, 
-        experience_levels=experience_levels,
-        countries=app.config['COUNTRIES'],
-        states=app.config['STATES'],
-        cities=app.config['CITIES']
-    )
 
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
@@ -598,9 +578,25 @@ def feed():
             comment_likes = cur.fetchall()
             comment_likes_data[comment_id] = comment_likes
 
+        #setup_profile
+        cur.execute("SELECT is_profile_complete FROM users WHERE id = %s", (current_user.id,))
+        is_complete = cur.fetchone()[0]
+
     finally:
         cur.close()
         conn.close()
+
+    categories = [
+        "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+        "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
+    ]
+
+    experience_levels = [
+        (1, "Beginner"),
+        (2, "Intermediate"),
+        (3, "Advanced"),
+        (4, "Expert")
+    ]
 
     return render_template(
         'feed.html',
@@ -610,9 +606,14 @@ def feed():
         notifications=notifications,
         requests=requests,
         likes_data=likes_data,
-        comment_likes_data=comment_likes_data
+        comment_likes_data=comment_likes_data,
+        show_profile_modal=not is_complete,
+        categories=categories,
+        experience_levels=experience_levels,
+        countries=app.config['COUNTRIES'],
+        states=app.config['STATES'],
+        cities=app.config['CITIES']
     )
-
 
 @app.route('/logout')
 @login_required
