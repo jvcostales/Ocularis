@@ -48,10 +48,10 @@ CREATE TABLE IF NOT EXISTS users (
     skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
     experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
-    country TEXT NOT NULL,
-    state TEXT NOT NULL,
-    city TEXT NOT NULL,
-    role VARCHAR(100) NOT NULL,
+    country TEXT,
+    state TEXT,
+    city TEXT,
+    role VARCHAR(100),
     facebook VARCHAR(100),
     instagram VARCHAR(100),
     x VARCHAR(100),
