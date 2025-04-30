@@ -321,7 +321,7 @@ def login():
             experience_level = user[10]  # Experience level at index 10
 
             if not skills or not preferences or experience_level is None:
-                return redirect(url_for('setup_profile'))
+                return redirect(url_for('api_setup_profile'))
 
             return redirect(url_for('feed'))
         else:
