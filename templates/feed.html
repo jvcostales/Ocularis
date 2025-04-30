@@ -525,10 +525,21 @@
                 </form>
             </div>
         </div>
-        {% endif %}     
+        {% endif %}
     </div>
 
     <script>
+        window.nextStep = function (step) {
+            document.querySelectorAll('.modal-step').forEach(div => {
+                div.style.display = 'none';
+            });
+            document.getElementById('step-' + step).style.display = 'block';
+        };
+
+        window.prevStep = function (step) {
+            window.nextStep(step);
+        };
+
         document.getElementById('profileForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -571,15 +582,6 @@
                 citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
             });
         });
-
-        function nextStep(step) {
-            document.querySelectorAll('.modal-step').forEach(div => div.style.display = 'none');
-            document.getElementById('step-' + step).style.display = 'block';
-        }
-
-        function prevStep(step) {
-            nextStep(step);
-        }
 
         let scrollPosition = 0;
 
