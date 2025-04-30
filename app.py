@@ -324,42 +324,56 @@ def login():
 @app.route('/api/setup-profile', methods=['POST'])
 @login_required
 def api_setup_profile():
-        skills = request.form.getlist('skills')
-        prefs = request.form.getlist('preferences')
-        level = int(request.form['experience_level'])
-        role = request.form['role']
-        facebook = request.form['facebook']
-        instagram = request.form['instagram']
-        x = request.form['x']
-        linkedin = request.form['linkedin']
-        telegram = request.form['telegram']
+    skills = request.form.getlist('skills')
+    prefs = request.form.getlist('preferences')
+    level = int(request.form['experience_level'])
+    role = request.form['role']
+    facebook = request.form['facebook']
+    instagram = request.form['instagram']
+    x = request.form['x']
+    linkedin = request.form['linkedin']
+    telegram = request.form['telegram']
+    country = request.form['country']
+    state = request.form['state']
+    city = request.form['city']
 
-        conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-            port=5432
-        )
-        cur = conn.cursor()
-        cur.execute("""
-            UPDATE users
-            SET skills = %s,
-                preferences = %s,
-                experience_level = %s,
-                role = %s,
-                facebook = %s,
-                instagram = %s,
-                x = %s,
-                linkedin = %s,
-                telegram = %s
-            WHERE id = %s
-        """, (skills, prefs, level, role, facebook, instagram, x, linkedin, telegram, current_user.id))
-        conn.commit()
-        cur.close()
-        conn.close()
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE users
+        SET skills = %s,
+            preferences = %s,
+            experience_level = %s,
+            role = %s,
+            facebook = %s,
+            instagram = %s,
+            x = %s,
+            linkedin = %s,
+            telegram = %s,
+            country = %s,
+            state = %s,
+            city = %s
+        WHERE id = %s
+    """, (skills, prefs, level, role, facebook, instagram, x, linkedin, telegram, country, state, city, current_user.id))
 
-        return jsonify({'success': True})
+    cur.execute("""
+    UPDATE users
+    SET is_profile_complete = TRUE
+    WHERE id = %s
+""", (current_user.id,))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({'success': True})
+
 
 
 
