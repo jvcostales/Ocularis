@@ -315,14 +315,6 @@ def login():
             user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
             login_user(user_obj)
 
-            # New logic: Check if profile is incomplete
-            skills = user[8]  # Assuming skills is at index 8
-            preferences = user[9]  # Preferences at index 9
-            experience_level = user[10]  # Experience level at index 10
-
-            if not skills or not preferences or experience_level is None:
-                return redirect(url_for('api_setup_profile'))
-
             return redirect(url_for('feed'))
         else:
             return 'Invalid email or password'
