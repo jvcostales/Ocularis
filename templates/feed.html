@@ -141,7 +141,7 @@
             <!--bakit naka-center ung post 1 kapag un lang ung content-->
             <!--fix class names-->
             {% for image in images %}
-            <div class="post1" {% if loop.last %}style="margin-bottom: 16px;"{% endif %}>
+            <div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
                 <div class="profile-more-wrapper">
                     <div class="profile-post">
                         <img src="..\static\pfp.jpg" class="pfp">
@@ -542,7 +542,7 @@
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
             }
-            
+
             const countrySelect = document.getElementById('country');
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
@@ -846,7 +846,9 @@
                 if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
             }
 
-            window.addEventListener('resize', setFullHeight);
+            window.addEventListener('resize', () => {
+                setTimeout(setFullHeight, 0); // Add a small delay before adjusting height
+            });
             setFullHeight();
 
             const imageInputPreview = document.getElementById('image');
