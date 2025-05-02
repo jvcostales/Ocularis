@@ -516,7 +516,40 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const allStates = {{ states | tojson }};
+            const steps = document.querySelectorAll('.modal-step');
+            let currentStep = 0;
+
+            function showStep(index) {
+                steps.forEach((step, i) => {
+                    step.style.display = (i === index) ? 'block' : 'none';
+                });
+            }
+
+            document.querySelectorAll('.next').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (currentStep < steps.length - 1) {
+                        currentStep++;
+                        showStep(currentStep);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.prev').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (currentStep > 0) {
+                        currentStep--;
+                        showStep(currentStep);
+                    }
+                });
+            });
+
+            // Start with first step visible
+            showStep(currentStep);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const allStates = {{ states | tojson
+        }};
         const allCities = {{ cities | tojson }};
 
         document.getElementById('country').addEventListener('change', function () {
@@ -850,36 +883,6 @@
                 document.getElementById('profileModal').style.display = 'none';
             }
         });
-
-        const steps = document.querySelectorAll('.modal-step');
-        let currentStep = 0;
-
-        function showStep(index) {
-            steps.forEach((step, i) => {
-                step.style.display = (i === index) ? 'block' : 'none';
-            });
-        }
-
-        document.querySelectorAll('.next').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (currentStep < steps.length - 1) {
-                    currentStep++;
-                    showStep(currentStep);
-                }
-            });
-        });
-
-        document.querySelectorAll('.prev').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (currentStep > 0) {
-                    currentStep--;
-                    showStep(currentStep);
-                }
-            });
-        });
-
-        // Initialize the first step
-        showStep(currentStep);
     </script>
 </body>
 
