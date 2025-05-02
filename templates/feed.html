@@ -553,137 +553,164 @@
             });
         });
 
-        // Get all 'more' buttons and corresponding frame1s
-        const moreBtns = document.querySelectorAll('.more-symbol');
-        const allFrames1 = document.querySelectorAll('.frame1');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all 'more' buttons and corresponding frame1s
+            const moreBtns = document.querySelectorAll('.more-symbol');
+            const allFrames1 = document.querySelectorAll('.frame1');
 
-        const pfp = document.getElementById('pfp');
-        const frame2 = document.getElementById('frame2');
-        const pfp3 = document.getElementById('pfp3');
-        const frame3 = document.getElementById('frame3');
-        const pfp4 = document.getElementById('pfp4');
-        const frame4 = document.getElementById('frame4');
+            const pfp = document.getElementById('pfp');
+            const frame2 = document.getElementById('frame2');
+            const pfp3 = document.getElementById('pfp3');
+            const frame3 = document.getElementById('frame3');
+            const pfp4 = document.getElementById('pfp4');
+            const frame4 = document.getElementById('frame4');
 
-        // Hide all frames initially
-        allFrames1.forEach(frame => frame.style.display = 'none');
-        frame2.style.display = 'none';
-        frame3.style.display = 'none';
-        frame4.style.display = 'none';
-
-        let isFrame234Open = false;
-
-        // Add event listener to each "more" button
-        moreBtns.forEach((btn, index) => {
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                const isOpen = currentFrame.style.display === 'block';
-
-                // Close all frame1 elements
-                allFrames1.forEach(frame => frame.style.display = 'none');
-
-                // Toggle the current one
-                currentFrame.style.display = isOpen ? 'none' : 'block';
-
-                // Close other frames
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            });
-        });
-
-        // Frame 2 toggle
-        pfp.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame2.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
+            // Hide all frame1 elements safely
+            if (allFrames1.length > 0) {
+                allFrames1.forEach(frame => {
+                    if (frame) frame.style.display = 'none';
+                });
             }
-        });
 
-        // Frame 3 toggle
-        pfp3.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame3.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
-            }
-        });
+            // Hide frame2–4
+            if (frame2) frame2.style.display = 'none';
+            if (frame3) frame3.style.display = 'none';
+            if (frame4) frame4.style.display = 'none';
 
-        // Frame 4 toggle
-        pfp4.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame4.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
-            }
-        });
+            let isFrame234Open = false;
 
-        // Click anywhere outside to close all
-        document.addEventListener('click', function (event) {
-            // Close all frame1s
+            // Add event listener to each "more" button
             moreBtns.forEach((btn, index) => {
-                const frame = document.getElementById(`frame1-${index + 1}`);
-                if (!frame.contains(event.target) && event.target !== btn) {
-                    frame.style.display = 'none';
+                const frameId = `frame1-${index + 1}`;
+                const currentFrame = document.getElementById(frameId);
+
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    if (!currentFrame) return;
+
+                    const isOpen = currentFrame.style.display === 'block';
+
+                    allFrames1.forEach(frame => {
+                        if (frame) frame.style.display = 'none';
+                    });
+
+                    currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                    if (frame2) frame2.style.display = 'none';
+                    if (frame3) frame3.style.display = 'none';
+                    if (frame4) frame4.style.display = 'none';
+                    isFrame234Open = false;
+                });
+            });
+
+            // Frame 2 toggle
+            if (pfp) {
+                pfp.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame2 && frame2.style.display === 'block';
+
+                    if (isOpen) {
+                        if (frame2) frame2.style.display = 'none';
+                        if (frame3) frame3.style.display = 'none';
+                        if (frame4) frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        if (frame2) frame2.style.display = 'block';
+                        if (frame3) frame3.style.display = 'block';
+                        if (frame4) frame4.style.display = 'block';
+                        allFrames1.forEach(frame => {
+                            if (frame) frame.style.display = 'none';
+                        });
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            // Frame 3 toggle
+            if (pfp3) {
+                pfp3.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame3 && frame3.style.display === 'block';
+
+                    if (isOpen) {
+                        if (frame2) frame2.style.display = 'none';
+                        if (frame3) frame3.style.display = 'none';
+                        if (frame4) frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        if (frame2) frame2.style.display = 'block';
+                        if (frame3) frame3.style.display = 'block';
+                        if (frame4) frame4.style.display = 'block';
+                        allFrames1.forEach(frame => {
+                            if (frame) frame.style.display = 'none';
+                        });
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            // Frame 4 toggle
+            if (pfp4) {
+                pfp4.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame4 && frame4.style.display === 'block';
+
+                    if (isOpen) {
+                        if (frame2) frame2.style.display = 'none';
+                        if (frame3) frame3.style.display = 'none';
+                        if (frame4) frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        if (frame2) frame2.style.display = 'block';
+                        if (frame3) frame3.style.display = 'block';
+                        if (frame4) frame4.style.display = 'block';
+                        allFrames1.forEach(frame => {
+                            if (frame) frame.style.display = 'none';
+                        });
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            // Click anywhere outside to close all
+            document.addEventListener('click', function (event) {
+                // Close all frame1s
+                moreBtns.forEach((btn, index) => {
+                    const frame = document.getElementById(`frame1-${index + 1}`);
+                    if (frame && !frame.contains(event.target) && event.target !== btn) {
+                        frame.style.display = 'none';
+                    }
+                });
+
+                // Close frame2–4
+                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                    frame2.style.display = 'none';
+                }
+                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                    frame3.style.display = 'none';
+                }
+                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                    frame4.style.display = 'none';
+                }
+
+                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+                if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                    isFrame234Open = false;
                 }
             });
 
-            // Close frame2–4
-            if (!frame2.contains(event.target) && event.target !== pfp) {
-                frame2.style.display = 'none';
-            }
-            if (!frame3.contains(event.target) && event.target !== pfp3) {
-                frame3.style.display = 'none';
-            }
-            if (!frame4.contains(event.target) && event.target !== pfp4) {
-                frame4.style.display = 'none';
-            }
-
-            const frame2Visible = window.getComputedStyle(frame2).display !== 'none';
-            const frame3Visible = window.getComputedStyle(frame3).display !== 'none';
-            const frame4Visible = window.getComputedStyle(frame4).display !== 'none';
-
-            if (!frame2Visible && !frame3Visible && !frame4Visible) {
-                isFrame234Open = false;
-            }
-        });
-
-        // Reshow frame2–4 on resize if they were open
-        window.addEventListener('resize', function () {
-            if (isFrame234Open) {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-            }
+            // Reshow frame2–4 on resize if they were open
+            window.addEventListener('resize', function () {
+                if (isFrame234Open) {
+                    if (frame2) frame2.style.display = 'block';
+                    if (frame3) frame3.style.display = 'block';
+                    if (frame4) frame4.style.display = 'block';
+                }
+            });
         });
 
         function checkScrollbar() {
