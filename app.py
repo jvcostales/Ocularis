@@ -256,7 +256,6 @@ def signup():
 
     return render_template('signup.html')
 
-
 @app.route('/verify-email/<token>')
 def verify_email(token):
     try:

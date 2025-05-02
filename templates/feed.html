@@ -491,334 +491,357 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        const allStates = {{ states | tojson | safe }};
-        const allCities = {{ cities | tojson | safe }};
+            const countrySelect = document.getElementById('country');
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
 
-        const countrySelect = document.getElementById('country');
-        if (countrySelect) {
-            countrySelect.addEventListener('change', function () {
-                const iso = this.options[this.selectedIndex].dataset.iso;
-                const filteredStates = allStates.filter(state => state.country_code === iso);
+            let allStates = [];
+            let allCities = [];
 
-                const stateSelect = document.getElementById('state');
+            // Fetch all states and cities once
+            fetch('/api/get-states')
+                .then(res => res.json())
+                .then(data => allStates = data);
+
+            fetch('/api/get-cities')
+                .then(res => res.json())
+                .then(data => allCities = data);
+
+            // When a country is selected
+            countrySelect.addEventListener('change', () => {
+                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
                 stateSelect.innerHTML = '<option value="">Select State</option>';
-                filteredStates.forEach(state => {
-                    stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
-                });
-
-                document.getElementById('city').innerHTML = '<option value="">Select City</option>';
-            });
-        }
-
-        const stateSelect = document.getElementById('state');
-        if (stateSelect) {
-            stateSelect.addEventListener('change', function () {
-                const stateId = this.options[this.selectedIndex].dataset.id;
-                const filteredCities = allCities.filter(city => city.state_id == stateId);
-
-                const citySelect = document.getElementById('city');
                 citySelect.innerHTML = '<option value="">Select City</option>';
-                filteredCities.forEach(city => {
-                    citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
+
+                if (!selectedIso) return;
+
+                const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+
+                for (const state of filteredStates) {
+                    const option = document.createElement('option');
+                    option.value = state.name;
+                    option.dataset.stateCode = state.state_code;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                }
+            });
+
+            // When a state is selected
+            stateSelect.addEventListener('change', () => {
+                const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].dataset.stateCode;
+                const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                citySelect.innerHTML = '<option value="">Select City</option>';
+
+                if (!selectedStateCode || !selectedCountryIso) return;
+
+                const filteredCities = allCities.filter(city =>
+                    city.state_code === selectedStateCode && city.country_code === selectedCountryIso
+                );
+
+                for (const city of filteredCities) {
+                    const option = document.createElement('option');
+                    option.value = city.name;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                }
+            });
+
+            let scrollPosition = 0;
+
+            function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
+                const overlay = document.querySelector(overlaySelector);
+                const openBtn = document.getElementById(openBtnId);
+                const closeBtn = document.getElementById(closeBtnId);
+
+                if (!overlay || !openBtn || !closeBtn) return;
+
+                openBtn.addEventListener('click', () => {
+                    if (!isNested) {
+                        scrollPosition = window.scrollY;
+                        document.body.style.top = `-${scrollPosition}px`;
+                        document.body.classList.add('no-scrolling');
+                    }
+                    overlay.classList.add('active');
                 });
-            });
-        }
 
-        let scrollPosition = 0;
-
-        function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
-            const overlay = document.querySelector(overlaySelector);
-            const openBtn = document.getElementById(openBtnId);
-            const closeBtn = document.getElementById(closeBtnId);
-
-            if (!overlay || !openBtn || !closeBtn) return;
-
-            openBtn.addEventListener('click', () => {
-                if (!isNested) {
-                    scrollPosition = window.scrollY;
-                    document.body.style.top = `-${scrollPosition}px`;
-                    document.body.classList.add('no-scrolling');
+                function closeOverlay() {
+                    overlay.classList.remove('active');
+                    if (!isNested) {
+                        document.body.classList.remove('no-scrolling');
+                        document.body.style.top = '';
+                        window.scrollTo(0, scrollPosition);
+                    }
                 }
-                overlay.classList.add('active');
-            });
 
-            function closeOverlay() {
-                overlay.classList.remove('active');
-                if (!isNested) {
-                    document.body.classList.remove('no-scrolling');
-                    document.body.style.top = '';
-                    window.scrollTo(0, scrollPosition);
-                }
-            }
+                closeBtn.addEventListener('click', closeOverlay);
 
-            closeBtn.addEventListener('click', closeOverlay);
-
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    closeOverlay();
-                }
-            });
-        }
-
-        setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
-
-        document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
-            const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
-        });
-
-        document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-            const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
-        });
-
-        document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
-            const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
-        });
-
-        document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
-            const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
-        });
-
-        const moreBtns = document.querySelectorAll('.more-symbol');
-        const allFrames1 = document.querySelectorAll('.frame1');
-
-        const pfp = document.getElementById('pfp');
-        const frame2 = document.getElementById('frame2');
-        const pfp3 = document.getElementById('pfp3');
-        const frame3 = document.getElementById('frame3');
-        const pfp4 = document.getElementById('pfp4');
-        const frame4 = document.getElementById('frame4');
-
-        allFrames1.forEach(frame => frame.style.display = 'none');
-        if (frame2) frame2.style.display = 'none';
-        if (frame3) frame3.style.display = 'none';
-        if (frame4) frame4.style.display = 'none';
-
-        let isFrame234Open = false;
-
-        moreBtns.forEach((btn, index) => {
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                const isOpen = currentFrame.style.display === 'block';
-
-                allFrames1.forEach(frame => frame.style.display = 'none');
-
-                currentFrame.style.display = isOpen ? 'none' : 'block';
-
-                if (frame2) frame2.style.display = 'none';
-                if (frame3) frame3.style.display = 'none';
-                if (frame4) frame4.style.display = 'none';
-                isFrame234Open = false;
-            });
-        });
-
-        if (pfp) {
-            pfp.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const isOpen = frame2.style.display === 'block';
-                if (isOpen) {
-                    frame2.style.display = 'none';
-                    frame3.style.display = 'none';
-                    frame4.style.display = 'none';
-                    isFrame234Open = false;
-                } else {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    isFrame234Open = true;
-                }
-            });
-        }
-
-        if (pfp3) {
-            pfp3.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const isOpen = frame3.style.display === 'block';
-                if (isOpen) {
-                    frame2.style.display = 'none';
-                    frame3.style.display = 'none';
-                    frame4.style.display = 'none';
-                    isFrame234Open = false;
-                } else {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    isFrame234Open = true;
-                }
-            });
-        }
-
-        if (pfp4) {
-            pfp4.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const isOpen = frame4.style.display === 'block';
-                if (isOpen) {
-                    frame2.style.display = 'none';
-                    frame3.style.display = 'none';
-                    frame4.style.display = 'none';
-                    isFrame234Open = false;
-                } else {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    isFrame234Open = true;
-                }
-            });
-        }
-
-        document.addEventListener('click', function (event) {
-            moreBtns.forEach((btn, index) => {
-                const frame = document.getElementById(`frame1-${index + 1}`);
-                if (!frame.contains(event.target) && event.target !== btn) {
-                    frame.style.display = 'none';
-                }
-            });
-
-            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
-                frame2.style.display = 'none';
-            }
-            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
-                frame3.style.display = 'none';
-            }
-            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
-                frame4.style.display = 'none';
-            }
-
-            const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
-            const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
-            const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
-
-            if (!frame2Visible && !frame3Visible && !frame4Visible) {
-                isFrame234Open = false;
-            }
-        });
-
-        window.addEventListener('resize', function () {
-            if (isFrame234Open) {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-            }
-        });
-
-        function checkScrollbar() {
-            const imageInput = document.getElementById('image');
-            const div = document.getElementById('scrollableDiv');
-            const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
-            const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
-            const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-
-            if (imageInput && div) {
-                div.classList.remove('no-scroll', 'has-scroll');
-                if (imageInput.files.length > 0) {
-                    div.classList.add('has-scroll');
-                } else {
-                    div.classList.add('no-scroll');
-                }
-            }
-
-            const checkScrollState = (divList) => {
-                divList.forEach(el => {
-                    el.classList.remove('no-scroll', 'has-scroll');
-                    if (el.scrollHeight > el.clientHeight) {
-                        el.classList.add('has-scroll');
-                    } else {
-                        el.classList.add('no-scroll');
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        closeOverlay();
                     }
                 });
-            };
+            }
 
-            checkScrollState(likeDivs);
-            checkScrollState(commentDivs);
-            checkScrollState(commentLikeDivs);
-        }
+            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
 
-        const imageInput = document.getElementById('image');
-        if (imageInput) {
-            imageInput.addEventListener('change', checkScrollbar);
-        }
-        checkScrollbar();
-
-        const likeButtons = document.querySelectorAll(".like-button");
-        likeButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                button.classList.toggle("liked");
+            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
             });
-        });
 
-        function setFullHeight() {
-            const rightSidebar = document.querySelector('.right-sidebar');
-            const leftSidebar = document.querySelector('.left-sidebar');
-            if (rightSidebar) rightSidebar.style.height = window.innerHeight + 'px';
-            if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
-        }
+            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
+            });
 
-        window.addEventListener('resize', setFullHeight);
-        setFullHeight();
+            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+            });
 
-        const imageInputPreview = document.getElementById('image');
-        const imageWrapper = document.getElementById('imageWrapper');
-        const imagePreview = document.getElementById('uploadedImagePreview');
-        const closeButton = document.getElementById('closeButton');
+            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+            });
 
-        if (imageInputPreview) {
-            imageInputPreview.addEventListener('change', function () {
-                const file = this.files[0];
+            const moreBtns = document.querySelectorAll('.more-symbol');
+            const allFrames1 = document.querySelectorAll('.frame1');
 
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        imagePreview.src = e.target.result;
-                        imageWrapper.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
+            const pfp = document.getElementById('pfp');
+            const frame2 = document.getElementById('frame2');
+            const pfp3 = document.getElementById('pfp3');
+            const frame3 = document.getElementById('frame3');
+            const pfp4 = document.getElementById('pfp4');
+            const frame4 = document.getElementById('frame4');
+
+            allFrames1.forEach(frame => frame.style.display = 'none');
+            if (frame2) frame2.style.display = 'none';
+            if (frame3) frame3.style.display = 'none';
+            if (frame4) frame4.style.display = 'none';
+
+            let isFrame234Open = false;
+
+            moreBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                    const isOpen = currentFrame.style.display === 'block';
+
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+
+                    currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                    if (frame2) frame2.style.display = 'none';
+                    if (frame3) frame3.style.display = 'none';
+                    if (frame4) frame4.style.display = 'none';
+                    isFrame234Open = false;
+                });
+            });
+
+            if (pfp) {
+                pfp.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame2.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            if (pfp3) {
+                pfp3.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame3.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            if (pfp4) {
+                pfp4.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame4.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                moreBtns.forEach((btn, index) => {
+                    const frame = document.getElementById(`frame1-${index + 1}`);
+                    if (!frame.contains(event.target) && event.target !== btn) {
+                        frame.style.display = 'none';
+                    }
+                });
+
+                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                    frame2.style.display = 'none';
+                }
+                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                    frame3.style.display = 'none';
+                }
+                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                    frame4.style.display = 'none';
+                }
+
+                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+                if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                    isFrame234Open = false;
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (isFrame234Open) {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                }
+            });
+
+            function checkScrollbar() {
+                const imageInput = document.getElementById('image');
+                const div = document.getElementById('scrollableDiv');
+                const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+                const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+                const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+                if (imageInput && div) {
+                    div.classList.remove('no-scroll', 'has-scroll');
+                    if (imageInput.files.length > 0) {
+                        div.classList.add('has-scroll');
+                    } else {
+                        div.classList.add('no-scroll');
+                    }
+                }
+
+                const checkScrollState = (divList) => {
+                    divList.forEach(el => {
+                        el.classList.remove('no-scroll', 'has-scroll');
+                        if (el.scrollHeight > el.clientHeight) {
+                            el.classList.add('has-scroll');
+                        } else {
+                            el.classList.add('no-scroll');
+                        }
+                    });
+                };
+
+                checkScrollState(likeDivs);
+                checkScrollState(commentDivs);
+                checkScrollState(commentLikeDivs);
+            }
+
+            const imageInput = document.getElementById('image');
+            if (imageInput) {
+                imageInput.addEventListener('change', checkScrollbar);
+            }
+            checkScrollbar();
+
+            const likeButtons = document.querySelectorAll(".like-button");
+            likeButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    button.classList.toggle("liked");
+                });
+            });
+
+            function setFullHeight() {
+                const rightSidebar = document.querySelector('.right-sidebar');
+                const leftSidebar = document.querySelector('.left-sidebar');
+                if (rightSidebar) rightSidebar.style.height = window.innerHeight + 'px';
+                if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
+            }
+
+            window.addEventListener('resize', setFullHeight);
+            setFullHeight();
+
+            const imageInputPreview = document.getElementById('image');
+            const imageWrapper = document.getElementById('imageWrapper');
+            const imagePreview = document.getElementById('uploadedImagePreview');
+            const closeButton = document.getElementById('closeButton');
+
+            if (imageInputPreview) {
+                imageInputPreview.addEventListener('change', function () {
+                    const file = this.files[0];
+
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result;
+                            imageWrapper.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.src = '';
+                        imageWrapper.style.display = 'none';
+                    }
+                });
+            }
+
+            if (closeButton) {
+                closeButton.addEventListener('click', function (e) {
+                    e.preventDefault();
                     imagePreview.src = '';
                     imageWrapper.style.display = 'none';
-                }
-            });
-        }
-
-        if (closeButton) {
-            closeButton.addEventListener('click', function (e) {
-                e.preventDefault();
-                imagePreview.src = '';
-                imageWrapper.style.display = 'none';
-                imageInputPreview.value = '';
-            });
-        }
-
-        const circledClose = document.querySelector('.circled-icon-1-overlay-version');
-        if (circledClose) {
-            circledClose.addEventListener('click', function () {
-                document.getElementById('uploadedImagePreview').src = '';
-                document.getElementById('image').value = '';
-                document.getElementById('imageWrapper').style.display = 'none';
-            });
-        }
-
-        const profileForm = document.getElementById('profileForm');
-        if (profileForm) {
-            profileForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const response = await fetch('/api/setup-profile', {
-                    method: 'POST',
-                    body: formData
+                    imageInputPreview.value = '';
                 });
-                const result = await response.json();
-                if (result.success) {
-                    document.getElementById('profileModal').style.display = 'none';
-                }
-            });
-        }
+            }
+
+            const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+            if (circledClose) {
+                circledClose.addEventListener('click', function () {
+                    document.getElementById('uploadedImagePreview').src = '';
+                    document.getElementById('image').value = '';
+                    document.getElementById('imageWrapper').style.display = 'none';
+                });
+            }
+
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const response = await fetch('/api/setup-profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('profileModal').style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
 </body>
