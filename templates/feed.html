@@ -418,72 +418,97 @@
         {% if show_profile_modal %}
         <div id="profileModal" class="modal show">
             <form method="POST" id="profileForm" action="/api/setup-profile">
-                <h2>Your Skills</h2>
-                {% for category in categories %}
-                <label>
-                    <input type="checkbox" name="skills" value="{{ category }}">
-                    {{ category }}
-                </label><br>
-                {% endfor %}
-
-                <h2>Your Preferences</h2>
-                {% for category in categories %}
-                <label>
-                    <input type="checkbox" name="preferences" value="{{ category }}">
-                    {{ category }}
-                </label><br>
-                {% endfor %}
-
-                <h2>Experience Level</h2>
-                <label for="experience_level">Select your level:</label><br>
-                <select name="experience_level" id="experience_level" required>
-                    {% for value, label in experience_levels %}
-                    <option value="{{ value }}">{{ label }}</option>
+                <div class="modal-step" data-step="1">
+                    <h2>Your Skills</h2>
+                    {% for category in categories %}
+                    <label>
+                        <input type="checkbox" name="skills" value="{{ category }}">
+                        {{ category }}
+                    </label><br>
                     {% endfor %}
-                </select><br><br>
+                    <button type="button" class="next">Next</button>
+                </div>
 
-                <h2>Your Role</h2>
-                <label for="role">What best describes your role?</label><br>
-                <input type="text" id="role" name="role" maxlength="100" required><br><br>
-
-                <h2>Location</h2>
-                <label for="country">Country:</label><br>
-                <select id="country" name="country" required>
-                    <option value="">Select Country</option>
-                    {% for country in countries %}
-                    <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
+                <div class="modal-step" data-step="2" style="display:none;">
+                    <h2>Your Preferences</h2>
+                    {% for category in categories %}
+                    <label>
+                        <input type="checkbox" name="preferences" value="{{ category }}">
+                        {{ category }}
+                    </label><br>
                     {% endfor %}
-                </select><br><br>
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
 
-                <label for="state">State/Region:</label><br>
-                <select id="state" name="state" required>
-                    <option value="">Select State</option>
-                </select><br><br>
+                <div class="modal-step" data-step="3" style="display:none;">
+                    <h2>Experience Level</h2>
+                    <label for="experience_level">Select your level:</label><br>
+                    <select name="experience_level" id="experience_level" required>
+                        {% for value, label in experience_levels %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select><br><br>
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
 
-                <label for="city">City:</label><br>
-                <select id="city" name="city" required>
-                    <option value="">Select City</option>
-                </select><br><br>
+                <div class="modal-step" data-step="4" style="display:none;">
+                    <h2>Your Role</h2>
+                    <label for="role">What best describes your role?</label><br>
+                    <input type="text" id="role" name="role" maxlength="100" required><br><br>
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
 
-                <h2>Social Media Links</h2>
-                <label for="facebook">Facebook:</label><br>
-                <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/yourprofile"><br><br>
+                <div class="modal-step" data-step="5" style="display:none;">
+                    <h2>Location</h2>
+                    <label for="country">Country:</label><br>
+                    <select id="country" name="country" required>
+                        <option value="">Select Country</option>
+                        {% for country in countries %}
+                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
+                        {% endfor %}
+                    </select><br><br>
 
-                <label for="instagram">Instagram:</label><br>
-                <input type="url" id="instagram" name="instagram"
-                    placeholder="https://instagram.com/yourprofile"><br><br>
+                    <label for="state">State/Region:</label><br>
+                    <select id="state" name="state" required>
+                        <option value="">Select State</option>
+                    </select><br><br>
 
-                <label for="x">X (Twitter):</label><br>
-                <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
+                    <label for="city">City:</label><br>
+                    <select id="city" name="city" required>
+                        <option value="">Select City</option>
+                    </select><br><br>
 
-                <label for="linkedin">LinkedIn:</label><br>
-                <input type="url" id="linkedin" name="linkedin"
-                    placeholder="https://linkedin.com/in/yourprofile"><br><br>
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
 
-                <label for="telegram">Telegram:</label><br>
-                <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
+                <div class="modal-step" data-step="6" style="display:none;">
+                    <h2>Social Media Links</h2>
 
-                <button type="submit">Save Profile</button>
+                    <label for="facebook">Facebook:</label><br>
+                    <input type="url" id="facebook" name="facebook"
+                        placeholder="https://facebook.com/yourprofile"><br><br>
+
+                    <label for="instagram">Instagram:</label><br>
+                    <input type="url" id="instagram" name="instagram"
+                        placeholder="https://instagram.com/yourprofile"><br><br>
+
+                    <label for="x">X (Twitter):</label><br>
+                    <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
+
+                    <label for="linkedin">LinkedIn:</label><br>
+                    <input type="url" id="linkedin" name="linkedin"
+                        placeholder="https://linkedin.com/in/yourprofile"><br><br>
+
+                    <label for="telegram">Telegram:</label><br>
+                    <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
+
+                    <button type="button" class="prev">Previous</button>
+                    <button type="submit">Save Profile</button>
+                </div>
             </form>
         </div>
         {% endif %}
@@ -825,6 +850,36 @@
                 document.getElementById('profileModal').style.display = 'none';
             }
         });
+
+        const steps = document.querySelectorAll('.modal-step');
+        let currentStep = 0;
+
+        function showStep(index) {
+            steps.forEach((step, i) => {
+                step.style.display = (i === index) ? 'block' : 'none';
+            });
+        }
+
+        document.querySelectorAll('.next').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        document.querySelectorAll('.prev').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        // Initialize the first step
+        showStep(currentStep);
     </script>
 </body>
 
