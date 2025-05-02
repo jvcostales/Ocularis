@@ -140,7 +140,6 @@
             </div>
             <!--bakit naka-center ung post 1 kapag un lang ung content-->
             <!--fix class names-->
-            {% if images|length > 0 %}
             {% for image in images %}
             <div class="post1">
                 <div class="profile-more-wrapper">
@@ -338,13 +337,6 @@
                 </div>
             </div>
             {% endfor %}
-            {% else %}
-            <div class="notifs-empty" style="height: 1000px;">
-                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                <div class="oops">Oops!</div>
-                <div class="nothing">Nothing to show here at the moment.</div>
-            </div>
-            {% endif %}
         </div>
         <div class="right-sidebar-container">
             <div class="right-sidebar">
