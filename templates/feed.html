@@ -494,22 +494,8 @@
         const allStates = {{ states | tojson }};
         const allCities = {{ cities | tojson }};
 
-        function waitForElement(selector, callback) {
-            const element = document.querySelector(selector);
-            if (element) return callback(element);
-
-            const observer = new MutationObserver(() => {
-                const el = document.querySelector(selector);
-                if (el) {
-                    observer.disconnect();
-                    callback(el);
-                }
-            });
-
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-
-        waitForElement('#country', (countrySelect) => {
+        const countrySelect = document.getElementById('country');
+        if (countrySelect) {
             countrySelect.addEventListener('change', function () {
                 const iso = this.options[this.selectedIndex].dataset.iso;
                 const filteredStates = allStates.filter(state => state.country_code === iso);
@@ -522,9 +508,10 @@
 
                 document.getElementById('city').innerHTML = '<option value="">Select City</option>';
             });
-        });
+        }
 
-        waitForElement('#state', (stateSelect) => {
+        const stateSelect = document.getElementById('state');
+        if (stateSelect) {
             stateSelect.addEventListener('change', function () {
                 const stateId = this.options[this.selectedIndex].dataset.id;
                 const filteredCities = allCities.filter(city => city.state_id == stateId);
@@ -535,38 +522,41 @@
                     citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
                 });
             });
-        });
+        }
 
         let scrollPosition = 0;
 
         function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
-            waitForElement(overlaySelector, (overlay) => {
-                waitForElement(`#${openBtnId}`, (openBtn) => {
-                    waitForElement(`#${closeBtnId}`, (closeBtn) => {
-                        openBtn.addEventListener('click', () => {
-                            if (!isNested) {
-                                scrollPosition = window.scrollY;
-                                document.body.style.top = `-${scrollPosition}px`;
-                                document.body.classList.add('no-scrolling');
-                            }
-                            overlay.classList.add('active');
-                        });
+            const overlay = document.querySelector(overlaySelector);
+            const openBtn = document.getElementById(openBtnId);
+            const closeBtn = document.getElementById(closeBtnId);
 
-                        function closeOverlay() {
-                            overlay.classList.remove('active');
-                            if (!isNested) {
-                                document.body.classList.remove('no-scrolling');
-                                document.body.style.top = '';
-                                window.scrollTo(0, scrollPosition);
-                            }
-                        }
+            if (!overlay || !openBtn || !closeBtn) return;
 
-                        closeBtn.addEventListener('click', closeOverlay);
-                        overlay.addEventListener('click', (e) => {
-                            if (e.target === overlay) closeOverlay();
-                        });
-                    });
-                });
+            openBtn.addEventListener('click', () => {
+                if (!isNested) {
+                    scrollPosition = window.scrollY;
+                    document.body.style.top = `-${scrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                }
+                overlay.classList.add('active');
+            });
+
+            function closeOverlay() {
+                overlay.classList.remove('active');
+                if (!isNested) {
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollPosition);
+                }
+            }
+
+            closeBtn.addEventListener('click', closeOverlay);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeOverlay();
+                }
             });
         }
 
@@ -592,131 +582,130 @@
             setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
         });
 
-        waitForElement('.more-symbol', () => {
-            const moreBtns = document.querySelectorAll('.more-symbol');
-            const allFrames1 = document.querySelectorAll('.frame1');
+        const moreBtns = document.querySelectorAll('.more-symbol');
+        const allFrames1 = document.querySelectorAll('.frame1');
 
-            const pfp = document.getElementById('pfp');
-            const frame2 = document.getElementById('frame2');
-            const pfp3 = document.getElementById('pfp3');
-            const frame3 = document.getElementById('frame3');
-            const pfp4 = document.getElementById('pfp4');
-            const frame4 = document.getElementById('frame4');
+        const pfp = document.getElementById('pfp');
+        const frame2 = document.getElementById('frame2');
+        const pfp3 = document.getElementById('pfp3');
+        const frame3 = document.getElementById('frame3');
+        const pfp4 = document.getElementById('pfp4');
+        const frame4 = document.getElementById('frame4');
 
-            allFrames1.forEach(frame => frame.style.display = 'none');
-            if (frame2) frame2.style.display = 'none';
-            if (frame3) frame3.style.display = 'none';
-            if (frame4) frame4.style.display = 'none';
+        allFrames1.forEach(frame => frame.style.display = 'none');
+        if (frame2) frame2.style.display = 'none';
+        if (frame3) frame3.style.display = 'none';
+        if (frame4) frame4.style.display = 'none';
 
-            let isFrame234Open = false;
+        let isFrame234Open = false;
 
-            moreBtns.forEach((btn, index) => {
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                    const isOpen = currentFrame.style.display === 'block';
+        moreBtns.forEach((btn, index) => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                const isOpen = currentFrame.style.display === 'block';
 
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    currentFrame.style.display = isOpen ? 'none' : 'block';
+                allFrames1.forEach(frame => frame.style.display = 'none');
 
-                    if (frame2) frame2.style.display = 'none';
-                    if (frame3) frame3.style.display = 'none';
-                    if (frame4) frame4.style.display = 'none';
-                    isFrame234Open = false;
-                });
+                currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                if (frame2) frame2.style.display = 'none';
+                if (frame3) frame3.style.display = 'none';
+                if (frame4) frame4.style.display = 'none';
+                isFrame234Open = false;
             });
+        });
 
-            if (pfp) {
-                pfp.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame2.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            if (pfp3) {
-                pfp3.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame3.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            if (pfp4) {
-                pfp4.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame4.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            document.addEventListener('click', function (event) {
-                moreBtns.forEach((btn, index) => {
-                    const frame = document.getElementById(`frame1-${index + 1}`);
-                    if (!frame.contains(event.target) && event.target !== btn) {
-                        frame.style.display = 'none';
-                    }
-                });
-
-                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+        if (pfp) {
+            pfp.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame2.style.display === 'block';
+                if (isOpen) {
                     frame2.style.display = 'none';
-                }
-                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
                     frame3.style.display = 'none';
-                }
-                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
                     frame4.style.display = 'none';
-                }
-
-                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
-                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
-                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
-
-                if (!frame2Visible && !frame3Visible && !frame4Visible) {
                     isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        if (pfp3) {
+            pfp3.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame3.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        if (pfp4) {
+            pfp4.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame4.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            moreBtns.forEach((btn, index) => {
+                const frame = document.getElementById(`frame1-${index + 1}`);
+                if (!frame.contains(event.target) && event.target !== btn) {
+                    frame.style.display = 'none';
                 }
             });
 
-            window.addEventListener('resize', function () {
-                if (isFrame234Open) {
-                    if (frame2) frame2.style.display = 'block';
-                    if (frame3) frame3.style.display = 'block';
-                    if (frame4) frame4.style.display = 'block';
-                }
-            });
+            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                frame2.style.display = 'none';
+            }
+            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                frame3.style.display = 'none';
+            }
+            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                frame4.style.display = 'none';
+            }
+
+            const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+            const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+            const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+            if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                isFrame234Open = false;
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (isFrame234Open) {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+            }
         });
 
         function checkScrollbar() {
@@ -751,20 +740,16 @@
             checkScrollState(commentLikeDivs);
         }
 
-        window.addEventListener('load', () => {
-            const imageInput = document.getElementById('image');
-            if (imageInput) {
-                imageInput.addEventListener('change', checkScrollbar);
-            }
-            checkScrollbar();
-        });
+        const imageInput = document.getElementById('image');
+        if (imageInput) {
+            imageInput.addEventListener('change', checkScrollbar);
+        }
+        checkScrollbar();
 
-        waitForElement('.like-button', () => {
-            const likeButtons = document.querySelectorAll(".like-button");
-            likeButtons.forEach(button => {
-                button.addEventListener("click", () => {
-                    button.classList.toggle("liked");
-                });
+        const likeButtons = document.querySelectorAll(".like-button");
+        likeButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                button.classList.toggle("liked");
             });
         });
 
@@ -774,14 +759,16 @@
             if (rightSidebar) rightSidebar.style.height = window.innerHeight + 'px';
             if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
         }
+
         window.addEventListener('resize', setFullHeight);
-        window.addEventListener('load', setFullHeight);
+        setFullHeight();
 
-        waitForElement('#image', (imageInputPreview) => {
-            const imageWrapper = document.getElementById('imageWrapper');
-            const imagePreview = document.getElementById('uploadedImagePreview');
-            const closeButton = document.getElementById('closeButton');
+        const imageInputPreview = document.getElementById('image');
+        const imageWrapper = document.getElementById('imageWrapper');
+        const imagePreview = document.getElementById('uploadedImagePreview');
+        const closeButton = document.getElementById('closeButton');
 
+        if (imageInputPreview) {
             imageInputPreview.addEventListener('change', function () {
                 const file = this.files[0];
 
@@ -797,27 +784,28 @@
                     imageWrapper.style.display = 'none';
                 }
             });
+        }
 
-            if (closeButton) {
-                closeButton.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    imagePreview.src = '';
-                    imageWrapper.style.display = 'none';
-                    imageInputPreview.value = '';
-                });
-            }
+        if (closeButton) {
+            closeButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                imagePreview.src = '';
+                imageWrapper.style.display = 'none';
+                imageInputPreview.value = '';
+            });
+        }
 
-            const circledClose = document.querySelector('.circled-icon-1-overlay-version');
-            if (circledClose) {
-                circledClose.addEventListener('click', function () {
-                    imagePreview.src = '';
-                    imageInputPreview.value = '';
-                    imageWrapper.style.display = 'none';
-                });
-            }
-        });
+        const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+        if (circledClose) {
+            circledClose.addEventListener('click', function () {
+                document.getElementById('uploadedImagePreview').src = '';
+                document.getElementById('image').value = '';
+                document.getElementById('imageWrapper').style.display = 'none';
+            });
+        }
 
-        waitForElement('#profileForm', (profileForm) => {
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
             profileForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const formData = new FormData(this);
@@ -830,7 +818,7 @@
                     document.getElementById('profileModal').style.display = 'none';
                 }
             });
-        });
+        }
         });
     </script>
 </body>
