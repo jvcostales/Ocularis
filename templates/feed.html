@@ -141,7 +141,7 @@
             <!--bakit naka-center ung post 1 kapag un lang ung content-->
             <!--fix class names-->
             {% for image in images %}
-            <div class="post1">
+            <div class="post1" {% if loop.last %}style="margin-bottom: 16px;"{% endif %}>
                 <div class="profile-more-wrapper">
                     <div class="profile-post">
                         <img src="..\static\pfp.jpg" class="pfp">
