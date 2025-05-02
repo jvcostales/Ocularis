@@ -500,30 +500,37 @@
 
             // Fetch all states and cities once
             fetch('/api/get-states')
-                .then(res => res.text())  // <-- use text instead of json
-                .then(data => console.log('States raw response:', data));
+                .then(res => res.json())
+                .then(data => {
+                    allStates = data;
+                    console.log('Fetched States:', allStates);
+                });
 
             fetch('/api/get-cities')
                 .then(res => res.json())
-                .then(data => allCities = data);
+                .then(data => {
+                    allCities = data;
+                    console.log('Fetched Cities:', allCities);
+                });
 
             // When a country is selected
             countrySelect.addEventListener('change', () => {
-                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-                stateSelect.innerHTML = '<option value="">Select State</option>';
-                citySelect.innerHTML = '<option value="">Select City</option>';
+                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;  // Get selected country ISO
+                stateSelect.innerHTML = '<option value="">Select State</option>';  // Reset state options
+                citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
 
-                if (!selectedIso) return;
+                if (!selectedIso) return;  // If no country is selected, do nothing
 
-                const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                const filteredStates = allStates.filter(state => state.country_code === selectedIso);  // Filter states by country_code
+                console.log('Filtered States:', filteredStates);  // Log filtered states to check if it's correct
 
-                for (const state of filteredStates) {
+                // Add filtered states to the state dropdown
+                filteredStates.forEach(state => {
                     const option = document.createElement('option');
-                    option.value = state.name;
-                    option.dataset.stateCode = state.state_code;
+                    option.value = state.state_code;  // Using state_code as value for easy reference
                     option.textContent = state.name;
                     stateSelect.appendChild(option);
-                }
+                });
             });
 
             // When a state is selected
@@ -531,20 +538,20 @@
                 const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].dataset.stateCode;
                 const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
 
-                citySelect.innerHTML = '<option value="">Select City</option>';
+                citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
 
-                if (!selectedStateCode || !selectedCountryIso) return;
+                if (!selectedStateCode || !selectedCountryIso) return;  // If no state or country is selected, do nothing
 
                 const filteredCities = allCities.filter(city =>
-                    city.state_code === selectedStateCode && city.country_code === selectedCountryIso
+                    city.state_code === selectedStateCode && city.country_code === selectedCountryIso  // Filter cities by state_code and country_code
                 );
 
-                for (const city of filteredCities) {
+                filteredCities.forEach(city => {
                     const option = document.createElement('option');
                     option.value = city.name;
                     option.textContent = city.name;
                     citySelect.appendChild(option);
-                }
+                });
             });
 
             let scrollPosition = 0;
