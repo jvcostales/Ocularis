@@ -490,6 +490,40 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const allStates = {{ states | tojson }};
+        const allCities = {{ cities | tojson }};
+
+        const countrySelect = document.getElementById('country');
+        if (countrySelect) {
+            countrySelect.addEventListener('change', function () {
+                const iso = this.options[this.selectedIndex].dataset.iso;
+                const filteredStates = allStates.filter(state => state.country_code === iso);
+
+                const stateSelect = document.getElementById('state');
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                filteredStates.forEach(state => {
+                    stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
+                });
+
+                document.getElementById('city').innerHTML = '<option value="">Select City</option>';
+            });
+        }
+
+        const stateSelect = document.getElementById('state');
+        if (stateSelect) {
+            stateSelect.addEventListener('change', function () {
+                const stateId = this.options[this.selectedIndex].dataset.id;
+                const filteredCities = allCities.filter(city => city.state_id == stateId);
+
+                const citySelect = document.getElementById('city');
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                filteredCities.forEach(city => {
+                    citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
+                });
+            });
+        }
+
         let scrollPosition = 0;
 
         function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
@@ -526,10 +560,8 @@
             });
         }
 
-        // Static overlay setup
         setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
 
-        // Dynamic overlays setup for Likes, Comments, and Shares
         document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
             const index = overlay.id.split('-')[1];
             setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
@@ -537,7 +569,7 @@
 
         document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
             const index = overlay.id.split('-')[1];
-            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
+            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
         });
 
         document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
@@ -550,7 +582,6 @@
             setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
         });
 
-        // Get all 'more' buttons and corresponding frame1s
         const moreBtns = document.querySelectorAll('.more-symbol');
         const allFrames1 = document.querySelectorAll('.frame1');
 
@@ -561,92 +592,88 @@
         const pfp4 = document.getElementById('pfp4');
         const frame4 = document.getElementById('frame4');
 
-        // Hide all frames initially
         allFrames1.forEach(frame => frame.style.display = 'none');
-        frame2.style.display = 'none';
-        frame3.style.display = 'none';
-        frame4.style.display = 'none';
+        if (frame2) frame2.style.display = 'none';
+        if (frame3) frame3.style.display = 'none';
+        if (frame4) frame4.style.display = 'none';
 
         let isFrame234Open = false;
 
-        // Add event listener to each "more" button
         moreBtns.forEach((btn, index) => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const currentFrame = document.getElementById(`frame1-${index + 1}`);
                 const isOpen = currentFrame.style.display === 'block';
 
-                // Close all frame1 elements
                 allFrames1.forEach(frame => frame.style.display = 'none');
 
-                // Toggle the current one
                 currentFrame.style.display = isOpen ? 'none' : 'block';
 
-                // Close other frames
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
+                if (frame2) frame2.style.display = 'none';
+                if (frame3) frame3.style.display = 'none';
+                if (frame4) frame4.style.display = 'none';
                 isFrame234Open = false;
             });
         });
 
-        // Frame 2 toggle
-        pfp.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame2.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
-            }
-        });
+        if (pfp) {
+            pfp.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame2.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
 
-        // Frame 3 toggle
-        pfp3.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame3.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
-            }
-        });
+        if (pfp3) {
+            pfp3.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame3.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
 
-        // Frame 4 toggle
-        pfp4.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isOpen = frame4.style.display === 'block';
-            if (isOpen) {
-                frame2.style.display = 'none';
-                frame3.style.display = 'none';
-                frame4.style.display = 'none';
-                isFrame234Open = false;
-            } else {
-                frame2.style.display = 'block';
-                frame3.style.display = 'block';
-                frame4.style.display = 'block';
-                allFrames1.forEach(frame => frame.style.display = 'none');
-                isFrame234Open = true;
-            }
-        });
+        if (pfp4) {
+            pfp4.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame4.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
 
-        // Click anywhere outside to close all
         document.addEventListener('click', function (event) {
-            // Close all frame1s
             moreBtns.forEach((btn, index) => {
                 const frame = document.getElementById(`frame1-${index + 1}`);
                 if (!frame.contains(event.target) && event.target !== btn) {
@@ -654,27 +681,25 @@
                 }
             });
 
-            // Close frame2–4
-            if (!frame2.contains(event.target) && event.target !== pfp) {
+            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
                 frame2.style.display = 'none';
             }
-            if (!frame3.contains(event.target) && event.target !== pfp3) {
+            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
                 frame3.style.display = 'none';
             }
-            if (!frame4.contains(event.target) && event.target !== pfp4) {
+            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
                 frame4.style.display = 'none';
             }
 
-            const frame2Visible = window.getComputedStyle(frame2).display !== 'none';
-            const frame3Visible = window.getComputedStyle(frame3).display !== 'none';
-            const frame4Visible = window.getComputedStyle(frame4).display !== 'none';
+            const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+            const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+            const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
 
             if (!frame2Visible && !frame3Visible && !frame4Visible) {
                 isFrame234Open = false;
             }
         });
 
-        // Reshow frame2–4 on resize if they were open
         window.addEventListener('resize', function () {
             if (isFrame234Open) {
                 frame2.style.display = 'block';
@@ -690,7 +715,6 @@
             const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
             const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
 
-            // Main image scrollable div
             if (imageInput && div) {
                 div.classList.remove('no-scroll', 'has-scroll');
                 if (imageInput.files.length > 0) {
@@ -700,7 +724,6 @@
                 }
             }
 
-            // Generic scrollbar check for any list of divs
             const checkScrollState = (divList) => {
                 divList.forEach(el => {
                     el.classList.remove('no-scroll', 'has-scroll');
@@ -717,16 +740,13 @@
             checkScrollState(commentLikeDivs);
         }
 
-        window.addEventListener('load', () => {
-            const imageInput = document.getElementById('image');
-            if (imageInput) {
-                imageInput.addEventListener('change', checkScrollbar);
-            }
-            checkScrollbar(); // Initial check on load
-        });
+        const imageInput = document.getElementById('image');
+        if (imageInput) {
+            imageInput.addEventListener('change', checkScrollbar);
+        }
+        checkScrollbar();
 
         const likeButtons = document.querySelectorAll(".like-button");
-
         likeButtons.forEach(button => {
             button.addEventListener("click", () => {
                 button.classList.toggle("liked");
@@ -734,99 +754,72 @@
         });
 
         function setFullHeight() {
-            document.querySelector('.right-sidebar').style.height = window.innerHeight + 'px';
-            document.querySelector('.left-sidebar').style.height = window.innerHeight + 'px';
+            const rightSidebar = document.querySelector('.right-sidebar');
+            const leftSidebar = document.querySelector('.left-sidebar');
+            if (rightSidebar) rightSidebar.style.height = window.innerHeight + 'px';
+            if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
         }
+
         window.addEventListener('resize', setFullHeight);
-        window.addEventListener('load', setFullHeight);
+        setFullHeight();
 
         const imageInputPreview = document.getElementById('image');
         const imageWrapper = document.getElementById('imageWrapper');
         const imagePreview = document.getElementById('uploadedImagePreview');
         const closeButton = document.getElementById('closeButton');
 
-        imageInputPreview.addEventListener('change', function () {
-            const file = this.files[0];
+        if (imageInputPreview) {
+            imageInputPreview.addEventListener('change', function () {
+                const file = this.files[0];
 
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imageWrapper.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '';
+                    imageWrapper.style.display = 'none';
+                }
+            });
+        }
 
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imageWrapper.style.display = 'block'; // Show wrapper when image is valid
-                };
-
-                reader.readAsDataURL(file);
-            } else {
+        if (closeButton) {
+            closeButton.addEventListener('click', function (e) {
+                e.preventDefault();
                 imagePreview.src = '';
-                imageWrapper.style.display = 'none'; // Hide wrapper if no image or invalid file
-            }
-        });
-
-        closeButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            imagePreview.src = '';
-            imageWrapper.style.display = 'none';
-            imageInputPreview.value = ''; // Reset input field
-        });
-
-        //close button preview
-        document.querySelector('.circled-icon-1-overlay-version').addEventListener('click', function () {
-            // Clear the image preview
-            document.getElementById('uploadedImagePreview').src = '';
-
-            // Clear the uploaded file
-            document.getElementById('image').value = '';
-
-            // Hide the wrapper div
-            document.getElementById('imageWrapper').style.display = 'none';
-        });
-
-        document.getElementById('profileForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            const response = await fetch('/api/setup-profile', {
-                method: 'POST',
-                body: formData
+                imageWrapper.style.display = 'none';
+                imageInputPreview.value = '';
             });
+        }
 
-            const result = await response.json();
-            if (result.success) {
-                document.getElementById('profileModal').style.display = 'none';
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const allStates = {{ states | tojson
-        }};
-        const allCities = {{ cities | tojson }};
-
-        document.getElementById('country').addEventListener('change', function () {
-            const iso = this.options[this.selectedIndex].dataset.iso;
-            const filteredStates = allStates.filter(state => state.country_code === iso);
-
-            const stateSelect = document.getElementById('state');
-            stateSelect.innerHTML = '<option value="">Select State</option>';
-            filteredStates.forEach(state => {
-                stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
+        const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+        if (circledClose) {
+            circledClose.addEventListener('click', function () {
+                document.getElementById('uploadedImagePreview').src = '';
+                document.getElementById('image').value = '';
+                document.getElementById('imageWrapper').style.display = 'none';
             });
+        }
 
-            document.getElementById('city').innerHTML = '<option value="">Select City</option>';
-        });
-
-        document.getElementById('state').addEventListener('change', function () {
-            const stateId = this.options[this.selectedIndex].dataset.id;
-            const filteredCities = allCities.filter(city => city.state_id == stateId);
-
-            const citySelect = document.getElementById('city');
-            citySelect.innerHTML = '<option value="">Select City</option>';
-            filteredCities.forEach(city => {
-                citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch('/api/setup-profile', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('profileModal').style.display = 'none';
+                }
             });
+        }
         });
-        });
-
     </script>
 </body>
 
