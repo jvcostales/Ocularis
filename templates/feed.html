@@ -495,70 +495,68 @@
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
 
-            let allStates = [];
-            let allCities = [];
+            if (countrySelect && stateSelect && citySelect) {
+                let allStates = [];
+                let allCities = [];
 
-            // Fetch all states and cities once
-            fetch('/api/get-states')
-                .then(res => res.json())
-                .then(data => {
-                    allStates = data;
-                    console.log('Fetched States:', allStates);
-                });
-
-            fetch('/api/get-cities')
-                .then(res => res.json())
-                .then(data => {
-                    allCities = data;
-                    console.log('Fetched Cities:', allCities);
-                });
-
-            // When a country is selected
-            countrySelect.addEventListener('change', () => {
-                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;  // Get selected country ISO
-                stateSelect.innerHTML = '<option value="">Select State</option>';  // Reset state options
-                citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
-
-                if (!selectedIso) return;  // If no country is selected, do nothing
-
-                const filteredStates = allStates.filter(state => state.country_code === selectedIso);  // Filter states by country_code
-                console.log('Filtered States:', filteredStates);  // Log filtered states to check if it's correct
-
-                // Add filtered states to the state dropdown
-                filteredStates.forEach(state => {
-                    const option = document.createElement('option');
-                    option.value = state.state_code;  // Using state_code as value for easy reference
-                    option.textContent = state.name;
-                    stateSelect.appendChild(option);
-                });
-            });
-
-            stateSelect.addEventListener('change', () => {
-                const selectedStateCode = stateSelect.value;
-                const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-
-                citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
-
-                console.log('Selected country ISO:', selectedCountryIso);
-                console.log('Selected state code:', selectedStateCode);
-
-                if (!selectedStateCode || !selectedCountryIso) return;
-
-                // Fetch cities from backend using query parameters
-                fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                fetch('/api/get-states')
                     .then(res => res.json())
-                    .then(filteredCities => {
-                        filteredCities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city.name;
-                            option.textContent = city.name;
-                            citySelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching cities:', error);
+                    .then(data => {
+                        allStates = data;
+                        console.log('Fetched States:', allStates);
                     });
-            });
+
+                fetch('/api/get-cities')
+                    .then(res => res.json())
+                    .then(data => {
+                        allCities = data;
+                        console.log('Fetched Cities:', allCities);
+                    });
+
+                countrySelect.addEventListener('change', () => {
+                    const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                    stateSelect.innerHTML = '<option value="">Select State</option>';
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+
+                    if (!selectedIso) return;
+
+                    const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                    console.log('Filtered States:', filteredStates);
+
+                    filteredStates.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.state_code;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                    });
+                });
+
+                stateSelect.addEventListener('change', () => {
+                    const selectedStateCode = stateSelect.value;
+                    const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+
+                    console.log('Selected country ISO:', selectedCountryIso);
+                    console.log('Selected state code:', selectedStateCode);
+
+                    if (!selectedStateCode || !selectedCountryIso) return;
+
+                    fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                        .then(res => res.json())
+                        .then(filteredCities => {
+                            filteredCities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.name;
+                                option.textContent = city.name;
+                                citySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cities:', error);
+                        });
+                });
+            }
 
             let scrollPosition = 0;
 
@@ -845,13 +843,23 @@
                 profileForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
                     const formData = new FormData(this);
-                    const response = await fetch('/api/setup-profile', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        document.getElementById('profileModal').style.display = 'none';
+                    try {
+                        const response = await fetch('/api/setup-profile', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            document.getElementById('profileModal').style.display = 'none';
+                            window.location.href = result.redirect_url;
+                        } else {
+                            alert('Something went wrong while saving your profile.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
                     }
                 });
             }
