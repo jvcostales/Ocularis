@@ -100,6 +100,44 @@
                             class="material-symbols-outlined image">image</span></button>
                 </div>
             </div>
+            <div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
+                <div class="overlay-content">
+                    <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlay">close</span></button>
+                    <div class="overlay-title">Post</div>
+                    <div class="scrollable-div no-scroll" id="scrollableDiv">
+                        <div class="profile-post">
+                            <img src="..\static\pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">Lorem ipsum dolor</div>
+                                <div class="date">Jan 1</div>
+                            </div>
+                        </div>
+                        <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data">
+                            <input class="overlay-tagline" type="text" id="caption" name="caption"
+                                placeholder="Do you mind sharing your work?">
+                            <div class="upload">
+                                <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
+                                <div class="drop">Drop your images here or browse</div>
+                                <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
+                                <button class="browse-file" type="button"
+                                    onclick="document.getElementById('image').click();">
+                                    Browse File
+                                </button>
+                                <input type="file" id="image" name="image" accept="image/*" style="display: none;"
+                                    required>
+                            </div>
+                            <div class="image-button-wrapper" id="imageWrapper" style="display: none;">
+                                <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview">
+                                </div>
+                                <button class="circled-icon-1-overlay-version"><span
+                                        class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
+                            </div>
+                    </div>
+                    <input type="submit" value="Post" class="post-button">
+                    </form>
+                </div>
+            </div>
             <!--bakit naka-center ung post 1 kapag un lang ung content-->
             <!--fix class names-->
             {% for image in images %}
@@ -149,44 +187,6 @@
                     <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
                         {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
                     </div>
-                </div>
-            </div>
-            <div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
-                <div class="overlay-content">
-                    <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlay">close</span></button>
-                    <div class="overlay-title">Post</div>
-                    <div class="scrollable-div no-scroll" id="scrollableDiv">
-                        <div class="profile-post">
-                            <img src="..\static\pfp.jpg" class="pfp">
-                            <div class="profile-name-date">
-                                <div class="username">Lorem ipsum dolor</div>
-                                <div class="date">Jan 1</div>
-                            </div>
-                        </div>
-                        <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data">
-                            <input class="overlay-tagline" type="text" id="caption" name="caption"
-                                placeholder="Do you mind sharing your work?">
-                            <div class="upload">
-                                <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
-                                <div class="drop">Drop your images here or browse</div>
-                                <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
-                                <button class="browse-file" type="button"
-                                    onclick="document.getElementById('image').click();">
-                                    Browse File
-                                </button>
-                                <input type="file" id="image" name="image" accept="image/*" style="display: none;"
-                                    required>
-                            </div>
-                            <div class="image-button-wrapper" id="imageWrapper" style="display: none;">
-                                <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview">
-                                </div>
-                                <button class="circled-icon-1-overlay-version"><span
-                                        class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
-                            </div>
-                    </div>
-                    <input type="submit" value="Post" class="post-button">
-                    </form>
                 </div>
             </div>
             <div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
@@ -784,7 +784,7 @@
             document.getElementById('imageWrapper').style.display = 'none';
         });
 
-                //setup_profile script
+        //setup_profile script
         const allStates = {{ states | tojson }};
         const allCities = {{ cities | tojson }};
 
