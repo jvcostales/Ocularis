@@ -535,8 +535,8 @@
 
             // When a state is selected
             stateSelect.addEventListener('change', () => {
-                const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].dataset.stateCode;
-                const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                const selectedStateCode = stateSelect.value;
+                const selectedCountryIso = countrySelect.value;
 
                 citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
 
