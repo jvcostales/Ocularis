@@ -550,6 +550,11 @@
                     city.country_code === selectedCountryIso
                 );
 
+                console.log('All Cities:', allCities);
+                allCities.forEach(city => {
+                    console.log(`City: ${city.name}, State Code: ${city.state_code}, Country Code: ${city.country_code}`);
+                });
+
                 filteredCities.forEach(city => {
                     const option = document.createElement('option');
                     option.value = city.name;
