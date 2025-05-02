@@ -540,10 +540,14 @@
 
                 citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
 
+                console.log('Selected country ISO:', selectedCountryIso);
+                console.log('Selected state code:', selectedStateCode);
+
                 if (!selectedStateCode || !selectedCountryIso) return;  // If no state or country is selected, do nothing
 
                 const filteredCities = allCities.filter(city =>
-                    city.state_code === selectedStateCode && city.country_code === selectedCountryIso  // Filter cities by state_code and country_code
+                    city.state_code === selectedStateCode &&
+                    city.country_code === selectedCountryIso
                 );
 
                 filteredCities.forEach(city => {
