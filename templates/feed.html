@@ -526,30 +526,28 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Static overlay setup
-            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+        // Static overlay setup
+        setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
 
-            // Dynamic overlays setup for Likes, Comments, and Shares
-            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
-            });
+        // Dynamic overlays setup for Likes, Comments, and Shares
+        document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+        });
 
-            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
-            });
+        document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
+        });
 
-            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
-            });
+        document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+        });
 
-            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
-            });
+        document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
         });
 
         // Get all 'more' buttons and corresponding frame1s
