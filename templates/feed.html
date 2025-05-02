@@ -533,9 +533,8 @@
                 });
             });
 
-            // When a state is selected
             stateSelect.addEventListener('change', () => {
-                const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].value;  // Directly use the value of the selected option
+                const selectedStateCode = stateSelect.value;
                 const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
 
                 citySelect.innerHTML = '<option value="">Select City</option>';  // Reset city options
@@ -543,19 +542,22 @@
                 console.log('Selected country ISO:', selectedCountryIso);
                 console.log('Selected state code:', selectedStateCode);
 
-                if (!selectedStateCode || !selectedCountryIso) return;  // If no state or country is selected, do nothing
+                if (!selectedStateCode || !selectedCountryIso) return;
 
-                const filteredCities = allCities.filter(city =>
-                    city.state_code === selectedStateCode &&
-                    city.country_code === selectedCountryIso
-                );
-
-                filteredCities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.name;
-                    option.textContent = city.name;
-                    citySelect.appendChild(option);
-                });
+                // Fetch cities from backend using query parameters
+                fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                    .then(res => res.json())
+                    .then(filteredCities => {
+                        filteredCities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.name;
+                            option.textContent = city.name;
+                            citySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
             });
 
             let scrollPosition = 0;

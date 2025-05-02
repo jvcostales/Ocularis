@@ -1092,7 +1092,17 @@ def get_states():
 
 @app.route('/api/get-cities')
 def get_cities():
-    return jsonify(app.config['CITIES'])
+    country_code = request.args.get('country')
+    state_code = request.args.get('state')
+
+    if not country_code or not state_code:
+        return jsonify([])
+
+    filtered = [
+        city for city in app.config['CITIES']
+        if city['country_code'] == country_code and city['state_code'] == state_code
+    ]
+    return jsonify(filtered)
 
 if __name__ == '__main__':
     app.run(debug=True)
