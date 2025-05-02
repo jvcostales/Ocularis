@@ -1082,5 +1082,17 @@ def recommendations():
 
     return render_template("recommendations.html", users=users_list)
 
+@app.route('/api/get-countries')
+def get_countries():
+    return jsonify(app.config['COUNTRIES'])
+
+@app.route('/api/get-states')
+def get_states():
+    return jsonify(app.config['STATES'])
+
+@app.route('/api/get-cities')
+def get_cities():
+    return jsonify(app.config['CITIES'])
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -498,55 +498,53 @@
             let allStates = [];
             let allCities = [];
 
-            Promise.all([
-                fetch('/api/get-states').then(res => res.json()),
-                fetch('/api/get-cities').then(res => res.json())
-            ]).then(([states, cities]) => {
-                allStates = states;
-                allCities = cities;
+            // Fetch all states and cities once
+            fetch('/api/get-states')
+                .then(res => res.text())  // <-- use text instead of json
+                .then(data => console.log('States raw response:', data));
 
-                // Attach event listeners only after data is ready
+            fetch('/api/get-cities')
+                .then(res => res.json())
+                .then(data => allCities = data);
 
-                countrySelect.addEventListener('change', () => {
-                    const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-                    stateSelect.innerHTML = '<option value="">Select State</option>';
-                    citySelect.innerHTML = '<option value="">Select City</option>';
+            // When a country is selected
+            countrySelect.addEventListener('change', () => {
+                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                citySelect.innerHTML = '<option value="">Select City</option>';
 
-                    console.log('Selected ISO:', selectedIso);
-                    console.log('States:', allStates);
-                    console.log('Cities:', allCities);
+                if (!selectedIso) return;
 
-                    if (!selectedIso) return;
+                const filteredStates = allStates.filter(state => state.country_code === selectedIso);
 
-                    const filteredStates = allStates.filter(state => state.country_code === selectedIso);
-                    for (const state of filteredStates) {
-                        const option = document.createElement('option');
-                        option.value = state.name;
-                        option.dataset.stateCode = state.state_code;
-                        option.textContent = state.name;
-                        stateSelect.appendChild(option);
-                    }
-                });
+                for (const state of filteredStates) {
+                    const option = document.createElement('option');
+                    option.value = state.name;
+                    option.dataset.stateCode = state.state_code;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                }
+            });
 
-                stateSelect.addEventListener('change', () => {
-                    const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].dataset.stateCode;
-                    const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+            // When a state is selected
+            stateSelect.addEventListener('change', () => {
+                const selectedStateCode = stateSelect.options[stateSelect.selectedIndex].dataset.stateCode;
+                const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
 
-                    citySelect.innerHTML = '<option value="">Select City</option>';
+                citySelect.innerHTML = '<option value="">Select City</option>';
 
-                    if (!selectedStateCode || !selectedCountryIso) return;
+                if (!selectedStateCode || !selectedCountryIso) return;
 
-                    const filteredCities = allCities.filter(city =>
-                        city.state_code === selectedStateCode && city.country_code === selectedCountryIso
-                    );
+                const filteredCities = allCities.filter(city =>
+                    city.state_code === selectedStateCode && city.country_code === selectedCountryIso
+                );
 
-                    for (const city of filteredCities) {
-                        const option = document.createElement('option');
-                        option.value = city.name;
-                        option.textContent = city.name;
-                        citySelect.appendChild(option);
-                    }
-                });
+                for (const city of filteredCities) {
+                    const option = document.createElement('option');
+                    option.value = city.name;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                }
             });
 
             let scrollPosition = 0;
