@@ -782,6 +782,21 @@
             document.getElementById('imageWrapper').style.display = 'none';
         });
 
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            const response = await fetch('/api/setup-profile', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById('profileModal').style.display = 'none';
+            }
+        });
+
         //setup_profile script
         const allStates = {{ states | tojson }};
         const allCities = {{ cities | tojson }};
@@ -808,34 +823,6 @@
             filteredCities.forEach(city => {
                 citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
             });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const profileForm = document.getElementById("profileForm");
-            const modalContainer = document.getElementById("modalContainer");
-
-            profileForm.addEventListener("submit", function (e) {
-                // Optional: prevent actual form submission if needed
-                // e.preventDefault();
-
-                // Close or remove the modal
-                modalContainer.remove(); // or use modalContainer.style.display = 'none';
-            });
-        });
-
-        document.getElementById('profileForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            const response = await fetch('/api/setup-profile', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                document.getElementById('profileModal').style.display = 'none';
-            }
         });
     </script>
 
