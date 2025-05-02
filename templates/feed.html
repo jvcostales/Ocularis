@@ -491,8 +491,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        const allStates = {{ states | tojson }};
-        const allCities = {{ cities | tojson }};
+        const allStates = {{ states | tojson | safe }};
+        const allCities = {{ cities | tojson | safe }};
 
         const countrySelect = document.getElementById('country');
         if (countrySelect) {
