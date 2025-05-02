@@ -17,6 +17,8 @@ a:visited {
 *,
 *::before,
 *::after {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -37,7 +39,6 @@ a:visited {
         top: 0;
         background: #fff;
         color: #2c2c2c;
-        margin: 0;
     }
 
     .left-sidebar {
@@ -45,7 +46,6 @@ a:visited {
         contain: layout style;
         box-sizing: border-box;
         padding: 16px;
-        margin: 0;
     }
 
     .namelogo {
@@ -380,7 +380,6 @@ a:visited {
         position: sticky;
         top: 0;
         height: 100vh;
-        margin: 0;
     }
 
     .right-sidebar {
@@ -390,7 +389,6 @@ a:visited {
         padding: 16px;
         display: grid;
         grid-template-rows: auto 1fr 1fr;
-        margin: 0;
     }
 
     .right {

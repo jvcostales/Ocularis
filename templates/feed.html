@@ -842,13 +842,12 @@
             function setFullHeight() {
                 const rightSidebar = document.querySelector('.right-sidebar');
                 const leftSidebar = document.querySelector('.left-sidebar');
-                if (rightSidebar) rightSidebar.style.height = window.innerHeight + 'px';
-                if (leftSidebar) leftSidebar.style.height = window.innerHeight + 'px';
+                const height = Math.floor(window.innerHeight); // Floor to avoid fractional pixels
+                if (rightSidebar) rightSidebar.style.height = height + 'px';
+                if (leftSidebar) leftSidebar.style.height = height + 'px';
             }
 
-            window.addEventListener('resize', () => {
-                setTimeout(setFullHeight, 0); // Add a small delay before adjusting height
-            });
+            window.addEventListener('resize', setFullHeight);
             setFullHeight();
 
             const imageInputPreview = document.getElementById('image');
