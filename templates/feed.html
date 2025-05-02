@@ -12,14 +12,6 @@
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    {% if images|length == 0 %}
-    <style>
-        body {
-            overflow-y: hidden;
-        }
-    </style>
-    {% endif %}
 </head>
 
 <body>
@@ -550,7 +542,7 @@
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
             }
-
+            
             const countrySelect = document.getElementById('country');
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
