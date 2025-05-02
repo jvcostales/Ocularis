@@ -525,6 +525,68 @@
     </div>
 
     <script>
+        let scrollPosition = 0;
+
+        function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
+            const overlay = document.querySelector(overlaySelector);
+            const openBtn = document.getElementById(openBtnId);
+            const closeBtn = document.getElementById(closeBtnId);
+
+            if (!overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                if (!isNested) {
+                    scrollPosition = window.scrollY;
+                    document.body.style.top = `-${scrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                }
+                overlay.classList.add('active');
+            });
+
+            function closeOverlay() {
+                overlay.classList.remove('active');
+                if (!isNested) {
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollPosition);
+                }
+            }
+
+            closeBtn.addEventListener('click', closeOverlay);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeOverlay();
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Static overlay setup
+            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+
+            // Dynamic overlays setup for Likes, Comments, and Shares
+            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+            });
+
+            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
+            });
+
+            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+            });
+
+            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+            });
+        });
+
         window.nextStep = function (step) {
             document.querySelectorAll('.modal-step').forEach(div => {
                 div.style.display = 'none';
@@ -589,68 +651,6 @@
 
                 // Close or remove the modal
                 modalContainer.remove(); // or use modalContainer.style.display = 'none';
-            });
-        });
-
-        let scrollPosition = 0;
-
-        function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
-            const overlay = document.querySelector(overlaySelector);
-            const openBtn = document.getElementById(openBtnId);
-            const closeBtn = document.getElementById(closeBtnId);
-
-            if (!overlay || !openBtn || !closeBtn) return;
-
-            openBtn.addEventListener('click', () => {
-                if (!isNested) {
-                    scrollPosition = window.scrollY;
-                    document.body.style.top = `-${scrollPosition}px`;
-                    document.body.classList.add('no-scrolling');
-                }
-                overlay.classList.add('active');
-            });
-
-            function closeOverlay() {
-                overlay.classList.remove('active');
-                if (!isNested) {
-                    document.body.classList.remove('no-scrolling');
-                    document.body.style.top = '';
-                    window.scrollTo(0, scrollPosition);
-                }
-            }
-
-            closeBtn.addEventListener('click', closeOverlay);
-
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    closeOverlay();
-                }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Static overlay setup
-            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
-
-            // Dynamic overlays setup for Likes, Comments, and Shares
-            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
-            });
-
-            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true); // Mark as nested
-            });
-
-            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
-            });
-
-            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
             });
         });
 
