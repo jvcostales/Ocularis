@@ -947,7 +947,6 @@ def send_request(receiver_id):
 
     return redirect(url_for('profile', user_id=receiver_id))
 
-
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
     receiver_id = current_user.id
