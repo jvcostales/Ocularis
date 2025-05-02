@@ -490,6 +490,34 @@
     </div>
 
     <script>
+        //setup_profile script
+        const allStates = {{ states | tojson }};
+        const allCities = {{ cities | tojson }};
+
+        document.getElementById('country').addEventListener('change', function () {
+            const iso = this.options[this.selectedIndex].dataset.iso;
+            const filteredStates = allStates.filter(state => state.country_code === iso);
+
+            const stateSelect = document.getElementById('state');
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            filteredStates.forEach(state => {
+                stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
+            });
+
+            document.getElementById('city').innerHTML = '<option value="">Select City</option>';
+        });
+
+        document.getElementById('state').addEventListener('change', function () {
+            const stateId = this.options[this.selectedIndex].dataset.id;
+            const filteredCities = allCities.filter(city => city.state_id == stateId);
+
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            filteredCities.forEach(city => {
+                citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
+            });
+        });
+
         let scrollPosition = 0;
 
         function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
@@ -795,34 +823,6 @@
             if (result.success) {
                 document.getElementById('profileModal').style.display = 'none';
             }
-        });
-
-        //setup_profile script
-        const allStates = {{ states | tojson }};
-        const allCities = {{ cities | tojson }};
-
-        document.getElementById('country').addEventListener('change', function () {
-            const iso = this.options[this.selectedIndex].dataset.iso;
-            const filteredStates = allStates.filter(state => state.country_code === iso);
-
-            const stateSelect = document.getElementById('state');
-            stateSelect.innerHTML = '<option value="">Select State</option>';
-            filteredStates.forEach(state => {
-                stateSelect.innerHTML += `<option value="${state.name}" data-id="${state.id}">${state.name}</option>`;
-            });
-
-            document.getElementById('city').innerHTML = '<option value="">Select City</option>';
-        });
-
-        document.getElementById('state').addEventListener('change', function () {
-            const stateId = this.options[this.selectedIndex].dataset.id;
-            const filteredCities = allCities.filter(city => city.state_id == stateId);
-
-            const citySelect = document.getElementById('city');
-            citySelect.innerHTML = '<option value="">Select City</option>';
-            filteredCities.forEach(city => {
-                citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
-            });
         });
     </script>
 
