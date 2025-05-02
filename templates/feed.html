@@ -490,7 +490,10 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            //setup_profile script
             const allStates = {{ states | tojson }};
         const allCities = {{ cities | tojson }};
 
@@ -516,7 +519,6 @@
             filteredCities.forEach(city => {
                 citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
             });
-        });
         });
 
         let scrollPosition = 0;
@@ -825,7 +827,9 @@
                 document.getElementById('profileModal').style.display = 'none';
             }
         });
-        
+    });
+
+
     </script>
 </body>
 
