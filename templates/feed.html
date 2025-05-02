@@ -134,7 +134,6 @@
                                         class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
                             </div>
                     </div>
-                    <input type="hidden" name="form_type" value="upload">
                     <input type="submit" value="Post" class="post-button">
                     </form>
                 </div>
@@ -418,7 +417,7 @@
 
         {% if show_profile_modal %}
         <div id="profileModal" class="modal show">
-            <form method="POST" id="profileForm">
+            <form method="POST" id="profileForm" action="/api/setup-profile">
                 <h2>Your Skills</h2>
                 {% for category in categories %}
                 <label>

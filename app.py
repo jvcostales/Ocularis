@@ -443,6 +443,7 @@ def reset_password(token):
 @app.route('/feed', methods=['GET', 'POST'])
 @login_required
 def feed():
+    
     tags = [
         "Architecture", "Art Direction", "Branding", "Fashion", "Graphic Design",
         "Illustration", "Industrial Design", "Interaction Design", "Logo Design",
@@ -450,47 +451,46 @@ def feed():
     ]
 
     if request.method == 'POST':
-        if request.form.get('form_type') == 'upload':
-            if 'image' not in request.files:
-                return 'No file part'
-            
-            file = request.files['image']
-            caption = request.form.get('caption', '')
-            selected_tags = request.form.getlist('tags')
-            
-            if file.filename == '':
-                return 'No selected file'
-            
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join('/var/data', filename)
-                file.save(file_path)
+        if 'image' not in request.files:
+            return 'No file part'
+        
+        file = request.files['image']
+        caption = request.form.get('caption', '')
+        selected_tags = request.form.getlist('tags')
+        
+        if file.filename == '':
+            return 'No selected file'
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('/var/data', filename)
+            file.save(file_path)
 
-                image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
+            image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
 
-                conn = psycopg2.connect(
-                    host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                    dbname="ocularis_db", 
-                    user="ocularis_db_user", 
-                    password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                    port=5432
-                )
-                cur = conn.cursor()
+            conn = psycopg2.connect(
+                host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                dbname="ocularis_db", 
+                user="ocularis_db_user", 
+                password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                port=5432
+            )
+            cur = conn.cursor()
 
-                cur.execute(
-                    "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id", 
-                    (current_user.id, image_url, caption)
-                )
-                image_id = cur.fetchone()[0]
+            cur.execute(
+                "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id", 
+                (current_user.id, image_url, caption)
+            )
+            image_id = cur.fetchone()[0]
 
-                for tag in selected_tags:
-                    cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
+            for tag in selected_tags:
+                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
 
-                conn.commit()
-                cur.close()
-                conn.close()
+            conn.commit()
+            cur.close()
+            conn.close()
 
-                return redirect(url_for('feed'))
+            return redirect(url_for('feed'))
 
     # Fetch feed content, comments, notifications, and friend requests
     conn = psycopg2.connect(
