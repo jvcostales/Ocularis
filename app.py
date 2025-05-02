@@ -371,7 +371,7 @@ def api_setup_profile():
     cur.close()
     conn.close()
 
-    return redirect(url_for('feed'))
+    return jsonify({'success': True, 'redirect_url': url_for('feed')})
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
