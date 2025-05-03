@@ -1440,6 +1440,7 @@ input[type="url"]::placeholder {
         padding: 0 16px;
         outline: none;
         margin-bottom: 36px;
+        box-sizing: border-box;
     }
 
     .setup2-field::placeholder {
@@ -2781,6 +2782,7 @@ input[type="url"]::placeholder {
         padding: 0 16px;
         outline: none;
         margin-bottom: 36px;
+        box-sizing: border-box;
     }
 
     .setup2-field::placeholder {
@@ -4045,6 +4047,7 @@ input[type="url"]::placeholder {
         padding: 0 16px;
         outline: none;
         margin-bottom: 36px;
+        box-sizing: border-box;
     }
 
     .setup2-field::placeholder {
