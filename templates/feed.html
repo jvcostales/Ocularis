@@ -861,6 +861,7 @@
             const imageWrapper = document.getElementById('imageWrapper');
             const imagePreview = document.getElementById('uploadedImagePreview');
             const closeButton = document.getElementById('closeButton');
+            const scrollableDiv = document.querySelector('.scrollable-div');
 
             if (imageInputPreview) {
                 imageInputPreview.addEventListener('change', function () {
@@ -886,6 +887,11 @@
                     imagePreview.src = '';
                     imageWrapper.style.display = 'none';
                     imageInputPreview.value = '';
+
+                    if (scrollableDiv) {
+                        scrollableDiv.classList.remove('has-scroll');
+                        scrollableDiv.classList.add('no-scroll');
+                    }
                 });
             }
 
@@ -895,6 +901,11 @@
                     document.getElementById('uploadedImagePreview').src = '';
                     document.getElementById('image').value = '';
                     document.getElementById('imageWrapper').style.display = 'none';
+
+                    if (scrollableDiv) {
+                        scrollableDiv.classList.remove('has-scroll');
+                        scrollableDiv.classList.add('no-scroll');
+                    }
                 });
             }
 
