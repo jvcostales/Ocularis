@@ -457,33 +457,36 @@
                         <div class="div-setup" id="divSetup3">
                             <div class="heading">Where are you located?</div>
                             <div class="subheading">Show us where your ideas come to life.</div>
-                            <form class="left-align">
-                                <div class="label">Country</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="country" name="country" required>
-                                        <option disabled selected>Select your country</option>
-                                        {% for country in countries %}
-                                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name
-                                            }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-                                </div>
-                                <div class="label">Region</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="state" name="state" required>
-                                        <option value="">Select your region</option>
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-                                </div>
-                                <div class="label">City</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="city" name="city" required>
-                                        <option value="">Select your city</option>
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-                                </div>
-                            </form>
+                            <div class="left-align">
+                                <form>
+                                    <div class="label">Country</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="country" name="country" required>
+                                            <option disabled selected>Select your country</option>
+                                            {% for country in countries %}
+                                            <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{
+                                                country.name
+                                                }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                    </div>
+                                    <div class="label">Region</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="state" name="state" required>
+                                            <option value="">Select your region</option>
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                    </div>
+                                    <div class="label">City</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="city" name="city" required>
+                                            <option value="">Select your city</option>
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                    </div>
+                                </form>
+                            </div>
                             <div class="button-wrapper">
                                 <div class="partner-back" onclick="prevStep()">
                                     <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
@@ -508,7 +511,7 @@
                                     {{ category }}
                                 </label>
                                 {% endfor %}
-                                <a href="#" class="view-more">View all fields...</a>
+                                <!--<a href="#" class="view-more">View all fields...</a>-->
                             </div>
                             <div class="button-wrapper">
                                 <div class="partner-back" onclick="prevStep()">
@@ -723,7 +726,7 @@
         function showStep(step) {
             for (let i = 1; i <= totalSteps; i++) {
                 const el = document.getElementById('step-' + i);
-                if (el) el.style.display = (i === step) ? 'block' : 'none';
+                if (el) el.style.display = (i === step) ? 'flex' : 'none';
             }
         }
 

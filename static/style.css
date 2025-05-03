@@ -1437,6 +1437,7 @@ a:visited {
         display: flex;
         flex-direction: column;
         justify-content: left;
+        margin-bottom: 36px;
     }
 
     .label {
@@ -1453,11 +1454,6 @@ a:visited {
 
     .label-wrapper {
         position: relative;
-    }
-
-    .label-wrapper:last-child {
-        position: relative;
-        margin-bottom: 36px;
     }
 
     .location {
@@ -2782,6 +2778,7 @@ a:visited {
         display: flex;
         flex-direction: column;
         justify-content: left;
+        margin-bottom: 36px;
     }
 
     .label {
@@ -2798,11 +2795,6 @@ a:visited {
 
     .label-wrapper {
         position: relative;
-    }
-
-    .label-wrapper:last-child {
-        position: relative;
-        margin-bottom: 36px;
     }
 
     .location {
@@ -4050,6 +4042,7 @@ a:visited {
         display: flex;
         flex-direction: column;
         justify-content: left;
+        margin-bottom: 36px;
     }
 
     .label {
@@ -4066,11 +4059,6 @@ a:visited {
 
     .label-wrapper {
         position: relative;
-    }
-
-    .label-wrapper:last-child {
-        position: relative;
-        margin-bottom: 36px;
     }
 
     .location {
