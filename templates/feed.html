@@ -417,7 +417,7 @@
 
         {% if show_profile_modal %}
         <div id="profileModal" class="modal show">
-            <form method="POST" id="profileForm">
+            <form method="POST" id="profileForm" action="/api/setup-profile">
 
                 <div class="overlaySetup" id="step-1">
                     <div class="overlay-content-setup">
@@ -559,7 +559,7 @@
                             <div class="left-align">
                                 {% for value, label in experience_levels %}
                                 <label class="radio-item">
-                                    <input type="radio" name="experience_level" value="{{ value }}">{{ label }}
+                                    <input type="radio" name="experience_level" value="{{ value }}" required>{{ label }}
                                 </label>
                                 {% endfor %}
                             </div>
