@@ -11,10 +11,8 @@ from search import search_bp
 from recommender import get_similar_users
 import pandas as pd
 import json
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 app.register_blueprint(search_bp)
 login_manager = LoginManager()

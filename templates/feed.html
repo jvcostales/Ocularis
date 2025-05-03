@@ -417,7 +417,7 @@
 
         {% if show_profile_modal %}
         <div id="profileModal" class="modal show">
-            <form method="POST" id="profileForm" action="/api/setup-profile">
+            <form method="POST" id="profileForm">
 
                 <div class="overlaySetup" id="step-1">
                     <div class="overlay-content-setup">
@@ -1118,48 +1118,30 @@
             }
 
             const profileForm = document.getElementById('profileForm');
-
             if (profileForm) {
-                console.log('Profile form found and listener attached.');
-
                 profileForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    console.log('Form submission intercepted.');
-
                     const formData = new FormData(this);
-                    console.log('FormData prepared:');
-                    for (const [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`);
-                    }
-
                     try {
                         const response = await fetch('/api/setup-profile', {
                             method: 'POST',
                             body: formData
                         });
 
-                        console.log('Fetch response status:', response.status);
-
                         const result = await response.json();
-                        console.log('Response JSON:', result);
 
                         if (result.success) {
-                            console.log('Profile saved successfully. Redirecting...');
                             document.getElementById('profileModal').style.display = 'none';
                             window.location.href = result.redirect_url;
                         } else {
-                            console.warn('Profile save failed. Server responded with success = false.');
                             alert('Something went wrong while saving your profile.');
                         }
                     } catch (error) {
-                        console.error('Error during form submission:', error);
+                        console.error('Error:', error);
                         alert('An error occurred. Please try again.');
                     }
                 });
-            } else {
-                console.warn('Profile form not found in the DOM.');
             }
-
         });
     </script>
 </body>
