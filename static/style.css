@@ -14,14 +14,6 @@ a:visited {
     color: inherit;
 }
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {

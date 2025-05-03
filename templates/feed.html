@@ -839,12 +839,19 @@
                 });
             });
 
+            function isChrome() {
+                return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            }
+
             function setFullHeight() {
+                const adjustment = isChrome() ? 1 : 0;
+                const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
+
                 const rightSidebar = document.querySelector('.right-sidebar');
                 const leftSidebar = document.querySelector('.left-sidebar');
-                const height = Math.floor(window.innerHeight); // Floor to avoid fractional pixels
-                if (rightSidebar) rightSidebar.style.height = height + 'px';
-                if (leftSidebar) leftSidebar.style.height = height + 'px';
+
+                if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
+                if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
             }
 
             window.addEventListener('resize', setFullHeight);
