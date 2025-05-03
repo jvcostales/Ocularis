@@ -1117,44 +1117,26 @@
                 });
             }
 
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) {
-                console.log('Form found');
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileForm = document.getElementById('profileForm');
+                if (profileForm) {
+                    console.log('Form found');
 
-                profileForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    console.log('Form submission prevented');
+                    profileForm.addEventListener('submit', async function (e) {
+                        console.log('Form submit event triggered'); // This should show up!
+                        e.preventDefault();
 
-                    const formData = new FormData(this);
-                    console.log('Form data:', formData);
-
-                    try {
-                        console.log('Sending data to the server...');
-                        const response = await fetch('/api/setup-profile', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        console.log('Response received:', response);
-                        const result = await response.json();
-                        console.log('Parsed result:', result);
-
-                        if (result.success) {
-                            console.log('Profile saved successfully');
-                            document.getElementById('profileModal').style.display = 'none';
-                            window.location.href = result.redirect_url;
-                        } else {
-                            console.log('Something went wrong while saving the profile');
-                            alert('Something went wrong while saving your profile.');
+                        const formData = new FormData(this);
+                        for (const [key, value] of formData.entries()) {
+                            console.log(`${key}: ${value}`);
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                console.log('Form not found');
-            }
+
+                        // Your fetch logic here...
+                    });
+                } else {
+                    console.log('Form not found');
+                }
+            });
 
         });
     </script>
