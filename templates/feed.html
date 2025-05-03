@@ -423,7 +423,7 @@
                     <div class="overlay-content-setup">
                         <div class="overlay-title-setup">Setup</div>
                         <div class="div-setup" id="divSetup1">
-                            <img src="pfp.jpg" class="pfpsetup1">
+                            <img src="..\static\pfp.jpg" class="pfpsetup1">
                             <div class="heading">Hello, {{ current_user.first_name }} {{ current_user.last_name }}!
                             </div>
                             <div class="subheading">Ready to setup your account?</div>
@@ -718,7 +718,7 @@
 
     <script>
         let currentStep = 1;
-        const totalSteps = 6;
+        const totalSteps = 7;
 
         function showStep(step) {
             for (let i = 1; i <= totalSteps; i++) {
