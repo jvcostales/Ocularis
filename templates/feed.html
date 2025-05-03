@@ -419,7 +419,212 @@
         <div id="profileModal" class="modal show">
             <form method="POST" id="profileForm" action="/api/setup-profile">
 
-                <!-- Step 1: Skills -->
+                <div class="overlaySetup" id="step-1">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup1">
+                            <img src="pfp.jpg" class="pfpsetup1">
+                            <div class="heading">Hello, {{ current_user.first_name }} {{ current_user.last_name }}!
+                            </div>
+                            <div class="subheading">Ready to setup your account?</div>
+                            <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-2" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup2">
+                            <div class="heading">What is your role?</div>
+                            <div class="subheading">Your role helps us personalize your experience.</div>
+                            <input class="setup2-field" type="text" placeholder="ex. Graphic Designer" id="role"
+                                name="role" maxlength="100" required>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-3" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup3">
+                            <div class="heading">Where are you located?</div>
+                            <div class="subheading">Show us where your ideas come to life.</div>
+                            <form class="left-align">
+                                <div class="label">Country</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="country" name="country" required>
+                                        <option disabled selected>Select your country</option>
+                                        {% for country in countries %}
+                                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name
+                                            }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                                <div class="label">Region</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="state" name="state" required>
+                                        <option value="">Select your region</option>
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                                <div class="label">City</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="city" name="city" required>
+                                        <option value="">Select your city</option>
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                            </form>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-4" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup4">
+                            <div class="heading">What are your skills?</div>
+                            <div class="subheading">Tell us what you’re good at—select all that apply.</div>
+                            <div class="checkbox-grid">
+                                {% for category in categories %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="skills" value="{{ category }}">
+                                    {{ category }}
+                                </label>
+                                {% endfor %}
+                                <a href="#" class="view-more">View all fields...</a>
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-5" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup5">
+                            <div class="heading">What are your preferences?</div>
+                            <div class="subheading">Tell us your design vibe—select all that apply.</div>
+                            <div class="checkbox-grid">
+                                {% for category in categories %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="preferences" value="{{ category }}">
+                                    {{ category }}
+                                </label>
+                                {% endfor %}
+                                <a href="#" class="view-more">View all fields...</a>
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-6" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup6">
+                            <div class="heading">What is your experience level?</div>
+                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                            <div class="left-align">
+                                {% for value, label in experience_levels %}
+                                <label class="radio-item">
+                                    <input type="radio" name="experience_level" value="{{ value }}" required>{{ label }}
+                                </label>
+                                {% endfor %}
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-7" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup7">
+                            <div class="heading">What is your experience level?</div>
+                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                            <table class="social-table">
+                                <tr>
+                                    <td><label for="facebook">Facebook</label></td>
+                                    <td>
+                                        <input type="url" id="facebook" name="facebook"
+                                            placeholder="https://facebook.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="instagram">Instagram</label></td>
+                                    <td>
+                                        <input type="url" id="instagram" name="instagram"
+                                            placeholder="https://instagram.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="x">X (Twitter)</label></td>
+                                    <td>
+                                        <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="linkedin">LinkedIn</label></td>
+                                    <td>
+                                        <input type="url" id="linkedin" name="linkedin"
+                                            placeholder="https://linkedin.com/in/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="telegram">Telegram</label></td>
+                                    <td>
+                                        <input type="url" id="telegram" name="telegram"
+                                            placeholder="https://t.me/yourusername">
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Skills
                 <div class="form-step" id="step-1">
                     <h2>Your Skills</h2>
                     {% for category in categories %}
@@ -429,9 +634,9 @@
                     </label><br>
                     {% endfor %}
                     <button type="button" onclick="nextStep()">Next</button>
-                </div>
+                </div>-->
 
-                <!-- Step 2: Preferences -->
+                <!-- Step 2: Preferences
                 <div class="form-step" id="step-2" style="display:none;">
                     <h2>Your Preferences</h2>
                     {% for category in categories %}
@@ -442,9 +647,9 @@
                     {% endfor %}
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="button" onclick="nextStep()">Next</button>
-                </div>
+                </div> -->
 
-                <!-- Step 3: Experience -->
+                <!-- Step 3: Experience
                 <div class="form-step" id="step-3" style="display:none;">
                     <h2>Experience Level</h2>
                     <label for="experience_level">Select your level:</label><br>
@@ -455,17 +660,17 @@
                     </select><br><br>
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="button" onclick="nextStep()">Next</button>
-                </div>
+                </div> -->
 
-                <!-- Step 4: Role -->
+                <!-- Step 4: Role
                 <div class="form-step" id="step-4" style="display:none;">
                     <h2>Your Role</h2>
                     <input type="text" id="role" name="role" maxlength="100" required><br><br>
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="button" onclick="nextStep()">Next</button>
-                </div>
+                </div> -->
 
-                <!-- Step 5: Location -->
+                <!-- Step 5: Location
                 <div class="form-step" id="step-5" style="display:none;">
                     <h2>Location</h2>
                     <label for="country">Country:</label><br>
@@ -488,9 +693,9 @@
 
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="button" onclick="nextStep()">Next</button>
-                </div>
+                </div> -->
 
-                <!-- Step 6: Social Links -->
+                <!-- Step 6: Social Links
                 <div class="form-step" id="step-6" style="display:none;">
                     <h2>Social Media Links</h2>
                     <input type="url" id="facebook" name="facebook"
@@ -504,7 +709,7 @@
 
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="submit">Save Profile</button>
-                </div>
+                </div> -->
             </form>
         </div>
         {% endif %}
