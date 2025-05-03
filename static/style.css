@@ -18,6 +18,15 @@ input[type="url"] {
     all: unset;
 }
 
+td input[type="url"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="url"]::placeholder {
+    color: #c4c4c4;
+}
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
