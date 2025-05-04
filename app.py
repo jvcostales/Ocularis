@@ -903,6 +903,11 @@ def profile(user_id):
 def send_request(receiver_id):
     sender_id = current_user.id
 
+    # ❌ Block if not verified
+    if not current_user.verified:
+        flash("You must verify your account before sending friend requests.")
+        return redirect(url_for('profile', user_id=receiver_id))
+
     # Prevent sending a request to yourself
     if sender_id == receiver_id:
         flash("You cannot send a friend request to yourself.")
@@ -995,8 +1000,13 @@ def cancel_request(receiver_id):
 
     return redirect(url_for('profile', user_id=receiver_id))
 
-@app.route('/accept_request/<int:request_id>')
+@app.route('/accept_request/<int:request_id>', methods=['POST'])
+@login_required
 def accept_request(request_id):
+    if not current_user.verified:
+        flash("Please verify your account before accepting friend requests.")
+        return redirect('/requests')
+
     receiver_id = current_user.id
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -1007,38 +1017,48 @@ def accept_request(request_id):
     )
     cur = conn.cursor()
 
-    # Fetch sender from request
-    cur.execute("""
-        SELECT sender_id FROM friend_requests 
-        WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
-    """, (request_id, receiver_id))
-    row = cur.fetchone()
-    if not row:
-        flash("Request not found.")
-        return redirect('/requests')
-    
-    sender_id = row[0]
+    try:
+        # Fetch sender from request
+        cur.execute("""
+            SELECT sender_id FROM friend_requests 
+            WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+        """, (request_id, receiver_id))
+        row = cur.fetchone()
+        if not row:
+            flash("Request not found.")
+            return redirect('/requests')
 
-    # Update request status
-    cur.execute("""
-        UPDATE friend_requests SET status = 'accepted'
-        WHERE request_id = %s;
-    """, (request_id,))
+        sender_id = row[0]
 
-    # Add to friends
-    cur.execute("""
-        INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);
-    """, (min(sender_id, receiver_id), max(sender_id, receiver_id)))
+        # Update request status
+        cur.execute("""
+            UPDATE friend_requests SET status = 'accepted'
+            WHERE request_id = %s;
+        """, (request_id,))
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    flash("Friend request accepted.")
+        # Add to friends
+        cur.execute("""
+            INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);
+        """, (min(sender_id, receiver_id), max(sender_id, receiver_id)))
+
+        conn.commit()
+        flash("Friend request accepted.")
+    except Exception as e:
+        conn.rollback()
+        flash(f"An error occurred: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
     return redirect('/feed')
 
-
-@app.route('/reject_request/<int:request_id>')
+@app.route('/reject_request/<int:request_id>', methods=['POST'])
+@login_required
 def reject_request(request_id):
+    if not current_user.verified:
+        flash("Please verify your account before rejecting friend requests.")
+        return redirect('/requests')
+
     receiver_id = current_user.id
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -1049,16 +1069,21 @@ def reject_request(request_id):
     )
     cur = conn.cursor()
 
-    cur.execute("""
-        UPDATE friend_requests 
-        SET status = 'rejected' 
-        WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
-    """, (request_id, receiver_id))
+    try:
+        cur.execute("""
+            UPDATE friend_requests 
+            SET status = 'rejected' 
+            WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+        """, (request_id, receiver_id))
+        conn.commit()
+        flash("Friend request rejected.")
+    except Exception as e:
+        conn.rollback()
+        flash(f"An error occurred: {e}")
+    finally:
+        cur.close()
+        conn.close()
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    flash("Friend request rejected.")
     return redirect('/feed')
 
 @app.route('/recommendations', methods=['GET'])

@@ -591,6 +591,11 @@ input[type="url"]::placeholder {
         color: #a6a6a6;
     }
 
+    .circled-icon-1[disabled] {
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
     .circled-icon-2 {
         border: none;
         border-radius: 50%;
@@ -609,6 +614,12 @@ input[type="url"]::placeholder {
 
     .circled-icon-2:active {
         background-color: #9BB35B;
+    }
+
+    .circled-icon-2[disabled] {
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: #DDDEDF;
     }
 
     span.close-symbol {
