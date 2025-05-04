@@ -882,7 +882,7 @@ def profile(user_id):
         disable_add_friend=disable_add_friend  # Passing the flag to the template
     )
 
-@app.route('/send_request/<int:receiver_id>', methods=['GET'])
+@app.route('/send_request/<int:receiver_id>', methods=['POST'])
 @login_required
 def send_request(receiver_id):
     sender_id = current_user.id

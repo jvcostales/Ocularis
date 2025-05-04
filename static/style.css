@@ -32,7 +32,6 @@ input[type="url"]::placeholder {
     .container {
         display: grid;
         grid-template-columns: 2fr 1fr 6fr 1fr 2fr;
-        gap: 16px;
         box-sizing: border-box;
     }
 
@@ -1603,8 +1602,6 @@ input[type="url"]::placeholder {
     .container {
         display: grid;
         grid-template-columns: 2fr 1fr 5fr;
-        gap: 16px;
-        padding: 16px;
         box-sizing: border-box;
     }
 
@@ -2951,8 +2948,6 @@ input[type="url"]::placeholder {
     .container {
         display: grid;
         grid-template-columns: 4fr;
-        gap: 16px;
-        padding: 16px;
         box-sizing: border-box;
     }
 
