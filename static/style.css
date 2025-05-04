@@ -412,6 +412,8 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
+        padding-right: 6px;
+        /*due to scrollbar*/
         box-sizing: border-box;
         margin-bottom: 16px;
         overflow-x: hidden;
@@ -420,16 +422,7 @@ input[type="url"]::placeholder {
         display: flex;
         flex-direction: column;
     }
-    /*
 
-    .notifs.no-scroll {
-        padding-right: 24px;
-    }
-
-    .notifs.has-scroll {
-        padding-right: 6px;
-    }
-*/
     .notifs-empty {
         flex-grow: 1;
         display: flex;
@@ -493,16 +486,6 @@ input[type="url"]::placeholder {
         display: flex;
         flex-direction: column;
     }
-
-    /*
-    .requests.no-scroll {
-        padding-right: 24px;
-    }
-
-    .requests.has-scroll {
-        padding-right: 6px;
-    }
-        */
 
     .requests::-webkit-scrollbar {
         width: 18px;
