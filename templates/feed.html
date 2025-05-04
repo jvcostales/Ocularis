@@ -396,9 +396,11 @@
                                 {{ created_at.strftime('%b %#d') }}
                             </div>
                             <div class="request-icons">
-                                <button class="circled-icon-1" {% if not is_verified %}disabled{% endif %}><span class="material-symbols-outlined close-symbol"
+                                <button class="circled-icon-1" {% if not is_verified %}disabled{% endif %}><span
+                                        class="material-symbols-outlined close-symbol"
                                         onclick="window.location.href='/reject_request/{{ request_id }}'">close</span></button>
-                                <button class="circled-icon-2" {% if not is_verified %}disabled{% endif %}><span class="material-symbols-outlined check-symbol"
+                                <button class="circled-icon-2" {% if not is_verified %}disabled{% endif %}><span
+                                        class="material-symbols-outlined check-symbol"
                                         onclick="window.location.href='/accept_request/{{ request_id }}'">check</span></button>
                             </div>
                         </div>
@@ -1032,6 +1034,23 @@
                 checkScrollState(commentDivs);
                 checkScrollState(commentLikeDivs);
             }
+
+            function adjustRightPaddingOnScrollCheck() {
+                const ids = ["notifs", "requests"];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                        el.style.paddingRight = hasScroll ? "6px" : "24px";
+                    }
+                });
+            }
+
+            // Run it on page load
+            window.addEventListener("load", adjustRightPaddingOnScrollCheck);
+
+            // Optional: Update on resize
+            window.addEventListener("resize", adjustRightPaddingOnScrollCheck);
 
             const imageInput = document.getElementById('image');
             if (imageInput) {
