@@ -349,7 +349,7 @@
                         <div class="settings">Settings</div>
                     </div>
                 </div>
-                <div class="notifs">
+                <div class="notifs" id="notifs">
                     <div class="notifs-title">
                         Notifs
                     </div>
@@ -380,7 +380,7 @@
                     </div>
                     {% endif %}
                 </div>
-                <div class="requests">
+                <div class="requests" id="requests">
                     <div class="requests-title">
                         Requests
                     </div>
@@ -1006,6 +1006,8 @@
                 const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
                 const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
                 const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+                const notifs = document.getElementById('notifs');
+                const requests = document.getElementById('requests');
 
                 if (imageInput && div) {
                     div.classList.remove('no-scroll', 'has-scroll');
@@ -1030,6 +1032,8 @@
                 checkScrollState(likeDivs);
                 checkScrollState(commentDivs);
                 checkScrollState(commentLikeDivs);
+                checkScrollState(notifs);
+                checkScrollState(requests);
             }
 
             const imageInput = document.getElementById('image');
