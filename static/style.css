@@ -2001,6 +2001,12 @@ input[type="url"]::placeholder {
         height: min-content;
     }
 
+    .no-scrolling {
+        position: fixed;
+        width: 100%;
+        overflow-y: scroll;
+    }
+
     .close-icon {
         color: #c4c4c4;
         border: none;
@@ -3263,6 +3269,12 @@ input[type="url"]::placeholder {
         height: min-content;
         width: 548px;
         margin: 16px;
+    }
+
+    .no-scrolling {
+        position: fixed;
+        width: 100%;
+        overflow-y: scroll;
     }
 
     .close-icon {

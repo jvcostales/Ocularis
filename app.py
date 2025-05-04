@@ -947,6 +947,38 @@ def send_request(receiver_id):
 
     return redirect(url_for('profile', user_id=receiver_id))
 
+@app.route('/cancel_request/<int:receiver_id>', methods=['POST'])
+@login_required
+def cancel_request(receiver_id):
+    sender_id = current_user.id
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Delete the pending friend request
+        cur.execute("""
+            DELETE FROM friend_requests
+            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+        """, (sender_id, receiver_id))
+        conn.commit()
+
+        flash("Friend request cancelled.")
+    except Exception as e:
+        flash(f"An error occurred: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('profile', user_id=receiver_id))
+
 @app.route('/accept_request/<int:request_id>')
 def accept_request(request_id):
     receiver_id = current_user.id

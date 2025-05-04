@@ -17,23 +17,24 @@
 <body>
     <h1>{{ user[0] }} {{ user[1] }}</h1>
 
+
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
     {% elif request_status %}
     {% if request_status[0] == 'pending' %}
     <p>Friend request sent (pending).</p>
+    <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
+        <button type="submit">Cancel Friend Request</button>
+    </form>
     {% elif request_status[0] == 'rejected' %}
     <p>Friend request was rejected.</p>
     {% endif %}
-    {% endif %}
-
-    <form action="/send_request/{{ user_id }}" method="get">
-        <button type="submit" {% if is_friend or (request_status and request_status[0]=='pending' ) %}disabled{% endif
-            %}>
-            Add Friend
-        </button>
+    {% else %}
+    <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+        <button type="submit">Add Friend</button>
     </form>
+    {% endif %}
     {% endif %}
 
     {% for image in images %}
