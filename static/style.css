@@ -420,6 +420,7 @@ input[type="url"]::placeholder {
         display: flex;
         flex-direction: column;
     }
+    /*
 
     .notifs.no-scroll {
         padding-right: 24px;
@@ -428,7 +429,7 @@ input[type="url"]::placeholder {
     .notifs.has-scroll {
         padding-right: 6px;
     }
-
+*/
     .notifs-empty {
         flex-grow: 1;
         display: flex;
@@ -493,6 +494,7 @@ input[type="url"]::placeholder {
         flex-direction: column;
     }
 
+    /*
     .requests.no-scroll {
         padding-right: 24px;
     }
@@ -500,6 +502,7 @@ input[type="url"]::placeholder {
     .requests.has-scroll {
         padding-right: 6px;
     }
+        */
 
     .requests::-webkit-scrollbar {
         width: 18px;
