@@ -19,22 +19,28 @@
 
 
     {% if not is_own_profile %}
-        {% if is_friend %}
-            <p>You are friends.</p>
-        {% elif request_status %}
-            {% if request_status[0] == 'pending' %}
-                <p>Friend request sent (pending).</p>
-                <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
-                    <button type="submit">Cancel Request</button>
-                </form>
-            {% elif request_status[0] == 'rejected' %}
-                <p>Friend request was rejected.</p>
-            {% endif %}
-        {% else %}
-            <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
-                <button type="submit">Beriend</button>
-            </form>
-        {% endif %}
+    {% if is_friend %}
+    <p>You are friends.</p>
+    {% elif request_status %}
+    {% if request_status[0] == 'pending' %}
+    <p>Friend request sent (pending).</p>
+    <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
+        <button type="submit">Cancel Request</button>
+    </form>
+    {% elif request_status[0] == 'rejected' %}
+    <p>Friend request was rejected.</p>
+    {% endif %}
+    {% else %}
+    {% if current_user.verified %}
+    <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+        <button type="submit">Befriend</button>
+    </form>
+    {% else %}
+    <form action="#" method="post" disabled>
+        <button type="submit" disabled>Befriend (Verify your account first)</button>
+    </form>
+    {% endif %}
+    {% endif %}
     {% endif %}
 
     {% for image in images %}

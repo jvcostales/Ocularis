@@ -1603,6 +1603,7 @@ input[type="url"]::placeholder {
         display: grid;
         grid-template-columns: 2fr 1fr 5fr;
         box-sizing: border-box;
+        padding-right: 16px;
     }
 
     .left-sidebar-container {
@@ -2949,6 +2950,7 @@ input[type="url"]::placeholder {
         display: grid;
         grid-template-columns: 4fr;
         box-sizing: border-box;
+        padding: 0 16px;
     }
 
     .left-sidebar {

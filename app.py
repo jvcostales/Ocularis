@@ -161,23 +161,39 @@ cur.close()
 conn.close()
 
 class User(UserMixin):
-    def __init__(self, id, first_name, last_name, email, password):
+    def __init__(self, id, first_name, last_name, email, password, verified=False):
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = password
+        self.verified = verified
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", dbname="ocularis_db", user="ocularis_db_user", password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
     cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    cur.execute("SELECT id, first_name, last_name, email, password, verified FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
     cur.close()
     conn.close()
+
     if user:
-        return User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
+        return User(
+            id=user[0],
+            first_name=user[1],
+            last_name=user[2],
+            email=user[3],
+            password=user[4],
+            verified=user[5]
+        )
     return None
 
 def send_verification_email(recipient_email, token):
