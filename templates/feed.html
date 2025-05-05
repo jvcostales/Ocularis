@@ -396,10 +396,10 @@
                                 {{ created_at.strftime('%b %#d') }}
                             </div>
                             <div class="request-icons">
-                                <button class="circled-icon-1" {% if not is_verified %}disabled{% endif %}><span
+                                <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
                                         class="material-symbols-outlined close-symbol"
                                         onclick="window.location.href='/reject_request/{{ request_id }}'">close</span></button>
-                                <button class="circled-icon-2" {% if not is_verified %}disabled{% endif %}><span
+                                <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
                                         class="material-symbols-outlined check-symbol"
                                         onclick="window.location.href='/accept_request/{{ request_id }}'">check</span></button>
                             </div>
