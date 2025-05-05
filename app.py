@@ -559,7 +559,7 @@ def feed():
         """, (current_user.id,))
         notifications = cur.fetchall()
 
-        # Fetch friend requests
+        # Fetch incoming friend requests for the current user (where the current user is the receiver)
         cur.execute("""
             SELECT fr.request_id, u.first_name, u.last_name, fr.created_at
             FROM friend_requests fr
@@ -567,6 +567,7 @@ def feed():
             WHERE fr.receiver_id = %s AND fr.status = 'pending'
             ORDER BY fr.created_at DESC
         """, (current_user.id,))
+
         requests = cur.fetchall()
 
         # Fetch likes for each image

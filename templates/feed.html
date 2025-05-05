@@ -397,12 +397,12 @@
                                 {{ created_at.strftime('%b %#d') }}
                             </div>
                             <div class="request-icons">
-                                <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="POST"
+                                <form action="{{ url_for('reject_request', request_id=request[0]) }}" method="POST"
                                     style="display:inline;">
                                     <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
                                             class="material-symbols-outlined close-symbol">close</span></button>
                                 </form>
-                                <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="POST"
+                                <form action="{{ url_for('accept_request', request_id=request[0]) }}" method="POST"
                                     style="display:inline;">
                                     <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
                                             class="material-symbols-outlined check-symbol">check</span></button>
