@@ -874,26 +874,19 @@ def profile(user_id):
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Query for an outgoing request (if the current user sent the request)
+    # OUTGOING (You sent a request)
     cur.execute("""
         SELECT status FROM friend_requests
         WHERE sender_id = %s AND receiver_id = %s;
     """, (current_user.id, user_id))
     outgoing_request = cur.fetchone()
 
-    # Query for an incoming request (if the current user received the request)
+    # INCOMING (They sent a request)
     cur.execute("""
-        SELECT status FROM friend_requests
+        SELECT request_id, status FROM friend_requests
         WHERE sender_id = %s AND receiver_id = %s;
     """, (user_id, current_user.id))
     incoming_request = cur.fetchone()
-
-    # Combine the request statuses into a single variable to pass to the template
-    request_status = None
-    if outgoing_request:
-        request_status = outgoing_request[0]  # The status of the outgoing request (e.g., 'pending')
-    elif incoming_request:
-        request_status = incoming_request[0]  # The status of the incoming request (e.g., 'pending')
 
     cur.close()
     conn.close()
@@ -902,7 +895,8 @@ def profile(user_id):
     disable_add_friend = (
         is_friend or
         current_user_id == user_id or
-        incoming_request is not None  # you cannot add if they already sent you a request
+        incoming_request is not None or # you cannot add if they already sent you a request
+        outgoing_request is not None
     )
 
     return render_template(
@@ -912,7 +906,8 @@ def profile(user_id):
         comments=comments,
         user_id=user_id,
         is_friend=is_friend,
-        request_status=request_status,
+        outgoing_request=outgoing_request,
+        incoming_request=incoming_request,
         is_own_profile=(current_user_id == user_id),
         disable_add_friend=disable_add_friend
     )

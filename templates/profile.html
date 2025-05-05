@@ -19,6 +19,7 @@
 
 
     {% if not is_own_profile %}
+
     {% if is_friend %}
     <p>You are friends.</p>
 
@@ -31,17 +32,17 @@
         <button type="submit">Reject</button>
     </form>
 
-    {% elif request_status %}
-    {% if request_status[0] == 'pending' %}
+    {% elif outgoing_request %}
+    {% if outgoing_request[0] == 'pending' %}
     <p>Friend request sent (pending).</p>
     <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
         <button type="submit">Cancel Request</button>
     </form>
-    {% elif request_status[0] == 'rejected' %}
+    {% elif outgoing_request[0] == 'rejected' %}
     <p>Friend request was rejected.</p>
     {% endif %}
 
-    {% else %}
+    {% elif not disable_add_friend %}
     {% if current_user.verified %}
     <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
         <button type="submit">Befriend</button>
@@ -52,8 +53,8 @@
     </form>
     {% endif %}
     {% endif %}
-    {% endif %}
 
+    {% endif %}
 
     {% for image in images %}
     <div class="post">
