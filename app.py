@@ -874,23 +874,15 @@ def profile(user_id):
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Check if there's a friend request in either direction
+    # Check if a friend request is already sent
     cur.execute("""
-        SELECT sender_id, receiver_id, status
-        FROM friend_requests
-        WHERE (sender_id = %s AND receiver_id = %s)
-            OR (sender_id = %s AND receiver_id = %s)
-        ORDER BY created_at DESC
-        LIMIT 1;
-    """, (current_user_id, user_id, user_id, current_user_id))
+        SELECT status FROM friend_requests
+        WHERE sender_id = %s AND receiver_id = %s;
+    """, (current_user_id, user_id))
+    request_status = cur.fetchone()
 
-    row = cur.fetchone()
-    request_status = None
-
-    if row:
-        sender_id, receiver_id, status = row
-        direction = 'sent' if sender_id == current_user_id else 'received'
-        request_status = (status, direction)
+    cur.close()
+    conn.close()
 
     # Add a flag to indicate if the "Add Friend" button should be disabled
     disable_add_friend = is_friend or current_user_id == user_id
@@ -942,17 +934,6 @@ def send_request(receiver_id):
 
         if already_friends:
             flash("You are already friends with this user.")
-            return redirect(url_for('profile', user_id=receiver_id))
-
-        # ✅ Block if the other user already sent you a pending request
-        cur.execute("""
-            SELECT * FROM friend_requests
-            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-        """, (receiver_id, sender_id))
-        incoming_request = cur.fetchone()
-
-        if incoming_request:
-            flash("This user already sent you a friend request. Please respond to it.")
             return redirect(url_for('profile', user_id=receiver_id))
 
         # Prevent sending a duplicate pending request
@@ -1070,7 +1051,7 @@ def accept_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('feed', request_id=request_id))
+    return redirect('/feed')
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
@@ -1104,7 +1085,7 @@ def reject_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('feed', request_id=request_id))
+    return redirect('/feed')
 
 @app.route('/recommendations', methods=['GET'])
 @login_required
