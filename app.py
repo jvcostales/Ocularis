@@ -874,19 +874,26 @@ def profile(user_id):
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Check outgoing friend request (current user → profile user)
+    # Query for an outgoing request (if the current user sent the request)
     cur.execute("""
         SELECT status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-    """, (current_user_id, user_id))
+        WHERE sender_id = %s AND receiver_id = %s;
+    """, (current_user.id, user_id))
     outgoing_request = cur.fetchone()
 
-    # Check incoming friend request (profile user → current user)
+    # Query for an incoming request (if the current user received the request)
     cur.execute("""
-        SELECT request_id FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-    """, (user_id, current_user_id))
+        SELECT status FROM friend_requests
+        WHERE sender_id = %s AND receiver_id = %s;
+    """, (user_id, current_user.id))
     incoming_request = cur.fetchone()
+
+    # Combine the request statuses into a single variable to pass to the template
+    request_status = None
+    if outgoing_request:
+        request_status = outgoing_request[0]  # The status of the outgoing request (e.g., 'pending')
+    elif incoming_request:
+        request_status = incoming_request[0]  # The status of the incoming request (e.g., 'pending')
 
     cur.close()
     conn.close()
@@ -905,12 +912,10 @@ def profile(user_id):
         comments=comments,
         user_id=user_id,
         is_friend=is_friend,
-        outgoing_request=outgoing_request,
-        incoming_request=incoming_request,
+        request_status=request_status,
         is_own_profile=(current_user_id == user_id),
         disable_add_friend=disable_add_friend
     )
-
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
 @login_required
