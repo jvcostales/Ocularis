@@ -21,48 +21,27 @@
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
-    <form action="{{ url_for('unfriend', user_id=user_id) }}" method="POST" style="display:inline;">
-        <button type="submit" class="btn btn-danger"
-            onclick="return confirm('Are you sure you want to unfriend this user?');">
-            Unfriend
-        </button>
+    <form action="{{ url_for('unfriend', receiver_id=user_id) }}" method="post">
+        <button type="submit">Unfriend</button>
     </form>
-
     {% elif request_status %}
     {% if request_status[0] == 'pending' %}
-    {% if request_status[1] == 'sent_by_current_user' %}
-    <p>Befriend request sent (pending).</p>
+    <p>Friend request sent (pending).</p>
     <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
         <button type="submit">Cancel Request</button>
     </form>
-    {% elif request_status[1] == 'received_by_current_user' %}
-    <p>This user wants to befriend you.</p>
-    <form action="{{ url_for('accept_request', request_id=request_id) }}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-success">Accept</button>
-    </form>
-    <form action="{{ url_for('reject_request', request_id=request_id) }}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-danger">Reject</button>
-    </form>
-    {% endif %}
-
     {% elif request_status[0] == 'rejected' %}
-    <p>Befriend request was rejected.</p>
-    {% if current_user.verified %}
-    <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
-        <button type="submit">Befriend Again</button>
-    </form>
-    {% else %}
-    <button type="button" disabled>Befriend Again (Verify your account first)</button>
+    <p>Friend request was rejected.</p>
     {% endif %}
-    {% endif %}
-
     {% else %}
     {% if current_user.verified %}
     <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
         <button type="submit">Befriend</button>
     </form>
     {% else %}
-    <button type="button" disabled>Befriend (Verify your account first)</button>
+    <form action="#" method="post" disabled>
+        <button type="submit" disabled>Befriend (Verify your account first)</button>
+    </form>
     {% endif %}
     {% endif %}
     {% endif %}
