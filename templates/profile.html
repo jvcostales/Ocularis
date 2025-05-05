@@ -26,9 +26,11 @@
     {% elif incoming_request %}
     <p>{{ user[0] }} wants to be your friend.</p>
     <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
+        <input type="hidden" name="origin" value="profile">
         <button type="submit">Accept</button>
     </form>
     <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
+        <input type="hidden" name="origin" value="profile">
         <button type="submit">Reject</button>
     </form>
 
