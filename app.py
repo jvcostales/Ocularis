@@ -904,7 +904,7 @@ def profile(user_id):
 def send_request(receiver_id):
     sender_id = current_user.id
 
-    # ❌ Block if not verified
+    # Block if not verified
     if not current_user.verified:
         flash("You must verify your account before sending friend requests.")
         return redirect(url_for('profile', user_id=receiver_id))
@@ -924,45 +924,42 @@ def send_request(receiver_id):
     cur = conn.cursor()
 
     try:
-        # Prevent sending a request if already friends
+        # Check if already friends
         cur.execute("""
-            SELECT * FROM friends
+            SELECT 1 FROM friends
             WHERE (user1_id = %s AND user2_id = %s)
                OR (user1_id = %s AND user2_id = %s);
         """, (sender_id, receiver_id, receiver_id, sender_id))
-        already_friends = cur.fetchone()
-
-        if already_friends:
+        if cur.fetchone():
             flash("You are already friends with this user.")
             return redirect(url_for('profile', user_id=receiver_id))
 
-        # Prevent sending a duplicate pending request
+        # Check for existing pending request
         cur.execute("""
-            SELECT * FROM friend_requests
+            SELECT 1 FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
         """, (sender_id, receiver_id))
-        existing_request = cur.fetchone()
-
-        if existing_request:
+        if cur.fetchone():
             flash("Friend request already sent.")
-        else:
-            # Handle rejected request and allow sending a new one
-            cur.execute("""
-                DELETE FROM friend_requests
-                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
-            """, (sender_id, receiver_id))
-            conn.commit()
+            return redirect(url_for('profile', user_id=receiver_id))
 
-            # Insert new friend request
-            cur.execute("""
-                INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-                VALUES (%s, %s, 'pending', NOW());
-            """, (sender_id, receiver_id))
-            conn.commit()
-            flash("Friend request sent.")
+        # Delete previously rejected request if it exists
+        cur.execute("""
+            DELETE FROM friend_requests
+            WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
+        """, (sender_id, receiver_id))
+
+        # Insert new friend request
+        cur.execute("""
+            INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
+            VALUES (%s, %s, 'pending', NOW());
+        """, (sender_id, receiver_id))
+
+        conn.commit()
+        flash("Friend request sent.")
     except Exception as e:
-        flash(f"An error occurred: {e}")
         conn.rollback()
+        flash(f"An error occurred: {e}")
     finally:
         cur.close()
         conn.close()
