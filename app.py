@@ -877,16 +877,18 @@ def profile(user_id):
     # OUTGOING (You sent a request)
     cur.execute("""
         SELECT status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s;
+        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (current_user.id, user_id))
     outgoing_request = cur.fetchone()
+
 
     # INCOMING (They sent a request)
     cur.execute("""
         SELECT request_id, status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s;
+        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (user_id, current_user.id))
     incoming_request = cur.fetchone()
+
 
     cur.close()
     conn.close()
