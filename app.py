@@ -883,7 +883,7 @@ def profile(user_id):
 
     # Check incoming friend request (profile user → current user)
     cur.execute("""
-        SELECT id FROM friend_requests
+        SELECT request_id FROM friend_requests
         WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (user_id, current_user_id))
     incoming_request = cur.fetchone()
