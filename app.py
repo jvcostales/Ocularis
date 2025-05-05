@@ -1070,7 +1070,7 @@ def accept_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect('/feed')
+    return redirect(url_for('feed', request_id=request_id))
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
@@ -1104,7 +1104,7 @@ def reject_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect('/feed')
+    return redirect(url_for('feed', request_id=request_id))
 
 @app.route('/recommendations', methods=['GET'])
 @login_required
