@@ -17,19 +17,38 @@
 <body>
     <h1>{{ user[0] }} {{ user[1] }}</h1>
 
-
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
+
     {% elif request_status %}
-    {% if request_status[0] == 'pending' %}
+    {% set status = request_status[0] %}
+    {% set direction = request_status[1] %}
+
+    {% if status == 'pending' %}
+    {% if direction == 'sent' %}
     <p>Friend request sent (pending).</p>
     <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
         <button type="submit">Cancel Request</button>
     </form>
-    {% elif request_status[0] == 'rejected' %}
-    <p>Friend request was rejected.</p>
+    {% elif direction == 'received' %}
+    <p>This user sent you a friend request.</p>
+    <form action="{{ url_for('accept_request', sender_id=user_id) }}" method="post">
+        <button type="submit">Accept</button>
+    </form>
+    <form action="{{ url_for('reject_request', sender_id=user_id) }}" method="post">
+        <button type="submit">Reject</button>
+    </form>
     {% endif %}
+
+    {% elif status == 'rejected' %}
+    {% if direction == 'sent' %}
+    <p>Your friend request was rejected.</p>
+    {% elif direction == 'received' %}
+    <p>You rejected this user's friend request.</p>
+    {% endif %}
+    {% endif %}
+
     {% else %}
     {% if current_user.verified %}
     <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
@@ -42,6 +61,7 @@
     {% endif %}
     {% endif %}
     {% endif %}
+
 
     {% for image in images %}
     <div class="post">
