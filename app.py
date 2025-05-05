@@ -870,22 +870,33 @@ def profile(user_id):
     cur.execute("""
         SELECT 1 FROM friends 
         WHERE (user1_id = %s AND user2_id = %s)
-            OR (user1_id = %s AND user2_id = %s);
+           OR (user1_id = %s AND user2_id = %s);
     """, (current_user_id, user_id, user_id, current_user_id))
     is_friend = cur.fetchone() is not None
 
-    # Check if a friend request is already sent
+    # Check outgoing friend request (current user → profile user)
     cur.execute("""
         SELECT status FROM friend_requests
-        WHERE sender_id = %s AND receiver_id = %s;
+        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (current_user_id, user_id))
-    request_status = cur.fetchone()
+    outgoing_request = cur.fetchone()
+
+    # Check incoming friend request (profile user → current user)
+    cur.execute("""
+        SELECT id FROM friend_requests
+        WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+    """, (user_id, current_user_id))
+    incoming_request = cur.fetchone()
 
     cur.close()
     conn.close()
 
-    # Add a flag to indicate if the "Add Friend" button should be disabled
-    disable_add_friend = is_friend or current_user_id == user_id
+    # Determine whether to disable "Add Friend" button
+    disable_add_friend = (
+        is_friend or
+        current_user_id == user_id or
+        incoming_request is not None  # you cannot add if they already sent you a request
+    )
 
     return render_template(
         "profile.html",
@@ -894,10 +905,12 @@ def profile(user_id):
         comments=comments,
         user_id=user_id,
         is_friend=is_friend,
-        request_status=request_status,
+        outgoing_request=outgoing_request,
+        incoming_request=incoming_request,
         is_own_profile=(current_user_id == user_id),
-        disable_add_friend=disable_add_friend  # Passing the flag to the template
+        disable_add_friend=disable_add_friend
     )
+
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
 @login_required
