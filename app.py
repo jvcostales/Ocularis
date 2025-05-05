@@ -936,14 +936,7 @@ def send_request(receiver_id):
             flash("You are already friends with this user.")
             return redirect(url_for('profile', user_id=receiver_id))
 
-        # Handle rejected request and allow sending a new one
-        cur.execute("""
-            DELETE FROM friend_requests
-            WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
-        """, (sender_id, receiver_id))
-        conn.commit()
-
-        # Check if a pending request already exists
+        # Prevent sending a duplicate pending request
         cur.execute("""
             SELECT * FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
@@ -953,6 +946,13 @@ def send_request(receiver_id):
         if existing_request:
             flash("Friend request already sent.")
         else:
+            # Handle rejected request and allow sending a new one
+            cur.execute("""
+                DELETE FROM friend_requests
+                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
+            """, (sender_id, receiver_id))
+            conn.commit()
+
             # Insert new friend request
             cur.execute("""
                 INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
@@ -960,56 +960,6 @@ def send_request(receiver_id):
             """, (sender_id, receiver_id))
             conn.commit()
             flash("Friend request sent.")
-    except Exception as e:
-        flash(f"An error occurred: {e}")
-        conn.rollback()
-    finally:
-        cur.close()
-        conn.close()
-
-    return redirect(url_for('profile', user_id=receiver_id))
-
-@app.route('/unfriend/<int:receiver_id>', methods=['POST'])
-@login_required
-def unfriend(receiver_id):
-    sender_id = current_user.id
-
-    # Prevent unfriending yourself
-    if sender_id == receiver_id:
-        flash("You cannot unfriend yourself.")
-        return redirect(url_for('profile', user_id=receiver_id))
-
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    try:
-        # Check if users are friends
-        cur.execute("""
-            SELECT * FROM friends
-            WHERE (user1_id = %s AND user2_id = %s)
-               OR (user1_id = %s AND user2_id = %s);
-        """, (sender_id, receiver_id, receiver_id, sender_id))
-        friendship = cur.fetchone()
-
-        if not friendship:
-            flash("You are not friends with this user.")
-            return redirect(url_for('profile', user_id=receiver_id))
-
-        # Remove the friendship
-        cur.execute("""
-            DELETE FROM friends
-            WHERE (user1_id = %s AND user2_id = %s)
-               OR (user1_id = %s AND user2_id = %s);
-        """, (sender_id, receiver_id, receiver_id, sender_id))
-        conn.commit()
-
-        flash("You have unfriended this user.")
     except Exception as e:
         flash(f"An error occurred: {e}")
         conn.rollback()

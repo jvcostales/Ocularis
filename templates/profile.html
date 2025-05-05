@@ -21,9 +21,6 @@
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
-    <form action="{{ url_for('unfriend', receiver_id=user_id) }}" method="post">
-        <button type="submit">Unfriend</button>
-    </form>
     {% elif request_status %}
     {% if request_status[0] == 'pending' %}
     <p>Friend request sent (pending).</p>
