@@ -390,18 +390,24 @@
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="request-details">
                             <div class="request-text">
-                                {{ first_name }} {{ last_name }} sent you a friend request.
+                                <span style="font-weight: 600;">{{ first_name }} {{ last_name }}</span> sent you a
+                                friend request.
                             </div>
                             <div class="request-date">
                                 {{ created_at.strftime('%b %#d') }}
                             </div>
                             <div class="request-icons">
-                                <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
-                                        class="material-symbols-outlined close-symbol"
-                                        onclick="window.location.href='/reject_request/{{ request_id }}'">close</span></button>
-                                <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
-                                        class="material-symbols-outlined check-symbol"
-                                        onclick="window.location.href='/accept_request/{{ request_id }}'">check</span></button>
+                                <form action="{{ url_for('reject_request', request_id=request_id) }}" method="POST"
+                                    style="display:inline;">
+                                    <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
+                                            class="material-symbols-outlined close-symbol">close</span></button>
+                                </form>
+                                <form action="{{ url_for('accept_request', request_id=request_id) }}" method="POST"
+                                    style="display:inline;">
+
+                                    <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
+                                            class="material-symbols-outlined check-symbol">check</span></button>
+                                </form>
                             </div>
                         </div>
                     </div>
