@@ -631,7 +631,8 @@ def feed():
         experience_levels=experience_levels,
         countries=app.config['COUNTRIES'],
         states=app.config['STATES'],
-        cities=app.config['CITIES']
+        cities=app.config['CITIES'],
+        verified=current_user.verified
     )
 
 @app.route('/logout')
