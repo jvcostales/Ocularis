@@ -33,10 +33,10 @@
     </form>
     {% elif direction == 'received' %}
     <p>This user sent you a friend request.</p>
-    <form action="{{ url_for('accept_request', sender_id=user_id) }}" method="post">
+    <form action="{{ url_for('accept_request', request_id=request_id) }}" method="post">
         <button type="submit">Accept</button>
     </form>
-    <form action="{{ url_for('reject_request', sender_id=user_id) }}" method="post">
+    <form action="{{ url_for('reject_request', request_id=request_id) }}" method="post">
         <button type="submit">Reject</button>
     </form>
     {% endif %}
