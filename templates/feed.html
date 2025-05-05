@@ -359,11 +359,11 @@
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">
                             <div class="notif-text">
-                                {{ username }}
+                                <span style="font-weight: 600;">{{ username }}</span>
                                 {% if action == 'like' %}
-                                liked your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                liked your post</a>.
                                 {% elif action == 'comment' %}
-                                commented on your <a href="{{ url_for('feed') }}#image-{{ image_id }}">post</a>.
+                                commented on your post</a>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">

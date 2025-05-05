@@ -1086,6 +1086,38 @@ def reject_request(request_id):
 
     return redirect('/feed')
 
+@app.route('/unfriend/<int:user_id>', methods=['POST'])
+@login_required
+def unfriend(user_id):
+    current_user_id = current_user.id
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Delete the friendship regardless of order
+        cur.execute("""
+            DELETE FROM friends
+            WHERE (user1_id = %s AND user2_id = %s)
+               OR (user1_id = %s AND user2_id = %s);
+        """, (current_user_id, user_id, user_id, current_user_id))
+        conn.commit()
+        flash("User has been unfriended.")
+    except Exception as e:
+        conn.rollback()
+        flash(f"An error occurred while unfriending: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('profile', user_id=user_id))
+
 @app.route('/recommendations', methods=['GET'])
 @login_required
 def recommendations():
