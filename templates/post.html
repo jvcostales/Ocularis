@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class="post" style="display: none;">
+    <div class="post-title">Post</div>
+    <div class="tagline-wrapper">
+        <div class="tagline-wrapper-2">
+            <img src="..\static\pfp.jpg" class="pfp">
+            <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
+        </div>
+        <button class="image-button" id="openOverlay"><span
+                class="material-symbols-outlined image">image</span></button>
+    </div>
+</div>
 <div class="post1" style="margin-bottom: 16px; margin-top: 0;">
     <div class="profile-more-wrapper">
         <div class="profile-post">
