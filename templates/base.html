@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocularis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-sidebar-container">
+            <div class="left-sidebar">
+                <div class="namelogo">
+                    <img src="..\static\Logo.png" class="logo">
+                    <div class="name">Ocularis</div>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a>
+                            <div class="icon-text-wrapper current">
+                                <span class="material-symbols-outlined sidebar-symbol">newspaper</span>
+                                <div>Feed</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('recommendations') }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">group</span>
+                                <div>Match</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">person</span>
+                                <div>Profile</div>
+                            </div>
+                        </a></li>
+                    <li><a href="{{ url_for('logout') }}">
+                            <div class="icon-text-wrapper">
+                                <span class="material-symbols-outlined sidebar-symbol">logout</span>
+                                <div>Logout</div>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="header">
+            <form class="search-wrapper hide-mobile" action="{{ url_for('search.search_results') }}" method="GET">
+                <input class="search" type="text" name="query" placeholder="Search" required>
+                <button class="search-button" type="submit"><span
+                        class="material-symbols-outlined search-symbol">search</span></button>
+            </form>
+            <div class="hide-pfp">
+                <button class="notifs-button"><span
+                        class="material-symbols-outlined notifs-symbol">notifications</span></button>
+                <div class="pfp-frame-wrapper">
+                    <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp3"></div>
+                    <div class="frame3" id="frame3">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-only">
+            <img src="..\static\Logo.png" class="logo">
+            <div class="button-pfp-wrapper">
+                <button class="search-button"><span
+                        class="material-symbols-outlined search-symbol">search</span></button>
+                <button class="notifs-button"><span
+                        class="material-symbols-outlined notifs-symbol">notifications</span></button>
+                <div class="pfp-frame-wrapper">
+                    <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp4"></div>
+                    <div class="frame4" id="frame4">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <div class="right-sidebar-container">
+            <div class="right-sidebar">
+                <div class="pfp-frame-wrapper">
+                    <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp"></div>
+                    <div class="frame2" id="frame2">
+                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="line"></div>
+                        <div class="saved">Saved</div>
+                        <div class="settings">Settings</div>
+                    </div>
+                </div>
+                <div class="notifs" id="notifs">
+                    <div class="notifs-title">
+                        Notifs
+                    </div>
+                    {% if notifications %}
+                    {% for username, action, image_id, created_at in notifications %}
+                    <div class="notif-bar">
+                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <div class="notif-details">
+                            <div class="notif-text">
+                                <span style="font-weight: 600;">{{ username }}</span>
+                                {% if action == 'like' %}
+                                liked your <span style="font-weight: 600;">post</span></a>.
+                                {% elif action == 'comment' %}
+                                commented on your <span style="font-weight: 600;">post</span></a>.
+                                {% endif %}
+                            </div>
+                            <div class="notif-date">
+                                {{ created_at.strftime('%b %#d') }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="requests" id="requests">
+                    <div class="requests-title">
+                        Requests
+                    </div>
+                    {% if requests %}
+                    {% for request_id, first_name, last_name, created_at in requests %}
+                    <div class="request-bar">
+                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <div class="request-details">
+                            <div class="request-text">
+                                <span style="font-weight: 600;">{{ first_name }} {{ last_name }}</span> sent you a
+                                friend request.
+                            </div>
+                            <div class="request-date">
+                                {{ created_at.strftime('%b %#d') }}
+                            </div>
+                            <div class="request-icons">
+                                <form action="{{ url_for('reject_request', request_id=request_id) }}" method="POST"
+                                    style="display:inline;">
+                                    <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
+                                            class="material-symbols-outlined close-symbol">close</span></button>
+                                </form>
+                                <form action="{{ url_for('accept_request', request_id=request_id) }}" method="POST"
+                                    style="display:inline;">
+                                    <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
+                                            class="material-symbols-outlined check-symbol">check</span></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if show_profile_modal %}
+        <div id="profileModal" class="modal show">
+            <form method="POST" id="profileForm" action="/api/setup-profile">
+
+                <div class="overlaySetup" id="step-1">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup1">
+                            <img src="..\static\pfp.jpg" class="pfpsetup1">
+                            <div class="heading">Hello, {{ current_user.first_name }} {{ current_user.last_name }}!
+                            </div>
+                            <div class="subheading">Ready to setup your account?</div>
+                            <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-2" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup2">
+                            <div class="heading">What is your role?</div>
+                            <div class="subheading">Your role helps us personalize your experience.</div>
+                            <input class="setup2-field" type="text" placeholder="ex. Graphic Designer" id="role"
+                                name="role" maxlength="100" required>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-3" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup3">
+                            <div class="heading">Where are you located?</div>
+                            <div class="subheading">Show us where your ideas come to life.</div>
+                            <div class="left-align">
+                                <div class="label">Country</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="country" name="country" required>
+                                        <option disabled selected>Select your country</option>
+                                        {% for country in countries %}
+                                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{
+                                            country.name
+                                            }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                                <div class="label">Region</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="state" name="state" required>
+                                        <option value="">Select your region</option>
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                                <div class="label">City</div>
+                                <div class="label-wrapper">
+                                    <select class="location" id="city" name="city" required>
+                                        <option value="">Select your city</option>
+                                    </select>
+                                    <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+                                </div>
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-4" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup4">
+                            <div class="heading">What are your skills?</div>
+                            <div class="subheading">Tell us what you’re good at—select all that apply.</div>
+                            <div class="checkbox-grid">
+                                {% for category in categories %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="skills" value="{{ category }}">
+                                    {{ category }}
+                                </label>
+                                {% endfor %}
+                                <!--<a href="#" class="view-more">View all fields...</a>-->
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-5" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup5">
+                            <div class="heading">What are your preferences?</div>
+                            <div class="subheading">Tell us your design vibe—select all that apply.</div>
+                            <div class="checkbox-grid">
+                                {% for category in categories %}
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="preferences" value="{{ category }}">
+                                    {{ category }}
+                                </label>
+                                {% endfor %}
+                                <!--<a href="#" class="view-more">View all fields...</a>-->
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-6" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup6">
+                            <div class="heading">What is your experience level?</div>
+                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                            <div class="left-align">
+                                {% for value, label in experience_levels %}
+                                <label class="radio-item">
+                                    <input type="radio" name="experience_level" value="{{ value }}" required>{{ label }}
+                                </label>
+                                {% endfor %}
+                            </div>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overlaySetup" id="step-7" style="display:none;">
+                    <div class="overlay-content-setup">
+                        <div class="overlay-title-setup">Setup</div>
+                        <div class="div-setup" id="divSetup7">
+                            <div class="heading">What is your experience level?</div>
+                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                            <table class="social-table">
+                                <tr>
+                                    <td><label for="facebook">Facebook</label></td>
+                                    <td>
+                                        <input type="url" id="facebook" name="facebook"
+                                            placeholder="https://facebook.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="instagram">Instagram</label></td>
+                                    <td>
+                                        <input type="url" id="instagram" name="instagram"
+                                            placeholder="https://instagram.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="x">X (Twitter)</label></td>
+                                    <td>
+                                        <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="linkedin">LinkedIn</label></td>
+                                    <td>
+                                        <input type="url" id="linkedin" name="linkedin"
+                                            placeholder="https://linkedin.com/in/yourprofile">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="telegram">Telegram</label></td>
+                                    <td>
+                                        <input type="url" id="telegram" name="telegram"
+                                            placeholder="https://t.me/yourusername">
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="button-wrapper">
+                                <div class="partner-back" onclick="prevStep()">
+                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                    <div class="partner-label-back">Back</div>
+                                </div>
+                                <button class="next-button" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Skills
+                <div class="form-step" id="step-1">
+                    <h2>Your Skills</h2>
+                    {% for category in categories %}
+                    <label>
+                        <input type="checkbox" name="skills" value="{{ category }}">
+                        {{ category }}
+                    </label><br>
+                    {% endfor %}
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>-->
+
+                <!-- Step 2: Preferences
+                <div class="form-step" id="step-2" style="display:none;">
+                    <h2>Your Preferences</h2>
+                    {% for category in categories %}
+                    <label>
+                        <input type="checkbox" name="preferences" value="{{ category }}">
+                        {{ category }}
+                    </label><br>
+                    {% endfor %}
+                    <button type="button" onclick="prevStep()">Previous</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div> -->
+
+                <!-- Step 3: Experience
+                <div class="form-step" id="step-3" style="display:none;">
+                    <h2>Experience Level</h2>
+                    <label for="experience_level">Select your level:</label><br>
+                    <select name="experience_level" id="experience_level" required>
+                        {% for value, label in experience_levels %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select><br><br>
+                    <button type="button" onclick="prevStep()">Previous</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div> -->
+
+                <!-- Step 4: Role
+                <div class="form-step" id="step-4" style="display:none;">
+                    <h2>Your Role</h2>
+                    <input type="text" id="role" name="role" maxlength="100" required><br><br>
+                    <button type="button" onclick="prevStep()">Previous</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div> -->
+
+                <!-- Step 5: Location
+                <div class="form-step" id="step-5" style="display:none;">
+                    <h2>Location</h2>
+                    <label for="country">Country:</label><br>
+                    <select id="country" name="country" required>
+                        <option value="">Select Country</option>
+                        {% for country in countries %}
+                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
+                        {% endfor %}
+                    </select><br><br>
+
+                    <label for="state">State/Region:</label><br>
+                    <select id="state" name="state" required>
+                        <option value="">Select State</option>
+                    </select><br><br>
+
+                    <label for="city">City:</label><br>
+                    <select id="city" name="city" required>
+                        <option value="">Select City</option>
+                    </select><br><br>
+
+                    <button type="button" onclick="prevStep()">Previous</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div> -->
+
+                <!-- Step 6: Social Links
+                <div class="form-step" id="step-6" style="display:none;">
+                    <h2>Social Media Links</h2>
+                    <input type="url" id="facebook" name="facebook"
+                        placeholder="https://facebook.com/yourprofile"><br><br>
+                    <input type="url" id="instagram" name="instagram"
+                        placeholder="https://instagram.com/yourprofile"><br><br>
+                    <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
+                    <input type="url" id="linkedin" name="linkedin"
+                        placeholder="https://linkedin.com/in/yourprofile"><br><br>
+                    <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
+
+                    <button type="button" onclick="prevStep()">Previous</button>
+                    <button type="submit">Save Profile</button>
+                </div> -->
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+
+        function showStep(step) {
+            for (let i = 1; i <= totalSteps; i++) {
+                const el = document.getElementById('step-' + i);
+                if (el) el.style.display = (i === step) ? 'flex' : 'none';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const modal = document.getElementById('profileModal');
+            if (modal && modal.classList.contains('show')) {
+                showStep(currentStep);
+            }
+
+            const countrySelect = document.getElementById('country');
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+
+            if (countrySelect && stateSelect && citySelect) {
+                let allStates = [];
+                let allCities = [];
+
+                fetch('/api/get-states')
+                    .then(res => res.json())
+                    .then(data => {
+                        allStates = data;
+                        console.log('Fetched States:', allStates);
+                    });
+
+                fetch('/api/get-cities')
+                    .then(res => res.json())
+                    .then(data => {
+                        allCities = data;
+                        console.log('Fetched Cities:', allCities);
+                    });
+
+                countrySelect.addEventListener('change', () => {
+                    const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                    stateSelect.innerHTML = '<option value="">Select State</option>';
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+
+                    if (!selectedIso) return;
+
+                    const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                    console.log('Filtered States:', filteredStates);
+
+                    filteredStates.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.state_code;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                    });
+                });
+
+                stateSelect.addEventListener('change', () => {
+                    const selectedStateCode = stateSelect.value;
+                    const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+
+                    console.log('Selected country ISO:', selectedCountryIso);
+                    console.log('Selected state code:', selectedStateCode);
+
+                    if (!selectedStateCode || !selectedCountryIso) return;
+
+                    fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                        .then(res => res.json())
+                        .then(filteredCities => {
+                            filteredCities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.name;
+                                option.textContent = city.name;
+                                citySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cities:', error);
+                        });
+                });
+            }
+
+            let scrollPosition = 0;
+
+            function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
+                const overlay = document.querySelector(overlaySelector);
+                const openBtn = document.getElementById(openBtnId);
+                const closeBtn = document.getElementById(closeBtnId);
+
+                if (!overlay || !openBtn || !closeBtn) return;
+
+                openBtn.addEventListener('click', () => {
+                    if (!isNested) {
+                        scrollPosition = window.scrollY;
+                        document.body.style.top = `-${scrollPosition}px`;
+                        document.body.classList.add('no-scrolling');
+                    }
+                    overlay.classList.add('active');
+                });
+
+                function closeOverlay() {
+                    overlay.classList.remove('active');
+                    if (!isNested) {
+                        document.body.classList.remove('no-scrolling');
+                        document.body.style.top = '';
+                        window.scrollTo(0, scrollPosition);
+                    }
+                }
+
+                closeBtn.addEventListener('click', closeOverlay);
+
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        closeOverlay();
+                    }
+                });
+            }
+
+            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+
+            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+            });
+
+            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
+            });
+
+            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+            });
+
+            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+            });
+
+            const moreBtns = document.querySelectorAll('.more-symbol');
+            const allFrames1 = document.querySelectorAll('.frame1');
+
+            const pfp = document.getElementById('pfp');
+            const frame2 = document.getElementById('frame2');
+            const pfp3 = document.getElementById('pfp3');
+            const frame3 = document.getElementById('frame3');
+            const pfp4 = document.getElementById('pfp4');
+            const frame4 = document.getElementById('frame4');
+
+            allFrames1.forEach(frame => frame.style.display = 'none');
+            if (frame2) frame2.style.display = 'none';
+            if (frame3) frame3.style.display = 'none';
+            if (frame4) frame4.style.display = 'none';
+
+            let isFrame234Open = false;
+
+            moreBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                    const isOpen = currentFrame.style.display === 'block';
+
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+
+                    currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                    if (frame2) frame2.style.display = 'none';
+                    if (frame3) frame3.style.display = 'none';
+                    if (frame4) frame4.style.display = 'none';
+                    isFrame234Open = false;
+                });
+            });
+
+            if (pfp) {
+                pfp.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame2.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            if (pfp3) {
+                pfp3.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame3.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            if (pfp4) {
+                pfp4.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = frame4.style.display === 'block';
+                    if (isOpen) {
+                        frame2.style.display = 'none';
+                        frame3.style.display = 'none';
+                        frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    } else {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+                        isFrame234Open = true;
+                    }
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                moreBtns.forEach((btn, index) => {
+                    const frame = document.getElementById(`frame1-${index + 1}`);
+                    if (!frame.contains(event.target) && event.target !== btn) {
+                        frame.style.display = 'none';
+                    }
+                });
+
+                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                    frame2.style.display = 'none';
+                }
+                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                    frame3.style.display = 'none';
+                }
+                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                    frame4.style.display = 'none';
+                }
+
+                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+                if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                    isFrame234Open = false;
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (isFrame234Open) {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                }
+            });
+
+            function checkScrollbar() {
+                const imageInput = document.getElementById('image');
+                const div = document.getElementById('scrollableDiv');
+                const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+                const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+                const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+                const notifs = document.getElementById('notifs');
+
+                if (imageInput && div) {
+                    div.classList.remove('no-scroll', 'has-scroll');
+                    if (imageInput.files.length > 0) {
+                        div.classList.add('has-scroll');
+                    } else {
+                        div.classList.add('no-scroll');
+                    }
+                }
+
+                const checkScrollState = (divList) => {
+                    divList.forEach(el => {
+                        el.classList.remove('no-scroll', 'has-scroll');
+                        if (el.scrollHeight > el.clientHeight) {
+                            el.classList.add('has-scroll');
+                        } else {
+                            el.classList.add('no-scroll');
+                        }
+                    });
+                };
+
+                checkScrollState(likeDivs);
+                checkScrollState(commentDivs);
+                checkScrollState(commentLikeDivs);
+            }
+
+            function adjustRightPaddingOnScrollCheck() {
+                const ids = ["notifs", "requests"];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                        el.style.paddingRight = hasScroll ? "6px" : "24px";
+                    }
+                });
+            }
+
+            // Run it on page load
+            window.addEventListener("load", adjustRightPaddingOnScrollCheck);
+
+            // Optional: Update on resize
+            window.addEventListener("resize", adjustRightPaddingOnScrollCheck);
+
+            const imageInput = document.getElementById('image');
+            if (imageInput) {
+                imageInput.addEventListener('change', checkScrollbar);
+            }
+            checkScrollbar();
+
+            const likeButtons = document.querySelectorAll(".like-button");
+            likeButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    button.classList.toggle("liked");
+                });
+            });
+
+            function isChrome() {
+                return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            }
+
+            function setFullHeight() {
+                const adjustment = isChrome() ? 1 : 0;
+                const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
+
+                const rightSidebar = document.querySelector('.right-sidebar');
+                const leftSidebar = document.querySelector('.left-sidebar');
+
+                if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
+                if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
+            }
+
+            window.addEventListener('resize', setFullHeight);
+            setFullHeight();
+
+            const imageInputPreview = document.getElementById('image');
+            const imageWrapper = document.getElementById('imageWrapper');
+            const imagePreview = document.getElementById('uploadedImagePreview');
+            const closeButton = document.getElementById('closeButton');
+            const scrollableDiv = document.querySelector('.scrollable-div');
+
+            if (imageInputPreview) {
+                imageInputPreview.addEventListener('change', function () {
+                    const file = this.files[0];
+
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result;
+                            imageWrapper.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.src = '';
+                        imageWrapper.style.display = 'none';
+                    }
+                });
+            }
+
+            if (closeButton) {
+                closeButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    imagePreview.src = '';
+                    imageWrapper.style.display = 'none';
+                    imageInputPreview.value = '';
+
+                    if (scrollableDiv) {
+                        scrollableDiv.classList.remove('has-scroll');
+                        scrollableDiv.classList.add('no-scroll');
+                    }
+                });
+            }
+
+            const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+            if (circledClose) {
+                circledClose.addEventListener('click', function () {
+                    document.getElementById('uploadedImagePreview').src = '';
+                    document.getElementById('image').value = '';
+                    document.getElementById('imageWrapper').style.display = 'none';
+
+                    if (scrollableDiv) {
+                        scrollableDiv.classList.remove('has-scroll');
+                        scrollableDiv.classList.add('no-scroll');
+                    }
+                });
+            }
+
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                console.log('Form found');
+
+                profileForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    console.log('Form submission prevented');
+
+                    const formData = new FormData(this);
+
+                    // Append all form data into a single array
+                    const dataArray = [];
+                    for (const [key, value] of formData.entries()) {
+                        dataArray.push([key, value]);
+                    }
+                    console.log('Form data as array:', dataArray);
+
+                    try {
+                        console.log('Sending data to the server...');
+                        const response = await fetch('/api/setup-profile', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        console.log('Response received:', response);
+                        const result = await response.json();
+                        console.log('Parsed result:', result);
+
+                        if (result.success) {
+                            console.log('Profile saved successfully');
+                            document.getElementById('profileModal').style.display = 'none';
+                            window.location.href = result.redirect_url;
+                        } else {
+                            console.log('Something went wrong while saving the profile');
+                            alert('Something went wrong while saving your profile.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            } else {
+                console.log('Form not found');
+            }
+
+        });
+    </script>
+</body>
+
+</html>

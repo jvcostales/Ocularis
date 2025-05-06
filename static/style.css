@@ -172,7 +172,7 @@ input[type="url"]::placeholder {
         justify-content: center;
     }
 
-    .feed {
+    main {
         grid-column: 3 / 4;
         grid-row: 2;
         color: #1a1a1a;
@@ -1786,7 +1786,7 @@ input[type="url"]::placeholder {
         color: #a6a6a6;
     }
 
-    .feed {
+    main {
         grid-column: 3 / 4;
         color: #1a1a1a;
     }
@@ -3050,7 +3050,7 @@ input[type="url"]::placeholder {
         color: #a6a6a6;
     }
 
-    .feed {
+    main {
         grid-column: 1 / 2;
         grid-row: 2;
         color: #1a1a1a;

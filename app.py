@@ -635,6 +635,94 @@ def feed():
         verified=current_user.verified
     )
 
+@app.route('/post/<int:image_id>')
+@login_required
+def view_post(image_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Fetch a single image by image_id
+        cur.execute("""
+            SELECT images.image_id, images.image_url, images.caption,
+                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name
+            FROM images 
+            JOIN users ON images.id = users.id
+            LEFT JOIN (
+                SELECT image_id, COUNT(*) AS like_count 
+                FROM likes 
+                GROUP BY image_id
+            ) AS likes 
+            ON images.image_id = likes.image_id
+            WHERE images.image_id = %s
+        """, (image_id,))
+        image = cur.fetchone()
+
+        if not image:
+            abort(404)
+
+        # Fetch comments for that image
+        cur.execute("""
+            SELECT comments.comment_id, comments.image_id, 
+                   users.first_name || ' ' || users.last_name AS display_name, 
+                   comments.comment_text, comments.created_at,
+                   COALESCE(like_count, 0) AS like_count, comments.user_id
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            LEFT JOIN (
+                SELECT comment_id, COUNT(*) AS like_count
+                FROM comment_likes
+                GROUP BY comment_id
+            ) AS cl ON comments.comment_id = cl.comment_id
+            WHERE comments.image_id = %s
+            ORDER BY comments.created_at ASC
+        """, (image_id,))
+        comments = cur.fetchall()
+
+        # Likes for the image
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+            ORDER BY l.created_at DESC
+        """, (image_id,))
+        likes = cur.fetchall()
+        likes_data = {image_id: likes}
+
+        # Likes for each comment
+        comment_likes_data = {}
+        for comment in comments:
+            comment_id = comment[0]
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+                FROM comment_likes cl
+                JOIN users u ON cl.user_id = u.id
+                WHERE cl.comment_id = %s
+                ORDER BY cl.created_at DESC
+            """, (comment_id,))
+            comment_likes = cur.fetchall()
+            comment_likes_data[comment_id] = comment_likes
+
+    finally:
+        cur.close()
+        conn.close()
+
+    return render_template(
+        'post.html',  # change this from 'feed.html' to your post template
+        image=image,
+        comments=comments,
+        likes_data=likes_data,
+        comment_likes_data=comment_likes_data,
+    )
+
+
 @app.route('/logout')
 @login_required
 def logout():
