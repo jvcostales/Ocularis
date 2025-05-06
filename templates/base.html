@@ -107,12 +107,12 @@
                         Notifs
                     </div>
                     {% if notifications %}
-                    {% for username, action, image_id, created_at in notifications %}
+                    {% for username, action, image_id, created_at, actor_id in notifications %}
                     <div class="notif-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">
                             <div class="notif-text">
-                                <span style="font-weight: 600;">{{ username }}</span>
+                                <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{ username }}</a></span>
                                 {% if action == 'like' %}
                                 liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                         style="font-weight: 600;">post</span></a>.

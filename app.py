@@ -552,7 +552,7 @@ def feed():
         # Fetch notifications
         cur.execute("""
             SELECT users.first_name || ' ' || users.last_name AS display_name,
-                   notifications.action_type, notifications.image_id, notifications.created_at
+                   notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
@@ -618,6 +618,8 @@ def feed():
         (4, "Expert")
     ]
 
+    today = datetime.today()
+
     return render_template(
         'feed.html',
         tags=tags,
@@ -633,7 +635,8 @@ def feed():
         countries=app.config['COUNTRIES'],
         states=app.config['STATES'],
         cities=app.config['CITIES'],
-        verified=current_user.verified
+        verified=current_user.verified,
+        today=today
     )
 
 @app.route('/post/<int:image_id>')
