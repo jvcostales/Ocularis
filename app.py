@@ -519,7 +519,7 @@ def feed():
         # Fetch images
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
-                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name, created_at
+                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name, images.created_at
             FROM images 
             JOIN users ON images.id = users.id
             LEFT JOIN (
