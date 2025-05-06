@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post1" style="margin-bottom: 16px;">
+    <div class="profile-more-wrapper">
+        <div class="profile-post">
+            <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <div class="profile-name-date">
+                <div class="username">
+                    <a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a>
+                </div>
+                <div class="date">Jan 1</div> <!-- Optional: replace with dynamic date -->
+            </div>
+        </div>
+        <div class="more-frame-wrapper">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn">more_horiz</span>
+            <div class="frame1" id="frame1">
+                <div class="save">Save</div>
+                <div class="hide">Hide</div>
+                <div class="report">Report</div>
+            </div>
+        </div>
+    </div>
+    <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
+        {{ image[2] }}
+    </div>
+    <div class="image-container">
+        <img src="{{ image[1] }}" class="image-post">
+    </div>
+    <div class="interactions">
+        <div class="lcs">
+            <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+                <button type="submit" style="all: unset;">
+                    <div class="partner like-button">
+                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                        <div class="partner-label">Like</div>
+                    </div>
+                </button>
+            </form>
+            <div class="partner" id="openOverlayComments">
+                <span class="material-symbols-outlined lcs-symbol">comment</span>
+                <div class="partner-label">Comment</div>
+            </div>
+            <div class="partner" id="openOverlayShare">
+                <span class="material-symbols-outlined lcs-symbol">share</span>
+                <div class="partner-label">Share</div>
+            </div>
+        </div>
+        <div class="metrics" id="openOverlayLikes">
+            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
+        </div>
+    </div>
+</div>
+<div class="overlayLikes" id="overlayLikes">
+    <div class="overlay-content-likes">
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayLikes">close</span>
+        </button>
+        <div class="overlay-title">Likes</div>
+        <div class="scrollable-div-likes" id="scrollableDivLikes">
+            {% if likes_data[image[0]] %}
+            {% for like in likes_data[image[0]] %}
+            <div class="profile-follow-wrapper">
+                <div class="profile-post-likes">
+                    <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                    <div class="profile-name-date">
+                        <div class="username">{{ like[0] }}</div>
+                        <div class="date">{{ like[1] }}</div>
+                    </div>
+                </div>
+                <button class="follow-button">Befriend</button>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="likes-empty">
+                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                <div class="oops">Oops!</div>
+                <div class="nothing">Nothing to show here at the moment.</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="overlayComments" id="overlayComments">
+    <div class="overlay-content-comments">
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayComments">close</span>
+        </button>
+        <div class="overlay-title">Comment</div>
+        <div class="scrollable-div-comments" id="scrollableDivComments">
+            {% set ns = namespace(has_comments=false) %}
+
+            {% for comment in comments %}
+            {% if comment[1] == image[0] %}
+            {% set ns.has_comments = true %}
+            <div class="profile-comment-wrapper">
+                <div class="profile-more-wrapper">
+                    <div class="profile-post-comments">
+                        <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                        <div class="profile-name-date">
+                            <div class="username">
+                                <a href="{{ url_for('profile', user_id=comment[6]) }}">{{ comment[2] }}</a>
+                            </div>
+                            <div class="date">Jan 1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-like-wrapper">
+                    <div class="comment">{{ comment[3] }}</div>
+                    <div class="like-metrics-wrapper">
+                        <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post">
+                            <button type="submit" style="all: unset;">
+                                <div class="partner comment-like-button">
+                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                            </button>
+                        </form>
+                        <div class="metrics" id="openOverlayCommentLikes-{{ comment[0] }}">
+                            {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overlayLikes" id="overlayCommentLikes-{{ comment[0] }}">
+                <div class="overlay-content-likes">
+                    <button class="close-icon">
+                        <span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlayCommentLikes-{{ comment[0] }}">close</span>
+                    </button>
+                    <div class="overlay-title">Likes</div>
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ comment[0] }}">
+                        {% if comment_likes_data[comment[0]] %}
+                        {% for comment_like in comment_likes_data[comment[0]] %}
+                        <div class="profile-follow-wrapper">
+                            <div class="profile-post-likes">
+                                <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                                <div class="profile-name-date">
+                                    <div class="username">{{ comment_like[0] }}</div>
+                                    <div class="date">{{ comment_like[1] }}</div>
+                                </div>
+                            </div>
+                            <button class="follow-button">Befriend</button>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="likes-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="line-comments"></div>
+            {% endif %}
+            {% endfor %}
+
+            {% if not ns.has_comments %}
+            <div class="comments-empty">
+                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                <div class="oops">Oops!</div>
+                <div class="nothing">Nothing to show here at the moment.</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="comment-bar">
+            <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
+                <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment" required>
+                <button class="send-button" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="overlayShare" id="overlayShare">
+    <div class="overlay-content-share">
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayShare">close</span>
+        </button>
+        <div class="overlay-title">Share</div>
+        <div class="share-wrapper">
+            <div class="share-via">Share via</div>
+            <div class="icon-grid">
+                <img src="{{ url_for('static', filename='fb.png') }}" class="fb">
+                <img src="{{ url_for('static', filename='ig.png') }}" class="ig">
+                <img src="{{ url_for('static', filename='x.png') }}" class="x">
+                <img src="{{ url_for('static', filename='gmail.png') }}" class="gmail">
+                <img src="{{ url_for('static', filename='linkedin.png') }}" class="linkedin">
+                <img src="{{ url_for('static', filename='telegram.png') }}" class="telegram">
+            </div>
+            <div class="or-copy-link">or copy link</div>
+            <div class="link-wrapper">
+                <div class="link">https://ocularis.app/post/123</div>
+                <button class="link-button">
+                    <span class="material-symbols-outlined link-symbol">content_copy</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
