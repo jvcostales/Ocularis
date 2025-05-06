@@ -51,18 +51,17 @@
         </div>
     </div>
 </div>
-<div class="overlayLikes" id="overlayLikes">
+<div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
     <div class="overlay-content-likes">
-        <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayLikes">close</span>
-        </button>
+        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivLikes">
+        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
             {% if likes_data[image[0]] %}
             {% for like in likes_data[image[0]] %}
             <div class="profile-follow-wrapper">
                 <div class="profile-post-likes">
-                    <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                    <img src="..\static\pfp.jpg" class="pfp">
                     <div class="profile-name-date">
                         <div class="username">{{ like[0] }}</div>
                         <div class="date">{{ like[1] }}</div>
@@ -81,13 +80,12 @@
         </div>
     </div>
 </div>
-<div class="overlayComments" id="overlayComments">
+<div class="overlayComments" id="overlayComments-{{ loop.index }}">
     <div class="overlay-content-comments">
-        <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayComments">close</span>
-        </button>
+        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayComments-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Comment</div>
-        <div class="scrollable-div-comments" id="scrollableDivComments">
+        <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             {% set ns = namespace(has_comments=false) %}
 
             {% for comment in comments %}
@@ -96,13 +94,15 @@
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
-                        <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                        <img src="..\static\pfp.jpg" class="pfp">
                         <div class="profile-name-date">
-                            <div class="username">
-                                <a href="{{ url_for('profile', user_id=comment[6]) }}">{{ comment[2] }}</a>
-                            </div>
+                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
+                                    comment[2] }}</a></div>
                             <div class="date">Jan 1</div>
                         </div>
+                    </div>
+                    <div class="more-frame-wrapper">
+                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
                     </div>
                 </div>
                 <div class="comment-like-wrapper">
@@ -110,32 +110,29 @@
                     <div class="like-metrics-wrapper">
                         <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post">
                             <button type="submit" style="all: unset;">
-                                <div class="partner comment-like-button">
-                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                <div class="partner comment-like-button"> <span
+                                        class="material-symbols-outlined lcs-symbol">thumb_up</span>
                                     <div class="partner-label">Like</div>
                                 </div>
                             </button>
                         </form>
-                        <div class="metrics" id="openOverlayCommentLikes-{{ comment[0] }}">
+                        <div class="metrics" id="openOverlayCommentLikes-{{ loop.index }}">
                             {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="overlayLikes" id="overlayCommentLikes-{{ comment[0] }}">
+            <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
-                    <button class="close-icon">
-                        <span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-{{ comment[0] }}">close</span>
-                    </button>
+                    <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ comment[0] }}">
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
                         {% if comment_likes_data[comment[0]] %}
                         {% for comment_like in comment_likes_data[comment[0]] %}
                         <div class="profile-follow-wrapper">
                             <div class="profile-post-likes">
-                                <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+                                <img src="..\static\pfp.jpg" class="pfp">
                                 <div class="profile-name-date">
                                     <div class="username">{{ comment_like[0] }}</div>
                                     <div class="date">{{ comment_like[1] }}</div>
@@ -154,11 +151,9 @@
                     </div>
                 </div>
             </div>
-
             <div class="line-comments"></div>
             {% endif %}
             {% endfor %}
-
             {% if not ns.has_comments %}
             <div class="comments-empty">
                 <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
@@ -167,9 +162,8 @@
             </div>
             {% endif %}
         </div>
-
         <div class="comment-bar">
-            <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <img src="..\static\pfp.jpg" class="pfp">
             <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
                 <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment" required>
                 <button class="send-button" type="submit">Send</button>
@@ -177,28 +171,26 @@
         </div>
     </div>
 </div>
-<div class="overlayShare" id="overlayShare">
+<div class="overlayShare" id="overlayShare-{{ loop.index }}">
     <div class="overlay-content-share">
-        <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayShare">close</span>
-        </button>
+        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayShare-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Share</div>
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
             <div class="icon-grid">
-                <img src="{{ url_for('static', filename='fb.png') }}" class="fb">
-                <img src="{{ url_for('static', filename='ig.png') }}" class="ig">
-                <img src="{{ url_for('static', filename='x.png') }}" class="x">
-                <img src="{{ url_for('static', filename='gmail.png') }}" class="gmail">
-                <img src="{{ url_for('static', filename='linkedin.png') }}" class="linkedin">
-                <img src="{{ url_for('static', filename='telegram.png') }}" class="telegram">
+                <img src="..\static\fb.png" class="fb">
+                <img src="..\static\ig.png" class="ig">
+                <img src="..\static\x.png" class="x">
+                <img src="..\static\gmail.png" class="gmail">
+                <img src="..\static\linkedin.png" class="linkedin">
+                <img src="..\static\telegram.png" class="telegram">
             </div>
             <div class="or-copy-link">or copy link</div>
             <div class="link-wrapper">
                 <div class="link">https://ocularis.app/post/123</div>
-                <button class="link-button">
-                    <span class="material-symbols-outlined link-symbol">content_copy</span>
-                </button>
+                <button class="link-button"><span
+                        class="material-symbols-outlined link-symbol">content_copy</span></button>
             </div>
         </div>
     </div>
