@@ -21,7 +21,7 @@
     {% if not is_own_profile %}
     {% if is_friend %}
     <p>You are friends.</p>
-    <form action="{{ url_for('unfriend', user_id=user_id) }}" method="post">
+    <form action="{{ url_for('unfriend', other_user_id=user_id) }}" method="post">
         <button type="submit">Unfriend</button>
     </form>
     {% elif incoming_request %}
