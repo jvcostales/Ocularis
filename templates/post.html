@@ -37,16 +37,16 @@
                     </div>
                 </button>
             </form>
-            <div class="partner" id="openOverlayComments">
+            <div class="partner" id="openOverlayComments-{{ image[0] }}">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
             </div>
-            <div class="partner" id="openOverlayShare">
+            <div class="partner" id="openOverlayShare-{{ image[0] }}">
                 <span class="material-symbols-outlined lcs-symbol">share</span>
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes">
+        <div class="metrics" id="openOverlayLikes-{{ image[0] }}">
             {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
     </div>
