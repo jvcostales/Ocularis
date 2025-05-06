@@ -112,11 +112,13 @@
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">
                             <div class="notif-text">
-                                <span style="font-weight: 600;">{{ username }}</span>
-                                {% if action == 'like' %}
-                                liked your <span style="font-weight: 600;">post</span></a>.
-                                {% elif action == 'comment' %}
-                                commented on your <span style="font-weight: 600;">post</span></a>.
+                                <span style="font-weight: 600;">{{ notif[0] }}</span>
+                                {% if notif[1] == 'like' %}
+                                liked your <a href="{{ url_for('view_post', post_id=notif[2]) }}"><span
+                                        style="font-weight: 600;">post</span></a>.
+                                {% elif notif[1] == 'comment' %}
+                                commented on your <a href="{{ url_for('view_post', post_id=notif[2]) }}"><span
+                                        style="font-weight: 600;">post</span></a>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
