@@ -114,10 +114,10 @@
                             <div class="notif-text">
                                 <span style="font-weight: 600;">{{ username }}</span>
                                 {% if action == 'like' %}
-                                liked your <a href="{{ url_for('view_post', post_id=image_id) }}"><span
+                                liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                         style="font-weight: 600;">post</span></a>.
                                 {% elif action == 'comment' %}
-                                commented on your <a href="{{ url_for('view_post', post_id=image_id) }}"><span
+                                commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                         style="font-weight: 600;">post</span></a>.
                                 {% endif %}
                             </div>
