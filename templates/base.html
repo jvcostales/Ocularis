@@ -108,15 +108,6 @@
                     </div>
                     {% if notifications %}
                     {% for display_name, action, image_id, created_at, actor_id in notifications %}
-                    <script>
-                        console.log("Notification Data:", {
-                            display_name: "{{ display_name }}",
-                            action: "{{ action }}",
-                            image_id: "{{ image_id }}",
-                            created_at: "{{ created_at }}",
-                            actor_id: "{{ actor_id }}"
-                        });
-                    </script>
                     <div class="notif-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">

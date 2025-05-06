@@ -560,6 +560,11 @@ def feed():
         """, (current_user.id,))
         notifications = cur.fetchall()
 
+            # Print each notification's data for debugging
+        for notification in notifications:
+            display_name, action, image_id, created_at, actor_id = notification
+            print(f"Notification Data - display_name: {display_name}, action: {action}, image_id: {image_id}, created_at: {created_at}, actor_id: {actor_id}")
+
         # Fetch friend requests
         cur.execute("""
             SELECT fr.request_id, u.first_name, u.last_name, fr.created_at
