@@ -1916,6 +1916,10 @@ input[type="url"]::placeholder {
         padding-bottom: 24px;
     }
 
+    .no-caption {
+        padding: 0;
+    }
+
     .image-post {
         width: 100%;
         border-radius: 10px;
@@ -3183,6 +3187,10 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         color: #1a1a1a;
         padding-bottom: 24px;
+    }
+
+    .no-caption {
+        padding: 0;
     }
 
     .image-post {
