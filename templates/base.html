@@ -107,7 +107,7 @@
                         Notifs
                     </div>
                     {% if notifications %}
-                    {% for username, action, image_id, created_at, actor_id in notifications %}
+                    {% for display_name, action, image_id, created_at, actor_id in notifications %}
                     <div class="notif-bar">
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="notif-details">
