@@ -710,6 +710,27 @@ def view_post(image_id):
             comment_likes = cur.fetchall()
             comment_likes_data[comment_id] = comment_likes
 
+                # Fetch notifications
+        cur.execute("""
+            SELECT users.first_name || ' ' || users.last_name AS display_name,
+                   notifications.action_type, notifications.image_id, notifications.created_at
+            FROM notifications
+            JOIN users ON notifications.actor_id = users.id
+            WHERE notifications.recipient_id = %s
+            ORDER BY notifications.created_at DESC
+        """, (current_user.id,))
+        notifications = cur.fetchall()
+
+        # Fetch friend requests
+        cur.execute("""
+            SELECT fr.request_id, u.first_name, u.last_name, fr.created_at
+            FROM friend_requests fr
+            JOIN users u ON fr.sender_id = u.id
+            WHERE fr.receiver_id = %s AND fr.status = 'pending'
+            ORDER BY fr.created_at DESC
+        """, (current_user.id,))
+        requests = cur.fetchall()
+
     finally:
         cur.close()
         conn.close()
@@ -720,8 +741,9 @@ def view_post(image_id):
         comments=comments,
         likes_data=likes_data,
         comment_likes_data=comment_likes_data,
+        notifications=notifications,
+        requests=requests
     )
-
 
 @app.route('/logout')
 @login_required
