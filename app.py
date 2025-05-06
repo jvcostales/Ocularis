@@ -9,6 +9,7 @@ import secrets
 from email.mime.text import MIMEText
 from search import search_bp
 from recommender import get_similar_users
+from datetime import datetime
 import pandas as pd
 import json
 
@@ -518,7 +519,7 @@ def feed():
         # Fetch images
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
-                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name
+                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name, created_at
             FROM images 
             JOIN users ON images.id = users.id
             LEFT JOIN (
