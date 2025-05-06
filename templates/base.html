@@ -122,7 +122,7 @@
                                 {% endif %}
                             </div>
                             <div class="notif-date">
-                                {{ created_at.strftime('%b %#d') }}
+                                {{ created_at.strftime('%b') }} {{ created_at.day }}
                             </div>
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                                 friend request.
                             </div>
                             <div class="request-date">
-                                {{ created_at.strftime('%b %#d') }}
+                                {{ created_at.strftime('%b') }} {{ created_at.day }}
                             </div>
                             <div class="request-icons">
                                 <form action="{{ url_for('reject_request', request_id=request_id) }}" method="POST"

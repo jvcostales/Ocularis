@@ -145,7 +145,8 @@
                         <div class="profile-name-date">
                             <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
                                     comment[2] }}</a></div>
-                            <div class="date">Jan 1</div>
+                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
+                            </div>
                         </div>
                     </div>
                     <div class="more-frame-wrapper">
