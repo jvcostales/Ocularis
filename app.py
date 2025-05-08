@@ -952,8 +952,20 @@ def profile(user_id):
     cur = conn.cursor()
     
     # Fetch user details
-    cur.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
+    cur.execute("SELECT first_name, last_name, role, city, state, country FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
+    role = user[2]
+    city = user[3]
+    state = user[4]
+    country = user[5]
+
+    # Count number of confirmed friends (mutual connections)
+    cur.execute("""
+        SELECT COUNT(*) FROM friends 
+        WHERE user1_id = %s OR user2_id = %s
+    """, (user_id, user_id))
+    friend_count = cur.fetchone()[0]
+
 
     # Fetch user's posts
     cur.execute("""
@@ -1063,9 +1075,15 @@ def profile(user_id):
         outgoing_request is not None
     )
 
+    location = ", ".join(filter(None, [city, state, country]))
+
+
     return render_template(
         "profile.html",
         user=user,
+        role=role,
+        location=location,
+        friend_count=friend_count,
         images=images,
         comments=comments,
         user_id=user_id,
