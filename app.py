@@ -1003,16 +1003,19 @@ def profile(user_id):
     """, (user_id, current_user.id))
     incoming_request = cur.fetchone()
 
-            # Likes for the image
-    cur.execute("""
-        SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
-        FROM likes l
-        JOIN users u ON l.user_id = u.id
-        WHERE l.image_id = %s
-        ORDER BY l.created_at DESC
-    """, (image_id,))
-    likes = cur.fetchall()
-    likes_data = {image_id: likes}
+    # Fetch likes for each image
+    likes_data = {}
+    for image in images:
+        image_id = image[0]
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+            ORDER BY l.created_at DESC
+        """, (image_id,))
+        likes = cur.fetchall()
+        likes_data[image_id] = likes
 
     # Likes for each comment
     comment_likes_data = {}
