@@ -1003,6 +1003,51 @@ def profile(user_id):
     """, (user_id, current_user.id))
     incoming_request = cur.fetchone()
 
+            # Likes for the image
+    cur.execute("""
+        SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+        FROM likes l
+        JOIN users u ON l.user_id = u.id
+        WHERE l.image_id = %s
+        ORDER BY l.created_at DESC
+    """, (image_id,))
+    likes = cur.fetchall()
+    likes_data = {image_id: likes}
+
+    # Likes for each comment
+    comment_likes_data = {}
+    for comment in comments:
+        comment_id = comment[0]
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            FROM comment_likes cl
+            JOIN users u ON cl.user_id = u.id
+            WHERE cl.comment_id = %s
+            ORDER BY cl.created_at DESC
+        """, (comment_id,))
+        comment_likes = cur.fetchall()
+        comment_likes_data[comment_id] = comment_likes
+
+                # Fetch notifications
+    cur.execute("""
+        SELECT users.first_name || ' ' || users.last_name AS display_name,
+               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (current_user.id,))
+    notifications = cur.fetchall()
+
+    # Fetch friend requests
+    cur.execute("""
+        SELECT fr.request_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (current_user.id,))
+    requests = cur.fetchall()
 
     cur.close()
     conn.close()
@@ -1025,7 +1070,11 @@ def profile(user_id):
         outgoing_request=outgoing_request,
         incoming_request=incoming_request,
         is_own_profile=(current_user_id == user_id),
-        disable_add_friend=disable_add_friend
+        disable_add_friend=disable_add_friend,
+        likes_data=likes_data,
+        comment_likes_data=comment_likes_data,
+        notifications=notifications,
+        requests=requests
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
