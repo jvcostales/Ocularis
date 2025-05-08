@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="profile-card">
-    <img src="..\static\samplepost.png" alt="Banner" class="banner">
+    <img src="..\static\pdsheader.png" alt="Banner" class="banner">
     <div class="info-button-wrapper">
         <div class="profile-info">
             <img src="..\static\pfp.jpg" alt="Profile" class="avatar">
@@ -19,7 +19,42 @@
                 <div class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else '' }}</div>
             </div>
         </div>
-        <button class="follow-button-profile">Follow</button>
+        {% if not is_own_profile %}
+        {% if is_friend %}
+        <p>You are friends.</p>
+        <form action="{{ url_for('unfriend', other_user_id=user_id) }}" method="post">
+            <button type="submit">Unfriend</button>
+        </form>
+        {% elif incoming_request %}
+        {% if incoming_request[1] == 'pending' %}
+        <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
+            <button type="submit" class="follow-button-profile">Confirm</button>
+        </form>
+        <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
+            <button type="submit" class="follow-button-profile">Decline</button>
+        </form>
+        {% endif %}
+        {% elif outgoing_request %}
+        {% if outgoing_request[0] == 'pending' %}
+        <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
+            <button type="submit" class="follow-button-profile">Cancel Request</button>
+        </form>
+        {% elif outgoing_request[0] == 'rejected' %}
+        <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+            <button type="submit" class="follow-button-profile">Befriend</button>
+        </form> {% endif %}
+        {% elif not disable_add_friend %}
+        {% if current_user.verified %}
+        <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+            <button type="submit" class="follow-button-profile">Befriend</button>
+        </form>
+        {% else %}
+        <form action="#" method="post">
+            <button type="submit" class="follow-button-profile" disabled>Befriend</button>
+        </form>
+        {% endif %}
+        {% endif %}
+        {% endif %}
     </div>
 </div>
 {% for image in images %}
