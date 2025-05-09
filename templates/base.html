@@ -146,7 +146,8 @@
                         <img src="..\static\pfp.jpg" class="pfp img-notif-request">
                         <div class="request-details">
                             <div class="request-text">
-                                <span style="font-weight: 600;">{{ first_name }} {{ last_name }}</span> sent you a
+                                <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{
+                                        first_name }} {{ last_name }}</a></span> sent you a
                                 friend request.
                             </div>
                             <div class="request-date">
@@ -940,6 +941,21 @@
             } else {
                 console.log('Form not found');
             }
+
+            // When the profile modal is shown
+            function showProfileModal() {
+                document.body.classList.add('modal-open');
+                // Code to display the modal, e.g.:
+                document.getElementById("profileModal").style.display = "block";
+            }
+
+            // When the profile modal is closed
+            function closeProfileModal() {
+                document.body.classList.remove('modal-open');
+                // Code to hide the modal, e.g.:
+                document.getElementById("profileModal").style.display = "none";
+            }
+
 
         });
     </script>

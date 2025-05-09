@@ -4,6 +4,10 @@ body {
     background-color: #f6f6f6;
 }
 
+body.modal-open {
+    overflow-y: hidden;
+}
+
 a {
     text-decoration: none;
     color: inherit;
