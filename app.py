@@ -746,7 +746,8 @@ def view_post(image_id):
         likes_data=likes_data,
         comment_likes_data=comment_likes_data,
         notifications=notifications,
-        requests=requests
+        requests=requests,
+        verified=current_user.verified
     )
 
 @app.route('/logout')
@@ -1095,7 +1096,8 @@ def profile(user_id):
         likes_data=likes_data,
         comment_likes_data=comment_likes_data,
         notifications=notifications,
-        requests=requests
+        requests=requests,
+        verified=current_user.verified
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
