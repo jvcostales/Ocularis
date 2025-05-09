@@ -622,6 +622,7 @@ def feed():
 
     return render_template(
         'feed.html',
+        current_page='feed',
         tags=tags,
         images=images,
         comments=comments,
@@ -1081,6 +1082,7 @@ def profile(user_id):
 
     return render_template(
         "profile.html",
+        current_page='profile',
         user=user,
         role=role,
         location=location,
@@ -1429,7 +1431,7 @@ def recommendations():
         user["name"] = name_map.get(user["user"], "Unknown")
         users_list.append(user)
 
-    return render_template("recommendations.html", users=users_list)
+    return render_template("recommendations.html", current_page='recommendations', users=users_list)
 
 @app.route('/api/get-countries')
 def get_countries():
