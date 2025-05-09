@@ -21,17 +21,16 @@
         </div>
         {% if not is_own_profile %}
         {% if is_friend %}
-        <p>You are friends.</p>
         <form action="{{ url_for('unfriend', other_user_id=user_id) }}" method="post">
-            <button type="submit">Unfriend</button>
+            <button type="submit" class="follow-button-profile">Unfriend</button>
         </form>
         {% elif incoming_request %}
         {% if incoming_request[1] == 'pending' %}
         <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
-            <button type="submit" class="follow-button-profile">Confirm</button>
+            <button type="submit" class="follow-button-profile">Accept</button>
         </form>
         <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
-            <button type="submit" class="follow-button-profile">Decline</button>
+            <button type="submit" class="follow-button-profile">Reject</button>
         </form>
         {% endif %}
         {% elif outgoing_request %}
@@ -42,7 +41,8 @@
         {% elif outgoing_request[0] == 'rejected' %}
         <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
             <button type="submit" class="follow-button-profile">Befriend</button>
-        </form> {% endif %}
+        </form>
+        {% endif %}
         {% elif not disable_add_friend %}
         {% if current_user.verified %}
         <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
@@ -50,11 +50,12 @@
         </form>
         {% else %}
         <form action="#" method="post">
-            <button type="submit" class="follow-button-profile" disabled>Befriend</button>
+            <button type="submit" class="follow-button-profile" disabled>Befriend (Verify your account first)</button>
         </form>
         {% endif %}
         {% endif %}
         {% endif %}
+
     </div>
 </div>
 {% for image in images %}

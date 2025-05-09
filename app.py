@@ -1103,7 +1103,7 @@ def profile(user_id):
 def send_request(receiver_id):
     sender_id = current_user.id
 
-    # ❌ Block if not verified
+    # Block if not verified
     if not current_user.verified:
         flash("You must verify your account before sending friend requests.")
         return redirect(url_for('profile', user_id=receiver_id))
@@ -1113,17 +1113,11 @@ def send_request(receiver_id):
         flash("You cannot send a friend request to yourself.")
         return redirect(url_for('profile', user_id=receiver_id))
 
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
+    conn = psycopg2.connect( ... )  # Connection details
     cur = conn.cursor()
 
     try:
-        # ✅ Sort the IDs to match how the friends table stores relationships
+        # Sort the IDs to match how the friends table stores relationships
         user1_id, user2_id = sorted((sender_id, receiver_id))
 
         # Prevent sending a request if already friends
@@ -1171,83 +1165,23 @@ def send_request(receiver_id):
     return redirect(url_for('profile', user_id=receiver_id))
 
 
-@app.route('/unfriend/<int:other_user_id>', methods=['POST'])
-@login_required
-def unfriend(other_user_id):
-    user_id = current_user.id
-
-    if user_id == other_user_id:
-        flash("You cannot unfriend yourself.")
-        return redirect(url_for('profile', user_id=other_user_id))
-
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    try:
-        user1_id, user2_id = sorted((user_id, other_user_id))  # Sort for consistent matching
-
-        cur.execute("""
-            DELETE FROM friends
-            WHERE user1_id = %s AND user2_id = %s;
-        """, (user1_id, user2_id))
-
-        if cur.rowcount:
-            flash("You have unfriended this user.")
-        else:
-            flash("You were not friends with this user.")
-
-        conn.commit()
-    except Exception as e:
-        flash(f"Error while unfriending: {e}")
-        conn.rollback()
-    finally:
-        cur.close()
-        conn.close()
-
-    return redirect(url_for('profile', user_id=other_user_id))
-
-
 @app.route('/cancel_request/<int:receiver_id>', methods=['POST'])
 @login_required
 def cancel_request(receiver_id):
     sender_id = current_user.id
 
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
+    conn = psycopg2.connect( ... )  # Connection details
     cur = conn.cursor()
 
     try:
-        # ✅ Check if already friends
-        user1_id, user2_id = sorted((sender_id, receiver_id))
-        cur.execute("""
-            SELECT * FROM friends
-            WHERE user1_id = %s AND user2_id = %s;
-        """, (user1_id, user2_id))
-        already_friends = cur.fetchone()
-
-        if already_friends:
-            flash("You are already friends with this user.")
-            return redirect(url_for('profile', user_id=receiver_id))
-
-        # ❌ Only delete pending friend requests
+        # Delete the pending friend request
         cur.execute("""
             DELETE FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
         """, (sender_id, receiver_id))
         conn.commit()
 
-        flash("Friend request cancelled.")
+        flash("Friend request canceled.")
     except Exception as e:
         flash(f"An error occurred: {e}")
         conn.rollback()
@@ -1261,115 +1195,98 @@ def cancel_request(receiver_id):
 @app.route('/accept_request/<int:request_id>', methods=['POST'])
 @login_required
 def accept_request(request_id):
-    if not current_user.verified:
-        flash("Please verify your account before accepting friend requests.")
-        return redirect('/requests')
-
     receiver_id = current_user.id
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
+
+    conn = psycopg2.connect( ... )  # Connection details
     cur = conn.cursor()
 
     try:
-        # Fetch sender from request
+        # Update friend request to 'accepted'
         cur.execute("""
-            SELECT sender_id FROM friend_requests 
-            WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+            UPDATE friend_requests
+            SET status = 'accepted'
+            WHERE request_id = %s AND receiver_id = %s;
         """, (request_id, receiver_id))
-        row = cur.fetchone()
-
-        if not row:
-            flash("Friend request not found or already handled.")
-            return redirect('/requests')
-
-        sender_id = row[0]
-
-        # Sort IDs for consistent friend record
-        user1_id, user2_id = sorted((sender_id, receiver_id))
-
-        # Check if they are already friends (prevent accidental double insert)
-        cur.execute("""
-            SELECT 1 FROM friends WHERE user1_id = %s AND user2_id = %s;
-        """, (user1_id, user2_id))
-        if cur.fetchone():
-            flash("You are already friends.")
-        else:
-            # Update request status
-            cur.execute("""
-                UPDATE friend_requests SET status = 'accepted'
-                WHERE request_id = %s;
-            """, (request_id,))
-
-            # Add to friends table
-            cur.execute("""
-                INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);
-            """, (user1_id, user2_id))
-
-            flash("Friend request accepted.")
-
         conn.commit()
 
+        # Insert the new friendship into the 'friends' table
+        cur.execute("""
+            SELECT sender_id FROM friend_requests WHERE request_id = %s;
+        """, (request_id,))
+        sender_id = cur.fetchone()[0]
+
+        user1_id, user2_id = sorted((sender_id, receiver_id))
+
+        cur.execute("""
+            INSERT INTO friends (user1_id, user2_id, friended_at)
+            VALUES (%s, %s, NOW());
+        """, (user1_id, user2_id))
+        conn.commit()
+
+        flash("Friend request accepted.")
     except Exception as e:
-        conn.rollback()
         flash(f"An error occurred: {e}")
+        conn.rollback()
     finally:
         cur.close()
         conn.close()
 
-    return redirect('/feed')
+    return redirect(url_for('profile', user_id=receiver_id))
 
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
 def reject_request(request_id):
-    if not current_user.verified:
-        flash("Please verify your account before rejecting friend requests.")
-        return redirect('/requests')
-
     receiver_id = current_user.id
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
+
+    conn = psycopg2.connect( ... )  # Connection details
     cur = conn.cursor()
 
     try:
-        # Check if the request exists and is still pending
+        # Delete the rejected friend request
         cur.execute("""
-            SELECT sender_id FROM friend_requests 
-            WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
+            DELETE FROM friend_requests
+            WHERE request_id = %s AND receiver_id = %s;
         """, (request_id, receiver_id))
-        row = cur.fetchone()
-
-        if not row:
-            flash("Friend request not found or already handled.")
-            return redirect('/requests')
-
-        # Update the request status to 'rejected'
-        cur.execute("""
-            UPDATE friend_requests 
-            SET status = 'rejected' 
-            WHERE request_id = %s;
-        """, (request_id,))
         conn.commit()
 
         flash("Friend request rejected.")
     except Exception as e:
-        conn.rollback()
         flash(f"An error occurred: {e}")
+        conn.rollback()
     finally:
         cur.close()
         conn.close()
 
-    return redirect('/feed')
+    return redirect(url_for('profile', user_id=receiver_id))
+
+
+@app.route('/unfriend/<int:other_user_id>', methods=['POST'])
+@login_required
+def unfriend(other_user_id):
+    user_id = current_user.id
+
+    conn = psycopg2.connect( ... )  # Connection details
+    cur = conn.cursor()
+
+    try:
+        # Remove the friendship from the 'friends' table
+        cur.execute("""
+            DELETE FROM friends
+            WHERE (user1_id = %s AND user2_id = %s) OR (user1_id = %s AND user2_id = %s);
+        """, (user_id, other_user_id, user_id, other_user_id))
+        conn.commit()
+
+        flash("You are no longer friends.")
+    except Exception as e:
+        flash(f"An error occurred: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('profile', user_id=other_user_id))
+
 
 
 @app.route('/recommendations', methods=['GET'])
