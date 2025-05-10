@@ -562,7 +562,7 @@ def feed():
 
         # Fetch friend requests
         cur.execute("""
-            SELECT fr.request_id, u.first_name, u.last_name, fr.created_at
+            SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
             FROM friend_requests fr
             JOIN users u ON fr.sender_id = u.id
             WHERE fr.receiver_id = %s AND fr.status = 'pending'
