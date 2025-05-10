@@ -20,7 +20,6 @@
             </div>
         </div>
 
-
         {% if not is_own_profile %}
         {% if is_friend %}
         <form action="{{ url_for('unfriend', other_user_id=user_id) }}" method="post">
@@ -28,17 +27,19 @@
         </form>
         {% elif incoming_request %}
         {% if incoming_request[1] == 'pending' %}
-        <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
-            <button type="submit" class="follow-button-profile">Accept</button>
-        </form>
-        <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
-            <button type="submit" class="follow-button-profile">Reject</button>
-        </form>
+        <div class="response-wrapper">
+            <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
+                <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+            </form>
+            <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
+                <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
+            </form>
+        </div>
         {% endif %}
         {% elif outgoing_request %}
         {% if outgoing_request[0] == 'pending' %}
         <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
-            <button type="submit" class="follow-button-profile">Cancel Request</button>
+            <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
         </form>
         {% elif outgoing_request[0] == 'rejected' %}
         <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
@@ -52,7 +53,7 @@
         </form>
         {% else %}
         <form action="#" method="post">
-            <button type="submit" class="follow-button-profile" disabled>Befriend (Verify your account first)</button>
+            <button type="submit" class="follow-button-profile-disabled" disabled>Befriend</button>
         </form>
         {% endif %}
         {% endif %}

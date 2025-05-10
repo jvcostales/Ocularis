@@ -4,10 +4,6 @@ body {
     background-color: #f6f6f6;
 }
 
-body.modal-open {
-    overflow-y: hidden;
-}
-
 a {
     text-decoration: none;
     color: inherit;
@@ -1687,6 +1683,49 @@ input[type="url"]::placeholder {
         margin-top: 16px;
     }
 
+    .response-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .no-margin {
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .follow-button-profile-secondary {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: 1px solid #1C46F5;
+        background-color: transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .follow-button-profile-cancel {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #c4c4c4;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1a1a1a;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
     .follow-button-profile {
         font-size: 1rem;
         font-family: 'Schibsted Grotesk', sans-serif;
@@ -1697,6 +1736,21 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         cursor: pointer;
         color: #f6f6f6;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .follow-button-profile-disabled {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #DDDEDF;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #A8AAB5;
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -3148,6 +3202,49 @@ input[type="url"]::placeholder {
         margin-top: 16px;
     }
 
+    .response-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .no-margin {
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .follow-button-profile-secondary {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: 1px solid #1C46F5;
+        background-color: transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .follow-button-profile-cancel {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #c4c4c4;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1a1a1a;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
     .follow-button-profile {
         font-size: 1rem;
         font-family: 'Schibsted Grotesk', sans-serif;
@@ -3158,6 +3255,21 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         cursor: pointer;
         color: #f6f6f6;
+        text-align: center;
+        margin-top: 24px;
+        margin-right: 24px;
+    }
+
+    .follow-button-profile-disabled {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #DDDEDF;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #A8AAB5;
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -4536,6 +4648,49 @@ input[type="url"]::placeholder {
         margin-top: 16px;
     }
 
+    .response-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        margin-left: 24px;
+    }
+
+    .no-margin {
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+    }   
+
+    .follow-button-profile-secondary {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: 1px solid #1C46F5;
+        background-color: transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+        margin-bottom: 24px;
+        margin-left: 24px;
+    }
+
+    .follow-button-profile-cancel {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #c4c4c4;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 24px;
+        margin-left: 24px;
+    }
+
     .follow-button-profile {
         font-size: 1rem;
         font-family: 'Schibsted Grotesk', sans-serif;
@@ -4547,8 +4702,23 @@ input[type="url"]::placeholder {
         cursor: pointer;
         color: #f6f6f6;
         text-align: center;
-        margin-top: 24px;
-        margin-right: 24px;
+        margin-bottom: 24px;
+        margin-left: 24px;
+    }
+
+    .follow-button-profile-disabled {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #DDDEDF;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #A8AAB5;
+        text-align: center;
+        margin-bottom: 24px;
+        margin-left: 24px;
     }
 
     .follow-button-profile:hover {
@@ -4561,7 +4731,6 @@ input[type="url"]::placeholder {
 
     .info-button-wrapper {
         display: flex;
-        align-items: start;
-        justify-content: space-between;
+        flex-direction: column;
     }
 }
