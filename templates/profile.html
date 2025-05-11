@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="more-frame-wrapper">
-            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ image[0] }}">more_horiz</span>
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ image[0] - 1 }}">
                 <div class="save">Save</div>
                 <div class="hide">Hide</div>
@@ -99,26 +99,26 @@
                     </div>
                 </button>
             </form>
-            <div class="partner" id="openOverlayComments-{{ image[0] }}">
+            <div class="partner" id="openOverlayComments-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
             </div>
-            <div class="partner" id="openOverlayShare-{{ image[0] }}">
+            <div class="partner" id="openOverlayShare-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">share</span>
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes-{{ image[0] }}">
+        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
             {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
     </div>
 </div>
-<div class="overlayLikes" id="overlayLikes-{{ image[0] }}">
+<div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
     <div class="overlay-content-likes">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayLikes-{{ image[0] }}">close</span></button>
+                id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ image[0] }}">
+        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
             {% if likes_data[image[0]] %}
             {% for like in likes_data[image[0]] %}
             <div class="profile-follow-wrapper">
@@ -142,12 +142,12 @@
         </div>
     </div>
 </div>
-<div class="overlayComments" id="overlayComments-{{ image[0] }}">
+<div class="overlayComments" id="overlayComments-{{ loop.index }}">
     <div class="overlay-content-comments">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayComments-{{ image[0] }}">close</span></button>
+                id="closeOverlayComments-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Comment</div>
-        <div class="scrollable-div-comments" id="scrollableDivComments-{{ image[0] }}">
+        <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             {% set ns = namespace(has_comments=false) %}
 
             {% for comment in comments %}
@@ -178,18 +178,18 @@
                                 </div>
                             </button>
                         </form>
-                        <div class="metrics" id="openOverlayCommentLikes-{{ image[0] }}">
+                        <div class="metrics" id="openOverlayCommentLikes-{{ loop.index }}">
                             {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="overlayLikes" id="overlayCommentLikes-{{ image[0] }}">
+            <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-{{ image[0] }}">close</span></button>
+                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ image[0] }}">
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
                         {% if comment_likes_data[comment[0]] %}
                         {% for comment_like in comment_likes_data[comment[0]] %}
                         <div class="profile-follow-wrapper">
@@ -233,10 +233,10 @@
         </div>
     </div>
 </div>
-<div class="overlayShare" id="overlayShare-{{ image[0] }}">
+<div class="overlayShare" id="overlayShare-{{ loop.index }}">
     <div class="overlay-content-share">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayShare-{{ image[0] }}">close</span></button>
+                id="closeOverlayShare-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Share</div>
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
