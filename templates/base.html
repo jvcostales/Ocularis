@@ -768,6 +768,17 @@
                 }
             });
 
+            const singleMoreBtn = document.getElementById('moreBtn-unique');
+            const singleFrame = document.getElementById('frame1-unique');
+
+            if (singleMoreBtn && singleFrame) {
+                singleMoreBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = singleFrame.style.display === 'block';
+                    singleFrame.style.display = isOpen ? 'none' : 'block';
+                });
+            }
+
             function checkScrollbar() {
                 const imageInput = document.getElementById('image');
                 const div = document.getElementById('scrollableDiv');
