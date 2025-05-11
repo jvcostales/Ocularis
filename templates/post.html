@@ -13,8 +13,8 @@
             </div>
         </div>
         <div class="more-frame-wrapper">
-            <span class="material-symbols-outlined more-symbol" id="moreBtnunique">more_horiz</span>
-            <div class="frame1" id="frame1-{{ image[0] - 1 }}">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-1">more_horiz</span>
+            <div class="frame1" id="frame1-1">
                 <div class="save">Save</div>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
@@ -37,26 +37,26 @@
                     </div>
                 </button>
             </form>
-            <div class="partner" id="openOverlayCommentsunique">
+            <div class="partner" id="openOverlayComments-1">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
             </div>
-            <div class="partner" id="openOverlayShareunique">
+            <div class="partner" id="openOverlayShare-1">
                 <span class="material-symbols-outlined lcs-symbol">share</span>
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikesunique">
+        <div class="metrics" id="openOverlayLikes-1">
             {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
     </div>
 </div>
-<div class="overlayLikes" id="overlayLikesunique">
+<div class="overlayLikes" id="overlayLikes-1">
     <div class="overlay-content-likes">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayLikesunique">close</span></button>
+                id="closeOverlayLikes-1">close</span></button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivLikesunique">
+        <div class="scrollable-div-likes" id="scrollableDivLikes-1">
             {% if likes_data[image[0]] %}
             {% for like in likes_data[image[0]] %}
             <div class="profile-follow-wrapper">
@@ -80,12 +80,12 @@
         </div>
     </div>
 </div>
-<div class="overlayComments" id="overlayCommentsunique">
+<div class="overlayComments" id="overlayComments-1">
     <div class="overlay-content-comments">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayCommentsunique">close</span></button>
+                id="closeOverlayComments-1">close</span></button>
         <div class="overlay-title">Comment</div>
-        <div class="scrollable-div-comments" id="scrollableDivCommentsunique">
+        <div class="scrollable-div-comments" id="scrollableDivComments-1">
             {% set ns = namespace(has_comments=false) %}
 
             {% for comment in comments %}
@@ -116,18 +116,18 @@
                                 </div>
                             </button>
                         </form>
-                        <div class="metrics" id="openOverlayCommentLikesunique">
+                        <div class="metrics" id="openOverlayCommentLikes-1">
                             {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="overlayLikes" id="overlayCommentLikesunique">
+            <div class="overlayLikes" id="overlayCommentLikes-1">
                 <div class="overlay-content-likes">
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikesunique">close</span></button>
+                            id="closeOverlayCommentLikes-1">close</span></button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikesunique">
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-1">
                         {% if comment_likes_data[comment[0]] %}
                         {% for comment_like in comment_likes_data[comment[0]] %}
                         <div class="profile-follow-wrapper">
@@ -171,10 +171,10 @@
         </div>
     </div>
 </div>
-<div class="overlayShare" id="overlayShareunique">
+<div class="overlayShare" id="overlayShare-1">
     <div class="overlay-content-share">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayShareunique">close</span></button>
+                id="closeOverlayShare-1">close</span></button>
         <div class="overlay-title">Share</div>
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
