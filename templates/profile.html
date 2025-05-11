@@ -63,20 +63,19 @@
     </div>
 </div>
 {% for image in images %}
-<div class="post1" style="margin-bottom: 16px;">
+<div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <img src="..\static\pfp.jpg" class="pfp">
             <div class="profile-name-date">
-                <div class="username">
-                    <a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a>
-                </div>
-                <div class="date">Jan 1</div> <!-- Optional: replace with dynamic date -->
+                <div class="username"><a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{
+                        image[6] }}</a></div>
+                <div class="date">{{ image[7].strftime('%b') }} {{ image[7].day }}</div>
             </div>
         </div>
         <div class="more-frame-wrapper">
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
-            <div class="frame1" id="frame1-{{ image[0] - 1 }}">
+            <div class="frame1" id="frame1-{{ loop.index }}">
                 <div class="save">Save</div>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
@@ -86,9 +85,7 @@
     <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
         {{ image[2] }}
     </div>
-    <div class="image-container">
-        <img src="{{ image[1] }}" class="image-post">
-    </div>
+    <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
     <div class="interactions">
         <div class="lcs">
             <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
@@ -126,7 +123,7 @@
                     <img src="..\static\pfp.jpg" class="pfp">
                     <div class="profile-name-date">
                         <div class="username">{{ like[0] }}</div>
-                        <div class="date">{{ like[1] }}</div>
+                        <div class="date">{{ like[1].strftime('%b') }} {{ like[1].day }}</div>
                     </div>
                 </div>
                 <button class="follow-button">Befriend</button>
@@ -160,7 +157,8 @@
                         <div class="profile-name-date">
                             <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
                                     comment[2] }}</a></div>
-                            <div class="date">Jan 1</div>
+                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
+                            </div>
                         </div>
                     </div>
                     <div class="more-frame-wrapper">
@@ -197,7 +195,8 @@
                                 <img src="..\static\pfp.jpg" class="pfp">
                                 <div class="profile-name-date">
                                     <div class="username">{{ comment_like[0] }}</div>
-                                    <div class="date">{{ comment_like[1] }}</div>
+                                    <div class="date">{{ comment_like[1].strftime('%b') }} {{ comment_like[1].day }}
+                                    </div>
                                 </div>
                             </div>
                             <button class="follow-button">Befriend</button>
