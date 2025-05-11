@@ -972,8 +972,8 @@ def profile(user_id):
     # Fetch user's posts
     cur.execute("""
         SELECT images.image_id, images.image_url, images.caption, 
-               (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count, images.created_at
-               images.id, users.first_name, users.last_name
+               (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count,
+               images.id, users.first_name, users.last_name, images.created_at
         FROM images
         JOIN users ON images.id = users.id
         WHERE images.id = %s
