@@ -84,7 +84,11 @@
                 <div class="pfp-frame-wrapper">
                     <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp4"></div>
                     <div class="frame4" id="frame4">
-                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="frame-username">
+                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                {{ current_user.first_name }} {{ current_user.last_name }}
+                            </a>
+                        </div>
                         <div class="line"></div>
                         <div class="saved">Saved</div>
                         <div class="settings">Settings</div>
@@ -100,7 +104,11 @@
                 <div class="pfp-frame-wrapper">
                     <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp"></div>
                     <div class="frame2" id="frame2">
-                        <div class="frame-username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="frame-username">
+                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                {{ current_user.first_name }} {{ current_user.last_name }}
+                            </a>
+                        </div>
                         <div class="line"></div>
                         <div class="saved">Saved</div>
                         <div class="settings">Settings</div>
@@ -767,17 +775,6 @@
                     frame4.style.display = 'block';
                 }
             });
-
-            const singleMoreBtn = document.getElementById('moreBtn-unique');
-            const singleFrame = document.getElementById('frame1-unique');
-
-            if (singleMoreBtn && singleFrame) {
-                singleMoreBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = singleFrame.style.display === 'block';
-                    singleFrame.style.display = isOpen ? 'none' : 'block';
-                });
-            }
 
             function checkScrollbar() {
                 const imageInput = document.getElementById('image');
