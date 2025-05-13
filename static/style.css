@@ -1769,6 +1769,93 @@ input[type="url"]::placeholder {
         align-items: start;
         justify-content: space-between;
     }
+
+    .card-pairup {
+        background-color: white;
+        border-radius: 10px;
+        text-align: left;
+        padding: 24px;
+        margin-bottom: 16px;
+    }
+
+    .post-title-pairup {
+        font-size: 1.125rem;
+        color: #c4c4c4;
+        margin-bottom: 96px;
+        font-weight: 500;
+    }
+
+    .pairup-tagline {
+        font-size: 1.5rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        font-weight: 400;
+    }
+
+    .pairup-buttons {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .match-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .match-button:hover {
+        background-color: #4F72F7;
+    }
+
+    .match-button:active {
+        background-color: #152FAE;
+    }
+
+    .browse-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: transparent;
+        border: 1px solid #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+    }
+
+    .browse-button:hover {
+        border: 1px solid #4F72F7;
+        color: #4F72F7;
+        background-color: rgba(28, 70, 245, 0.06);
+    }
+
+    .browse-button:active {
+        border: 1px solid #152FAE;
+        color: #152FAE;
+        background-color: rgba(21, 47, 174, 0.35);
+    }
+
+    .profile-more-wrapper-pairup {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile-post-pairup {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
 }
 
 /* Tablet: 8-column layout */
@@ -3288,6 +3375,93 @@ input[type="url"]::placeholder {
         align-items: start;
         justify-content: space-between;
     }
+
+    .card-pairup {
+        background-color: white;
+        border-radius: 10px;
+        text-align: left;
+        padding: 24px;
+        margin-bottom: 16px;
+    }
+
+    .post-title-pairup {
+        font-size: 1.125rem;
+        color: #c4c4c4;
+        margin-bottom: 96px;
+        font-weight: 500;
+    }
+
+    .pairup-tagline {
+        font-size: 1.5rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        font-weight: 400;
+    }
+
+    .pairup-buttons {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .match-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .match-button:hover {
+        background-color: #4F72F7;
+    }
+
+    .match-button:active {
+        background-color: #152FAE;
+    }
+
+    .browse-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: transparent;
+        border: 1px solid #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+    }
+
+    .browse-button:hover {
+        border: 1px solid #4F72F7;
+        color: #4F72F7;
+        background-color: rgba(28, 70, 245, 0.06);
+    }
+
+    .browse-button:active {
+        border: 1px solid #152FAE;
+        color: #152FAE;
+        background-color: rgba(21, 47, 174, 0.35);
+    }
+
+    .profile-more-wrapper-pairup {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile-post-pairup {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
 }
 
 /* Mobile: 4-column layout */
@@ -4733,5 +4907,92 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: start;
         justify-content: space-between;
+    }
+
+    .card-pairup {
+        background-color: white;
+        border-radius: 10px;
+        text-align: left;
+        padding: 24px;
+        margin-bottom: 16px;
+    }
+
+    .post-title-pairup {
+        font-size: 1.125rem;
+        color: #c4c4c4;
+        margin-bottom: 96px;
+        font-weight: 500;
+    }
+
+    .pairup-tagline {
+        font-size: 1.5rem;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        font-weight: 400;
+    }
+
+    .pairup-buttons {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .match-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .match-button:hover {
+        background-color: #4F72F7;
+    }
+
+    .match-button:active {
+        background-color: #152FAE;
+    }
+
+    .browse-button {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: transparent;
+        border: 1px solid #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #1C46F5;
+        text-align: center;
+    }
+
+    .browse-button:hover {
+        border: 1px solid #4F72F7;
+        color: #4F72F7;
+        background-color: rgba(28, 70, 245, 0.06);
+    }
+
+    .browse-button:active {
+        border: 1px solid #152FAE;
+        color: #152FAE;
+        background-color: rgba(21, 47, 174, 0.35);
+    }
+
+    .profile-more-wrapper-pairup {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile-post-pairup {
+        display: flex;
+        align-items: center;
+        gap: 16px;
     }
 }

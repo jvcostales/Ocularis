@@ -1365,9 +1365,9 @@ def reject_request(request_id):
 
 
 
-@app.route('/recommendations', methods=['GET'])
+@app.route('/match', methods=['GET'])
 @login_required
-def recommendations():
+def match():
     # Fetch all users from DB
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -1405,7 +1405,7 @@ def recommendations():
     similar_users_df = get_similar_users(target_index, df)
 
     if similar_users_df.empty:
-        return render_template("recommendations.html", users=[])
+        return render_template("match.html", users=[])
 
     # Fetch names for recommended users
     user_ids = similar_users_df['user'].tolist()
@@ -1431,7 +1431,7 @@ def recommendations():
         user["name"] = name_map.get(user["user"], "Unknown")
         users_list.append(user)
 
-    return render_template("recommendations.html", current_page='recommendations', users=users_list)
+    return render_template("match.html", current_page='match', users=users_list)
 
 @app.route('/api/get-countries')
 def get_countries():
