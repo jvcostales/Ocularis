@@ -29,8 +29,8 @@
                                 <div>Feed</div>
                             </div>
                         </a></li>
-                    <li><a href="{{ url_for('match') }}">
-                            <div class="icon-text-wrapper {% if current_page == 'match' %}current{% endif %}">
+                    <li><a href="{{ url_for('pairup') }}">
+                            <div class="icon-text-wrapper {% if current_page in ['pairup', 'match'] %}current{% endif %}">
                                 <span class="material-symbols-outlined sidebar-symbol">group</span>
                                 <div>Match</div>
                             </div>

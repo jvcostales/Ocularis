@@ -1363,7 +1363,10 @@ def reject_request(request_id):
 
     return redirect(url_for('profile', user_id=current_user.id))
 
-
+@app.route('/pairup')
+@login_required
+def pairup():
+    return render_template("pairup.html")
 
 @app.route('/match', methods=['GET'])
 @login_required
