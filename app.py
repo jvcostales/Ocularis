@@ -1417,21 +1417,24 @@ def match():
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("SELECT id, first_name, last_name FROM users WHERE id = ANY(%s)", (user_ids,))
+    cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    # Map ID → Full Name
-    name_map = {row[0]: f"{row[1]} {row[2]}" for row in name_rows}
+    # Map ID → details
+    name_map = {row[0]: {"first_name": row[1], "last_name": row[2], "role": row[3]} for row in name_rows}
 
-    # Attach names to each user dict
+    # Attach names and role to each user dict
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
-        user["name"] = name_map.get(user["user"], "Unknown")
+        details = name_map.get(user["user"], {})
+        user["first_name"] = details.get("first_name", "Unknown")
+        user["last_name"] = details.get("last_name", "")
+        user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', users=users_list)
+    return render_template("match.html", current_page='match', user=users_list[0])
 
 @app.route('/api/get-countries')
 def get_countries():
