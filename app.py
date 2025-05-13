@@ -1368,12 +1368,12 @@ def reject_request(request_id):
 @app.route('/match', methods=['GET'])
 @login_required
 def match():
-    # Fetch all users from DB
+    # Connect to the database and fetch user data
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
@@ -1382,12 +1382,12 @@ def match():
     cur.close()
     conn.close()
 
-    # Convert to DataFrame format for the recommender
+    # Format user data into a list of dictionaries
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
         row_data = {'user': uid}
-        for cat in ["Typography", "Branding", "Advertising", "Graphic Design", "Illustration", 
+        for cat in ["Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
                     "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"]:
             row_data[f"{cat}_skill"] = int(cat in (skills or []))
             row_data[f"{cat}_pref"] = int(cat in (prefs or []))
@@ -1396,42 +1396,56 @@ def match():
 
     df = pd.DataFrame(users_data)
 
-    # Skip if user hasn't set up their profile yet
+    # Check if current user has a profile
     if current_user.id not in df["user"].values:
+        print(f"User {current_user.id} has no profile set up.")
         return "Please complete your profile to get recommendations."
 
-    # Get index of current user
+    # Get recommendations
     target_index = df[df['user'] == current_user.id].index[0]
     similar_users_df = get_similar_users(target_index, df)
 
+    # Log similar users dataframe
+    print("Recommended users (raw DataFrame):")
+    print(similar_users_df)
+
     if similar_users_df.empty:
+        print("No similar users found.")
         return render_template("match.html", users=[])
 
-    # Fetch names for recommended users
+    # Get full names for recommended users
     user_ids = similar_users_df['user'].tolist()
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("SELECT id, first_name, last_name FROM users WHERE id = ANY(%s)", (user_ids,))
+    cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    # Map ID → Full Name
-    name_map = {row[0]: f"{row[1]} {row[2]}" for row in name_rows}
+    # Map ID → full name and role
+    name_map = {row[0]: {'name': f"{row[1]} {row[2]}", 'role': row[3]} for row in name_rows}
 
-    # Attach names to each user dict
+    # Combine data for display
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
-        user["name"] = name_map.get(user["user"], "Unknown")
+        user_info = name_map.get(user["user"], {'name': 'Unknown', 'role': 'Unknown'})
+        user["name"] = user_info['name']
+        user["role"] = user_info['role']
         users_list.append(user)
 
+    # Log final users list to be rendered
+    print("Final matched users with name and role:")
+    for u in users_list:
+        print(f"ID: {u['user']}, Name: {u['name']}, Role: {u['role']}")
+
     return render_template("match.html", current_page='match', users=users_list)
+
 
 @app.route('/api/get-countries')
 def get_countries():
