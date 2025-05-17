@@ -109,19 +109,20 @@ CREATE TABLE IF NOT EXISTS comment_likes (
 );
 """)
 
-cur.execute(""" 
+cur.execute("""
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id SERIAL PRIMARY KEY,
     recipient_id INT NOT NULL,
     actor_id INT NOT NULL,
-    image_id INT NOT NULL,
-    action_type VARCHAR(50) NOT NULL, -- 'like' or 'comment'
+    image_id INT, -- made nullable for notifications that don't relate to images
+    action_type VARCHAR(50) NOT NULL, -- e.g., 'like', 'comment', 'collab_check'
     created_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
 );
 """)
+
 
 cur.execute(""" 
 CREATE TABLE IF NOT EXISTS image_tags (
@@ -551,14 +552,20 @@ def feed():
 
         # Fetch notifications
         cur.execute("""
-            SELECT users.first_name || ' ' || users.last_name AS display_name,
-                   notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
+            SELECT 
+                users.first_name || ' ' || users.last_name AS display_name,
+                notifications.action_type,
+                notifications.image_id,
+                notifications.created_at,
+                notifications.actor_id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
             ORDER BY notifications.created_at DESC
         """, (current_user.id,))
+
         notifications = cur.fetchall()
+
 
         # Fetch friend requests
         cur.execute("""
@@ -1460,6 +1467,30 @@ def get_cities():
         if city['country_code'] == country_code and city['state_code'] == state_code
     ]
     return jsonify(filtered)
+
+@app.route('/notify/collab_check', methods=['POST'])
+@login_required
+def notify_collab_check():
+    data = request.get_json()
+    recipient_id = data.get('recipient_id')
+
+    if not recipient_id:
+        return jsonify({'error': 'recipient_id is required'}), 400
+
+    actor_id = current_user.id  # logged-in user who checked the collaborator
+
+    try:
+        cur.execute("""
+            INSERT INTO notifications (recipient_id, actor_id, action_type)
+            VALUES (%s, %s, 'collab_check')
+        """, (recipient_id, actor_id))
+        cur.connection.commit()
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    return jsonify({'message': 'Notification sent to collaborator'}), 201
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

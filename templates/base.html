@@ -30,7 +30,8 @@
                             </div>
                         </a></li>
                     <li><a href="{{ url_for('pairup') }}">
-                            <div class="icon-text-wrapper {% if current_page in ['pairup', 'match'] %}current{% endif %}">
+                            <div
+                                class="icon-text-wrapper {% if current_page in ['pairup', 'match'] %}current{% endif %}">
                                 <span class="material-symbols-outlined sidebar-symbol">group</span>
                                 <div>Match</div>
                             </div>
@@ -132,6 +133,8 @@
                                 {% elif action == 'comment' %}
                                 commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                         style="font-weight: 600;">post</span></a>.
+                                {% elif action == 'collab_check' %}
+                                found you as a match.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
@@ -490,6 +493,24 @@
             </form>
         </div>
         {% endif %}
+        <!-- Triggered when a notification is clicked -->
+        <div id="collab-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Someone Checked Your Profile!</h2>
+                <p><strong>{{ inviter_username }}</strong> wants to collaborate with you.</p>
+
+                <div class="popout">
+                    <h4>🔗 Reach out via:</h4>
+                    <a href="{{ inviter_instagram }}" target="_blank">Instagram</a>
+                    <a href="{{ inviter_portfolio }}" target="_blank">Portfolio</a>
+                </div>
+
+                <div class="popout">
+                    <h4>🎨 You can now post together!</h4>
+                    <a href="/collab-post/start?with={{ inviter_id }}">Start a collab post</a>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -953,6 +974,31 @@
             } else {
                 console.log('Form not found');
             }
+
+            document.querySelectorAll('.circled-icon-2').forEach(button => {
+                button.addEventListener('click', () => {
+                    const recipientId = button.getAttribute('data-recipient-id');
+
+                    fetch('/notify/collab_check', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'  // Only if you use CSRF protection
+                        },
+                        body: JSON.stringify({ recipient_id: recipientId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                console.log(data.message);
+                                // You can also add a success message or UI feedback here
+                            } else if (data.error) {
+                                console.error(data.error);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
 
         });
     </script>
