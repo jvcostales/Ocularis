@@ -976,29 +976,30 @@
             }
 
             document.querySelectorAll('.circled-icon-2').forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
                     const recipientId = button.getAttribute('data-recipient-id');
 
-                    fetch('/notify/collab_check', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token() }}'  // Only if you use CSRF protection
-                        },
-                        body: JSON.stringify({ recipient_id: recipientId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                console.log(data.message);
-                                // You can also add a success message or UI feedback here
-                            } else if (data.error) {
-                                console.error(data.error);
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
+                    try {
+                        const response = await fetch('/notify/collab_check', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ recipient_id: recipientId })
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert('Notification sent!');
+                        } else {
+                            alert('Error: ' + result.error);
+                        }
+                    } catch (error) {
+                        alert('Request failed: ' + error.message);
+                    }
                 });
             });
+
 
         });
     </script>
