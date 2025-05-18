@@ -1419,9 +1419,9 @@ def match():
 
     # Get already matched users
     cur.execute("""
-        SELECT matched_user_id FROM recommendations WHERE user_id = %s
+        SELECT recommended_user_id FROM recommendations WHERE user_id = %s
         UNION
-        SELECT user_id FROM recommendations WHERE matched_user_id = %s
+        SELECT user_id FROM recommendations WHERE recommended_user_id = %s
     """, (current_user.id, current_user.id))
     excluded_ids = [row[0] for row in cur.fetchall()]
     excluded_ids.append(current_user.id)
