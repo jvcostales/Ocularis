@@ -1468,6 +1468,8 @@ def get_cities():
     ]
     return jsonify(filtered)
 
+import psycopg2
+
 @app.route('/notify/collab_check', methods=['POST'])
 @login_required
 def notify_collab_check():
@@ -1477,19 +1479,29 @@ def notify_collab_check():
     if not recipient_id:
         return jsonify({'error': 'recipient_id is required'}), 400
 
-    actor_id = current_user.id  # logged-in user who checked the collaborator
+    actor_id = current_user.id
 
     try:
-        cur.execute("""
-            INSERT INTO notifications (recipient_id, actor_id, action_type)
-            VALUES (%s, %s, 'collab_check')
-        """, (recipient_id, actor_id))
-        cur.connection.commit()
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+            dbname="ocularis_db",
+            user="ocularis_db_user",
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            port=5432
+        )
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO notifications (recipient_id, actor_id, action_type)
+                    VALUES (%s, %s, 'collab_check')
+                """, (recipient_id, actor_id))
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    finally:
+        if conn:
+            conn.close()
 
     return jsonify({'message': 'Notification sent to collaborator'}), 201
-
 
 
 if __name__ == '__main__':
