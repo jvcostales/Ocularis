@@ -971,8 +971,7 @@
 
                         const result = await response.json();
                         if (response.ok) {
-                            // ✅ Redirect instead of alert
-                            window.location.href = '/pairup';  // Change path if needed
+                            alert('Notification sent!');
                         } else {
                             alert('Error: ' + result.error);
                         }
@@ -981,7 +980,6 @@
                     }
                 });
             });
-
 
 
         });
