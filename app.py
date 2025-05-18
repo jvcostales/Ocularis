@@ -329,7 +329,7 @@ def login():
         conn.close()
 
         if user and check_password_hash(user[4], password):  # password is at index 4
-            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
+            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password = 'password123')
             login_user(user_obj)
 
             return redirect(url_for('feed'))
@@ -1502,6 +1502,7 @@ def notify_collab_check():
             conn.close()
 
     return jsonify({'message': 'Notification sent to collaborator'}), 201
+
 
 
 if __name__ == '__main__':
