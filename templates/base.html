@@ -493,25 +493,6 @@
             </form>
         </div>
         {% endif %}
-        <!-- Triggered when a notification is clicked -->
-        <div id="collab-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Someone Checked Your Profile!</h2>
-                <p><strong>{{ inviter_username }}</strong> wants to collaborate with you.</p>
-
-                <div class="popout">
-                    <h4>🔗 Reach out via:</h4>
-                    <a href="{{ inviter_instagram }}" target="_blank">Instagram</a>
-                    <a href="{{ inviter_portfolio }}" target="_blank">Portfolio</a>
-                </div>
-
-                <div class="popout">
-                    <h4>🎨 You can now post together!</h4>
-                    <a href="/collab-post/start?with={{ inviter_id }}">Start a collab post</a>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -990,7 +971,8 @@
 
                         const result = await response.json();
                         if (response.ok) {
-                            alert('Notification sent!');
+                            // ✅ Redirect instead of alert
+                            window.location.href = '/pairup';  // Change path if needed
                         } else {
                             alert('Error: ' + result.error);
                         }
@@ -999,6 +981,7 @@
                     }
                 });
             });
+
 
 
         });

@@ -3,7 +3,6 @@
 
 <div class="card">
     <div class="post-title">Match</div>
-
     {% if user %}
     <div class="card-content">
         <div class="photo"></div>
@@ -24,24 +23,12 @@
             <span class="material-symbols-outlined check-symbol">check</span>
         </button>
     </div>
-
-    {% elif cooldown_remaining %}
-    <div class="notifs-empty">
-        <span class="material-symbols-outlined empty-symbol">schedule</span>
-        <div class="oops">Please wait</div>
-        <div class="nothing">
-            New matches available in {{ cooldown_remaining.hours }}h {{ cooldown_remaining.minutes }}m.
-        </div>
-    </div>
-
     {% else %}
     <div class="notifs-empty">
         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
         <div class="oops">Oops!</div>
         <div class="nothing">Nothing to show here at the moment.</div>
-    </div>
-    {% endif %}
+    </div> {% endif %}
 </div>
-
 
 {% endblock %}

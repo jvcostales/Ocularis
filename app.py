@@ -9,8 +9,7 @@ import secrets
 from email.mime.text import MIMEText
 from search import search_bp
 from recommender import get_similar_users
-from datetime import datetime, timedelta
-import pytz
+from datetime import datetime
 import pandas as pd
 import json
 
@@ -155,17 +154,6 @@ CREATE TABLE IF NOT EXISTS friends (
     FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE,
     CHECK (user1_id <> user2_id)
-);
-""")
-
-cur.execute(""" 
-CREATE TABLE IF NOT EXISTS recommendations (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    recommended_user_id INTEGER NOT NULL,
-    status VARCHAR(10) CHECK (status IN ('accepted', 'declined')) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, recommended_user_id)
 );
 """)
 
@@ -1390,6 +1378,7 @@ def pairup():
 @app.route('/match', methods=['GET'])
 @login_required
 def match():
+    # Fetch all users from DB
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1398,50 +1387,15 @@ def match():
         port=5432
     )
     cur = conn.cursor()
-
-    # Check cooldown
-    cur.execute("""
-        SELECT MAX(created_at) FROM recommendations
-        WHERE user_id = %s
-    """, (current_user.id,))
-    last_response = cur.fetchone()[0]
-
-    if last_response:
-        now = datetime.utcnow()
-        elapsed = now - last_response
-        if elapsed < timedelta(hours=24):
-            hours_left = 24 - int(elapsed.total_seconds() // 3600)
-            minutes_left = int((elapsed.total_seconds() % 3600) // 60)
-            cur.close()
-            conn.close()
-            return render_template("match.html", current_page='match', user=None, cooldown_remaining={"hours": hours_left, "minutes": minutes_left})
-
-
-    # Get already matched users
-    cur.execute("""
-        SELECT recommended_user_id FROM recommendations WHERE user_id = %s
-        UNION
-        SELECT user_id FROM recommendations WHERE recommended_user_id = %s
-    """, (current_user.id, current_user.id))
-    excluded_ids = [row[0] for row in cur.fetchall()]
-    excluded_ids.append(current_user.id)
-
-    # Fetch candidates
-    cur.execute("""
-        SELECT id, skills, preferences, experience_level
-        FROM users
-        WHERE id != %s
-    """, (current_user.id,))
+    cur.execute("SELECT id, skills, preferences, experience_level FROM users")
     rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    # Recommender logic
+    # Convert to DataFrame format for the recommender
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
-        if uid in excluded_ids:
-            continue
         row_data = {'user': uid}
         for cat in ["Typography", "Branding", "Advertising", "Graphic Design", "Illustration", 
                     "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"]:
@@ -1451,18 +1405,20 @@ def match():
         users_data.append(row_data)
 
     df = pd.DataFrame(users_data)
-    if df.empty or current_user.id not in df["user"].values:
-        return render_template("match.html", current_page='match', user=user, cooldown_remaining=None)
 
+    # Skip if user hasn't set up their profile yet
+    if current_user.id not in df["user"].values:
+        return "Please complete your profile to get recommendations."
+
+    # Get index of current user
     target_index = df[df['user'] == current_user.id].index[0]
     similar_users_df = get_similar_users(target_index, df)
 
     if similar_users_df.empty:
-        return render_template("match.html", current_page='match', user=user, cooldown_remaining=None)
+        return render_template("match.html", users=[])
 
-    # Get only the top match
-    top_match_id = similar_users_df.iloc[0]['user']
-    
+    # Fetch names for recommended users
+    user_ids = similar_users_df['user'].tolist()
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1471,20 +1427,24 @@ def match():
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = %s", (top_match_id,))
-    result = cur.fetchone()
+    cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
+    name_rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    user = {
-        "user": top_match_id,
-        "first_name": result[1],
-        "last_name": result[2],
-        "role": result[3]
-    }
+    # Map ID → details
+    name_map = {row[0]: {"first_name": row[1], "last_name": row[2], "role": row[3]} for row in name_rows}
 
-    return render_template("match.html", current_page='match', user=user, cooldown_remaining=None)
+    # Attach names and role to each user dict
+    users_list = []
+    for user in similar_users_df.to_dict(orient='records'):
+        details = name_map.get(user["user"], {})
+        user["first_name"] = details.get("first_name", "Unknown")
+        user["last_name"] = details.get("last_name", "")
+        user["role"] = details.get("role", "")
+        users_list.append(user)
 
+    return render_template("match.html", current_page='match', user=users_list[0])
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -1508,6 +1468,8 @@ def get_cities():
     ]
     return jsonify(filtered)
 
+import psycopg2
+
 @app.route('/notify/collab_check', methods=['POST'])
 @login_required
 def notify_collab_check():
@@ -1518,7 +1480,6 @@ def notify_collab_check():
         return jsonify({'error': 'recipient_id is required'}), 400
 
     actor_id = current_user.id
-    now = datetime.now(pytz.utc)
 
     try:
         conn = psycopg2.connect(
@@ -1530,25 +1491,17 @@ def notify_collab_check():
         )
         with conn:
             with conn.cursor() as cur:
-                # Insert into notifications
                 cur.execute("""
                     INSERT INTO notifications (recipient_id, actor_id, action_type)
                     VALUES (%s, %s, 'collab_check')
                 """, (recipient_id, actor_id))
-
-                # Insert into recommendations (to track accepted match)
-                cur.execute("""
-                    INSERT INTO recommendations (user_id, recommended_user_id, status, created_at)
-                    VALUES (%s, %s, 'accepted', %s)
-                """, (actor_id, recipient_id, now))
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
         if conn:
             conn.close()
 
-    return jsonify({'message': 'Notification sent and match recorded'}), 201
+    return jsonify({'message': 'Notification sent to collaborator'}), 201
 
 
 if __name__ == '__main__':
