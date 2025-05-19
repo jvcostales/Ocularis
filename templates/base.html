@@ -982,6 +982,70 @@
             });
 
 
+            document.querySelector('.check-symbol').addEventListener('click', () => {
+                localStorage.setItem('match_disabled_until', Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
+                window.location.href = '/pairup';
+            });
+            document.querySelector('.close-symbol').addEventListener('click', () => {
+                localStorage.setItem('match_disabled_until', Date.now() + 24 * 60 * 60 * 1000);
+                window.location.href = '/pairup';
+            });
+
+
+            const disabledUntil = localStorage.getItem('match_disabled_until');
+            const container = document.getElementById('pairup-container');
+
+            if (disabledUntil) {
+                const remainingTime = parseInt(disabledUntil) - Date.now();
+
+                if (remainingTime > 0) {
+                    // Create cooldown card element
+                    const cooldownCard = document.createElement('div');
+                    cooldownCard.className = 'card-pairup';
+                    cooldownCard.innerHTML = `
+                <div class="post-title-pairup">⏳ Match Cooldown</div>
+                <div class="pairup-tagline">
+                    You’ve already matched or skipped.<br>
+                    Please wait before trying again.
+                </div>
+                <div class="cooldown-timer" style="font-weight: bold; margin-top: 10px;"></div>
+                <div class="pairup-buttons">
+                    <button class="browse-button">Browse</button>
+                </div>
+            `;
+
+                    container.innerHTML = ''; // Clear existing card
+                    container.appendChild(cooldownCard);
+
+                    // Live countdown timer
+                    const timer = cooldownCard.querySelector('.cooldown-timer');
+
+                    function updateCountdown() {
+                        const now = Date.now();
+                        const timeLeft = parseInt(disabledUntil) - now;
+
+                        if (timeLeft <= 0) {
+                            // Reload page to bring back match card
+                            localStorage.removeItem('match_disabled_until');
+                            location.reload();
+                            return;
+                        }
+
+                        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                        timer.textContent = `Try again in ${hours}h ${minutes}m ${seconds}s`;
+                    }
+
+                    updateCountdown();
+                    setInterval(updateCountdown, 1000);
+                }
+            }
+
+
+
+
         });
     </script>
 </body>

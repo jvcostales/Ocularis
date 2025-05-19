@@ -1502,7 +1502,7 @@ def notify_collab_check():
         if conn:
             conn.close()
 
-    return jsonify({'message': 'Notification sent to collaborator'}), 201
+    return redirect(url_for('pairup'))
 
 if __name__ == '__main__':
     app.run(debug=True)
