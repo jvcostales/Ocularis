@@ -992,14 +992,16 @@
             });
 
 
+            const onPairupPage = document.getElementById('pairup-page');
+            if (!onPairupPage) return; // Only run cooldown logic on pairup.html
+
             const disabledUntil = localStorage.getItem('match_disabled_until');
             const container = document.getElementById('pairup-container');
 
-            if (disabledUntil) {
-                const remainingTime = parseInt(disabledUntil) - Date.now();
+            if (disabledUntil && container) {
+                const timeLeft = parseInt(disabledUntil) - Date.now();
 
-                if (remainingTime > 0) {
-                    // Create cooldown card element
+                if (timeLeft > 0) {
                     const cooldownCard = document.createElement('div');
                     cooldownCard.className = 'card-pairup';
                     cooldownCard.innerHTML = `
@@ -1014,10 +1016,9 @@
                 </div>
             `;
 
-                    container.innerHTML = ''; // Clear existing card
+                    container.innerHTML = '';
                     container.appendChild(cooldownCard);
 
-                    // Live countdown timer
                     const timer = cooldownCard.querySelector('.cooldown-timer');
 
                     function updateCountdown() {
@@ -1025,7 +1026,6 @@
                         const timeLeft = parseInt(disabledUntil) - now;
 
                         if (timeLeft <= 0) {
-                            // Reload page to bring back match card
                             localStorage.removeItem('match_disabled_until');
                             location.reload();
                             return;
@@ -1040,6 +1040,8 @@
 
                     updateCountdown();
                     setInterval(updateCountdown, 1000);
+                } else {
+                    localStorage.removeItem('match_disabled_until');
                 }
             }
 
