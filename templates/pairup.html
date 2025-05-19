@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div id="pairup-page">
-    <div id="pairup-container">
-        <div class="card-pairup">
-            <div class="post-title-pairup">Pair Up</div>
-            <div class="pairup-tagline">Lorem ipsum dolor<br>consectetur</div>
-            <div class="pairup-buttons">
-                <form action="{{ url_for('match') }}" method="GET">
-                    <button type="submit" class="match-button">Match</button>
-                </form>
-                <button class="browse-button">Browse</button>
-            </div>
-        </div>
+<div class="card-pairup">
+    <div class="post-title-pairup">Pair Up</div>
+    <div class="pairup-tagline">Lorem ipsum dolor
+        <br>consectetur
+    </div>
+    <div class="pairup-buttons">
+        <form action="{{ url_for('match') }}" method="GET">
+            <button type="submit" class="match-button">Match</button>
+        </form>
+        <button class="browse-button">Browse</button>
     </div>
 </div>
 <div class="card">

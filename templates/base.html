@@ -992,59 +992,36 @@
             });
 
 
-            const onPairupPage = document.getElementById('pairup-page');
-            if (!onPairupPage) return; // Only run cooldown logic on pairup.html
 
-            const disabledUntil = localStorage.getItem('match_disabled_until');
-            const container = document.getElementById('pairup-container');
 
-            if (disabledUntil && container) {
-                const timeLeft = parseInt(disabledUntil) - Date.now();
+            const cooldownKey = 'pairupCooldown';
+            const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
 
-                if (timeLeft > 0) {
-                    const cooldownCard = document.createElement('div');
-                    cooldownCard.className = 'card-pairup';
-                    cooldownCard.innerHTML = `
-                <div class="post-title-pairup">⏳ Match Cooldown</div>
-                <div class="pairup-tagline">
-                    You’ve already matched or skipped.<br>
-                    Please wait before trying again.
-                </div>
-                <div class="cooldown-timer" style="font-weight: bold; margin-top: 10px;"></div>
-                <div class="pairup-buttons">
-                    <button class="browse-button">Browse</button>
-                </div>
-            `;
-
-                    container.innerHTML = '';
-                    container.appendChild(cooldownCard);
-
-                    const timer = cooldownCard.querySelector('.cooldown-timer');
-
-                    function updateCountdown() {
-                        const now = Date.now();
-                        const timeLeft = parseInt(disabledUntil) - now;
-
-                        if (timeLeft <= 0) {
-                            localStorage.removeItem('match_disabled_until');
-                            location.reload();
-                            return;
-                        }
-
-                        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-                        timer.textContent = `Try again in ${hours}h ${minutes}m ${seconds}s`;
-                    }
-
-                    updateCountdown();
-                    setInterval(updateCountdown, 1000);
-                } else {
-                    localStorage.removeItem('match_disabled_until');
-                }
+            function setCooldown() {
+                const expireTime = Date.now() + cooldownDuration;
+                localStorage.setItem(cooldownKey, expireTime);
             }
 
+            function hasCooldown() {
+                const expireTime = localStorage.getItem(cooldownKey);
+                return expireTime && Date.now() < parseInt(expireTime);
+            }
+
+            document.querySelectorAll(".circled-icon-1, .circled-icon-2").forEach(button => {
+                button.addEventListener("click", function () {
+                    setCooldown();
+                    window.location.href = "/pairup";
+                });
+            });
+
+            // Disable Match and Browse buttons if in cooldown
+            if (hasCooldown()) {
+                const matchButton = document.querySelector(".match-button");
+                const browseButton = document.querySelector(".browse-button");
+
+                if (matchButton) matchButton.disabled = true;
+                if (browseButton) browseButton.disabled = true;
+            }
 
 
 

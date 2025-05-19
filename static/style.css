@@ -27,6 +27,12 @@ input[type="url"]::placeholder {
     color: #c4c4c4;
 }
 
+.match-button:disabled,
+.browse-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
