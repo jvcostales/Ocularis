@@ -329,7 +329,7 @@ def login():
         conn.close()
 
         if user and check_password_hash(user[4], password):  # password is at index 4
-            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password = 'password123')
+            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
             login_user(user_obj)
 
             return redirect(url_for('feed'))
@@ -1474,19 +1474,20 @@ import psycopg2
 @login_required
 def notify_collab_check():
     data = request.get_json()
-    recipient_id = data.get('recipient_id')
-
-    if not recipient_id:
-        return jsonify({'error': 'recipient_id is required'}), 400
+    try:
+        recipient_id = int(data.get('recipient_id'))
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid recipient_id'}), 400
 
     actor_id = current_user.id
+    conn = None
 
     try:
         conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            host=os.environ.get("DB_HOST"),
+            dbname=os.environ.get("DB_NAME"),
+            user=os.environ.get("DB_USER"),
+            password=os.environ.get("DB_PASSWORD"),
             port=5432
         )
         with conn:
@@ -1502,8 +1503,6 @@ def notify_collab_check():
             conn.close()
 
     return jsonify({'message': 'Notification sent to collaborator'}), 201
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
