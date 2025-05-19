@@ -982,18 +982,6 @@
             });
 
 
-            document.querySelector('.check-symbol').addEventListener('click', () => {
-                localStorage.setItem('match_disabled_until', Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
-                window.location.href = '/pairup';
-            });
-            document.querySelector('.close-symbol').addEventListener('click', () => {
-                localStorage.setItem('match_disabled_until', Date.now() + 24 * 60 * 60 * 1000);
-                window.location.href = '/pairup';
-            });
-
-
-
-
             const cooldownKey = 'pairupCooldown';
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
 
