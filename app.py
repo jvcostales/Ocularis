@@ -1373,7 +1373,44 @@ def reject_request(request_id):
 @app.route('/pairup')
 @login_required
 def pairup():
-    return render_template("pairup.html")
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    # Fetch notifications
+    cur.execute("""
+        SELECT 
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (current_user.id,))
+    notifications = cur.fetchall()
+
+    # Fetch friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (current_user.id,))
+    requests = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template("pairup.html", notifications=notifications, requests=requests)
 
 @app.route('/match', methods=['GET'])
 @login_required
@@ -1389,6 +1426,33 @@ def match():
     cur = conn.cursor()
     cur.execute("SELECT id, skills, preferences, experience_level FROM users")
     rows = cur.fetchall()
+
+    # Fetch notifications
+    cur.execute("""
+        SELECT 
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (current_user.id,))
+
+    notifications = cur.fetchall()
+
+    # Fetch friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (current_user.id,))
+    requests = cur.fetchall()
+
     cur.close()
     conn.close()
 
@@ -1444,7 +1508,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0])
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests)
 
 @app.route('/api/get-countries')
 def get_countries():

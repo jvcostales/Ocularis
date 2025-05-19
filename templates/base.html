@@ -982,34 +982,59 @@
             });
 
 
+
+
+            
             const cooldownKey = 'pairupCooldown';
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
+            const cooldownMessage = document.getElementById('cooldown-message');
 
             function setCooldown() {
                 const expireTime = Date.now() + cooldownDuration;
                 localStorage.setItem(cooldownKey, expireTime);
             }
 
-            function hasCooldown() {
+            function getRemainingTime() {
                 const expireTime = localStorage.getItem(cooldownKey);
-                return expireTime && Date.now() < parseInt(expireTime);
+                if (!expireTime) return 0;
+                return Math.max(parseInt(expireTime) - Date.now(), 0);
             }
 
+            function formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                return `${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            function updateCooldownUI() {
+                const remaining = getRemainingTime();
+                if (remaining > 0) {
+                    document.querySelector(".match-button")?.setAttribute("disabled", "true");
+                    document.querySelector(".browse-button")?.setAttribute("disabled", "true");
+                    cooldownMessage.textContent = `Please wait ${formatTime(remaining)} before pairing again.`;
+                } else {
+                    cooldownMessage.textContent = '';
+                    localStorage.removeItem(cooldownKey);
+                }
+            }
+
+            // Handle initial check
+            updateCooldownUI();
+
+            // Start countdown if in cooldown
+            if (getRemainingTime() > 0) {
+                setInterval(updateCooldownUI, 1000);
+            }
+
+            // Set cooldown on button click
             document.querySelectorAll(".circled-icon-1, .circled-icon-2").forEach(button => {
                 button.addEventListener("click", function () {
                     setCooldown();
                     window.location.href = "/pairup";
                 });
             });
-
-            // Disable Match and Browse buttons if in cooldown
-            if (hasCooldown()) {
-                const matchButton = document.querySelector(".match-button");
-                const browseButton = document.querySelector(".browse-button");
-
-                if (matchButton) matchButton.disabled = true;
-                if (browseButton) browseButton.disabled = true;
-            }
 
 
 
