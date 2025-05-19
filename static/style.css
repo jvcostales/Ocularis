@@ -34,13 +34,6 @@ input[type="url"]::placeholder {
     cursor: not-allowed;
 }
 
-.match-button:hover,
-.browse-button:hover {
-    background-color: transparent;
-    color: #A8AAB5;
-    cursor: not-allowed;
-}
-
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
