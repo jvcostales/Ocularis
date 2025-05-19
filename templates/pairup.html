@@ -12,16 +12,18 @@
         </form>
         <button class="browse-button">Browse</button>
     </div>
-    <div id="cooldown-message" style="margin-top: 10px; color: red;"></div>
+    <div id="cooldown-message" style="margin-top: 16px; color: red;"></div>
 </div>
 <div class="card">
     <div class="post-title">Recent</div>
+    {% if notifications %}
+    {% for display_name, action, image_id, created_at, actor_id in notifications %}
     <div class="profile-more-wrapper-pairup">
         <div class="profile-post-pairup">
-            <img src="pfp.jpg" class="pfp">
+            <img src="..\static\pfp.jpg" class="pfp">
             <div class="profile-name-date">
-                <div class="username">Lorem ipsum dolor</div>
-                <div class="date">Jan 1</div>
+                <div class="username">><a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name }}</a></div>
+                <div class="date">{{ created_at.strftime('%b') }} {{ created_at.day }}</div>
             </div>
         </div>
         <div class="more-frame-wrapper">
@@ -33,6 +35,14 @@
             </div>
         </div>
     </div>
+    {% endfor %}
+    {% else %}
+    <div class="notifs-empty">
+        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+        <div class="oops">Oops!</div>
+        <div class="nothing">Nothing to show here at the moment.</div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

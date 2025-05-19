@@ -29,7 +29,15 @@ input[type="url"]::placeholder {
 
 .match-button:disabled,
 .browse-button:disabled {
-    background-color: #ccc;
+    background-color: #DDDEDF;
+    color: #A8AAB5;
+    cursor: not-allowed;
+}
+
+.match-button:hover,
+.browse-button:hover {
+    background-color: transparent;
+    color: #A8AAB5;
     cursor: not-allowed;
 }
 
