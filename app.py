@@ -1442,9 +1442,16 @@ def match():
         LIMIT 1
     """, (user_id,))
     result = cur.fetchone()
+
     if result:
         last_action_time = result[0]
+
+        # Ensure timezone-awareness (assuming stored in UTC)
+        if last_action_time.tzinfo is None:
+            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+
         now_utc = datetime.now(timezone.utc)
+
         if now_utc - last_action_time < timedelta(hours=24):
             cur.close()
             conn.close()
