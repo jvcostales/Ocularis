@@ -9,7 +9,7 @@ import secrets
 from email.mime.text import MIMEText
 from search import search_bp
 from recommender import get_similar_users
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 
@@ -154,6 +154,14 @@ CREATE TABLE IF NOT EXISTS friends (
     FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE,
     CHECK (user1_id <> user2_id)
+);
+""")
+
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS collab_actions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 """)
 
@@ -1415,8 +1423,8 @@ def pairup():
 @app.route('/match', methods=['POST'])
 @login_required
 def match():
+    user_id = current_user.id
 
-    # Fetch all users from DB
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1425,12 +1433,30 @@ def match():
         port=5432
     )
     cur = conn.cursor()
+
+    # Check last collab action
+    cur.execute("""
+        SELECT action_time FROM collab_actions
+        WHERE user_id = %s
+        ORDER BY action_time DESC
+        LIMIT 1
+    """, (user_id,))
+    result = cur.fetchone()
+    if result:
+        last_action_time = result[0]
+        now_utc = datetime.now(timezone.utc)
+        if now_utc - last_action_time < timedelta(hours=24):
+            cur.close()
+            conn.close()
+            return jsonify({'error': 'Access to /match is locked for 24 hours after collab check.'}), 403
+
+    # Fetch all users
     cur.execute("SELECT id, skills, preferences, experience_level FROM users")
     rows = cur.fetchall()
 
     # Fetch notifications
     cur.execute("""
-        SELECT 
+        SELECT
             users.first_name || ' ' || users.last_name AS display_name,
             notifications.action_type,
             notifications.image_id,
@@ -1440,8 +1466,7 @@ def match():
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
-    """, (current_user.id,))
-
+    """, (user_id,))
     notifications = cur.fetchall()
 
     # Fetch friend requests
@@ -1451,13 +1476,10 @@ def match():
         JOIN users u ON fr.sender_id = u.id
         WHERE fr.receiver_id = %s AND fr.status = 'pending'
         ORDER BY fr.created_at DESC
-    """, (current_user.id,))
+    """, (user_id,))
     requests = cur.fetchall()
 
-    cur.close()
-    conn.close()
-
-    # Convert to DataFrame format for the recommender
+    # Prepare data for recommender
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -1471,36 +1493,30 @@ def match():
 
     df = pd.DataFrame(users_data)
 
-    # Skip if user hasn't set up their profile yet
-    if current_user.id not in df["user"].values:
+    if user_id not in df["user"].values:
+        cur.close()
+        conn.close()
         return "Please complete your profile to get recommendations."
 
-    # Get index of current user
-    target_index = df[df['user'] == current_user.id].index[0]
+    # Recommender logic
+    target_index = df[df['user'] == user_id].index[0]
     similar_users_df = get_similar_users(target_index, df)
 
     if similar_users_df.empty:
+        cur.close()
+        conn.close()
         return render_template("match.html", users=[])
 
-    # Fetch names for recommended users
+    # Get recommended user info
     user_ids = similar_users_df['user'].tolist()
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-        port=5432
-    )
-    cur = conn.cursor()
     cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
+
     cur.close()
     conn.close()
 
-    # Map ID → details
     name_map = {row[0]: {"first_name": row[1], "last_name": row[2], "role": row[3]} for row in name_rows}
 
-    # Attach names and role to each user dict
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
         details = name_map.get(user["user"], {})
@@ -1533,7 +1549,6 @@ def get_cities():
     ]
     return jsonify(filtered)
 
-import psycopg2
 
 @app.route('/notify/collab_check', methods=['POST'])
 @login_required
@@ -1561,6 +1576,12 @@ def notify_collab_check():
                     INSERT INTO notifications (recipient_id, actor_id, action_type)
                     VALUES (%s, %s, 'collab_check')
                 """, (recipient_id, actor_id))
+
+                cur.execute("""
+                    INSERT INTO collab_actions (user_id) VALUES (%s)
+                """, (actor_id,))
+
+                
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
@@ -1605,39 +1626,40 @@ def browse_users():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-    cur = conn.cursor()
 
-    # Fetch notifications
-    cur.execute("""
-        SELECT 
-            users.first_name || ' ' || users.last_name AS display_name,
-            notifications.action_type,
-            notifications.image_id,
-            notifications.created_at,
-            notifications.actor_id
-        FROM notifications
-        JOIN users ON notifications.actor_id = users.id
-        WHERE notifications.recipient_id = %s
-        ORDER BY notifications.created_at DESC
-    """, (current_user.id,))
+    with conn:
+        with conn.cursor() as cur:
+            # Fetch notifications
+            cur.execute("""
+                SELECT 
+                    users.first_name || ' ' || users.last_name AS display_name,
+                    notifications.action_type,
+                    notifications.image_id,
+                    notifications.created_at,
+                    notifications.actor_id
+                FROM notifications
+                JOIN users ON notifications.actor_id = users.id
+                WHERE notifications.recipient_id = %s
+                ORDER BY notifications.created_at DESC
+            """, (current_user.id,))
+            notifications = cur.fetchall()
 
-    notifications = cur.fetchall()
+            # Fetch friend requests
+            cur.execute("""
+                SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+                FROM friend_requests fr
+                JOIN users u ON fr.sender_id = u.id
+                WHERE fr.receiver_id = %s AND fr.status = 'pending'
+                ORDER BY fr.created_at DESC
+            """, (current_user.id,))
+            requests = cur.fetchall()
 
-
-    # Fetch friend requests
-    cur.execute("""
-        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
-        FROM friend_requests fr
-        JOIN users u ON fr.sender_id = u.id
-        WHERE fr.receiver_id = %s AND fr.status = 'pending'
-        ORDER BY fr.created_at DESC
-    """, (current_user.id,))
-    requests = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return render_template('browse.html', users=users, notifications=notifications, requests=requests)
+    return render_template(
+        'browse.html', 
+        users=users, 
+        notifications=notifications, 
+        requests=requests
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
