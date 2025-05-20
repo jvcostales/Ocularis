@@ -496,15 +496,6 @@
     </div>
 
     <script>
-
-
-        function attachCooldownTime(form) {
-            const expiry = localStorage.getItem("pairupCooldown") || "";
-            console.log("Cooldown expiry sent:", expiry);
-            document.getElementById("cooldown-expiry-input").value = expiry;
-            return true;
-        }
-        
         let currentStep = 1;
         const totalSteps = 7;
 
@@ -1052,9 +1043,17 @@
             });
 
 
-
-
         });
+
+
+        window.attachCooldownTime = function (form) {
+            const expiry = localStorage.getItem("pairupCooldown") || "";
+            console.log("Cooldown expiry sent:", expiry);
+            document.getElementById("cooldown-expiry-input").value = expiry;
+            return true;
+        };
+
+
     </script>
 </body>
 
