@@ -1702,7 +1702,7 @@ def browse_users():
 
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # Check last collab action
+            # Check last collab action first
             cur.execute("""
                 SELECT action_time FROM collab_actions
                 WHERE user_id = %s
@@ -1719,6 +1719,15 @@ def browse_users():
                 now_utc = datetime.now(timezone.utc)
                 if now_utc - last_action_time < timedelta(hours=24):
                     return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
+
+            # Now fetch random users
+            cur.execute("""
+                SELECT id, first_name, last_name
+                FROM users
+                ORDER BY RANDOM()
+                LIMIT 10
+            """)
+            users = cur.fetchall()
 
             # Fetch notifications
             cur.execute("""
