@@ -1,20 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Container to dynamically replace card-pairup with the cooldown message -->
-<div id="pairup-container">
-    <div class="card-pairup">
-        <div class="post-title-pairup">Pair Up</div>
-        <div class="pairup-tagline">Lorem ipsum dolor
-            <br>consectetur
-        </div>
-        <div class="pairup-buttons">
-            <form id="match-form" action="/match" method="POST">
-                <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
-                <button type="submit" class="match-button">Match</button>
-            </form>
-            <button class="browse-button">Browse</button>
-        </div>
+<div class="card-pairup">
+    <div class="post-title-pairup">Pair Up</div>
+    <div class="pairup-tagline">Lorem ipsum dolor
+        <br>consectetur
+    </div>
+    <div class="pairup-buttons">
+        <button class="match-button">Match</button>
+        <button class="browse-button">Browse</button>
     </div>
 </div>
 

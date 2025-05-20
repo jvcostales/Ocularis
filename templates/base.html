@@ -958,104 +958,31 @@
 
 
 
+            document.getElementById('notify-btn').addEventListener('click', function () {
+                const recipientId = this.getAttribute('data-recipient-id');
 
-
-            const cooldownKey = 'pairupCooldown';
-            const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
-
-            const pairupContainer = document.getElementById("pairup-container");
-
-            const originalCardHTML = `
-    <div class="card-pairup">
-        <div class="post-title-pairup">Pair Up</div>
-        <div class="pairup-tagline">Lorem ipsum dolor
-            <br>consectetur
-        </div>
-        <div class="pairup-buttons">
-            <form id="match-form" action="/match" method="POST">
-                <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
-                <button type="submit" class="match-button">Match</button>
-            </form>
-            <button class="browse-button">Browse</button>
-        </div>
-    </div>
-`;
-
-            function setCooldown() {
-                const expireTime = Date.now() + cooldownDuration;
-                localStorage.setItem(cooldownKey, expireTime);
-            }
-
-            function getRemainingTime() {
-                const expireTime = localStorage.getItem(cooldownKey);
-                if (!expireTime) return 0;
-                return Math.max(parseInt(expireTime) - Date.now(), 0);
-            }
-
-            function formatTime(ms) {
-                const totalSeconds = Math.floor(ms / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                return `${hours}h ${minutes}m ${seconds}s`;
-            }
-
-            function showCooldownMessage(remaining) {
-                pairupContainer.innerHTML = `
-        <div id="cooldown-message" style="margin-top: 16px; color: red;">
-            Please wait ${formatTime(remaining)} before pairing again.
-        </div>
-    `;
-            }
-
-            function attachMatchFormHandler() {
-                const matchForm = document.querySelector("#match-form");
-                if (matchForm) {
-                    matchForm.addEventListener("submit", function (e) {
-                        const expiry = localStorage.getItem(cooldownKey) || "";
-                        console.log("Cooldown expiry sent:", expiry);
-                        document.getElementById("cooldown-expiry-input").value = expiry;
-                    });
-                }
-            }
-
-            function updateCooldownUI() {
-                const remaining = getRemainingTime();
-
-                if (remaining > 0) {
-                    showCooldownMessage(remaining);
-                } else {
-                    localStorage.removeItem(cooldownKey);
-                    pairupContainer.innerHTML = originalCardHTML;
-                    attachMatchFormHandler(); // reattach after HTML update
-                }
-            }
-
-            // Handle initial load
-            updateCooldownUI();
-
-            // Countdown tick every second if in cooldown
-            if (getRemainingTime() > 0) {
-                setInterval(() => {
-                    const remaining = getRemainingTime();
-                    if (remaining > 0) {
-                        const msg = document.getElementById("cooldown-message");
-                        if (msg) msg.textContent = `Please wait ${formatTime(remaining)} before pairing again.`;
-                    } else {
-                        updateCooldownUI();
-                    }
-                }, 1000);
-            }
-
-            // Set cooldown on button click
-            document.addEventListener("click", function (e) {
-                if (e.target.matches(".circled-icon-1, .circled-icon-2")) {
-                    setCooldown();
-                    window.location.href = "/pairup";
-                }
+                fetch('/notify/collab_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ recipient_id: recipientId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert('Error: ' + data.error);
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(err => alert('Request failed: ' + err));
             });
 
 
+
+
+        });
 
 
     </script>
