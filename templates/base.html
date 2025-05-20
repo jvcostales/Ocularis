@@ -959,7 +959,7 @@
 
 
 
-            
+
             const cooldownKey = 'pairupCooldown';
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
 
@@ -1044,12 +1044,10 @@
 
             function attachCooldownTime(form) {
                 const expiry = localStorage.getItem("pairupCooldown") || "";
+                console.log("Cooldown expiry sent:", expiry);
                 document.getElementById("cooldown-expiry-input").value = expiry;
-                return true; // allow form submission
+                return true;
             }
-
-
-
 
         });
     </script>
