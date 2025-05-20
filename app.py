@@ -12,6 +12,7 @@ from recommender import get_similar_users
 from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
+from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -1663,26 +1664,27 @@ def get_random_users():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT id, first_name, last_name, city, role
-        FROM users
-        WHERE is_profile_complete = TRUE
-        AND id != %s
-        AND id NOT IN (
-            SELECT recipient_id FROM notifications 
-            WHERE actor_id = %s AND action_type = 'collab_check'
-            UNION
-            SELECT actor_id FROM notifications 
-            WHERE recipient_id = %s AND action_type = 'collab_check'
-        )
-        ORDER BY RANDOM()
-        LIMIT 20;
-    """, (current_user.id, current_user.id, current_user.id))
-    users = cur.fetchall()
 
-    cur.close()
-    conn.close()
+    with conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("""
+                SELECT id, first_name, last_name, city, role
+                FROM users
+                WHERE is_profile_complete = TRUE
+                AND id != %s
+                AND id NOT IN (
+                    SELECT recipient_id FROM notifications 
+                    WHERE actor_id = %s AND action_type = 'collab_check'
+                    UNION
+                    SELECT actor_id FROM notifications 
+                    WHERE recipient_id = %s AND action_type = 'collab_check'
+                )
+                ORDER BY RANDOM()
+                LIMIT 20;
+            """, (current_user.id, current_user.id, current_user.id))
+
+            users = cur.fetchall()
+
     return users
 
 
@@ -1699,7 +1701,7 @@ def browse_users():
     )
 
     with conn:
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
             # Check last collab action
             cur.execute("""
                 SELECT action_time FROM collab_actions
@@ -1710,7 +1712,7 @@ def browse_users():
             result = cur.fetchone()
 
             if result:
-                last_action_time = result[0]
+                last_action_time = result["action_time"]
                 if last_action_time.tzinfo is None:
                     last_action_time = last_action_time.replace(tzinfo=timezone.utc)
 
@@ -1744,7 +1746,7 @@ def browse_users():
             requests = cur.fetchall()
 
     # Fetch and filter random users
-    users = get_random_users()
+    users = get_random_users()  # Make sure this returns dicts, not tuples
     users = [user for user in users if user["id"] != current_user.id]
 
     return render_template(
@@ -1753,7 +1755,6 @@ def browse_users():
         notifications=notifications, 
         requests=requests
     )
-
 
 if __name__ == '__main__':
     app.run(debug=True)
