@@ -1633,8 +1633,7 @@ def get_random_users():
 @app.route('/browse', methods=['POST'])
 @login_required
 def browse_users():
-    users = get_random_users()
-
+    # 24-hour block timer check
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1645,6 +1644,24 @@ def browse_users():
 
     with conn:
         with conn.cursor() as cur:
+            # Check last collab action
+            cur.execute("""
+                SELECT action_time FROM collab_actions
+                WHERE user_id = %s
+                ORDER BY action_time DESC
+                LIMIT 1
+            """, (current_user.id,))
+            result = cur.fetchone()
+
+            if result:
+                last_action_time = result[0]
+                if last_action_time.tzinfo is None:
+                    last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+
+                now_utc = datetime.now(timezone.utc)
+                if now_utc - last_action_time < timedelta(hours=24):
+                    return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
+
             # Fetch notifications
             cur.execute("""
                 SELECT 
@@ -1670,12 +1687,17 @@ def browse_users():
             """, (current_user.id,))
             requests = cur.fetchall()
 
+    # Fetch and filter random users
+    users = get_random_users()
+    users = [user for user in users if user["id"] != current_user.id]
+
     return render_template(
         'browse.html', 
         users=users, 
         notifications=notifications, 
         requests=requests
     )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
