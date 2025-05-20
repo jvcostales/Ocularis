@@ -1691,8 +1691,7 @@ def get_random_users():
 @app.route('/browse', methods=['POST'])
 @login_required
 def browse_users():
-    user_id = current_user.id
-    
+    # 24-hour block timer check
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1709,7 +1708,7 @@ def browse_users():
                 WHERE user_id = %s
                 ORDER BY action_time DESC
                 LIMIT 1
-            """, (user_id,))
+            """, (current_user.id,))
             result = cur.fetchone()
 
             if result:
@@ -1721,7 +1720,7 @@ def browse_users():
                 if now_utc - last_action_time < timedelta(hours=24):
                     return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
 
-            # Fetch random users
+            # Now fetch random users
             cur.execute("""
                 SELECT id, first_name, last_name
                 FROM users
@@ -1732,7 +1731,7 @@ def browse_users():
 
             # Fetch notifications
             cur.execute("""
-                SELECT
+                SELECT 
                     users.first_name || ' ' || users.last_name AS display_name,
                     notifications.action_type,
                     notifications.image_id,
@@ -1742,7 +1741,7 @@ def browse_users():
                 JOIN users ON notifications.actor_id = users.id
                 WHERE notifications.recipient_id = %s
                 ORDER BY notifications.created_at DESC
-            """, (user_id,))
+            """, (current_user.id,))
             notifications = cur.fetchall()
 
             # Fetch friend requests
@@ -1752,20 +1751,19 @@ def browse_users():
                 JOIN users u ON fr.sender_id = u.id
                 WHERE fr.receiver_id = %s AND fr.status = 'pending'
                 ORDER BY fr.created_at DESC
-            """, (user_id,))
+            """, (current_user.id,))
             requests = cur.fetchall()
 
-    # Filter out current user from the random users
-    users = [user for user in users if user["id"] != user_id]
+    # Fetch and filter random users
+    users = get_random_users()  # Make sure this returns dicts, not tuples
+    users = [user for user in users if user["id"] != current_user.id]
 
     return render_template(
-        'browse.html',
-        users=users,
-        user_id=user_id,
-        notifications=notifications,
+        'browse.html', 
+        users=users, 
+        notifications=notifications, 
         requests=requests
     )
-
 
 if __name__ == '__main__':
     app.run(debug=True)
