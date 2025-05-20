@@ -1515,7 +1515,15 @@ def match():
     cur.close()
     conn.close()
 
-    name_map = {row[0]: {"first_name": row[1], "last_name": row[2], "role": row[3]} for row in name_rows}
+    name_map = {
+        row[0]: {
+            "id": row[0],
+            "first_name": row[1],
+            "last_name": row[2],
+            "role": row[3]
+        }
+        for row in name_rows
+    }
 
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
