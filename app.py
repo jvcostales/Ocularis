@@ -1412,7 +1412,7 @@ def pairup():
 
     return render_template("pairup.html", notifications=notifications, requests=requests)
 
-@app.route('/match', methods=['POST'])
+@app.route('/match', methods=['GET', 'POST'])
 @login_required
 def match():
     cooldown_expiry_ms = request.form.get("cooldown_expiry")
@@ -1617,7 +1617,7 @@ def browse_users():
     )
     cur = conn.cursor()
 
-        # Fetch notifications
+    # Fetch notifications
     cur.execute("""
         SELECT 
             users.first_name || ' ' || users.last_name AS display_name,
