@@ -1412,7 +1412,7 @@ def pairup():
 
     return render_template("pairup.html", notifications=notifications, requests=requests)
 
-@app.route('/match', methods=['GET', 'POST'])
+@app.route('/match', methods=['POST'])
 @login_required
 def match():
     cooldown_expiry_ms = request.form.get("cooldown_expiry")
