@@ -1528,6 +1528,7 @@ def match():
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
         details = name_map.get(user["user"], {})
+        user["id"] = details.get("id", user["user"])  # Add this line to ensure 'id' is set
         user["first_name"] = details.get("first_name", "Unknown")
         user["last_name"] = details.get("last_name", "")
         user["role"] = details.get("role", "")
