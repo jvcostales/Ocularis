@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS users (
     verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT,
     reset_token TEXT,
-    skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
+    skills TEXT[] ,            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
     experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
     country TEXT,
@@ -1468,19 +1468,28 @@ def match():
 
     # Get all matched user IDs for current user
     cur.execute("""
-        SELECT matched_user_id FROM recent_matches WHERE user_id = %s
+    SELECT matched_user_id FROM recent_matches WHERE user_id = %s
     """, (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
 
-    # Exclude current user as well
-    exclude_ids = matched_ids + [user_id]
+    exclude_ids = matched_ids + [user_id] or [-1]  # Ensure not empty
 
-    # Fetch candidate users excluding matched users and current user
+    # Fetch candidate users excluding matched ones and current user
     cur.execute("""
         SELECT id, skills, preferences, experience_level FROM users
-        WHERE id != ALL(%s) AND is_profile_complete = TRUE
-    """, (exclude_ids,))
+        WHERE id NOT IN %s AND is_profile_complete = TRUE
+    """, (tuple(exclude_ids),))
     rows = cur.fetchall()
+
+    # Also fetch current user's data to include in DataFrame
+    cur.execute("""
+        SELECT id, skills, preferences, experience_level FROM users
+        WHERE id = %s AND is_profile_complete = TRUE
+    """, (user_id,))
+    self_data = cur.fetchone()
+
+    if self_data:
+        rows.append(self_data)
 
 
     # Fetch notifications
