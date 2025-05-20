@@ -964,6 +964,7 @@
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
 
             const pairupContainer = document.getElementById("pairup-container");
+
             const originalCardHTML = `
     <div class="card-pairup">
         <div class="post-title-pairup">Pair Up</div>
@@ -971,7 +972,7 @@
             <br>consectetur
         </div>
         <div class="pairup-buttons">
-            <form action="/match" method="POST" onsubmit="return attachCooldownTime(this)">
+            <form id="match-form" action="/match" method="POST">
                 <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
                 <button type="submit" class="match-button">Match</button>
             </form>
@@ -1007,6 +1008,17 @@
     `;
             }
 
+            function attachMatchFormHandler() {
+                const matchForm = document.querySelector("#match-form");
+                if (matchForm) {
+                    matchForm.addEventListener("submit", function (e) {
+                        const expiry = localStorage.getItem(cooldownKey) || "";
+                        console.log("Cooldown expiry sent:", expiry);
+                        document.getElementById("cooldown-expiry-input").value = expiry;
+                    });
+                }
+            }
+
             function updateCooldownUI() {
                 const remaining = getRemainingTime();
 
@@ -1015,6 +1027,7 @@
                 } else {
                     localStorage.removeItem(cooldownKey);
                     pairupContainer.innerHTML = originalCardHTML;
+                    attachMatchFormHandler(); // reattach after HTML update
                 }
             }
 
@@ -1043,15 +1056,6 @@
             });
 
 
-        });
-
-
-        window.attachCooldownTime = function (form) {
-            const expiry = localStorage.getItem("pairupCooldown") || "";
-            console.log("Cooldown expiry sent:", expiry);
-            document.getElementById("cooldown-expiry-input").value = expiry;
-            return true;
-        };
 
 
     </script>
