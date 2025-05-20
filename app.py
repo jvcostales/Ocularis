@@ -1424,10 +1424,21 @@ def pairup():
     """, (current_user.id,))
     requests = cur.fetchall()
 
+
+    # Fetch recent matches
+    cur.execute("""
+        SELECT u.id, u.first_name, u.last_name, rm.matched_at
+        FROM recent_matches rm
+        JOIN users u ON rm.matched_user_id = u.id
+        WHERE rm.user_id = %s
+        ORDER BY rm.matched_at DESC
+    """, (current_user.id,))
+    recent_matches = cur.fetchall()
+
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", notifications=notifications, requests=requests)
+    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches)
 
 @app.route('/match', methods=['POST'])
 @login_required

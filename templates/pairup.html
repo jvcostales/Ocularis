@@ -18,14 +18,13 @@
 
 <div class="card">
     <div class="post-title">Recent</div>
-    {% if notifications %}
-    {% for display_name, action, image_id, created_at, actor_id in notifications %}
+    {% for match in recent_matches %}
     <div class="profile-more-wrapper-pairup">
         <div class="profile-post-pairup">
             <img src="..\static\pfp.jpg" class="pfp">
             <div class="profile-name-date">
-                <div class="username"><a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name }}</a></div>
-                <div class="date">{{ created_at.strftime('%b') }} {{ created_at.day }}</div>
+                <div class="username"><a href="/profile/{{ match[0] }}">{{ match[1] }} {{ match[2] }}</a></div>
+                <div class="date">{{ match[3].strftime('%b') }} {{ match[3].day }}</div>
             </div>
         </div>
         <div class="more-frame-wrapper">
