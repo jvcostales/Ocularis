@@ -956,35 +956,10 @@
                 console.log('Form not found');
             }
 
-            document.querySelectorAll('.circled-icon-2').forEach(button => {
-                button.addEventListener('click', async () => {
-                    const recipientId = button.getAttribute('data-recipient-id');
-
-                    try {
-                        const response = await fetch('/notify/collab_check', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ recipient_id: recipientId })
-                        });
-
-                        const result = await response.json();
-                        if (response.ok) {
-                            alert('Notification sent!');
-                        } else {
-                            alert('Error: ' + result.error);
-                        }
-                    } catch (error) {
-                        alert('Request failed: ' + error.message);
-                    }
-                });
-            });
 
 
 
-
-
+            
             const cooldownKey = 'pairupCooldown';
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
 
@@ -996,10 +971,10 @@
             <br>consectetur
         </div>
         <div class="pairup-buttons">
-        <form action="/match" method="POST" onsubmit="return attachCooldownTime(this)">
-            <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
-            <button type="submit" class="match-button">Match</button>
-        </form>                
+            <form action="/match" method="POST" onsubmit="return attachCooldownTime(this)">
+                <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
+                <button type="submit" class="match-button">Match</button>
+            </form>
             <button class="browse-button">Browse</button>
         </div>
     </div>
