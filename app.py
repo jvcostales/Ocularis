@@ -1412,9 +1412,20 @@ def pairup():
 
     return render_template("pairup.html", notifications=notifications, requests=requests)
 
-@app.route('/match', methods=['GET'])
+@app.route('/match', methods=['POST'])
 @login_required
 def match():
+    cooldown_expiry_ms = request.form.get("cooldown_expiry")
+    if cooldown_expiry_ms:
+        try:
+            expiry_datetime = datetime.fromtimestamp(int(cooldown_expiry_ms) / 1000)
+            if expiry_datetime > datetime.now():
+                flash("You're still on cooldown!")
+                return redirect("/pairup")
+        except ValueError:
+            flash("Invalid cooldown time.")
+            return redirect("/pairup")
+        
     # Fetch all users from DB
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 

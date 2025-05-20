@@ -1066,6 +1066,12 @@
                 }
             });
 
+            function attachCooldownTime(form) {
+                const expiry = localStorage.getItem("pairupCooldown") || "";
+                document.getElementById("cooldown-expiry-input").value = expiry;
+                return true; // allow form submission
+            }
+
 
 
 
