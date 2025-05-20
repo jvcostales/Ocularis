@@ -1593,7 +1593,7 @@ def get_random_users():
     conn.close()
     return users
 
-@app.route('/browse')
+@app.route('/browse', methods=['POST'])
 @login_required
 def browse_users():
     users = get_random_users()
