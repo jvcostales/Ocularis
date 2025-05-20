@@ -1579,5 +1579,75 @@ def notify_collab_check():
 
     return jsonify({'message': 'Notification sent to collaborator'}), 201
 
+
+
+def get_random_users():
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, first_name, last_name, city, role
+        FROM users
+        WHERE is_profile_complete = TRUE
+        ORDER BY RANDOM()
+        LIMIT 20;
+    """)
+    users = cur.fetchall()
+
+    cur.close()
+    conn.close()
+    return users
+
+@app.route('/browse')
+@login_required
+def browse_users():
+    users = get_random_users()
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+        # Fetch notifications
+    cur.execute("""
+        SELECT 
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (current_user.id,))
+
+    notifications = cur.fetchall()
+
+
+    # Fetch friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (current_user.id,))
+    requests = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('browse.html', users=users, notifications=notifications, requests=requests)
+
 if __name__ == '__main__':
     app.run(debug=True)
