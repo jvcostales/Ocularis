@@ -984,10 +984,25 @@
 
 
 
-            
+
             const cooldownKey = 'pairupCooldown';
             const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in ms
-            const cooldownMessage = document.getElementById('cooldown-message');
+
+            const pairupContainer = document.getElementById("pairup-container");
+            const originalCardHTML = `
+    <div class="card-pairup">
+        <div class="post-title-pairup">Pair Up</div>
+        <div class="pairup-tagline">Lorem ipsum dolor
+            <br>consectetur
+        </div>
+        <div class="pairup-buttons">
+            <form action="/match" method="GET">
+                <button type="submit" class="match-button">Match</button>
+            </form>
+            <button class="browse-button">Browse</button>
+        </div>
+    </div>
+`;
 
             function setCooldown() {
                 const expireTime = Date.now() + cooldownDuration;
@@ -1008,33 +1023,49 @@
                 return `${hours}h ${minutes}m ${seconds}s`;
             }
 
+            function showCooldownMessage(remaining) {
+                pairupContainer.innerHTML = `
+        <div id="cooldown-message" style="margin-top: 16px; color: red;">
+            Please wait ${formatTime(remaining)} before pairing again.
+        </div>
+    `;
+            }
+
             function updateCooldownUI() {
                 const remaining = getRemainingTime();
+
                 if (remaining > 0) {
-                    document.querySelector(".match-button")?.setAttribute("disabled", "true");
-                    document.querySelector(".browse-button")?.setAttribute("disabled", "true");
-                    cooldownMessage.textContent = `Please wait ${formatTime(remaining)} before pairing again.`;
+                    showCooldownMessage(remaining);
                 } else {
-                    cooldownMessage.textContent = '';
                     localStorage.removeItem(cooldownKey);
+                    pairupContainer.innerHTML = originalCardHTML;
                 }
             }
 
-            // Handle initial check
+            // Handle initial load
             updateCooldownUI();
 
-            // Start countdown if in cooldown
+            // Countdown tick every second if in cooldown
             if (getRemainingTime() > 0) {
-                setInterval(updateCooldownUI, 1000);
+                setInterval(() => {
+                    const remaining = getRemainingTime();
+                    if (remaining > 0) {
+                        const msg = document.getElementById("cooldown-message");
+                        if (msg) msg.textContent = `Please wait ${formatTime(remaining)} before pairing again.`;
+                    } else {
+                        updateCooldownUI();
+                    }
+                }, 1000);
             }
 
             // Set cooldown on button click
-            document.querySelectorAll(".circled-icon-1, .circled-icon-2").forEach(button => {
-                button.addEventListener("click", function () {
+            document.addEventListener("click", function (e) {
+                if (e.target.matches(".circled-icon-1, .circled-icon-2")) {
                     setCooldown();
                     window.location.href = "/pairup";
-                });
+                }
             });
+
 
 
 
