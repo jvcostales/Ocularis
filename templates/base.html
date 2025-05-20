@@ -996,9 +996,10 @@
             <br>consectetur
         </div>
         <div class="pairup-buttons">
-            <form action="/match" method="GET">
-                <button type="submit" class="match-button">Match</button>
-            </form>
+        <form action="/match" method="POST" onsubmit="return attachCooldownTime(this)">
+            <input type="hidden" name="cooldown_expiry" id="cooldown-expiry-input">
+            <button type="submit" class="match-button">Match</button>
+        </form>                
             <button class="browse-button">Browse</button>
         </div>
     </div>
