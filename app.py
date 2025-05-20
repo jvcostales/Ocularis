@@ -165,6 +165,15 @@ CREATE TABLE IF NOT EXISTS collab_actions (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS recent_matches (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    matched_user_id INT REFERENCES users(id),
+    matched_at TIMESTAMP DEFAULT NOW()
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -1457,9 +1466,22 @@ def match():
             conn.close()
             return jsonify({'error': 'Access to /match is locked for 24 hours after collab check.'}), 403
 
-    # Fetch all users
-    cur.execute("SELECT id, skills, preferences, experience_level FROM users")
+    # Get all matched user IDs for current user
+    cur.execute("""
+        SELECT matched_user_id FROM recent_matches WHERE user_id = %s
+    """, (user_id,))
+    matched_ids = [row[0] for row in cur.fetchall()]
+
+    # Exclude current user as well
+    exclude_ids = matched_ids + [user_id]
+
+    # Fetch candidate users excluding matched users and current user
+    cur.execute("""
+        SELECT id, skills, preferences, experience_level FROM users
+        WHERE id != ALL(%s) AND is_profile_complete = TRUE
+    """, (exclude_ids,))
     rows = cur.fetchall()
+
 
     # Fetch notifications
     cur.execute("""
@@ -1597,6 +1619,11 @@ def notify_collab_check():
                     INSERT INTO collab_actions (user_id) VALUES (%s)
                 """, (actor_id,))
 
+                cur.execute("""
+                    INSERT INTO recent_matches (user_id, matched_user_id)
+                    VALUES (%s, %s), (%s, %s)
+                """, (actor_id, recipient_id, recipient_id, actor_id))
+
                 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -1621,14 +1648,23 @@ def get_random_users():
         SELECT id, first_name, last_name, city, role
         FROM users
         WHERE is_profile_complete = TRUE
+        AND id != %s
+        AND id NOT IN (
+            SELECT recipient_id FROM notifications 
+            WHERE actor_id = %s AND action_type = 'collab_check'
+            UNION
+            SELECT actor_id FROM notifications 
+            WHERE recipient_id = %s AND action_type = 'collab_check'
+        )
         ORDER BY RANDOM()
         LIMIT 20;
-    """)
+    """, (current_user.id, current_user.id, current_user.id))
     users = cur.fetchall()
 
     cur.close()
     conn.close()
     return users
+
 
 @app.route('/browse', methods=['POST'])
 @login_required
