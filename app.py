@@ -63,14 +63,16 @@ CREATE TABLE IF NOT EXISTS users (
 );
 """)
 
-cur.execute(""" 
+cur.execute("""
 CREATE TABLE IF NOT EXISTS images (
     image_id SERIAL PRIMARY KEY,
     id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
+    collaborator_id INT,
+    caption TEXT,
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
-    caption TEXT
+    FOREIGN KEY (collaborator_id) REFERENCES users(id)
 );
 """)
 
@@ -515,7 +517,7 @@ def feed():
         file = request.files['image']
         caption = request.form.get('caption', '')
         selected_tags = request.form.getlist('tags')
-        selected_collaborator = request.form.get('collaborator')  # single value, or None
+        collaborator_id = request.form.get('collaborator')  # This will be None if not selected
         
         if file.filename == '':
             return 'No selected file'
@@ -547,15 +549,16 @@ def feed():
 
 
             # Insert collaborators (if any)
-            if selected_collaborator:
-                try:
-                    collaborator_id_int = int(selected_collaborator)
-                    cur.execute(
-                        "INSERT INTO image_collaborators (image_id, user_id) VALUES (%s, %s)",
-                        (image_id, collaborator_id_int)
-                    )
-                except ValueError:
-                    pass
+            if collaborator_id:
+                cur.execute(
+                    "INSERT INTO images (id, image_url, caption, collaborator_id) VALUES (%s, %s, %s, %s) RETURNING image_id",
+                    (current_user.id, image_url, caption, collaborator_id)
+                )
+            else:
+                cur.execute(
+                    "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id",
+                    (current_user.id, image_url, caption)
+                )
   
 
             conn.commit()
@@ -576,18 +579,30 @@ def feed():
 
     try:
         # Fetch images
+        # Fetch images with author and collaborator names
         cur.execute("""
-            SELECT images.image_id, images.image_url, images.caption,
-                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name, images.created_at
-            FROM images 
-            JOIN users ON images.id = users.id
+            SELECT 
+                images.image_id,              -- 0
+                images.image_url,             -- 1
+                images.caption,               -- 2
+                COALESCE(like_count, 0),      -- 3
+                images.id,                    -- 4 (author's user ID)
+                author.first_name,            -- 5
+                author.last_name,             -- 6
+                images.created_at,            -- 7
+                collaborator.id,              -- 8 (collaborator's user ID)
+                collaborator.first_name,      -- 9
+                collaborator.last_name        -- 10
+            FROM images
+            JOIN users AS author ON images.id = author.id
+            LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
             LEFT JOIN (
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
                 GROUP BY image_id
             ) AS likes 
             ON images.image_id = likes.image_id
-            ORDER BY images.created_at DESC
+            ORDER BY images.created_at DESC;
         """)
         images = cur.fetchall()
 
