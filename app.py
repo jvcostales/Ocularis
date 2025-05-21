@@ -1817,7 +1817,6 @@ def settings():
     if not user_id:
         return redirect(url_for('login'))
 
-    # Directly create connection here (no helper)
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1828,12 +1827,13 @@ def settings():
     cur = conn.cursor()
 
     if request.method == 'POST':
+        # Get form data
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
-        country = request.form.get('country')
-        state = request.form.get('state')
-        city = request.form.get('city')
+        country = request.form.get('country')   # should be country code (iso2)
+        state = request.form.get('state')       # state code
+        city = request.form.get('city')         # city code
         experience_level = request.form.get('experience_level')
 
         skills = request.form.get('skills', '')
@@ -1853,9 +1853,10 @@ def settings():
             filename = f"user_{user_id}_profile.{profile_pic.filename.rsplit('.', 1)[1]}"
             filepath = os.path.join('static/uploads/profile_pics', filename)
             profile_pic.save(filepath)
-            # You need to update your DB schema and add profile_pic column to save this path
+            # Update profile_pic path in DB
             cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filepath, user_id))
 
+        # Update user data (assuming skills, preferences stored as arrays in DB)
         cur.execute("""
             UPDATE users SET
                 first_name = %s,
@@ -1899,6 +1900,7 @@ def settings():
         return redirect(url_for('settings'))
 
     else:
+        # GET: fetch user info + countries list
         cur.execute("""
             SELECT first_name, last_name, role, country, state, city, skills, preferences,
                    experience_level, facebook, instagram, x, linkedin, telegram
@@ -1909,7 +1911,26 @@ def settings():
         conn.close()
 
         if user:
-            return render_template('settings.html', user=user)
+            user_dict = {
+                'first_name': user[0],
+                'last_name': user[1],
+                'role': user[2],
+                'country': user[3],
+                'state': user[4],
+                'city': user[5],
+                'skills': ', '.join(user[6]) if user[6] else '',
+                'preferences': ', '.join(user[7]) if user[7] else '',
+                'experience_level': user[8],
+                'facebook': user[9],
+                'instagram': user[10],
+                'x': user[11],
+                'linkedin': user[12],
+                'telegram': user[13]
+            }
+
+            countries = app.config['COUNTRIES']  # List of countries for dropdown
+
+            return render_template('settings.html', user=user_dict, countries=countries)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))

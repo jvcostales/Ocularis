@@ -30,17 +30,38 @@
         <input type="text" name="role" value="{{ user[2] or '' }}" />
     </label><br />
 
+
+
     <label>Country:
-        <input type="text" name="country" value="{{ user[3] or '' }}" />
+        <select id="country" name="country" required>
+            <option value="">Select Country</option>
+            {% for c in countries %}
+            <option value="{{ c.name }}" data-iso="{{ c.iso2 }}" {% if user[3]==c.name %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+            {% endfor %}
+        </select>
     </label><br />
 
     <label>State/Province:
-        <input type="text" name="state" value="{{ user[4] or '' }}" />
+        <select id="state" name="state" required>
+            <option value="">Select State</option>
+            {% if user[4] %}
+            <option selected value="{{ user[4] }}">{{ user[4] }}</option>
+            {% endif %}
+        </select>
     </label><br />
 
     <label>City:
-        <input type="text" name="city" value="{{ user[5] or '' }}" />
+        <select id="city" name="city" required>
+            <option value="">Select City</option>
+            {% if user[5] %}
+            <option selected value="{{ user[5] }}">{{ user[5] }}</option>
+            {% endif %}
+        </select>
     </label><br />
+
+
 
     <label>Skills (comma separated):
         <input type="text" name="skills" value="{{ user[6] | join(', ') if user[6] else '' }}" />
