@@ -531,6 +531,10 @@
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
 
+            const savedCountry = countrySelect?.dataset?.selected;
+            const savedState = stateSelect?.dataset?.selected;
+            const savedCity = citySelect?.dataset?.selected;
+
             if (countrySelect && stateSelect && citySelect) {
                 let allStates = [];
                 let allCities = [];
@@ -561,10 +565,16 @@
 
                     filteredStates.forEach(state => {
                         const option = document.createElement('option');
-                        option.value = state.state_code;
+                        option.value = state.state_code; // or state.name if you prefer
                         option.textContent = state.name;
                         stateSelect.appendChild(option);
                     });
+
+                    // ✅ Now set saved state after populating the dropdown
+                    if (savedState) {
+                        stateSelect.value = savedState;
+                        stateSelect.dispatchEvent(new Event('change'));
+                    }
                 });
 
                 stateSelect.addEventListener('change', () => {
@@ -587,10 +597,25 @@
                                 option.textContent = city.name;
                                 citySelect.appendChild(option);
                             });
+
+                            // After cities are fetched and appended
+                            if (savedCity) {
+                                citySelect.value = savedCity;
+                            }
                         })
                         .catch(error => {
                             console.error('Error fetching cities:', error);
                         });
+                });
+            }
+
+            if (savedCountry) {
+                // Select the correct country
+                Array.from(countrySelect.options).forEach(opt => {
+                    if (opt.value === savedCountry) {
+                        opt.selected = true;
+                        countrySelect.dispatchEvent(new Event('change'));
+                    }
                 });
             }
 

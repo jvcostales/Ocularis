@@ -1648,14 +1648,14 @@ def get_states():
 @app.route('/api/get-cities')
 def get_cities():
     country_code = request.args.get('country')
-    state_code = request.args.get('state')
+    state_name = request.args.get('state')  # changed from state_code to state_name
 
-    if not country_code or not state_code:
+    if not country_code or not state_name:
         return jsonify([])
 
     filtered = [
         city for city in app.config['CITIES']
-        if city['country_code'] == country_code and city['state_code'] == state_code
+        if city['country_code'] == country_code and city['state_name'].lower() == state_name.lower()
     ]
     return jsonify(filtered)
 

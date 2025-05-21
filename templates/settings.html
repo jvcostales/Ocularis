@@ -35,45 +35,29 @@
 
 
 
-    <div class="label">Country</div>
-    <div class="label-wrapper">
-        <select class="location" id="country" name="country" required>
-            <option disabled {% if not user[3] %}selected{% endif %}>Select your country</option>
+
+    <label>Country:
+        <select name="country" id="country" data-selected="{{ user[3] or '' }}">
+            <option value="">Select Country</option>
             {% for country in countries %}
             <option value="{{ country.name }}" data-iso="{{ country.iso2 }}" {% if country.name==user[3] %}selected{%
-                endif %}>
-                {{ country.name }}
-            </option>
+                endif %}>{{ country.name }}</option>
             {% endfor %}
         </select>
-        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-    </div>
+    </label><br />
 
-    <!-- State / Province -->
-    <div class="label">Region</div>
-    <div class="label-wrapper">
-        <select class="location" id="state" name="state" required>
-            {% if user[4] %}
-            <option value="{{ user[4] }}" selected>{{ user[4] }}</option>
-            {% else %}
-            <option value="">Select your region</option>
-            {% endif %}
+    <label>State/Province:
+        <select name="state" id="state" data-selected="{{ user[4] or '' }}">
+            <option value="">Select State</option>
         </select>
-        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-    </div>
+    </label><br />
 
-    <!-- City -->
-    <div class="label">City</div>
-    <div class="label-wrapper">
-        <select class="location" id="city" name="city" required>
-            {% if user[5] %}
-            <option value="{{ user[5] }}" selected>{{ user[5] }}</option>
-            {% else %}
-            <option value="">Select your city</option>
-            {% endif %}
+    <label>City:
+        <select name="city" id="city" data-selected="{{ user[5] or '' }}">
+            <option value="">Select City</option>
         </select>
-        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
-    </div>
+    </label><br />
+
 
 
 
