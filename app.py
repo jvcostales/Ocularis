@@ -538,16 +538,6 @@ def feed():
             )
             cur = conn.cursor()
 
-            cur.execute(
-                "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id", 
-                (current_user.id, image_url, caption)
-            )
-            image_id = cur.fetchone()[0]
-
-            for tag in selected_tags:
-                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
-
-
             # Insert collaborators (if any)
             if collaborator_id:
                 cur.execute(
@@ -559,8 +549,12 @@ def feed():
                     "INSERT INTO images (id, image_url, caption) VALUES (%s, %s, %s) RETURNING image_id",
                     (current_user.id, image_url, caption)
                 )
-  
 
+            image_id = cur.fetchone()[0]
+
+            for tag in selected_tags:
+                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))  
+  
             conn.commit()
             cur.close()
             conn.close()
