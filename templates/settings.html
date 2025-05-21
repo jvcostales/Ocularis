@@ -77,14 +77,16 @@
 {% endfor %}
 
 
-  <label>Experience Level:
+<label>Experience Level:
     <select name="experience_level">
-      <option value="1" {% if user.experience_level == ' 1' %}selected{% endif %}>Beginner</option>
-        <option value="2" {% if user.experience_level=='2' %}selected{% endif %}>Intermediate</option>
-        <option value="3" {% if user.experience_level=='3' %}selected{% endif %}>Advanced</option>
-        <option value="4" {% if user.experience_level=='4' %}selected{% endif %}>Expert</option>
-        </select>
-    </label><br />
+        {% for level_id, label in experience_levels %}
+            <option value="{{ level_id }}" {% if level_id == user.experience_level %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+</label><br />
+
 
     <h3>Linked Accounts</h3>
 

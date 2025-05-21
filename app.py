@@ -1935,7 +1935,14 @@ def settings():
                 "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories)
+            experience_levels = [
+                (1, "Beginner"),
+                (2, "Intermediate"),
+                (3, "Advanced"),
+                (4, "Expert")
+            ]
+
+            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
