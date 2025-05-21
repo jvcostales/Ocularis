@@ -175,6 +175,14 @@ CREATE TABLE IF NOT EXISTS recent_matches (
 );
 """)
 
+cur.execute(""" 
+CREATE TABLE IF NOT EXISTS image_collaborators (
+    image_id INT REFERENCES images(image_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (image_id, user_id)
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -477,10 +485,28 @@ def reset_password(token):
 def feed():
     
     tags = [
-        "Architecture", "Art Direction", "Branding", "Fashion", "Graphic Design",
-        "Illustration", "Industrial Design", "Interaction Design", "Logo Design",
-        "Motion Graphics", "Photography", "UI/UX", "Web Design"
+        "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+        "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
     ]
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    # Fetch matched users to show in collaborator select list
+    cur.execute("""
+        SELECT u.id, u.first_name, u.last_name
+        FROM recent_matches rm
+        JOIN users u ON rm.matched_user_id = u.id
+        WHERE rm.user_id = %s
+        ORDER BY rm.matched_at DESC
+    """, (current_user.id,))
+    matched_users = cur.fetchall()
 
     if request.method == 'POST':
         if 'image' not in request.files:
@@ -489,6 +515,7 @@ def feed():
         file = request.files['image']
         caption = request.form.get('caption', '')
         selected_tags = request.form.getlist('tags')
+        selected_collaborator = request.form.get('collaborator')  # single value, or None
         
         if file.filename == '':
             return 'No selected file'
@@ -517,6 +544,19 @@ def feed():
 
             for tag in selected_tags:
                 cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
+
+
+            # Insert collaborators (if any)
+            if selected_collaborator:
+                try:
+                    collaborator_id_int = int(selected_collaborator)
+                    cur.execute(
+                        "INSERT INTO image_collaborators (image_id, user_id) VALUES (%s, %s)",
+                        (image_id, collaborator_id_int)
+                    )
+                except ValueError:
+                    pass
+  
 
             conn.commit()
             cur.close()
@@ -649,6 +689,7 @@ def feed():
         'feed.html',
         current_page='feed',
         tags=tags,
+        matched_users=matched_users,
         images=images,
         comments=comments,
         notifications=notifications,
