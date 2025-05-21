@@ -1811,8 +1811,9 @@ def browse_users():
 
 
 @app.route('/settings', methods=['GET', 'POST'])
+@login_required
 def settings():
-    user_id = session.get('id')
+    user_id = current_user.id
     if not user_id:
         return redirect(url_for('login'))
 
