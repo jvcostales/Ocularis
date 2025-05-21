@@ -1930,7 +1930,12 @@ def settings():
 
             countries = app.config['COUNTRIES']  # List of countries for dropdown
 
-            return render_template('settings.html', user=user_dict, countries=countries)
+            categories = [
+                "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+                "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
+            ]
+
+            return render_template('settings.html', user=user_dict, countries=countries, categories=categories)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
