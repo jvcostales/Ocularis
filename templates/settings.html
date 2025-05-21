@@ -27,25 +27,59 @@
     </label><br />
 
     <label>Role:
-        <input type="text" name="role" value="{{ user[2] or '' }}" maxlength="100" />
+        <input type="text" name="role" value="{{ user[2] or '' }}" />
     </label><br />
 
-    <label>Country:
-        <input type="text" name="country" value="{{ user[3] or '' }}" list="country-list" />
-        <datalist id="country-list">
+
+
+
+
+
+    <div class="label">Country</div>
+    <div class="label-wrapper">
+        <select class="location" id="country" name="country" required>
+            <option disabled {% if not user[3] %}selected{% endif %}>Select your country</option>
             {% for country in countries %}
-            <option value="{{ country.name }}"></option>
+            <option value="{{ country.name }}" data-iso="{{ country.iso2 }}" {% if country.name==user[3] %}selected{%
+                endif %}>
+                {{ country.name }}
+            </option>
             {% endfor %}
-        </datalist>
-    </label><br />
+        </select>
+        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+    </div>
 
-    <label>State/Province:
-        <input type="text" name="state" value="{{ user[4] or '' }}" />
-    </label><br />
+    <!-- State / Province -->
+    <div class="label">Region</div>
+    <div class="label-wrapper">
+        <select class="location" id="state" name="state" required>
+            {% if user[4] %}
+            <option value="{{ user[4] }}" selected>{{ user[4] }}</option>
+            {% else %}
+            <option value="">Select your region</option>
+            {% endif %}
+        </select>
+        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+    </div>
 
-    <label>City:
-        <input type="text" name="city" value="{{ user[5] or '' }}" />
-    </label><br />
+    <!-- City -->
+    <div class="label">City</div>
+    <div class="label-wrapper">
+        <select class="location" id="city" name="city" required>
+            {% if user[5] %}
+            <option value="{{ user[5] }}" selected>{{ user[5] }}</option>
+            {% else %}
+            <option value="">Select your city</option>
+            {% endif %}
+        </select>
+        <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
+    </div>
+
+
+
+
+
+
 
     <label>Skills (comma separated):
         <input type="text" name="skills" value="{{ user[6] | join(', ') if user[6] else '' }}" />
@@ -56,7 +90,7 @@
     </label><br />
 
     <label>Experience Level:
-        <select name="experience_level" required>
+        <select name="experience_level">
             <option value="1" {% if user[8]==1 %}selected{% endif %}>Beginner</option>
             <option value="2" {% if user[8]==2 %}selected{% endif %}>Intermediate</option>
             <option value="3" {% if user[8]==3 %}selected{% endif %}>Advanced</option>
@@ -66,21 +100,19 @@
 
     <h3>Linked Accounts</h3>
     <label>Facebook:
-        <input type="url" name="facebook" value="{{ user[9] or '' }}" placeholder="https://facebook.com/yourprofile" />
+        <input type="text" name="facebook" value="{{ user[9] or '' }}" />
     </label><br />
     <label>Instagram:
-        <input type="url" name="instagram" value="{{ user[10] or '' }}"
-            placeholder="https://instagram.com/yourprofile" />
+        <input type="text" name="instagram" value="{{ user[10] or '' }}" />
     </label><br />
     <label>X (Twitter):
-        <input type="url" name="x" value="{{ user[11] or '' }}" placeholder="https://x.com/yourprofile" />
+        <input type="text" name="x" value="{{ user[11] or '' }}" />
     </label><br />
     <label>LinkedIn:
-        <input type="url" name="linkedin" value="{{ user[12] or '' }}"
-            placeholder="https://linkedin.com/in/yourprofile" />
+        <input type="text" name="linkedin" value="{{ user[12] or '' }}" />
     </label><br />
     <label>Telegram:
-        <input type="url" name="telegram" value="{{ user[13] or '' }}" placeholder="https://t.me/yourusername" />
+        <input type="text" name="telegram" value="{{ user[13] or '' }}" />
     </label><br />
 
     <button type="submit">Update Settings</button>
