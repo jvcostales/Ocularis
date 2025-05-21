@@ -1812,7 +1812,7 @@ def browse_users():
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    user_id = session.get('user_id')
+    user_id = session.get('id')
     if not user_id:
         return redirect(url_for('login'))
 
