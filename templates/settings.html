@@ -4,79 +4,89 @@
 <h1>Account Settings</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<ul>
-    {% for category, message in messages %}
-    <li class="{{ category }}">{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endwith %}
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
-    <label>Profile Picture:
-        <input type="file" name="profile_pic" accept="image/*" />
-    </label><br />
+  <!-- Profile Picture -->
+  <label>Profile Picture:
+    <input type="file" name="profile_pic" accept="image/*">
+  </label><br>
 
-    <label>First Name:
-        <input type="text" name="first_name" value="{{ user[0] }}" required />
-    </label><br />
+  <!-- Basic Info -->
+  <label>First Name:
+    <input type="text" name="first_name" value="{{ user[0] }}" required>
+  </label><br>
 
-    <label>Last Name:
-        <input type="text" name="last_name" value="{{ user[1] }}" required />
-    </label><br />
+  <label>Last Name:
+    <input type="text" name="last_name" value="{{ user[1] }}" required>
+  </label><br>
 
-    <label>Role:
-        <input type="text" name="role" value="{{ user[2] or '' }}" />
-    </label><br />
+  <label>Role:
+    <input type="text" name="role" value="{{ user[2] or '' }}">
+  </label><br>
 
-    <label>Country:
-        <input type="text" name="country" value="{{ user[3] or '' }}" />
-    </label><br />
+  <!-- Location Info -->
+  <label>Country:
+    <input type="text" name="country" value="{{ user[3] or '' }}">
+  </label><br>
 
-    <label>State/Province:
-        <input type="text" name="state" value="{{ user[4] or '' }}" />
-    </label><br />
+  <label>State/Province:
+    <input type="text" name="state" value="{{ user[4] or '' }}">
+  </label><br>
 
-    <label>City:
-        <input type="text" name="city" value="{{ user[5] or '' }}" />
-    </label><br />
+  <label>City:
+    <input type="text" name="city" value="{{ user[5] or '' }}">
+  </label><br>
 
-    <label>Skills (comma separated):
-        <input type="text" name="skills" value="{{ user[6] | join(', ') if user[6] else '' }}" />
-    </label><br />
+  <!-- Design Profile -->
+  <label>Skills (comma separated):
+    <input type="text" name="skills" value="{{ user[6] | join(', ') if user[6] else '' }}">
+  </label><br>
 
-    <label>Preferences (comma separated):
-        <input type="text" name="preferences" value="{{ user[7] | join(', ') if user[7] else '' }}" />
-    </label><br />
+  <label>Preferences (comma separated):
+    <input type="text" name="preferences" value="{{ user[7] | join(', ') if user[7] else '' }}">
+  </label><br>
 
-    <label>Experience Level:
-        <select name="experience_level">
-            <option value="1" {% if user[8]==1 %}selected{% endif %}>Beginner</option>
-            <option value="2" {% if user[8]==2 %}selected{% endif %}>Intermediate</option>
-            <option value="3" {% if user[8]==3 %}selected{% endif %}>Advanced</option>
-            <option value="4" {% if user[8]==4 %}selected{% endif %}>Expert</option>
-        </select>
-    </label><br />
+  <label>Experience Level:
+    <select name="experience_level">
+      <option value="1" {% if user[8] == 1 %}selected{% endif %}>Beginner</option>
+      <option value="2" {% if user[8] == 2 %}selected{% endif %}>Intermediate</option>
+      <option value="3" {% if user[8] == 3 %}selected{% endif %}>Advanced</option>
+      <option value="4" {% if user[8] == 4 %}selected{% endif %}>Expert</option>
+    </select>
+  </label><br>
 
-    <h3>Linked Accounts</h3>
-    <label>Facebook:
-        <input type="text" name="facebook" value="{{ user[9] or '' }}" />
-    </label><br />
-    <label>Instagram:
-        <input type="text" name="instagram" value="{{ user[10] or '' }}" />
-    </label><br />
-    <label>X (Twitter):
-        <input type="text" name="x" value="{{ user[11] or '' }}" />
-    </label><br />
-    <label>LinkedIn:
-        <input type="text" name="linkedin" value="{{ user[12] or '' }}" />
-    </label><br />
-    <label>Telegram:
-        <input type="text" name="telegram" value="{{ user[13] or '' }}" />
-    </label><br />
+  <!-- Social Media Links -->
+  <h3>Linked Accounts</h3>
 
-    <button type="submit">Update Settings</button>
+  <label>Facebook:
+    <input type="text" name="facebook" value="{{ user[9] or '' }}">
+  </label><br>
+
+  <label>Instagram:
+    <input type="text" name="instagram" value="{{ user[10] or '' }}">
+  </label><br>
+
+  <label>X (Twitter):
+    <input type="text" name="x" value="{{ user[11] or '' }}">
+  </label><br>
+
+  <label>LinkedIn:
+    <input type="text" name="linkedin" value="{{ user[12] or '' }}">
+  </label><br>
+
+  <label>Telegram:
+    <input type="text" name="telegram" value="{{ user[13] or '' }}">
+  </label><br>
+
+  <button type="submit">Update Settings</button>
 </form>
 
 {% endblock %}
