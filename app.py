@@ -1819,11 +1819,11 @@ def settings():
 
     # Directly create connection here (no helper)
     conn = psycopg2.connect(
-        dbname='your_dbname',
-        user='your_dbuser',
-        password='your_dbpassword',
-        host='your_dbhost',
-        port='5432'
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
     )
     cur = conn.cursor()
 
