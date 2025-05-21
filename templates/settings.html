@@ -59,10 +59,11 @@
         </select>
     </label><br />
 
-    <label>Skills:</label><br />
-    {% for category in categories %}
-    <label>
-        <input type="checkbox" name="skills" value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
+<label>Skills:</label><br />
+{% for category in categories %}
+  <label>
+    <input type="checkbox" name="skills[]" value="{{ category }}"
+      {% if category in user.skills.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />
 {% endfor %}
@@ -70,7 +71,7 @@
 <label>Preferences:</label><br />
 {% for category in categories %}
   <label>
-    <input type="checkbox" name="preferences" value="{{ category }}"
+    <input type="checkbox" name="preferences[]" value="{{ category }}"
       {% if category in user.preferences.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />

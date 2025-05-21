@@ -1836,11 +1836,8 @@ def settings():
         city = request.form.get('city')         # city code
         experience_level = request.form.get('experience_level')
 
-        skills = request.form.get('skills', '')
-        skills_list = [s.strip() for s in skills.split(',')] if skills else []
-
-        preferences = request.form.get('preferences', '')
-        preferences_list = [p.strip() for p in preferences.split(',')] if preferences else []
+        skills_list = request.form.getlist('skills[]')
+        preferences_list = request.form.getlist('preferences[]')
 
         facebook = request.form.get('facebook')
         instagram = request.form.get('instagram')
