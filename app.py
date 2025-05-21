@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS users (
     verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT,
     reset_token TEXT,
-    skills TEXT[] ,            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
+    skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
     experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
     country TEXT,
@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS users (
     x VARCHAR(100),
     linkedin VARCHAR(100),
     telegram VARCHAR(100),
+    profile_pic VARCHAR(255),  -- NEW: stores the path or URL to the profile picture
     is_profile_complete BOOLEAN DEFAULT FALSE
 );
 """)
@@ -1807,6 +1808,111 @@ def browse_users():
         notifications=notifications,
         requests=requests
     )
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    # Directly create connection here (no helper)
+    conn = psycopg2.connect(
+        dbname='your_dbname',
+        user='your_dbuser',
+        password='your_dbpassword',
+        host='your_dbhost',
+        port='5432'
+    )
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        role = request.form.get('role')
+        country = request.form.get('country')
+        state = request.form.get('state')
+        city = request.form.get('city')
+        experience_level = request.form.get('experience_level')
+
+        skills = request.form.get('skills', '')
+        skills_list = [s.strip() for s in skills.split(',')] if skills else []
+
+        preferences = request.form.get('preferences', '')
+        preferences_list = [p.strip() for p in preferences.split(',')] if preferences else []
+
+        facebook = request.form.get('facebook')
+        instagram = request.form.get('instagram')
+        x = request.form.get('x')
+        linkedin = request.form.get('linkedin')
+        telegram = request.form.get('telegram')
+
+        profile_pic = request.files.get('profile_pic')
+        if profile_pic and profile_pic.filename != '':
+            filename = f"user_{user_id}_profile.{profile_pic.filename.rsplit('.', 1)[1]}"
+            filepath = os.path.join('static/uploads/profile_pics', filename)
+            profile_pic.save(filepath)
+            # You need to update your DB schema and add profile_pic column to save this path
+            cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filepath, user_id))
+
+        cur.execute("""
+            UPDATE users SET
+                first_name = %s,
+                last_name = %s,
+                role = %s,
+                country = %s,
+                state = %s,
+                city = %s,
+                skills = %s,
+                preferences = %s,
+                experience_level = %s,
+                facebook = %s,
+                instagram = %s,
+                x = %s,
+                linkedin = %s,
+                telegram = %s
+            WHERE id = %s
+        """, (
+            first_name,
+            last_name,
+            role,
+            country,
+            state,
+            city,
+            skills_list,
+            preferences_list,
+            experience_level,
+            facebook,
+            instagram,
+            x,
+            linkedin,
+            telegram,
+            user_id
+        ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        flash("Settings updated successfully.", "success")
+        return redirect(url_for('settings'))
+
+    else:
+        cur.execute("""
+            SELECT first_name, last_name, role, country, state, city, skills, preferences,
+                   experience_level, facebook, instagram, x, linkedin, telegram
+            FROM users WHERE id = %s
+        """, (user_id,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if user:
+            return render_template('settings.html', user=user)
+        else:
+            flash("User not found.", "danger")
+            return redirect(url_for('login'))
+
 
 
 if __name__ == '__main__':
