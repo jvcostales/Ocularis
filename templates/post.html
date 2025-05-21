@@ -7,7 +7,15 @@
             <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username">
-                    <a href="{{ url_for('profile', user_id=image[4]) }}">{{ image[5] }} {{ image[6] }}</a>
+                    <a href="{{ url_for('profile', user_id=image[4]) }}">
+                        {{ image[5] }} {{ image[6] }}
+                    </a>
+                    {% if image[8] %}
+                    and
+                    <a href="{{ url_for('profile', user_id=image[8]) }}">
+                        {{ image[9] }} {{ image[10] }}
+                    </a>
+                    {% endif %}
                 </div>
                 <div class="date">Jan 1</div> <!-- Optional: replace with dynamic date -->
             </div>
