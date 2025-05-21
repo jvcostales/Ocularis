@@ -1701,6 +1701,33 @@ def browse_users():
         port=5432
     )
 
+    cur = conn.cursor()
+
+    # Fetch notifications
+    cur.execute("""
+        SELECT 
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (current_user.id,))
+    notifications = cur.fetchall()
+
+    # Fetch friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (current_user.id,))
+    requests = cur.fetchall()
+
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             # 1. 24-hour collab action block check
@@ -1720,31 +1747,6 @@ def browse_users():
                 now_utc = datetime.now(timezone.utc)
                 if now_utc - last_action_time < timedelta(hours=24):
                     return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
-
-            # 2. Fetch notifications
-            cur.execute("""
-                SELECT 
-                    users.first_name || ' ' || users.last_name AS display_name,
-                    notifications.action_type,
-                    notifications.image_id,
-                    notifications.created_at,
-                    notifications.actor_id
-                FROM notifications
-                JOIN users ON notifications.actor_id = users.id
-                WHERE notifications.recipient_id = %s
-                ORDER BY notifications.created_at DESC
-            """, (user_id,))
-            notifications = cur.fetchall()
-
-            # 3. Fetch friend requests
-            cur.execute("""
-                SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
-                FROM friend_requests fr
-                JOIN users u ON fr.sender_id = u.id
-                WHERE fr.receiver_id = %s AND fr.status = 'pending'
-                ORDER BY fr.created_at DESC
-            """, (user_id,))
-            requests = cur.fetchall()
 
     # 4. Get filtered random users
     users = get_random_users()
