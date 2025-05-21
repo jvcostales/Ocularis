@@ -1691,7 +1691,8 @@ def get_random_users():
 @app.route('/browse', methods=['POST'])
 @login_required
 def browse_users():
-    # 24-hour block timer check
+    user_id = current_user.id
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1702,13 +1703,13 @@ def browse_users():
 
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # Check last collab action first
+            # 1. 24-hour collab action block check
             cur.execute("""
                 SELECT action_time FROM collab_actions
                 WHERE user_id = %s
                 ORDER BY action_time DESC
                 LIMIT 1
-            """, (current_user.id,))
+            """, (user_id,))
             result = cur.fetchone()
 
             if result:
@@ -1720,52 +1721,41 @@ def browse_users():
                 if now_utc - last_action_time < timedelta(hours=24):
                     return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
 
-            # Now fetch random users
+            # 2. Fetch notifications
             cur.execute("""
-                SELECT id, first_name, last_name
-                FROM users
-                ORDER BY RANDOM()
-                LIMIT 10
-            """)
-            users = cur.fetchall()
+                SELECT 
+                    users.first_name || ' ' || users.last_name AS display_name,
+                    notifications.action_type,
+                    notifications.image_id,
+                    notifications.created_at,
+                    notifications.actor_id
+                FROM notifications
+                JOIN users ON notifications.actor_id = users.id
+                WHERE notifications.recipient_id = %s
+                ORDER BY notifications.created_at DESC
+            """, (user_id,))
+            notifications = cur.fetchall()
 
-        # Fetch notifications
-        cur.execute("""
-            SELECT 
-                users.first_name || ' ' || users.last_name AS display_name,
-                notifications.action_type,
-                notifications.image_id,
-                notifications.created_at,
-                notifications.actor_id
-            FROM notifications
-            JOIN users ON notifications.actor_id = users.id
-            WHERE notifications.recipient_id = %s
-            ORDER BY notifications.created_at DESC
-        """, (current_user.id,))
+            # 3. Fetch friend requests
+            cur.execute("""
+                SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+                FROM friend_requests fr
+                JOIN users u ON fr.sender_id = u.id
+                WHERE fr.receiver_id = %s AND fr.status = 'pending'
+                ORDER BY fr.created_at DESC
+            """, (user_id,))
+            requests = cur.fetchall()
 
-        notifications = cur.fetchall()
-
-
-        # Fetch friend requests
-        cur.execute("""
-            SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
-            FROM friend_requests fr
-            JOIN users u ON fr.sender_id = u.id
-            WHERE fr.receiver_id = %s AND fr.status = 'pending'
-            ORDER BY fr.created_at DESC
-        """, (current_user.id,))
-        requests = cur.fetchall()
-
-    # Fetch and filter random users
-    users = get_random_users()  # Make sure this returns dicts, not tuples
-    users = [user for user in users if user["id"] != current_user.id]
+    # 4. Get filtered random users
+    users = get_random_users()
 
     return render_template(
-        'browse.html', 
-        users=users, 
-        notifications=notifications, 
+        'browse.html',
+        users=users,
+        notifications=notifications,
         requests=requests
     )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
