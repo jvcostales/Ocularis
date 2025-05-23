@@ -2016,22 +2016,27 @@ def saved():
     # 1. Fetch saved posts
     cur.execute("""
         SELECT 
-            images.image_id,              -- image[0]
-            images.image_url,             -- image[1] (not used in this snippet, but useful to have)
-            images.caption,               -- image[2] (not used here)
-            images.created_at,            -- image[3] (not used here)
-            author.id AS author_id,       -- image[4]
-            author.first_name,            -- image[5]
-            author.last_name,             -- image[6]
-            images.created_at,            -- image[7] (used for date formatting)
-            collaborator.id AS collaborator_id,  -- image[8] (check if exists)
-            collaborator.first_name,      -- image[9]
-            collaborator.last_name        -- image[10]
+            images.image_id,                            -- image[0]
+            images.image_url,                           -- image[1]
+            images.caption,                             -- image[2]
+            COUNT(likes.image_id) AS like_count,        -- image[3] ← updated
+            author.id AS author_id,                     -- image[4]
+            author.first_name,                          -- image[5]
+            author.last_name,                           -- image[6]
+            images.created_at,                          -- image[7] (for date formatting)
+            collaborator.id AS collaborator_id,         -- image[8]
+            collaborator.first_name,                    -- image[9]
+            collaborator.last_name                      -- image[10]
         FROM saved_posts
         JOIN images ON saved_posts.image_id = images.image_id
         JOIN users AS author ON images.id = author.id
         LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
+        LEFT JOIN likes ON images.image_id = likes.image_id
         WHERE saved_posts.user_id = %s
+        GROUP BY 
+            images.image_id, images.image_url, images.caption, images.created_at,
+            author.id, author.first_name, author.last_name,
+            collaborator.id, collaborator.first_name, collaborator.last_name
         ORDER BY saved_posts.saved_at DESC;
     """, (user_id,))
     saved_posts = cur.fetchall()
