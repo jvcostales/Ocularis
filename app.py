@@ -2110,6 +2110,25 @@ def saved():
         verified=current_user.verified)
 
 
+@app.route('/save/<int:image_id>', methods=['POST'])
+@login_required
+def save_image(image_id):
+    user_id = current_user.id
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+
+    save_post(user_id, image_id, conn)
+    conn.close()
+
+    return redirect(url_for('saved'))
+
+
 @app.route('/unsave/<int:image_id>', methods=['POST'])
 @login_required
 def unsave_image(image_id):
