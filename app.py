@@ -1032,6 +1032,12 @@ def profile(user_id):
     # Fetch user details
     cur.execute("SELECT first_name, last_name, role, city, state, country FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
+
+    if not user:
+        cur.close()
+        conn.close()
+        abort(404)  # or return render_template("user_not_found.html")
+
     role = user[2]
     city = user[3]
     state = user[4]
