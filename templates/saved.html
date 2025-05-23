@@ -26,7 +26,7 @@
             <div class="frame1" id="frame1-{{ loop.index }}">
                 <form id="unsave-form-{{ image[0] }}" action="{{ url_for('unsave_image', image_id=image[0]) }}"
                     method="post" style="display: none;"></form>
-                <a href="#" class="save-text"
+                <a href="#" class="save"
                     onclick="document.getElementById('unsave-form-{{ image[0] }}').submit(); return false;">Unsave</a>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>

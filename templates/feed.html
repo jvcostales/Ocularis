@@ -89,12 +89,12 @@
                 {% if image[0] in saved_image_ids %}
                 <form id="unsave-form-{{ image[0] }}" action="{{ url_for('unsave_image', image_id=image[0]) }}"
                     method="post" style="display: none;"></form>
-                <a href="#" class="save-text"
+                <a href="#" class="save"
                     onclick="document.getElementById('unsave-form-{{ image[0] }}').submit(); return false;">Unsave</a>
                 {% else %}
                 <form id="save-form-{{ image[0] }}" action="{{ url_for('save_image', image_id=image[0]) }}"
                     method="post" style="display: none;"></form>
-                <a href="#" class="save-text"
+                <a href="#" class="save"
                     onclick="document.getElementById('save-form-{{ image[0] }}').submit(); return false;">Save</a>
                 {% endif %}
                 <div class="hide">Hide</div>
