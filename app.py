@@ -1045,17 +1045,34 @@ def profile(user_id):
     friend_count = cur.fetchone()[0]
 
 
-    # Fetch user's posts
+    # Fetch images with author and collaborator names for a specific user
     cur.execute("""
-        SELECT images.image_id, images.image_url, images.caption, 
-               (SELECT COUNT(*) FROM likes WHERE likes.image_id = images.image_id) AS like_count,
-               images.id, users.first_name, users.last_name, images.created_at
+        SELECT 
+            images.image_id,              -- 0
+            images.image_url,             -- 1
+            images.caption,               -- 2
+            COALESCE(like_count, 0),      -- 3
+            images.id,                    -- 4 (author's user ID)
+            author.first_name,            -- 5
+            author.last_name,             -- 6
+            images.created_at,            -- 7
+            collaborator.id,              -- 8 (collaborator's user ID)
+            collaborator.first_name,      -- 9
+            collaborator.last_name        -- 10
         FROM images
-        JOIN users ON images.id = users.id
+        JOIN users AS author ON images.id = author.id
+        LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
+        LEFT JOIN (
+            SELECT image_id, COUNT(*) AS like_count 
+            FROM likes 
+            GROUP BY image_id
+        ) AS likes 
+        ON images.image_id = likes.image_id
         WHERE images.id = %s
-        ORDER BY images.created_at DESC
+        ORDER BY images.created_at DESC;
     """, (user_id,))
     images = cur.fetchall()
+
 
     # Fetch comments on the user's posts
     cur.execute("""
