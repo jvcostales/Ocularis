@@ -1068,9 +1068,9 @@ def profile(user_id):
             GROUP BY image_id
         ) AS likes 
         ON images.image_id = likes.image_id
-        WHERE images.id = %s
+        WHERE images.id = %s OR images.collaborator_id = %s
         ORDER BY images.created_at DESC;
-    """, (user_id,))
+    """, (user_id, user_id))
     images = cur.fetchall()
 
 
@@ -1082,7 +1082,7 @@ def profile(user_id):
                comments.user_id
         FROM comments
         JOIN users ON comments.user_id = users.id
-        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
+        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s OR collaborator_id = %s)
         ORDER BY comments.created_at ASC
     """, (user_id,))
     comments = cur.fetchall()
