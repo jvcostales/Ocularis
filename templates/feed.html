@@ -87,13 +87,15 @@
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ loop.index }}">
                 {% if image[0] in saved_image_ids %}
-                <form action="{{ url_for('unsave_image', image_id=image[0]) }}" method="post">
-                    <button type="submit" class="save">Unsave</button>
-                </form>
+                <form id="unsave-form-{{ image[0] }}" action="{{ url_for('unsave_image', image_id=image[0]) }}"
+                    method="post" style="display: none;"></form>
+                <a href="#" class="save-text"
+                    onclick="document.getElementById('unsave-form-{{ image[0] }}').submit(); return false;">Unsave</a>
                 {% else %}
-                <form action="{{ url_for('save_image', image_id=image[0]) }}" method="post">
-                    <button type="submit" class="save">Save</button>
-                </form>
+                <form id="save-form-{{ image[0] }}" action="{{ url_for('save_image', image_id=image[0]) }}"
+                    method="post" style="display: none;"></form>
+                <a href="#" class="save-text"
+                    onclick="document.getElementById('save-form-{{ image[0] }}').submit(); return false;">Save</a>
                 {% endif %}
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
