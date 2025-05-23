@@ -1032,12 +1032,6 @@ def profile(user_id):
     # Fetch user details
     cur.execute("SELECT first_name, last_name, role, city, state, country FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
-
-    if not user:
-        cur.close()
-        conn.close()
-        abort(404)  # or return render_template("user_not_found.html")
-
     role = user[2]
     city = user[3]
     state = user[4]
@@ -1074,9 +1068,9 @@ def profile(user_id):
             GROUP BY image_id
         ) AS likes 
         ON images.image_id = likes.image_id
-        WHERE images.id = %s OR images.collaborator_id = %s
+        WHERE images.id = %s
         ORDER BY images.created_at DESC;
-    """, (user_id, user_id))
+    """, (user_id,))
     images = cur.fetchall()
 
 
@@ -1088,7 +1082,7 @@ def profile(user_id):
                comments.user_id
         FROM comments
         JOIN users ON comments.user_id = users.id
-        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s OR collaborator_id = %s)
+        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s)
         ORDER BY comments.created_at ASC
     """, (user_id,))
     comments = cur.fetchall()
