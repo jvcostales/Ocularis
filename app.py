@@ -186,6 +186,18 @@ CREATE TABLE IF NOT EXISTS image_collaborators (
 );
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS saved_posts (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    image_id INT NOT NULL,
+    saved_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (user_id, image_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -486,6 +498,8 @@ def reset_password(token):
 @app.route('/feed', methods=['GET', 'POST'])
 @login_required
 def feed():
+
+    user_id = current_user.id
     
     tags = [
         "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
@@ -677,6 +691,12 @@ def feed():
         cur.execute("SELECT is_profile_complete FROM users WHERE id = %s", (current_user.id,))
         is_complete = cur.fetchone()[0]
 
+        # Fetch the saved image IDs for the user
+        cur.execute("""
+            SELECT image_id FROM saved_posts WHERE user_id = %s
+        """, (user_id,))
+        saved_image_ids = [row[0] for row in cur.fetchall()]
+
     finally:
         cur.close()
         conn.close()
@@ -713,7 +733,8 @@ def feed():
         states=app.config['STATES'],
         cities=app.config['CITIES'],
         verified=current_user.verified,
-        today=today
+        today=today,
+        saved_image_ids=saved_image_ids
     )
 
 @app.route('/post/<int:image_id>')
@@ -1961,6 +1982,158 @@ def settings():
             flash("User not found.", "danger")
             return redirect(url_for('login'))
 
+
+def save_post(user_id, image_id, conn):
+    with conn.cursor() as cur:
+        try:
+            cur.execute("""
+                INSERT INTO saved_posts (user_id, image_id)
+                VALUES (%s, %s)
+                ON CONFLICT (user_id, image_id) DO NOTHING
+            """, (user_id, image_id))
+            conn.commit()
+            return {"success": True, "message": "Post saved successfully."}
+        except Exception as e:
+            conn.rollback()
+            return {"success": False, "message": str(e)}
+
+@app.route('/saved')
+@login_required
+def saved():
+    user_id = current_user.id
+    if not user_id:
+        return redirect(url_for('login'))
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    # 1. Fetch saved posts
+    cur.execute("""
+        SELECT images.image_id, images.image_url, images.caption, images.created_at,
+               author.first_name, author.last_name,
+               collaborator.first_name, collaborator.last_name
+        FROM saved_posts
+        JOIN images ON saved_posts.image_id = images.image_id
+        JOIN users AS author ON images.id = author.id
+        LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
+        WHERE saved_posts.user_id = %s
+        ORDER BY saved_posts.saved_at DESC;
+    """, (user_id,))
+    saved_posts = cur.fetchall()
+
+    # Initialize containers
+    all_comments = {}
+    likes_data = {}
+    comment_likes_data = {}
+
+    for post in saved_posts:
+        image_id = post[0]  # images.image_id
+
+        # 2. Fetch comments per image
+        cur.execute("""
+            SELECT comments.comment_id, comments.image_id, 
+                   users.first_name || ' ' || users.last_name AS display_name, 
+                   comments.comment_text, comments.created_at,
+                   COALESCE(like_count, 0) AS like_count, comments.user_id
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            LEFT JOIN (
+                SELECT comment_id, COUNT(*) AS like_count
+                FROM comment_likes
+                GROUP BY comment_id
+            ) AS cl ON comments.comment_id = cl.comment_id
+            WHERE comments.image_id = %s
+            ORDER BY comments.created_at ASC
+        """, (image_id,))
+        comments = cur.fetchall()
+        all_comments[image_id] = comments
+
+        # 3. Likes per image
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+            ORDER BY l.created_at DESC
+        """, (image_id,))
+        likes_data[image_id] = cur.fetchall()
+
+        # 4. Likes per comment
+        for comment in comments:
+            comment_id = comment[0]
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+                FROM comment_likes cl
+                JOIN users u ON cl.user_id = u.id
+                WHERE cl.comment_id = %s
+                ORDER BY cl.created_at DESC
+            """, (comment_id,))
+            comment_likes_data[comment_id] = cur.fetchall()
+
+    # 5. Notifications
+    cur.execute("""
+        SELECT users.first_name || ' ' || users.last_name AS display_name,
+               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (user_id,))
+    notifications = cur.fetchall()
+
+    # 6. Friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (user_id,))
+    requests = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('saved.html',
+        saved_posts=saved_posts,
+        comments=all_comments,
+        likes_data=likes_data,
+        comment_likes_data=comment_likes_data,
+        notifications=notifications,
+        requests=requests,
+        verified=current_user.verified)
+
+
+@app.route('/unsave/<int:image_id>', methods=['POST'])
+@login_required
+def unsave_image(image_id):
+    user_id = current_user.id
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM saved_posts 
+        WHERE user_id = %s AND image_id = %s
+    """, (user_id, image_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('saved'))
 
 
 if __name__ == '__main__':

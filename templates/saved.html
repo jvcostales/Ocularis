@@ -1,69 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post">
-    <div class="post-title">Post</div>
-    <div class="tagline-wrapper">
-        <div class="tagline-wrapper-2">
-            <img src="..\static\pfp.jpg" class="pfp">
-            <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
-        </div>
-        <button class="image-button" id="openOverlay"><span
-                class="material-symbols-outlined image">image</span></button>
-    </div>
-</div>
-<div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
-    <div class="overlay-content">
-        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlay">close</span></button>
-        <div class="overlay-title">Post</div>
-        <div class="scrollable-div no-scroll" id="scrollableDiv">
-            <div class="profile-post">
-                <img src="..\static\pfp.jpg" class="pfp">
-                <div class="profile-name-date">
-                    <div class="username">Lorem ipsum dolor</div>
-                    <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
-                </div>
-            </div>
-            <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data">
-                <input class="overlay-tagline" type="text" id="caption" name="caption"
-                    placeholder="Do you mind sharing your work?">
-                <div class="upload">
-                    <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
-                    <div class="drop">Drop your images here or browse</div>
-                    <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
-                    <button class="browse-file" type="button" onclick="document.getElementById('image').click();">
-                        Browse File
-                    </button>
-                    <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
-                </div>
-                <div class="image-button-wrapper" id="imageWrapper" style="display: none;">
-                    <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview">
-                    </div>
-                    <button class="circled-icon-1-overlay-version"><span
-                            class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
-                </div>
-                <label for="collaborator">Select a collaborator (optional):</label>
-                <select name="collaborator" id="collaborator">
-                    <option value="">-- None --</option>
-                    {% for user in matched_users %}
-                    <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
-                    {% endfor %}
-                </select>
-                <label for="tags">Tags:</label>
-                <select name="tags" id="tags" multiple size="6">
-                    {% for tag in tags %}
-                    <option value="{{ tag }}">{{ tag }}</option>
-                    {% endfor %}
-                </select>
-        </div>
-        <input type="submit" value="Post" class="post-button">
-        </form>
-    </div>
-</div>
-<!--bakit naka-center ung post 1 kapag un lang ung content-->
-<!--fix class names-->
-{% for image in images %}
+{% for image in saved_posts %}
 <div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
@@ -86,15 +24,9 @@
         <div class="more-frame-wrapper">
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ loop.index }}">
-                {% if image[0] in saved_image_ids %}
                 <form action="{{ url_for('unsave_image', image_id=image[0]) }}" method="post">
                     <button type="submit" class="save">Unsave</button>
                 </form>
-                {% else %}
-                <form action="{{ url_for('save_image', image_id=image[0]) }}" method="post">
-                    <button type="submit" class="save">Save</button>
-                </form>
-                {% endif %}
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
             </div>
