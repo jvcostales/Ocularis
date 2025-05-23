@@ -2036,7 +2036,8 @@ def saved():
         GROUP BY 
             images.image_id, images.image_url, images.caption, images.created_at,
             author.id, author.first_name, author.last_name,
-            collaborator.id, collaborator.first_name, collaborator.last_name
+            collaborator.id, collaborator.first_name, collaborator.last_name,
+            saved_posts.saved_at
         ORDER BY saved_posts.saved_at DESC;
     """, (user_id,))
     saved_posts = cur.fetchall()
