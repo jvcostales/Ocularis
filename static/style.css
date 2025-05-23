@@ -891,9 +891,8 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .save,
     .hide {
-        padding-bottom: 8px;
+        padding: 8px 0;
     }
 
     .save,
@@ -2563,9 +2562,8 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .save,
     .hide {
-        padding-bottom: 8px;
+        padding: 8px 0;
     }
 
     .save,
@@ -4237,9 +4235,8 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .save,
     .hide {
-        padding-bottom: 8px;
+        padding: 8px 0;
     }
 
     .save,
