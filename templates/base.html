@@ -522,41 +522,33 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            document.querySelectorAll('.like-form').forEach(form => {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Stop the default form submission
+            function likeImage(imageId, index) {
+                fetch(`/like/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'  // Optional: helps Flask detect AJAX
+                    },
+                    credentials: 'include'  // To include session cookie
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update like count in the DOM
+                        const countElement = document.getElementById(`like-count-${index}`);
+                        countElement.textContent = data.like_count;
 
-                    const imageId = this.dataset.imageId;
-                    const likeCountDisplay = document.querySelector(`.metrics[data-image-id="${imageId}"]`);
-
-                    fetch(this.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json' // Still good to declare we expect/send JSON
+                        // Optional: Change style to indicate like/unlike
+                        const button = document.querySelector(`#openOverlayLikes-${index}`).previousElementSibling;
+                        if (data.liked) {
+                            button.style.color = 'blue';  // Liked state
+                        } else {
+                            button.style.color = '';  // Default state
                         }
-                        // No 'body' property here if you're not sending a JSON payload.
-                        // A simple POST to an endpoint that only uses path variables like /like/<id> doesn't need a body.
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok ' + response.statusText);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                const newCount = data.new_like_count;
-                                likeCountDisplay.textContent = `${newCount} ${newCount === 1 ? 'Like' : 'Likes'}`;
-                            } else {
-                                alert('Failed to update like status: ' + (data.message || 'Unknown error.'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('An error occurred while trying to like/unlike the image.');
-                        });
-                });
-            });
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {

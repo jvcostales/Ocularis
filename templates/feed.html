@@ -108,14 +108,11 @@
     <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
     <div class="interactions">
         <div class="lcs">
-            <form class="like-form" data-image-id="{{ image[0] }}" method="post">
-                <button type="submit" style="all: unset; cursor: pointer;">
-                    <div class="partner like-button">
-                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                        <div class="partner-label">Like</div>
-                    </div>
-                </button>
-            </form>
+            <div class="partner like-button" onclick="likeImage({{ image[0] }}, {{ loop.index }})"
+                style="cursor:pointer;">
+                <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                <div class="partner-label">Like</div>
+            </div>
             <div class="partner" id="openOverlayComments-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
@@ -125,8 +122,8 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes-{{ loop.index }}" data-image-id="{{ image[0] }}">
-            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
+        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
+            <span id="like-count-{{ loop.index }}">{{ image[3] }}</span> {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
     </div>
 </div>
