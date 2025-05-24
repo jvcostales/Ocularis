@@ -866,17 +866,20 @@ def serve_images(filename):
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
 def like_image(image_id):
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-    new_like_count = 0 # Initialize, will be updated
+    conn = None # Initialize conn to None for proper cleanup in finally
+    cur = None  # Initialize cur to None
 
     try:
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+            dbname="ocularis_db",
+            user="ocularis_db_user",
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            port=5432
+        )
+        cur = conn.cursor()
+        new_like_count = 0
+
         # Check if the user has already liked the image
         cur.execute("SELECT * FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
         existing_like = cur.fetchone()
@@ -904,20 +907,24 @@ def like_image(image_id):
 
         # After committing, get the updated like count for the specific image
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
-        new_like_count = cur.fetchone()[0] # [0] to get the count value
+        new_like_count = cur.fetchone()[0]
 
-        # Return a JSON response
-        from flask import jsonify # Ensure jsonify is imported if not already
+        from flask import jsonify
         return jsonify({"success": True, "new_like_count": new_like_count})
 
     except Exception as e:
-        conn.rollback() # Rollback changes if an error occurs
+        # IMPORTANT: Ensure the rollback happens if conn exists
+        if conn:
+            conn.rollback()
         print(f"Error processing like/unlike: {e}")
         from flask import jsonify
-        return jsonify({"success": False, "message": "An error occurred while processing your request."}), 500
+        # Make sure this error response is valid JSON
+        return jsonify({"success": False, "message": f"An error occurred: {str(e)}"}), 500
     finally:
-        cur.close()
-        conn.close()
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required

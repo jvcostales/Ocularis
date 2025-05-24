@@ -531,12 +531,11 @@
 
                     fetch(this.action, {
                         method: 'POST',
-                        // You can remove the 'headers' object entirely if no other headers are needed.
-                        // Or keep it simple if you only intended 'Content-Type'.
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json' // Still good to declare we expect/send JSON
                         }
-                        // No body is needed
+                        // No 'body' property here if you're not sending a JSON payload.
+                        // A simple POST to an endpoint that only uses path variables like /like/<id> doesn't need a body.
                     })
                         .then(response => {
                             if (!response.ok) {
