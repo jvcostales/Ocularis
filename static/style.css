@@ -34,6 +34,10 @@ input[type="url"]::placeholder {
     cursor: not-allowed;
 }
 
+.like-button.liked .lcs-symbol {
+    color: #1C46F5;
+}
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {

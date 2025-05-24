@@ -522,47 +522,23 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            // Select all like buttons
-            const likeButtons = document.querySelectorAll('.like-button');
+            function toggleLike(button) {
+                const imageId = button.getAttribute('data-image-id');
 
-            likeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const imageId = button.getAttribute('data-image-id');
-
-                    fetch(`/like/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'  // optional, for identifying AJAX request
-                        },
-                        credentials: 'same-origin'  // important to send cookies for login session
+                fetch(`/like/${imageId}`, {
+                    method: 'POST',
+                    credentials: 'include' // sends session cookie for logged-in user
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.liked) {
+                            button.classList.add('liked');
+                        } else {
+                            button.classList.remove('liked');
+                        }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                if (data.liked) {
-                                    button.style.color = '#1C46F5';  // set color when liked
-                                } else {
-                                    button.style.color = '';         // reset color when unliked
-                                }
-
-                                // Optional: update like count if you display it somewhere
-                                // For example:
-                                // const countElem = button.querySelector('.like-count');
-                                // if(countElem) countElem.textContent = data.like_count;
-                            } else {
-                                console.error('Failed to like/unlike');
-                            }
-                        })
-                        .catch(err => console.error('Error:', err));
-                });
-            });
-
-
-
-
-
-
+                    .catch(error => console.error('Like failed:', error));
+            }
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
@@ -875,6 +851,13 @@
                 imageInput.addEventListener('change', checkScrollbar);
             }
             checkScrollbar();
+
+            const likeButtons = document.querySelectorAll(".like-button");
+            likeButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    button.classList.toggle("liked");
+                });
+            });
 
             function isChrome() {
                 return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
