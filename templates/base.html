@@ -525,28 +525,25 @@
             function likeImage(imageId, index) {
                 fetch(`/like/${imageId}`, {
                     method: 'POST',
+                    body: JSON.stringify({}), // Include dummy body
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'  // Optional: helps Flask detect AJAX
+                        'Content-Type': 'application/json'
                     },
-                    credentials: 'include'  // To include session cookie
+                    credentials: 'include' // Make sure session cookie is sent
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Request failed');
+                        return response.json();
+                    })
                     .then(data => {
-                        // Update like count in the DOM
-                        const countElement = document.getElementById(`like-count-${index}`);
-                        countElement.textContent = data.like_count;
+                        document.getElementById(`like-count-${index}`).textContent = data.like_count;
 
-                        // Optional: Change style to indicate like/unlike
+                        // Optional visual feedback
                         const button = document.querySelector(`#openOverlayLikes-${index}`).previousElementSibling;
-                        if (data.liked) {
-                            button.style.color = 'blue';  // Liked state
-                        } else {
-                            button.style.color = '';  // Default state
-                        }
+                        button.style.color = data.liked ? 'blue' : '';
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error('Fetch error:', error);
                     });
             }
 

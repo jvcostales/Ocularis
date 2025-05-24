@@ -877,33 +877,21 @@ def like_image(image_id):
 
     liked = False
     try:
-        # Check if the user has already liked the image
+        # Check if already liked
         cur.execute("SELECT * FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
         existing_like = cur.fetchone()
 
         if existing_like:
-            # Unlike the image
             cur.execute("DELETE FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
         else:
-            # Like the image
             cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
             liked = True
 
-            # Notification
-            cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
-            owner = cur.fetchone()
-            if owner and owner[0] != current_user.id:
-                cur.execute("""
-                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
-                    VALUES (%s, %s, %s, 'like')
-                """, (owner[0], current_user.id, image_id))
-
-        # Get updated like count
+        # Get new like count
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
         like_count = cur.fetchone()[0]
 
         conn.commit()
-
     finally:
         cur.close()
         conn.close()
