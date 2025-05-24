@@ -522,27 +522,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            function likeImage(imageId, index) {
-                fetch(`/like/${imageId}`, {
-                    method: 'POST',
-                    body: JSON.stringify({}), // Include dummy body
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Request failed');
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.getElementById(`like-count-${index}`).textContent = data.like_count;
-                        const button = document.querySelector(`#openOverlayLikes-${index}`).previousElementSibling;
-                        button.style.color = data.liked ? 'blue' : '';
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
@@ -1007,6 +986,8 @@
 
 
     </script>
+    <script src="{{ url_for('static', filename='js/feed.js') }}"></script>
+
 </body>
 
 </html>
