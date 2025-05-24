@@ -874,6 +874,7 @@ def like_image(image_id):
         port=5432
     )
     cur = conn.cursor()
+    new_like_count = 0 # Initialize, will be updated
 
     try:
         # Check if the user has already liked the image
@@ -888,7 +889,8 @@ def like_image(image_id):
             cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
 
             # Get the image owner
-            cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
+            # Assuming 'id' is the primary key for images table, otherwise adjust column name
+            cur.execute("SELECT user_id FROM images WHERE id = %s", (image_id,))
             owner = cur.fetchone()
 
             # Create notification if the liker is not the owner
@@ -899,11 +901,23 @@ def like_image(image_id):
                 """, (owner[0], current_user.id, image_id))
 
         conn.commit()
+
+        # After committing, get the updated like count for the specific image
+        cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
+        new_like_count = cur.fetchone()[0] # [0] to get the count value
+
+        # Return a JSON response
+        from flask import jsonify # Ensure jsonify is imported if not already
+        return jsonify({"success": True, "new_like_count": new_like_count})
+
+    except Exception as e:
+        conn.rollback() # Rollback changes if an error occurs
+        print(f"Error processing like/unlike: {e}")
+        from flask import jsonify
+        return jsonify({"success": False, "message": "An error occurred while processing your request."}), 500
     finally:
         cur.close()
         conn.close()
-
-    return redirect(url_for('feed'))
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
