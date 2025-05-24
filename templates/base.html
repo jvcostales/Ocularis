@@ -522,47 +522,37 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            // Select all forms that have the class 'like-form'
             document.querySelectorAll('.like-form').forEach(form => {
                 form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Stop the default form submission (which would reload the page)
+                    event.preventDefault(); // Stop the default form submission
 
-                    const imageId = this.dataset.imageId; // Get the image_id from the data attribute on the form
-                    // Find the specific like count display div for this image
+                    const imageId = this.dataset.imageId;
                     const likeCountDisplay = document.querySelector(`.metrics[data-image-id="${imageId}"]`);
 
-                    fetch(this.action, { // Use the form's action URL (e.g., /like/123)
+                    fetch(this.action, {
                         method: 'POST',
+                        // You can remove the 'headers' object entirely if no other headers are needed.
+                        // Or keep it simple if you only intended 'Content-Type'.
                         headers: {
-                            'Content-Type': 'application/json',
-                            // IMPORTANT: If you are using Flask-WTF or any CSRF protection,
-                            // you MUST include your CSRF token here.
-                            // Example: 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            // You'd need to add a meta tag in your HTML head for this:
-                            // <meta name="csrf-token" content="{{ csrf_token() }}">
-                        },
-                        // No body is needed for this simple POST request if you're not sending extra data
-                        // body: JSON.stringify({})
+                            'Content-Type': 'application/json'
+                        }
+                        // No body is needed
                     })
                         .then(response => {
                             if (!response.ok) {
-                                // If the HTTP status is not 2xx (e.g., 404, 500)
                                 throw new Error('Network response was not ok ' + response.statusText);
                             }
-                            return response.json(); // Parse the JSON response from Flask
+                            return response.json();
                         })
                         .then(data => {
                             if (data.success) {
-                                // Update the text content of the like count display
                                 const newCount = data.new_like_count;
                                 likeCountDisplay.textContent = `${newCount} ${newCount === 1 ? 'Like' : 'Likes'}`;
                             } else {
-                                // Handle the case where the Flask backend reported an error
                                 alert('Failed to update like status: ' + (data.message || 'Unknown error.'));
                             }
                         })
                         .catch(error => {
-                            // Handle network errors or issues with parsing JSON
                             console.error('Error:', error);
                             alert('An error occurred while trying to like/unlike the image.');
                         });
