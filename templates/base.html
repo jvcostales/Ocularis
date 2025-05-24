@@ -529,7 +529,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include' // Make sure session cookie is sent
+                    credentials: 'include'
                 })
                     .then(response => {
                         if (!response.ok) throw new Error('Request failed');
@@ -537,14 +537,10 @@
                     })
                     .then(data => {
                         document.getElementById(`like-count-${index}`).textContent = data.like_count;
-
-                        // Optional visual feedback
                         const button = document.querySelector(`#openOverlayLikes-${index}`).previousElementSibling;
                         button.style.color = data.liked ? 'blue' : '';
                     })
-                    .catch(error => {
-                        console.error('Fetch error:', error);
-                    });
+                    .catch(error => console.error('Error:', error));
             }
 
             const modal = document.getElementById('profileModal');
