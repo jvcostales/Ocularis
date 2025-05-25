@@ -134,18 +134,7 @@
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
             {% if likes_data[image[0]] %}
-            {% for like in likes_data[image[0]] %}
-            <div class="profile-follow-wrapper">
-                <div class="profile-post-likes">
-                    <img src="..\static\pfp.jpg" class="pfp">
-                    <div class="profile-name-date">
-                        <div class="username">{{ like[0] }}</div>
-                        <div class="date">{{ like[1].strftime('%b') }} {{ like[1].day }}</div>
-                    </div>
-                </div>
-                <button class="follow-button">Befriend</button>
-            </div>
-            {% endfor %}
+            <div id="likesList-{{ loop.index }}"></div>
             {% else %}
             <div class="likes-empty">
                 <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>

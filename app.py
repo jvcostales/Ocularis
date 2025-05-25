@@ -659,20 +659,6 @@ def feed():
         """, (current_user.id,))
         requests = cur.fetchall()
 
-        # Fetch likes for each image
-        likes_data = {}
-        for image in images:
-            image_id = image[0]
-            cur.execute("""
-                SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
-                FROM likes l
-                JOIN users u ON l.user_id = u.id
-                WHERE l.image_id = %s
-                ORDER BY l.created_at DESC
-            """, (image_id,))
-            likes = cur.fetchall()
-            likes_data[image_id] = likes
-
         # Fetch likes for each comment
         comment_likes_data = {}
         for comment in comments:
@@ -724,7 +710,6 @@ def feed():
         comments=comments,
         notifications=notifications,
         requests=requests,
-        likes_data=likes_data,
         comment_likes_data=comment_likes_data,
         show_profile_modal=not is_complete,
         categories=categories,
@@ -736,6 +721,40 @@ def feed():
         today=today,
         saved_image_ids=saved_image_ids
     )
+
+@app.route('/likes/<int:image_id>', methods=['GET'])
+def get_likes(image_id):
+    try:
+        conn = psycopg2.connect(
+            host="...",
+            dbname="...",
+            user="...",
+            password="...",
+            port=5432
+        )
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+            ORDER BY l.created_at DESC
+        """, (image_id,))
+        likes = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        # Convert tuples to dictionaries
+        likes_json = [{'display_name': name, 'created_at': str(created_at)} for name, created_at in likes]
+
+        return jsonify({'likes': likes_json})
+
+    except Exception as e:
+        print(f"Error fetching likes: {e}")
+        return jsonify({'error': 'Server error'}), 500
+
 
 @app.route('/post/<int:image_id>')
 @login_required
