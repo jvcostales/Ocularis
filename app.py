@@ -903,7 +903,7 @@ def like_image(image_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('feed'))
+    return jsonify({'status': 'liked' if not existing_like else 'unliked'})
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required

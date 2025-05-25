@@ -522,6 +522,37 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            document.querySelectorAll('.like-form').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Stop the form from submitting the usual way
+
+                    const imageId = this.dataset.imageId;
+                    const button = this.querySelector('button');
+                    const icon = this.querySelector('.lcs-symbol');
+                    const label = this.querySelector('.partner-label');
+
+                    fetch(`/like/${imageId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'liked') {
+                                icon.textContent = 'thumb_up_alt'; // Change to solid icon if desired
+                                label.textContent = 'Unlike';
+                            } else {
+                                icon.textContent = 'thumb_up';
+                                label.textContent = 'Like';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('AJAX like error:', error);
+                        });
+                });
+            });
+
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
