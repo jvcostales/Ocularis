@@ -522,6 +522,10 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            {% for image in images %}
+                fetchLikes({{ image[0]|int }}, {{ loop.index|int }});
+            {% endfor %}
+
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
