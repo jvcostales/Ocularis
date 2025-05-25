@@ -108,11 +108,14 @@
     <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
     <div class="interactions">
         <div class="lcs">
-            <div class="partner like-button" onclick="likeImage({{ image[0] }}, {{ loop.index }})"
-                style="cursor: pointer;">
-                <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                <div class="partner-label">Like</div>
-            </div>
+            <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+                <button type="submit" style="all: unset;">
+                    <div class="partner like-button">
+                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                        <div class="partner-label">Like</div>
+                    </div>
+                </button>
+            </form>
             <div class="partner" id="openOverlayComments-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
@@ -123,7 +126,7 @@
             </div>
         </div>
         <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
-            <span id="like-count-{{ loop.index }}">{{ image[3] }}</span> {{ 'Like' if image[3] == 1 else 'Likes' }}
+            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
     </div>
 </div>
@@ -133,7 +136,26 @@
                 id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
-            <div id="likesList-{{ loop.index }}"></div>
+            {% if likes_data[image[0]] %}
+            {% for like in likes_data[image[0]] %}
+            <div class="profile-follow-wrapper">
+                <div class="profile-post-likes">
+                    <img src="..\static\pfp.jpg" class="pfp">
+                    <div class="profile-name-date">
+                        <div class="username">{{ like[0] }}</div>
+                        <div class="date">{{ like[1].strftime('%b') }} {{ like[1].day }}</div>
+                    </div>
+                </div>
+                <button class="follow-button">Befriend</button>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="likes-empty">
+                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                <div class="oops">Oops!</div>
+                <div class="nothing">Nothing to show here at the moment.</div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
