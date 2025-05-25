@@ -133,15 +133,7 @@
                 id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
-            {% if likes_data[image[0]] %}
             <div id="likesList-{{ loop.index }}"></div>
-            {% else %}
-            <div class="likes-empty">
-                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                <div class="oops">Oops!</div>
-                <div class="nothing">Nothing to show here at the moment.</div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
