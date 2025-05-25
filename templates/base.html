@@ -524,12 +524,12 @@
 
             document.querySelectorAll('.like-form').forEach(form => {
                 form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Stop the form from submitting the usual way
+                    event.preventDefault(); // Prevent default form submission
 
                     const imageId = this.dataset.imageId;
-                    const button = this.querySelector('button');
                     const icon = this.querySelector('.lcs-symbol');
                     const label = this.querySelector('.partner-label');
+                    const likeCountEl = document.getElementById(`like-count-${imageId}`);
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
@@ -540,11 +540,16 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'liked') {
-                                icon.textContent = 'thumb_up_alt'; // Change to solid icon if desired
+                                icon.textContent = 'thumb_up_alt'; // filled thumb
                                 label.textContent = 'Unlike';
                             } else {
-                                icon.textContent = 'thumb_up';
+                                icon.textContent = 'thumb_up'; // outline thumb
                                 label.textContent = 'Like';
+                            }
+
+                            // Update like count if available
+                            if (likeCountEl && typeof data.like_count !== 'undefined') {
+                                likeCountEl.textContent = data.like_count;
                             }
                         })
                         .catch(error => {
