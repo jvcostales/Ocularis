@@ -553,6 +553,20 @@
                 });
             });
 
+            function toggleLike(imageId, index) {
+                fetch(`/like/${imageId}`, {
+                    method: 'POST',
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const likeDiv = document.getElementById(`openOverlayLikes-${index}`);
+                        likeDiv.textContent = `${data.like_count} Likes`;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);

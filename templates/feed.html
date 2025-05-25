@@ -125,8 +125,9 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
-            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
+        <div class="metrics" id="openOverlayLikes-{{ loop.index }}"
+            onclick="toggleLike({{ image.image_id }}, {{ loop.index }})">
+            {{ image.like_count }} Likes
         </div>
     </div>
 </div>
