@@ -876,33 +876,34 @@ def like_image(image_id):
     cur = conn.cursor()
 
     try:
+        # Check if the user has already liked the image
         cur.execute("SELECT * FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
         existing_like = cur.fetchone()
 
         if existing_like:
+            # Unlike the image
             cur.execute("DELETE FROM likes WHERE user_id = %s AND image_id = %s", (current_user.id, image_id))
-            action = 'unliked'
         else:
+            # Like the image
             cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
+
+            # Get the image owner
             cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
             owner = cur.fetchone()
+
+            # Create notification if the liker is not the owner
             if owner and owner[0] != current_user.id:
                 cur.execute("""
                     INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
                     VALUES (%s, %s, %s, 'like')
                 """, (owner[0], current_user.id, image_id))
-            action = 'liked'
-
-        # Get updated like count
-        cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
-        like_count = cur.fetchone()[0]
 
         conn.commit()
     finally:
         cur.close()
         conn.close()
 
-    return jsonify({'status': action, 'like_count': like_count})
+    return jsonify({'status': 'liked' if not existing_like else 'unliked'})
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
