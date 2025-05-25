@@ -863,6 +863,26 @@ def allowed_file(filename):
 def serve_images(filename):
     return send_from_directory('/var/data', filename)
 
+def get_likers(image_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT u.username
+        FROM likes l
+        JOIN users u ON l.user_id = u.id
+        WHERE l.image_id = %s
+    """, (image_id,))
+    likers = [row[0] for row in cur.fetchall()]
+    cur.close()
+    conn.close()
+    return likers
+
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
 def like_image(image_id):
@@ -909,7 +929,8 @@ def like_image(image_id):
 
     return jsonify({
         'status': 'liked' if not existing_like else 'unliked',
-        'like_count': like_count
+        'like_count': like_count,
+        'likers': get_likers(image_id)
     })
 
 @app.route('/comment/<int:image_id>', methods=['POST'])

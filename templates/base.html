@@ -533,6 +533,7 @@
                     const numberSpan = countDiv.querySelector('.like-number');
                     const textSpan = countDiv.querySelector('.like-text');
                     const buttonDiv = document.getElementById(`like-button-${imageId}`);
+                    const likerList = document.getElementById(`liker-list-${imageId}`); // NEW: target liker list element
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
@@ -555,6 +556,16 @@
                             // Update like count
                             numberSpan.textContent = data.like_count;
                             textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                            // Update liker list
+                            if (likerList) {
+                                likerList.innerHTML = ''; // Clear current list
+                                data.likers.forEach(username => {
+                                    const li = document.createElement('li');
+                                    li.textContent = username;
+                                    likerList.appendChild(li);
+                                });
+                            }
 
                             // Optional: style change
                             buttonDiv.classList.toggle('liked', data.status === 'liked');
