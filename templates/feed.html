@@ -125,12 +125,9 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        {% for image in images %}
-        <div class="metrics" id="openOverlayLikes-{{ loop.index }}"
-            onclick="toggleLike({{ image[0] }}, {{ loop.index }})">
-            {{ image[2] }} Likes
+        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
+            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
         </div>
-        {% endfor %}
     </div>
 </div>
 <div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
