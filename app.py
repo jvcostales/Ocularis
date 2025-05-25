@@ -898,12 +898,19 @@ def like_image(image_id):
                     VALUES (%s, %s, %s, 'like')
                 """, (owner[0], current_user.id, image_id))
 
+        # Count current likes BEFORE closing
+        cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
+        like_count = cur.fetchone()[0]
+
         conn.commit()
     finally:
         cur.close()
         conn.close()
 
-    return jsonify({'status': 'liked' if not existing_like else 'unliked'})
+    return jsonify({
+        'status': 'liked' if not existing_like else 'unliked',
+        'like_count': like_count
+    })
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required

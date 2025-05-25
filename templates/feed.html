@@ -110,7 +110,7 @@
         <div class="lcs">
             <form class="like-form" data-image-id="{{ image[0] }}">
                 <button type="submit" style="all: unset;">
-                    <div class="partner like-button">
+                    <div class="partner like-button" id="like-button-{{ image[0] }}">
                         <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
                         <div class="partner-label">Like</div>
                     </div>
@@ -125,8 +125,9 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
-            {{ image[3] }} {{ 'Like' if image[3] == 1 else 'Likes' }}
+        <div class="metrics like-count" id="like-count-{{ image[0] }}">
+            <span class="like-number">{{ image[3] }}</span>
+            <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
         </div>
     </div>
 </div>

@@ -524,28 +524,40 @@
 
             document.querySelectorAll('.like-form').forEach(form => {
                 form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Stop the form from submitting the usual way
+                    event.preventDefault();
 
                     const imageId = this.dataset.imageId;
-                    const button = this.querySelector('button');
                     const icon = this.querySelector('.lcs-symbol');
                     const label = this.querySelector('.partner-label');
+                    const countDiv = document.getElementById(`like-count-${imageId}`);
+                    const numberSpan = countDiv.querySelector('.like-number');
+                    const textSpan = countDiv.querySelector('.like-text');
+                    const buttonDiv = document.getElementById(`like-button-${imageId}`);
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
-                        }
+                        },
+                        credentials: 'include'
                     })
                         .then(response => response.json())
                         .then(data => {
+                            // Update icon and label
                             if (data.status === 'liked') {
-                                icon.textContent = 'thumb_up_alt'; // Change to solid icon if desired
+                                icon.textContent = 'thumb_up_alt';
                                 label.textContent = 'Unlike';
                             } else {
                                 icon.textContent = 'thumb_up';
                                 label.textContent = 'Like';
                             }
+
+                            // Update like count
+                            numberSpan.textContent = data.like_count;
+                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                            // Optional: style change
+                            buttonDiv.classList.toggle('liked', data.status === 'liked');
                         })
                         .catch(error => {
                             console.error('AJAX like error:', error);
