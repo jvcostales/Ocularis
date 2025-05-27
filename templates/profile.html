@@ -97,9 +97,9 @@
     <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
     <div class="interactions">
         <div class="lcs">
-            <form action="{{ url_for('like_image', image_id=image[0]) }}" method="post">
+            <form class="like-form" data-image-id="{{ image[0] }}">
                 <button type="submit" style="all: unset;">
-                    <div class="partner like-button">
+                    <div class="partner like-button" id="like-button-{{ image[0] }}">
                         <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
                         <div class="partner-label">Like</div>
                     </div>
