@@ -676,6 +676,7 @@
                 });
             }
 
+            // Setup overlays
             setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
 
             document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
@@ -698,22 +699,29 @@
                 setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
             });
 
+            // Setup like overlay data fetch
             document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
                 const index = likeBtn.id.split('-')[1];
                 const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
-                const imageId = document.getElementById(`like-count-${index}`)?.dataset?.imageId;
+                const imageId = scrollableDiv?.dataset?.imageId;
 
                 likeBtn.addEventListener('click', () => {
-                    if (!imageId) return;
+                    if (!imageId || !scrollableDiv) return;
+
+                    scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
 
                     fetch(`/likes/${imageId}`)
                         .then(res => res.json())
                         .then(data => {
-                            let html = `<ul>`;
-                            data.likers.forEach(liker => {
-                                html += `<li>${liker.name} (at ${new Date(liker.timestamp).toLocaleString()})</li>`;
-                            });
-                            html += `</ul>`;
+                            if (data.likers.length === 0) {
+                                scrollableDiv.innerHTML = `<p>No likes yet.</p>`;
+                                return;
+                            }
+
+                            const html = `<ul>` + data.likers
+                                .map(liker => `<li>${liker.name} (at ${new Date(liker.timestamp).toLocaleString()})</li>`)
+                                .join('') + `</ul>`;
+
                             scrollableDiv.innerHTML = html;
                         })
                         .catch(err => {
