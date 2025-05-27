@@ -1060,84 +1060,30 @@ def delete_image(image_id):
 @app.route('/comment/like/<int:comment_id>', methods=['POST'])
 @login_required
 def like_comment(comment_id):
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-        port=5432
-    )
+    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+                            dbname="ocularis_db", 
+                            user="ocularis_db_user", 
+                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+                            port=5432)
     cur = conn.cursor()
     try:
-        # Toggle like
-        cur.execute(
-            "SELECT 1 FROM comment_likes WHERE user_id = %s AND comment_id = %s",
-            (current_user.id, comment_id)
-        )
+        # Check if the user already liked the comment
+        cur.execute("SELECT * FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
+                    (current_user.id, comment_id))
         existing_like = cur.fetchone()
 
         if existing_like:
-            cur.execute(
-                "DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s",
-                (current_user.id, comment_id)
-            )
+            cur.execute("DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
+                        (current_user.id, comment_id))
         else:
-            cur.execute(
-                "INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)",
-                (current_user.id, comment_id)
-            )
-
-        # Get updated like count
-        cur.execute(
-            "SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s",
-            (comment_id,)
-        )
-        like_count = cur.fetchone()[0]
-
+            cur.execute("INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)", 
+                        (current_user.id, comment_id))
         conn.commit()
     finally:
         cur.close()
         conn.close()
 
-    # Return the values that match comment[0] and comment[3] for frontend use
-    return jsonify({
-        'comment_id': comment_id,     # maps to comment[0]
-        'like_count': like_count      # maps to comment[3]
-    })
-
-@app.route('/comment/likes/<int:comment_id>', methods=['GET'])
-@login_required
-def get_comment_likes(comment_id):
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    try:
-        cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
-            FROM comment_likes cl
-            JOIN users u ON cl.user_id = u.id
-            WHERE cl.comment_id = %s
-            ORDER BY cl.created_at DESC
-        """, (comment_id,))
-        likes = cur.fetchall()
-
-        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
-    finally:
-        cur.close()
-        conn.close()
-
-    return jsonify({
-        'comment_id': comment_id,
-        'likers': likers,
-        'like_count': len(likers)
-    })
-
+    return redirect(url_for('feed'))
 
 @app.route('/profile/<int:user_id>')
 @login_required
