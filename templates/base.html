@@ -838,9 +838,15 @@
                     scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
 
                     fetch(`/comment/likes/${commentId}`)
-                        .then(res => res.json())
+                        .then(async res => {
+                            const contentType = res.headers.get("content-type");
+                            if (!contentType || !contentType.includes("application/json")) {
+                                throw new Error("Non-JSON response received (possibly HTML error page).");
+                            }
+                            return res.json();
+                        })
                         .then(data => {
-                            if (data.likers.length === 0) {
+                            if (!data.likers || data.likers.length === 0) {
                                 scrollableDiv.innerHTML = `<p>No likes yet.</p>`;
                                 return;
                             }
@@ -853,10 +859,11 @@
                         })
                         .catch(err => {
                             scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                            console.error(err);
+                            console.error("Comment like overlay error:", err);
                         });
                 });
             });
+
 
 
 

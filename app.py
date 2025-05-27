@@ -1085,6 +1085,46 @@ def like_comment(comment_id):
 
     return redirect(url_for('feed'))
 
+@app.route('/comment/likes/<int:comment_id>', methods=['GET'])
+@login_required
+def get_comment_likes(comment_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+    try:
+        # Optional: Check if comment exists to avoid invalid comment_id
+        cur.execute("SELECT 1 FROM comments WHERE comment_id = %s", (comment_id,))
+        if not cur.fetchone():
+            return jsonify({'error': 'Comment not found'}), 404
+
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            FROM comment_likes cl
+            JOIN users u ON cl.user_id = u.id
+            WHERE cl.comment_id = %s
+            ORDER BY cl.created_at DESC
+        """, (comment_id,))
+        likes = cur.fetchall()
+
+        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
+
+    return jsonify({
+        'comment_id': comment_id,
+        'likers': likers,
+        'like_count': len(likers)
+    })
+
+
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
