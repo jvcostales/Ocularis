@@ -533,7 +533,7 @@
                     const numberSpan = countDiv.querySelector('.like-number');
                     const textSpan = countDiv.querySelector('.like-text');
                     const buttonDiv = document.getElementById(`like-button-${imageId}`);
-                    const likerList = document.getElementById(`liker-list-${imageId}`); // NEW: target liker list element
+                    const likerListDiv = document.getElementById(`liker-list-${imageId}`); // ADD THIS
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
@@ -557,24 +557,25 @@
                             numberSpan.textContent = data.like_count;
                             textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
 
-                            // Update liker list
-                            if (likerList) {
-                                likerList.innerHTML = ''; // Clear current list
-                                data.likers.forEach(username => {
-                                    const li = document.createElement('li');
-                                    li.textContent = username;
-                                    likerList.appendChild(li);
-                                });
-                            }
-
                             // Optional: style change
                             buttonDiv.classList.toggle('liked', data.status === 'liked');
+
+                            // Update liker list
+                            if (likerListDiv && data.likers) {
+                                likerListDiv.innerHTML = ''; // Clear old list
+                                data.likers.forEach(username => {
+                                    const span = document.createElement('span');
+                                    span.textContent = username;
+                                    likerListDiv.appendChild(span);
+                                });
+                            }
                         })
                         .catch(error => {
                             console.error('AJAX like error:', error);
                         });
                 });
             });
+
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
@@ -650,7 +651,7 @@
 
             let scrollPosition = 0;
 
-            function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false, isLikesOverlay = false) {
+            function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
                 const overlay = document.querySelector(overlaySelector);
                 const openBtn = document.getElementById(openBtnId);
                 const closeBtn = document.getElementById(closeBtnId);
@@ -664,42 +665,6 @@
                         document.body.classList.add('no-scrolling');
                     }
                     overlay.classList.add('active');
-
-                    // If this is a likes overlay, fetch likers and update the list dynamically
-                    if (isLikesOverlay) {
-                        // Extract imageId from overlay id or openBtnId
-                        // Assuming overlay ID is like 'overlayLikes-<index>' and
-                        // openBtnId is like 'openOverlayLikes-<index>'
-                        const index = overlay.id.split('-')[1];
-
-                        // We expect you to have the imageId associated somewhere, for example:
-                        // Use index to get the imageId, or if imageId == index, adjust accordingly.
-                        // Here, assuming index == imageId for simplicity:
-                        const imageId = index;
-
-                        const likerList = document.getElementById(`liker-list-${imageId}`);
-                        if (!likerList) return;
-
-                        likerList.innerHTML = '<li>Loading...</li>';
-
-                        fetch(`/likes/${imageId}`)
-                            .then(response => response.json())
-                            .then(likers => {
-                                likerList.innerHTML = '';
-                                if (likers.length === 0) {
-                                    likerList.innerHTML = '<li>No likes yet</li>';
-                                } else {
-                                    likers.forEach(name => {
-                                        const li = document.createElement('li');
-                                        li.textContent = name;
-                                        likerList.appendChild(li);
-                                    });
-                                }
-                            })
-                            .catch(() => {
-                                likerList.innerHTML = '<li>Error loading likes</li>';
-                            });
-                    }
                 });
 
                 function closeOverlay() {
@@ -720,13 +685,11 @@
                 });
             }
 
-            // Existing overlays
             setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
 
-            // Setup likes overlays with extra flag true for AJAX loading
             document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
                 const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`, false, true);
+                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
             });
 
             document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {

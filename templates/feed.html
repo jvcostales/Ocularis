@@ -125,7 +125,7 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div class="metrics" id="openOverlayLikes-{{ loop.index }}">
+        <div id="openOverlayLikes-{{ loop.index }}">
             <div class="metrics like-count" id="like-count-{{ image[0] }}">
                 <span class="like-number">{{ image[3] }}</span>
                 <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
@@ -139,11 +139,11 @@
                 id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
-            <ul class="liker-list" id="liker-list-{{ image[0] }}">
-                {% for liker in image_likers %}
-                <li>{{ liker }}</li>
+            <div id="liker-list-{{ image.image_id }}">
+                {% for liker in image.likers %}
+                <span>{{ liker.username }}</span>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 </div>

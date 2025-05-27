@@ -863,21 +863,6 @@ def allowed_file(filename):
 def serve_images(filename):
     return send_from_directory('/var/data', filename)
 
-@app.route('/likes/<int:image_id>')
-def get_likes(image_id):
-    conn = psycopg2.connect(...)  # your db config
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT u.username
-        FROM likes l
-        JOIN users u ON l.user_id = u.id
-        WHERE l.image_id = %s
-    """, (image_id,))
-    likers = [row[0] for row in cur.fetchall()]
-    cur.close()
-    conn.close()
-    return jsonify(likers)
-
 @app.route('/like/<int:image_id>', methods=['POST'])
 @login_required
 def like_image(image_id):
@@ -917,6 +902,15 @@ def like_image(image_id):
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
         like_count = cur.fetchone()[0]
 
+        # After getting like_count, get list of likers
+        cur.execute("""
+            SELECT u.username
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+        """, (image_id,))
+        likers = [row[0] for row in cur.fetchall()]
+
         conn.commit()
     finally:
         cur.close()
@@ -925,7 +919,7 @@ def like_image(image_id):
     return jsonify({
         'status': 'liked' if not existing_like else 'unliked',
         'like_count': like_count,
-        'likers': get_likers(image_id)
+        'likers': likers
     })
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
