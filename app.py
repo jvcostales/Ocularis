@@ -1094,11 +1094,8 @@ def like_comment(comment_id):
         # Commit the insert/delete
         conn.commit()
 
-        # Get the updated like count
-        cur.execute(
-            "SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s",
-            (comment_id,)
-        )
+        # Get updated like count
+        cur.execute("SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s", (comment_id,))
         like_count = cur.fetchone()[0]
 
     except Exception as e:
