@@ -125,8 +125,8 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div id="openOverlayLikes-{{ loop.index }}">
-            <div class="metrics like-count" id="like-count-{{ image[0] }}">
+        <div id="openOverlayLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="metrics like-count" id="like-count-{{ image[0] }}" data-image-id="{{ image[0] }}">
                 <span class="like-number">{{ image[3] }}</span>
                 <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
             </div>
@@ -152,7 +152,6 @@
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             {% set ns = namespace(has_comments=false) %}
-
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
             {% set ns.has_comments = true %}
