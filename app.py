@@ -898,18 +898,19 @@ def like_image(image_id):
                     VALUES (%s, %s, %s, 'like')
                 """, (owner[0], current_user.id, image_id))
 
-        # Count current likes BEFORE closing
+        # Count current likes
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
         like_count = cur.fetchone()[0]
 
-        # After getting like_count, get list of likers
         cur.execute("""
-            SELECT u.username
-            FROM likes l
-            JOIN users u ON l.user_id = u.id
+            SELECT first_name, last_name
+            FROM users u
+            JOIN likes l ON l.user_id = u.id
             WHERE l.image_id = %s
-        """, (image_id,))
-        likers = [row[0] for row in cur.fetchall()]
+    """, (image_id,))
+
+        # Combine first and last name into full name
+        likers = [f"{row[0]} {row[1]}" for row in cur.fetchall()]
 
         conn.commit()
     finally:
@@ -919,8 +920,9 @@ def like_image(image_id):
     return jsonify({
         'status': 'liked' if not existing_like else 'unliked',
         'like_count': like_count,
-        'likers': likers
+        'likers': likers  # sending list of full names
     })
+
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required

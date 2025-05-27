@@ -530,10 +530,10 @@
                     const icon = this.querySelector('.lcs-symbol');
                     const label = this.querySelector('.partner-label');
                     const countDiv = document.getElementById(`like-count-${imageId}`);
-                    const numberSpan = countDiv.querySelector('.like-number');
-                    const textSpan = countDiv.querySelector('.like-text');
+                    const numberSpan = countDiv?.querySelector('.like-number');
+                    const textSpan = countDiv?.querySelector('.like-text');
                     const buttonDiv = document.getElementById(`like-button-${imageId}`);
-                    const likerListDiv = document.getElementById(`liker-list-${imageId}`); // ADD THIS
+                    const likerListDiv = document.getElementById(`liker-list-${imageId}`);
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
@@ -544,6 +544,10 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            // Debug logs
+                            console.log('Liker list element:', likerListDiv);
+                            console.log('Likers from server:', data.likers);
+
                             // Update icon and label
                             if (data.status === 'liked') {
                                 icon.textContent = 'thumb_up_alt';
@@ -554,17 +558,18 @@
                             }
 
                             // Update like count
-                            numberSpan.textContent = data.like_count;
-                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            if (numberSpan && textSpan) {
+                                numberSpan.textContent = data.like_count;
+                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            }
 
-                            // Optional: style change
-                            buttonDiv.classList.toggle('liked', data.status === 'liked');
+                            // Style toggle
+                            if (buttonDiv) {
+                                buttonDiv.classList.toggle('liked', data.status === 'liked');
+                            }
 
                             // Update liker list
-                            console.log('Liker list element:', likerListDiv);   // ✅ Check if element exists
-                            console.log('Likers from server:', data.likers);     // ✅ Check if likers array is received
-
-                            if (likerListDiv && data.likers) {
+                            if (likerListDiv && Array.isArray(data.likers)) {
                                 likerListDiv.innerHTML = ''; // Clear old list
                                 data.likers.forEach(username => {
                                     const span = document.createElement('span');
@@ -578,7 +583,6 @@
                         });
                 });
             });
-
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
