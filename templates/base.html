@@ -568,6 +568,117 @@
                 });
             });
 
+
+            document.querySelectorAll('.like-form[data-comment-id]').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const commentId = this.dataset.commentId;
+                    const icon = this.querySelector('.lcs-symbol');
+                    const label = this.querySelector('.partner-label');
+                    const countDiv = document.getElementById(`comment-like-count-${commentId}`);
+                    const numberSpan = countDiv?.querySelector('.like-number');
+                    const textSpan = countDiv?.querySelector('.like-text');
+                    const buttonDiv = document.getElementById(`like-button-${commentId}`);
+
+                    fetch(`/comment/like/${commentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data) throw new Error('No data returned');
+
+                            // Update icon and label
+                            if (data.status === 'liked') {
+                                icon.textContent = 'thumb_up_alt';
+                                label.textContent = 'Unlike';
+                            } else {
+                                icon.textContent = 'thumb_up';
+                                label.textContent = 'Like';
+                            }
+
+                            // Update like count
+                            if (numberSpan && textSpan) {
+                                numberSpan.textContent = data.like_count;
+                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            }
+
+                            // Toggle liked class on button div
+                            if (buttonDiv) {
+                                buttonDiv.classList.toggle('liked', data.status === 'liked');
+                            }
+
+                            // Optionally refresh likers overlay or other UI here if needed
+                        })
+                        .catch(error => {
+                            console.error('AJAX comment like error:', error);
+                        });
+                });
+            });
+
+
+
+
+
+            document.querySelectorAll('.like-form[data-comment-id]').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const commentId = this.dataset.commentId;
+                    const icon = this.querySelector('.lcs-symbol');
+                    const label = this.querySelector('.partner-label');
+                    const countDiv = document.getElementById(`like-count-comment-${commentId}`);
+                    const numberSpan = countDiv?.querySelector('.like-number');
+                    const textSpan = countDiv?.querySelector('.like-text');
+                    const buttonDiv = document.getElementById(`like-button-${commentId}`);
+
+                    fetch(`/comment/like/${commentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data) throw new Error('No data returned');
+
+                            // Update icon and label
+                            if (data.status === 'liked') {
+                                icon.textContent = 'thumb_up_alt';
+                                label.textContent = 'Unlike';
+                            } else {
+                                icon.textContent = 'thumb_up';
+                                label.textContent = 'Like';
+                            }
+
+                            // Update like count, if count elements exist
+                            if (numberSpan && textSpan) {
+                                numberSpan.textContent = data.like_count;
+                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            }
+
+                            // Optional: toggle 'liked' class
+                            if (buttonDiv) {
+                                buttonDiv.classList.toggle('liked', data.status === 'liked');
+                            }
+
+                            // Optional: fetch updated likers for comments if you have a function like this
+                            if (typeof fetchCommentLikers === 'function') {
+                                fetchCommentLikers(commentId);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('AJAX comment like error:', error);
+                        });
+                });
+            });
+
+
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
