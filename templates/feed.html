@@ -151,6 +151,8 @@
                 id="closeOverlayComments-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+            {% for comment in comments %}
+            {% if comment_likes_data[comment[0]] %}
             <ul id="commentList-{{ image[0] }}"></ul>
             <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
@@ -183,11 +185,14 @@
                 </div>
             </div>
             <div class="line-comments"></div>
+            {% endif %}
+            {% endfor %}
         </div>
         <div class="comment-bar">
             <img src="..\static\pfp.jpg" class="pfp">
             <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
-                <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment" required>
+                <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment"
+                    required>
                 <button class="send-button" type="submit">Send</button>
             </form>
         </div>
