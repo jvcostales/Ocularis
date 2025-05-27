@@ -808,6 +808,30 @@
             });
 
 
+            document.querySelectorAll('.like-count[data-comment-id]').forEach(elem => {
+                elem.addEventListener('click', function () {
+                    const commentId = this.getAttribute('data-comment-id');
+
+                    fetch(`/comment/like/${commentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const likeNumberElem = this.querySelector('.like-number');
+                            const likeTextElem = this.querySelector('.like-text');
+
+                            likeNumberElem.textContent = data.like_count;
+                            likeTextElem.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                        })
+                        .catch(error => console.error('Error liking comment:', error));
+                });
+            });
+
+
 
 
 

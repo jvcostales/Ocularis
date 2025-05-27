@@ -176,14 +176,18 @@
                     <div class="like-metrics-wrapper">
                         <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post">
                             <button type="submit" style="all: unset;">
-                                <div class="partner comment-like-button"> <span
+                                <div class="partner comment-like-button" data-comment-id="{{ comment.id }}"> <span
                                         class="material-symbols-outlined lcs-symbol">thumb_up</span>
                                     <div class="partner-label">Like</div>
                                 </div>
                             </button>
                         </form>
-                        <div class="metrics" id="openOverlayCommentLikes-{{ loop.index }}">
-                            {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
+                        <div id="openCommentLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
+                            <div class="metrics like-count" id="comment-like-count-{{ comment[0] }}"
+                                data-comment-id="{{ comment[0] }}">
+                                <span class="like-number">{{ comment[3] }}</span>
+                                <span class="like-text">{{ 'Like' if comment[3] == 1 else 'Likes' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
