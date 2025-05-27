@@ -898,33 +898,52 @@ def like_image(image_id):
                     VALUES (%s, %s, %s, 'like')
                 """, (owner[0], current_user.id, image_id))
 
-        # Count current likes
+        # Count current likes BEFORE closing
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
         like_count = cur.fetchone()[0]
-
-        cur.execute("""
-            SELECT first_name, last_name
-            FROM users u
-            JOIN likes l ON l.user_id = u.id
-            WHERE l.image_id = %s
-    """, (image_id,))
-
-        # Combine first and last name into full name
-        likers = [f"{row[0]} {row[1]}" for row in cur.fetchall()]
 
         conn.commit()
     finally:
         cur.close()
         conn.close()
 
-    print(f"Likers for image {image_id}: {likers}")
-
     return jsonify({
         'status': 'liked' if not existing_like else 'unliked',
-        'like_count': like_count,
-        'likers': likers  # sending list of full names
+        'like_count': like_count
     })
 
+@app.route('/likes/<int:image_id>', methods=['GET'])
+@login_required
+def get_image_likes(image_id):
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            FROM likes l
+            JOIN users u ON l.user_id = u.id
+            WHERE l.image_id = %s
+            ORDER BY l.created_at DESC
+        """, (image_id,))
+        likes = cur.fetchall()
+
+        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
+    finally:
+        cur.close()
+        conn.close()
+
+    return jsonify({
+        'image_id': image_id,
+        'likers': likers,
+        'like_count': len(likers)
+    })
 
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required

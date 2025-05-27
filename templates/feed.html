@@ -125,15 +125,12 @@
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div id="openOverlayLikes-{{ loop.index }}">
-            <div class="metrics like-count" id="like-count-{{ image[0] }}">
-                <span class="like-number">{{ image[3] }}</span>
-                <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
-            </div>
+        <div id="openOverlay-{{ loop.index }}">
+        <div class="metrics like-count" id="like-count-{{ image[0] }}">
+            <span class="like-number">{{ image[3] }}</span>
+            <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
         </div>
-        {% for liker in image.likers %}
-        <span>{{ liker.username }}</span>
-        {% endfor %}
+        </div>
     </div>
 </div>
 <div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
@@ -142,10 +139,27 @@
                 id="closeOverlayLikes-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}">
-            <div id="liker-list-{{ image.image_id }}">
-                {% for liker in image.likers %}
-                <span>{{ liker.username }}</span>
+            <div id="liker-list-{{ image[0] }}">
+                {% if likes_data[image[0]] %}
+                {% for like in likes_data[image[0]] %}
+                <div class="profile-follow-wrapper">
+                    <div class="profile-post-likes">
+                        <img src="..\static\pfp.jpg" class="pfp">
+                        <div class="profile-name-date">
+                            <div class="username">{{ like[0] }}</div>
+                            <div class="date">{{ like[1].strftime('%b') }} {{ like[1].day }}</div>
+                        </div>
+                    </div>
+                    <button class="follow-button">Befriend</button>
+                </div>
                 {% endfor %}
+                {% else %}
+                <div class="likes-empty">
+                    <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                    <div class="oops">Oops!</div>
+                    <div class="nothing">Nothing to show here at the moment.</div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

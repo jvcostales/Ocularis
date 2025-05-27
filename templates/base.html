@@ -530,10 +530,9 @@
                     const icon = this.querySelector('.lcs-symbol');
                     const label = this.querySelector('.partner-label');
                     const countDiv = document.getElementById(`like-count-${imageId}`);
-                    const numberSpan = countDiv?.querySelector('.like-number');
-                    const textSpan = countDiv?.querySelector('.like-text');
+                    const numberSpan = countDiv.querySelector('.like-number');
+                    const textSpan = countDiv.querySelector('.like-text');
                     const buttonDiv = document.getElementById(`like-button-${imageId}`);
-                    const likerListDiv = document.getElementById(`liker-list-${imageId}`);
 
                     fetch(`/like/${imageId}`, {
                         method: 'POST',
@@ -544,10 +543,6 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            // Debug logs
-                            console.log('Liker list element:', likerListDiv);
-                            console.log('Likers from server:', data.likers);
-
                             // Update icon and label
                             if (data.status === 'liked') {
                                 icon.textContent = 'thumb_up_alt';
@@ -558,31 +553,51 @@
                             }
 
                             // Update like count
-                            if (numberSpan && textSpan) {
-                                numberSpan.textContent = data.like_count;
-                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-                            }
+                            numberSpan.textContent = data.like_count;
+                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
 
-                            // Style toggle
-                            if (buttonDiv) {
-                                buttonDiv.classList.toggle('liked', data.status === 'liked');
-                            }
+                            // Optional: style change
+                            buttonDiv.classList.toggle('liked', data.status === 'liked');
 
-                            // Update liker list
-                            if (likerListDiv) {
-                                likerListDiv.innerHTML = '';
-                                ['Alice Smith', 'Bob Jones'].forEach(name => {
-                                    const span = document.createElement('span');
-                                    span.textContent = name;
-                                    likerListDiv.appendChild(span);
-                                });
-                            }
+                            // ✅ Fetch updated likers list
+                            fetchLikers(imageId);
                         })
                         .catch(error => {
                             console.error('AJAX like error:', error);
                         });
                 });
             });
+
+            function fetchLikers(imageId) {
+                fetch(`/likes/${imageId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const likerDiv = document.getElementById(`liker-list-${imageId}`);
+                        likerDiv.innerHTML = '';
+
+                        if (data.likers.length === 0) {
+                            likerDiv.textContent = 'No likes yet.';
+                        } else {
+                            data.likers.forEach(liker => {
+                                const span = document.createElement('span');
+                                span.textContent = liker.name;
+                                likerDiv.appendChild(span);
+                            });
+                        }
+
+                        // Optional: also update like count here if you want consistency
+                        const countDiv = document.getElementById(`like-count-${imageId}`);
+                        if (countDiv) {
+                            const numberSpan = countDiv.querySelector('.like-number');
+                            const textSpan = countDiv.querySelector('.like-text');
+                            numberSpan.textContent = data.like_count;
+                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Failed to fetch likers:', err);
+                    });
+            }
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
