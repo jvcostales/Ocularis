@@ -182,7 +182,8 @@
                                 </div>
                             </button>
                         </form>
-                        <div id="openCommentLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
+                        <div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0"
+                            style="cursor: pointer;">
                             <div class="metrics like-count" id="comment-like-count-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
                                 <span class="like-number">{{ comment[3] }}</span>
@@ -194,10 +195,17 @@
             </div>
             <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
-                    <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
+                    <button class="close-icon">
+                        <span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span>
+                    </button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
+
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}"
+                        data-comment-id="{{ comment[0] }}">
+
+                        <p class="loading-msg" style="display: none;">Loading likes...</p>
+
                         {% if comment_likes_data[comment[0]] %}
                         {% for comment_like in comment_likes_data[comment[0]] %}
                         <div class="profile-follow-wrapper">
