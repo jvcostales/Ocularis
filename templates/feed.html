@@ -152,42 +152,6 @@
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             <ul id="commentList-{{ image[0] }}"></ul>
-            {% set ns = namespace(has_comments=false) %}
-            {% for comment in comments %}
-            {% if comment[1] == image[0] %}
-            {% set ns.has_comments = true %}
-            <div class="profile-comment-wrapper">
-                <div class="profile-more-wrapper">
-                    <div class="profile-post-comments">
-                        <img src="..\static\pfp.jpg" class="pfp">
-                        <div class="profile-name-date">
-                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
-                                    comment[2] }}</a></div>
-                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="more-frame-wrapper">
-                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
-                    </div>
-                </div>
-                <div class="comment-like-wrapper">
-                    <div class="comment">{{ comment[3] }}</div>
-                    <div class="like-metrics-wrapper">
-                        <form action="{{ url_for('like_comment', comment_id=comment[0]) }}" method="post">
-                            <button type="submit" style="all: unset;">
-                                <div class="partner comment-like-button"> <span
-                                        class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                                    <div class="partner-label">Like</div>
-                                </div>
-                            </button>
-                        </form>
-                        <div class="metrics" id="openOverlayCommentLikes-{{ loop.index }}">
-                            {{ comment[5] }} {{ 'Like' if comment[5] == 1 else 'Likes' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
                     <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"

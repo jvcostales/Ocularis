@@ -963,17 +963,19 @@ def post_comment(image_id):
     cur = conn.cursor()
 
     try:
-        # Insert the comment
-        cur.execute(
-            "INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s) RETURNING created_at",
-            (current_user.id, image_id, comment_text)
-        )
-        created_at = cur.fetchone()[0]
+        # Insert the comment and get id + timestamp
+        cur.execute("""
+            INSERT INTO comments (user_id, image_id, comment_text)
+            VALUES (%s, %s, %s)
+            RETURNING id, created_at
+        """, (current_user.id, image_id, comment_text))
+        comment_id, created_at = cur.fetchone()
 
         # Get the image owner
         cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
         owner = cur.fetchone()
 
+        # Create a notification if the commenter isn't the owner
         if owner and owner[0] != current_user.id:
             cur.execute("""
                 INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
@@ -988,9 +990,11 @@ def post_comment(image_id):
     return jsonify({
         'status': 'success',
         'comment': {
+            'comment_id': comment_id,
+            'user_id': current_user.id,
             'name': f'{current_user.first_name} {current_user.last_name}',
             'text': comment_text,
-            'timestamp': created_at.isoformat()
+            'timestamp': created_at.isoformat(),
         }
     })
 

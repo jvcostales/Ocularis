@@ -761,10 +761,42 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.status === 'success') {
-                                const commentList = document.querySelector(`#commentList-${imageId}`);
+                                const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
                                 const comment = data.comment;
-                                const newComment = document.createElement('li');
-                                newComment.innerHTML = `<strong>${comment.name}</strong>: ${comment.text} <small>${new Date(comment.timestamp).toLocaleString()}</small>`;
+
+                                const newComment = document.createElement('div');
+                                newComment.className = 'profile-comment-wrapper';
+                                newComment.innerHTML = `
+    <div class="profile-more-wrapper">
+        <div class="profile-post-comments">
+            <img src="/static/pfp.jpg" class="pfp">
+            <div class="profile-name-date">
+                <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
+                <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
+            </div>
+        </div>
+        <div class="more-frame-wrapper">
+            <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+        </div>
+    </div>
+    <div class="comment-like-wrapper">
+        <div class="comment">${comment.text}</div>
+        <div class="like-metrics-wrapper">
+            <form action="/like_comment/${comment.comment_id}" method="post">
+                <button type="submit" style="all: unset;">
+                    <div class="partner comment-like-button">
+                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                        <div class="partner-label">Like</div>
+                    </div>
+                </button>
+            </form>
+            <div class="metrics" id="openOverlayCommentLikes-${comment.overlay_index}">
+                0 Likes
+            </div>
+        </div>
+    </div>
+`;
+
                                 commentList.prepend(newComment);
                                 input.value = '';
                             } else {
