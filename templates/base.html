@@ -568,37 +568,6 @@
                 });
             });
 
-            function fetchLikers(imageId) {
-                fetch(`/likes/${imageId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const likerDiv = document.getElementById(`liker-list-${imageId}`);
-                        likerDiv.innerHTML = '';
-
-                        if (data.likers.length === 0) {
-                            likerDiv.textContent = 'No likes yet.';
-                        } else {
-                            data.likers.forEach(liker => {
-                                const span = document.createElement('span');
-                                span.textContent = liker.name;
-                                likerDiv.appendChild(span);
-                            });
-                        }
-
-                        // Optional: also update like count here if you want consistency
-                        const countDiv = document.getElementById(`like-count-${imageId}`);
-                        if (countDiv) {
-                            const numberSpan = countDiv.querySelector('.like-number');
-                            const textSpan = countDiv.querySelector('.like-text');
-                            numberSpan.textContent = data.like_count;
-                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Failed to fetch likers:', err);
-                    });
-            }
-
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
                 showStep(currentStep);
@@ -727,6 +696,31 @@
             document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
                 const index = overlay.id.split('-')[1];
                 setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+            });
+
+            document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
+                const index = likeBtn.id.split('-')[1];
+                const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
+                const imageId = document.getElementById(`like-count-${index}`)?.dataset?.imageId;
+
+                likeBtn.addEventListener('click', () => {
+                    if (!imageId) return;
+
+                    fetch(`/likes/${imageId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            let html = `<ul>`;
+                            data.likers.forEach(liker => {
+                                html += `<li>${liker.name} (at ${new Date(liker.timestamp).toLocaleString()})</li>`;
+                            });
+                            html += `</ul>`;
+                            scrollableDiv.innerHTML = html;
+                        })
+                        .catch(err => {
+                            scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                            console.error(err);
+                        });
+                });
             });
 
             const moreBtns = document.querySelectorAll('.more-symbol');
