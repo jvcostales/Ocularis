@@ -131,6 +131,9 @@
                 <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
             </div>
         </div>
+        {% for liker in image.likers %}
+        <span>{{ liker.username }}</span>
+        {% endfor %}
     </div>
 </div>
 <div class="overlayLikes" id="overlayLikes-{{ loop.index }}">

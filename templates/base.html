@@ -561,6 +561,9 @@
                             buttonDiv.classList.toggle('liked', data.status === 'liked');
 
                             // Update liker list
+                            console.log('Liker list element:', likerListDiv);   // ✅ Check if element exists
+                            console.log('Likers from server:', data.likers);     // ✅ Check if likers array is received
+
                             if (likerListDiv && data.likers) {
                                 likerListDiv.innerHTML = ''; // Clear old list
                                 data.likers.forEach(username => {
