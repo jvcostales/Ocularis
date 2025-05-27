@@ -184,7 +184,7 @@
                         </form>
                         <div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0"
                             style="cursor: pointer;">
-                            <div class="metrics like-count" id="comment-like-count-{{ comment[0] }}"
+                            <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
                                 <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
                                 <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1 else

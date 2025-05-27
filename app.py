@@ -1060,30 +1060,60 @@ def delete_image(image_id):
 @app.route('/comment/like/<int:comment_id>', methods=['POST'])
 @login_required
 def like_comment(comment_id):
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
     cur = conn.cursor()
     try:
         # Check if the user already liked the comment
-        cur.execute("SELECT * FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
-                    (current_user.id, comment_id))
+        cur.execute(
+            "SELECT 1 FROM comment_likes WHERE user_id = %s AND comment_id = %s",
+            (current_user.id, comment_id)
+        )
         existing_like = cur.fetchone()
 
         if existing_like:
-            cur.execute("DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s", 
-                        (current_user.id, comment_id))
+            # User already liked -> unlike
+            cur.execute(
+                "DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s",
+                (current_user.id, comment_id)
+            )
+            status = 'unliked'
         else:
-            cur.execute("INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)", 
-                        (current_user.id, comment_id))
+            # User has not liked -> like
+            cur.execute(
+                "INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)",
+                (current_user.id, comment_id)
+            )
+            status = 'liked'
+
+        # Commit the insert/delete
         conn.commit()
-    finally:
+
+        # Get the updated like count
+        cur.execute(
+            "SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s",
+            (comment_id,)
+        )
+        like_count = cur.fetchone()[0]
+
+    except Exception as e:
+        conn.rollback()
         cur.close()
         conn.close()
+        return jsonify({'error': str(e)}), 500
 
-    return redirect(url_for('feed'))
+    cur.close()
+    conn.close()
+
+    return jsonify({
+        'status': status,
+        'like_count': like_count
+    })
 
 @app.route('/comment/likes/<int:comment_id>', methods=['GET'])
 @login_required
