@@ -569,11 +569,11 @@
                             }
 
                             // Update liker list
-                            if (likerListDiv && Array.isArray(data.likers)) {
-                                likerListDiv.innerHTML = ''; // Clear old list
-                                data.likers.forEach(username => {
+                            if (likerListDiv) {
+                                likerListDiv.innerHTML = '';
+                                ['Alice Smith', 'Bob Jones'].forEach(name => {
                                     const span = document.createElement('span');
-                                    span.textContent = username;
+                                    span.textContent = name;
                                     likerListDiv.appendChild(span);
                                 });
                             }

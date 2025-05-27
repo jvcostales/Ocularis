@@ -917,6 +917,8 @@ def like_image(image_id):
         cur.close()
         conn.close()
 
+    print(f"Likers for image {image_id}: {likers}")
+
     return jsonify({
         'status': 'liked' if not existing_like else 'unliked',
         'like_count': like_count,
