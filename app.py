@@ -948,30 +948,32 @@ def get_image_likes(image_id):
 @app.route('/comment/<int:image_id>', methods=['POST'])
 @login_required
 def post_comment(image_id):
-    comment_text = request.form['comment']
-    
+    comment_text = request.json.get('comment')  # Expect JSON from AJAX
+
     if not comment_text.strip():
-        return redirect(url_for('feed'))
+        return jsonify({'error': 'Empty comment'}), 400
 
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
-    
+
     try:
         # Insert the comment
-        cur.execute("INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s)", 
-                    (current_user.id, image_id, comment_text))
+        cur.execute(
+            "INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s) RETURNING created_at",
+            (current_user.id, image_id, comment_text)
+        )
+        created_at = cur.fetchone()[0]
 
         # Get the image owner
         cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
         owner = cur.fetchone()
 
-        # Create a notification if commenter is not the owner
         if owner and owner[0] != current_user.id:
             cur.execute("""
                 INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
@@ -982,8 +984,15 @@ def post_comment(image_id):
     finally:
         cur.close()
         conn.close()
-    
-    return redirect(url_for('feed'))
+
+    return jsonify({
+        'status': 'success',
+        'comment': {
+            'name': f'{current_user.first_name} {current_user.last_name}',
+            'text': comment_text,
+            'timestamp': created_at.isoformat()
+        }
+    })
 
 @app.route('/comment/delete/<int:comment_id>', methods=['POST'])
 @login_required

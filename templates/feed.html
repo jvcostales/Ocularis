@@ -193,27 +193,9 @@
                             id="closeOverlayCommentLikes-{{ loop.index }}">close</span></button>
                     <div class="overlay-title">Likes</div>
                     <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}">
-                        {% if comment_likes_data[comment[0]] %}
-                        {% for comment_like in comment_likes_data[comment[0]] %}
-                        <div class="profile-follow-wrapper">
-                            <div class="profile-post-likes">
-                                <img src="..\static\pfp.jpg" class="pfp">
-                                <div class="profile-name-date">
-                                    <div class="username">{{ comment_like[0] }}</div>
-                                    <div class="date">{{ comment_like[1].strftime('%b') }} {{ comment_like[1].day }}
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="follow-button">Befriend</button>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <div class="likes-empty">
-                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                            <div class="oops">Oops!</div>
-                            <div class="nothing">Nothing to show here at the moment.</div>
-                        </div>
-                        {% endif %}
+                        <ul id="commentList-{{ image[0] }}">
+                            <!-- Comments will be prepended here -->
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -230,8 +212,9 @@
         </div>
         <div class="comment-bar">
             <img src="..\static\pfp.jpg" class="pfp">
-            <form class="comment-text" action="{{ url_for('post_comment', image_id=image[0]) }}" method="POST">
-                <input class="tagline-comment" type="text" name="comment" placeholder="Enter your comment" required>
+            <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
+                <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment"
+                    required>
                 <button class="send-button" type="submit">Send</button>
             </form>
         </div>

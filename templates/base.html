@@ -731,6 +731,54 @@
                 });
             });
 
+
+
+
+
+
+
+
+
+
+
+            document.querySelectorAll('.comment-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const imageId = this.dataset.imageId;
+                    const input = this.querySelector('.comment-input');
+                    const commentText = input.value.trim();
+
+                    if (!commentText) return;
+
+                    fetch(`/comment/${imageId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ comment: commentText })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const commentList = document.querySelector(`#commentList-${imageId}`);
+                                const comment = data.comment;
+                                const newComment = document.createElement('li');
+                                newComment.innerHTML = `<strong>${comment.name}</strong>: ${comment.text} <small>${new Date(comment.timestamp).toLocaleString()}</small>`;
+                                commentList.prepend(newComment);
+                                input.value = '';
+                            } else {
+                                console.error('Failed to post comment:', data);
+                            }
+                        })
+                        .catch(err => console.error('Error:', err));
+                });
+            });
+
+
+
+
+
             const moreBtns = document.querySelectorAll('.more-symbol');
             const allFrames1 = document.querySelectorAll('.frame1');
 
@@ -1034,8 +1082,6 @@
             } else {
                 console.log('Form not found');
             }
-
-
 
             document.getElementById('notify-btn').addEventListener('click', function () {
                 const recipientId = this.getAttribute('data-recipient-id');
