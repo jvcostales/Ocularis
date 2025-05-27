@@ -782,20 +782,20 @@
     <div class="comment-like-wrapper">
         <div class="comment">${comment.text}</div>
         <div class="like-metrics-wrapper">
-            <form action="/like_comment/${comment.comment_id}" method="post">
-                <button type="submit" style="all: unset;">
-                    <div class="partner comment-like-button">
-                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                        <div class="partner-label">Like</div>
-                    </div>
-                </button>
-            </form>
+                        <form class="comment-like-form" data-comment-id="{{ comment[0] }}">
+                            <button type="submit" style="all: unset;">
+                                <div class="partner like-button" id="comment-like-button-{{ comment[0] }}">
+                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                            </button>
+                        </form>
             <div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
-                            <div class="metrics like-count" id="comment-like-count-{{ comment[0] }}"
+                <div class="metrics like-count" id="comment-like-count-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
-                                <span class="like-number">{{ comment[3] }}</span>
-                                <span class="like-text">{{ 'Like' if comment[3] == 1 else 'Likes' }}</span>
-                            </div>
+                    <span class="like-number">{{ comment[3] }}</span>
+                    <span class="like-text">{{ 'Like' if comment[3] == 1 else 'Likes' }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -812,28 +812,55 @@
             });
 
 
-            document.querySelectorAll('.like-count[data-comment-id]').forEach(elem => {
-                elem.addEventListener('click', function () {
-                    const commentId = this.getAttribute('data-comment-id');
+            // Setup comment like overlay data fetch
+            document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
+                const index = likeBtn.id.split('-')[1];
+                const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
 
-                    fetch(`/comment/like/${commentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => response.json())
+                // We'll need commentId set via data attribute
+                const commentId = scrollableDiv?.dataset?.commentId;
+
+                likeBtn.addEventListener('click', () => {
+                    if (!commentId || !scrollableDiv) return;
+
+                    scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+
+                    fetch(`/comment/likes/${commentId}`)
+                        .then(res => res.json())
                         .then(data => {
-                            const likeNumberElem = this.querySelector('.like-number');
-                            const likeTextElem = this.querySelector('.like-text');
+                            if (data.likers.length === 0) {
+                                scrollableDiv.innerHTML = `
+                        <div class="likes-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>`;
+                                return;
+                            }
 
-                            likeNumberElem.textContent = data.like_count;
-                            likeTextElem.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            const html = data.likers.map(liker => `
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <img src="../static/pfp.jpg" class="pfp">
+                            <div class="profile-name-date">
+                                <div class="username">${liker.name}</div>
+                                <div class="date">${new Date(liker.timestamp).toLocaleString([], { month: 'short', day: 'numeric' })}</div>
+                            </div>
+                        </div>
+                        <button class="follow-button">Befriend</button>
+                    </div>
+                `).join('');
+
+                            scrollableDiv.innerHTML = html;
                         })
-                        .catch(error => console.error('Error liking comment:', error));
+                        .catch(err => {
+                            scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                            console.error(err);
+                        });
                 });
             });
+
+
 
 
 
