@@ -846,28 +846,27 @@
                 </div>
             </button>
         </form>
-        <div id="openOverlayCommentLikes-${comment.overlay_index}" role="button" tabindex="0" style="cursor: pointer;">
-            <div class="metrics like-count" id="comment-like-count-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-                <span class="like-number">0</span>
-                <span class="like-text">Likes</span>
-            </div>
-        </div>
+<div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
+    <div class="metrics like-count" id="comment-like-count-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+        <span class="like-number">${comment.like_count}</span>
+        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
+    </div>
+</div>
     </div>
 </div>
 
-<div class="overlayLikes" id="overlayCommentLikes-${comment.overlay_index}">
+<div class="overlayLikes" id="overlayCommentLikes--{{ loop.index }}">
     <div class="overlay-content-likes">
         <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-${comment.overlay_index}">close</span>
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-{{ loop.index }}">close</span>
         </button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-${comment.overlay_index}" data-comment-id="${comment.comment_id}">
+        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}" data-comment-id="${comment.comment_id}">
             <p class="loading-msg" style="display: none;">Loading likes...</p>
         </div>
     </div>
 </div>
 `;
-
 
                                 commentList.prepend(newComment);
                                 input.value = '';
