@@ -2,7 +2,6 @@
 {% block content %}
 
 {% for image in saved_posts %}
-{% set outer_index = loop.index %}
 <div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
@@ -23,8 +22,8 @@
             </div>
         </div>
         <div class="more-frame-wrapper">
-            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ outer_index }}">more_horiz</span>
-            <div class="frame1" id="frame1-{{ outer_index }}">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
+            <div class="frame1" id="frame1-{{ loop.index }}">
                 <form id="unsave-form-{{ image[0] }}" action="{{ url_for('unsave_image', image_id=image[0]) }}"
                     method="post" style="display: none;"></form>
                 <a href="#" class="save"
@@ -48,16 +47,16 @@
                     </div>
                 </button>
             </form>
-            <div class="partner" id="openOverlayComments-{{ outer_index }}">
+            <div class="partner" id="openOverlayComments-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">comment</span>
                 <div class="partner-label">Comment</div>
             </div>
-            <div class="partner" id="openOverlayShare-{{ outer_index }}">
+            <div class="partner" id="openOverlayShare-{{ loop.index }}">
                 <span class="material-symbols-outlined lcs-symbol">share</span>
                 <div class="partner-label">Share</div>
             </div>
         </div>
-        <div id="openOverlayLikes-{{ outer_index }}" role="button" tabindex="0" style="cursor: pointer;">
+        <div id="openOverlayLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
             <div class="metrics like-count" id="like-count-{{ image[0] }}" data-image-id="{{ image[0] }}">
                 <span class="like-number">{{ image[3] }}</span>
                 <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
@@ -65,33 +64,32 @@
         </div>
     </div>
 </div>
-
-<div class="overlayLikes" id="overlayLikes-{{ outer_index }}">
+<div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
     <div class="overlay-content-likes">
         <button class="close-icon">
             <span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayLikes-{{ outer_index }}">close</span>
+                id="closeOverlayLikes-{{ loop.index }}">close</span>
         </button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ outer_index }}" data-image-id="{{ image[0] }}">
+        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}" data-image-id="{{ image[0] }}">
             <p class="loading-msg" style="display: none;">Loading likes...</p>
         </div>
     </div>
 </div>
-
-<div class="overlayComments" id="overlayComments-{{ outer_index }}">
+<div class="overlayComments" id="overlayComments-{{ loop.index }}">
     <div class="overlay-content-comments">
         <button class="close-icon">
             <span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayComments-{{ outer_index }}">close</span>
+                id="closeOverlayComments-{{ loop.index }}">close</span>
         </button>
         <div class="overlay-title">Comment</div>
-        <div class="scrollable-div-comments" id="scrollableDivComments-{{ outer_index }}">
+        <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             <div id="commentList-{{ image[0] }}"></div>
 
             {% set image_comments = comments_by_image.get(image[0], []) %}
             {% if image_comments %}
             {% for comment in image_comments %}
+            {% set comment_index = loop.index %}
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
@@ -118,7 +116,7 @@
                                 </div>
                             </button>
                         </form>
-                        <div id="openOverlayCommentLikes-{{ outer_index }}" role="button" tabindex="0"
+                        <div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0"
                             style="cursor: pointer;">
                             <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
@@ -132,14 +130,14 @@
                 </div>
             </div>
 
-            <div class="overlayLikes" id="overlayCommentLikes-{{ outer_index }}">
+            <div class="overlayLikes" id="overlayCommentLikes-{{ comment_index }}">
                 <div class="overlay-content-likes">
                     <button class="close-icon">
                         <span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-{{ outer_index }}">close</span>
+                            id="closeOverlayCommentLikes-{{ comment_index }}">close</span>
                     </button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ outer_index }}"
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ comment_index }}"
                         data-comment-id="{{ comment[0] }}">
                         <p class="loading-msg" style="display: none;">Loading likes...</p>
                     </div>
@@ -167,11 +165,10 @@
         </div>
     </div>
 </div>
-
-<div class="overlayShare" id="overlayShare-{{ outer_index }}">
+<div class="overlayShare" id="overlayShare-{{ loop.index }}">
     <div class="overlay-content-share">
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayShare-{{ outer_index }}">close</span></button>
+                id="closeOverlayShare-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Share</div>
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
