@@ -1131,13 +1131,14 @@ def get_comment_likes(comment_id):
     )
     cur = conn.cursor()
     try:
-        # Optional: Check if comment exists to avoid invalid comment_id
+        # Verify comment exists
         cur.execute("SELECT 1 FROM comments WHERE comment_id = %s", (comment_id,))
         if not cur.fetchone():
             return jsonify({'error': 'Comment not found'}), 404
 
+        # Get all likers info: user id, full name, like timestamp
         cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
             FROM comment_likes cl
             JOIN users u ON cl.user_id = u.id
             WHERE cl.comment_id = %s
@@ -1145,7 +1146,14 @@ def get_comment_likes(comment_id):
         """, (comment_id,))
         likes = cur.fetchall()
 
-        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
+        likers = [
+            {
+                'user_id': row[0],
+                'name': row[1],
+                'timestamp': row[2].isoformat()
+            }
+            for row in likes
+        ]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
