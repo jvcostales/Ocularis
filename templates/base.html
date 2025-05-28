@@ -569,13 +569,15 @@
             });
 
 
-            document.querySelectorAll('.like-form[data-comment-id]').forEach(form => {
-                form.addEventListener('submit', function (event) {
+            document.addEventListener('submit', function (event) {
+                const form = event.target;
+
+                if (form.matches('.like-form[data-comment-id]')) {
                     event.preventDefault();
 
-                    const commentId = this.dataset.commentId;
-                    const icon = this.querySelector('.lcs-symbol');
-                    const label = this.querySelector('.partner-label');
+                    const commentId = form.dataset.commentId;
+                    const icon = form.querySelector('.lcs-symbol');
+                    const label = form.querySelector('.partner-label');
                     const countDiv = document.getElementById(`like-count-comment-${commentId}`);
                     const numberSpan = countDiv?.querySelector('.like-number');
                     const textSpan = countDiv?.querySelector('.like-text');
@@ -607,12 +609,12 @@
                                 textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
                             }
 
-                            // Optional: toggle 'liked' class
+                            // Toggle 'liked' class
                             if (buttonDiv) {
                                 buttonDiv.classList.toggle('liked', data.status === 'liked');
                             }
 
-                            // Optional: fetch updated likers for comments if you have a function like this
+                            // Update liker list
                             if (typeof fetchCommentLikers === 'function') {
                                 fetchCommentLikers(commentId);
                             }
@@ -620,9 +622,8 @@
                         .catch(error => {
                             console.error('AJAX comment like error:', error);
                         });
-                });
+                }
             });
-
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
