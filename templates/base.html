@@ -923,10 +923,12 @@
 
 
             document.querySelectorAll('.save-button').forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();  // <-- Prevent the default anchor behavior (jump to top)
+
                     const imageId = this.dataset.imageId;
                     const isSaved = this.classList.contains('saved');
-                    const frame = this.closest('.frame1');  // Find the parent frame1 element
+                    const frame = this.closest('.frame1');
 
                     fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
                         method: 'POST',
@@ -947,12 +949,13 @@
                             }
 
                             if (frame) {
-                                frame.style.display = 'none';  // Hide the frame1 container
+                                frame.style.display = 'none';
                             }
                         })
                         .catch(error => console.error('Error:', error));
                 });
             });
+
 
 
 
