@@ -580,8 +580,8 @@
                 const label = button.querySelector('.partner-label');
                 const countDiv = document.getElementById(`like-count-comment-${commentId}`);
                 const numberSpan = countDiv?.querySelector('.like-number');
-                const textSpan = countDiv?.querySelector('.like-text`);
-    const buttonDiv = document.getElementById(`like-button-${commentId}`);
+                const textSpan = countDiv?.querySelector('.like-text');
+                const buttonDiv = document.getElementById(`like-button-${commentId}`);
 
                 fetch(`/comment/like/${commentId}`, {
                     method: 'POST',
