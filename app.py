@@ -1295,6 +1295,12 @@ def profile(user_id):
         ORDER BY fr.created_at DESC
     """, (current_user.id,))
     requests = cur.fetchall()
+
+    # Fetch the saved image IDs for the user
+    cur.execute("""
+        SELECT image_id FROM saved_posts WHERE user_id = %s
+    """, (user_id,))
+    saved_image_ids = [row[0] for row in cur.fetchall()]
     
     cur.close()
     conn.close()
@@ -1329,7 +1335,8 @@ def profile(user_id):
         comment_likes_data=comment_likes_data,
         notifications=notifications,
         requests=requests,
-        verified=current_user.verified
+        verified=current_user.verified,
+        saved_image_ids=saved_image_ids
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
