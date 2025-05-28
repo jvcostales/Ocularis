@@ -78,28 +78,30 @@
 </div>
 <div class="overlayComments" id="overlayComments-{{ loop.index }}">
     <div class="overlay-content-comments">
-        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayComments-{{ loop.index }}">close</span></button>
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayComments-{{ loop.index }}">close</span>
+        </button>
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             <div id="commentList-{{ image[0] }}"></div>
-            {% set ns = namespace(has_comments=false) %}
-            {% for comment in comments %}
-            {% if comment[1] == image[0] %}
-            {% set ns.has_comments = true %}
+
+            {% set image_comments = comments_by_image.get(image[0], []) %}
+            {% if image_comments %}
+            {% for comment in image_comments %}
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
                         <img src="..\static\pfp.jpg" class="pfp">
                         <div class="profile-name-date">
-                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
-                                    comment[2] }}</a></div>
-                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
+                            <div class="username">
+                                <a href="{{ url_for('profile', user_id=comment[6]) }}">{{ comment[2] }}</a>
                             </div>
+                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}</div>
                         </div>
                     </div>
                     <div class="more-frame-wrapper">
-                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+                        <!-- More button can go here -->
                     </div>
                 </div>
                 <div class="comment-like-wrapper">
@@ -118,13 +120,15 @@
                             <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
                                 <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
-                                <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1 else
-                                    'Likes' }}</span>
+                                <span class="like-text">
+                                    {{ 'Like' if comment_likes_data[comment[0]] | length == 1 else 'Likes' }}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
                     <button class="close-icon">
@@ -138,10 +142,10 @@
                     </div>
                 </div>
             </div>
+
             <div class="line-comments"></div>
-            {% endif %}
             {% endfor %}
-            {% if not ns.has_comments %}
+            {% else %}
             <div class="comments-empty">
                 <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                 <div class="oops">Oops!</div>
@@ -149,6 +153,7 @@
             </div>
             {% endif %}
         </div>
+
         <div class="comment-bar">
             <img src="..\static\pfp.jpg" class="pfp">
             <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
