@@ -13,7 +13,6 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 from psycopg2.extras import RealDictCursor
-from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -2239,11 +2238,6 @@ def saved():
     cur.close()
     conn.close()
 
-    # Build a mapping of image_id -> list of comments
-    comments_by_image = defaultdict(list)
-    for comment in comments:
-        comments_by_image[comment[1]].append(comment)
-
     return render_template('saved.html',
         saved_posts=saved_posts,
         comments=all_comments,
@@ -2252,7 +2246,8 @@ def saved():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        comments_by_image=comments_by_image)
+        comments_by_image=all_comments  # just pass the original directly
+    )
 
 @app.route('/save/<int:image_id>', methods=['POST'])
 @login_required
