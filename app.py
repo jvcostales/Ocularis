@@ -987,6 +987,13 @@ def post_comment(image_id):
                 VALUES (%s, %s, %s, 'comment')
             """, (owner[0], current_user.id, image_id))
 
+        # Query the like count for the new comment
+        cur.execute(
+            "SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s",
+            (comment_id,)
+        )
+        like_count = cur.fetchone()[0]
+
         conn.commit()
     finally:
         cur.close()
@@ -994,7 +1001,7 @@ def post_comment(image_id):
 
     return jsonify({
         'status': 'success',
-        'like_count': 0,
+        'like_count': like_count,
         'comment': {
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
