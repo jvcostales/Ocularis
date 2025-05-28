@@ -922,6 +922,35 @@
 
 
 
+            document.querySelectorAll('.save-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.dataset.imageId;
+                    const isSaved = this.classList.contains('saved');
+
+                    fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'saved') {
+                                button.classList.add('saved');
+                                button.textContent = 'Unsave';
+                            } else if (data.status === 'unsaved') {
+                                button.classList.remove('saved');
+                                button.textContent = 'Save';
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+
+
+
 
             const moreBtns = document.querySelectorAll('.more-symbol');
             const allFrames1 = document.querySelectorAll('.frame1');
