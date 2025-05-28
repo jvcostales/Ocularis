@@ -89,7 +89,6 @@
             {% set image_comments = comments_by_image.get(image[0], []) %}
             {% if image_comments %}
             {% for comment in image_comments %}
-            {% set comment_index = loop.index %}
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
@@ -130,14 +129,14 @@
                 </div>
             </div>
 
-            <div class="overlayLikes" id="overlayCommentLikes-{{ comment_index }}">
+            <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
                 <div class="overlay-content-likes">
                     <button class="close-icon">
                         <span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-{{ comment_index }}">close</span>
+                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span>
                     </button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ comment_index }}"
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}"
                         data-comment-id="{{ comment[0] }}">
                         <p class="loading-msg" style="display: none;">Loading likes...</p>
                     </div>

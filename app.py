@@ -833,6 +833,12 @@ def view_post(image_id):
         """, (current_user.id,))
         requests = cur.fetchall()
 
+        # Fetch the saved image IDs for the user
+        cur.execute("""
+            SELECT image_id FROM saved_posts WHERE user_id = %s
+        """, (current_user.id,))
+        saved_image_ids = [row[0] for row in cur.fetchall()]
+    
     finally:
         cur.close()
         conn.close()
@@ -845,7 +851,8 @@ def view_post(image_id):
         comment_likes_data=comment_likes_data,
         notifications=notifications,
         requests=requests,
-        verified=current_user.verified
+        verified=current_user.verified,
+        saved_image_ids=saved_image_ids
     )
 
 @app.route('/logout')
