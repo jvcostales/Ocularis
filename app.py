@@ -2139,17 +2139,17 @@ def saved():
     # 1. Fetch saved posts
     cur.execute("""
         SELECT 
-            images.image_id,                            -- image[0]
-            images.image_url,                           -- image[1]
-            images.caption,                             -- image[2]
-            COUNT(likes.image_id) AS like_count,        -- image[3] ← updated
-            author.id AS author_id,                     -- image[4]
-            author.first_name,                          -- image[5]
-            author.last_name,                           -- image[6]
-            images.created_at,                          -- image[7] (for date formatting)
-            collaborator.id AS collaborator_id,         -- image[8]
-            collaborator.first_name,                    -- image[9]
-            collaborator.last_name                      -- image[10]
+            images.image_id,                            -- 0
+            images.image_url,                           -- 1
+            images.caption,                             -- 2
+            COUNT(likes.image_id) AS like_count,        -- 3
+            author.id AS author_id,                     -- 4
+            author.first_name,                          -- 5
+            author.last_name,                           -- 6
+            images.created_at,                          -- 7
+            collaborator.id AS collaborator_id,         -- 8
+            collaborator.first_name,                    -- 9
+            collaborator.last_name                      -- 10
         FROM saved_posts
         JOIN images ON saved_posts.image_id = images.image_id
         JOIN users AS author ON images.id = author.id
@@ -2165,54 +2165,71 @@ def saved():
     """, (user_id,))
     saved_posts = cur.fetchall()
 
-    # Initialize containers
+    image_ids = [post[0] for post in saved_posts]
+    if not image_ids:
+        image_ids = [-1]  # avoid empty IN clause
+
+    placeholders = ','.join(['%s'] * len(image_ids))
+
+    # 2. Fetch all comments for saved images in one query
+    cur.execute(f"""
+        SELECT comments.comment_id, comments.image_id, 
+               users.first_name || ' ' || users.last_name AS display_name, 
+               comments.comment_text, comments.created_at,
+               COALESCE(cl.like_count, 0) AS like_count, 
+               comments.user_id
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        LEFT JOIN (
+            SELECT comment_id, COUNT(*) AS like_count
+            FROM comment_likes
+            GROUP BY comment_id
+        ) AS cl ON comments.comment_id = cl.comment_id
+        WHERE comments.image_id IN ({placeholders})
+        ORDER BY comments.created_at ASC
+    """, tuple(image_ids))
+    comment_rows = cur.fetchall()
+
     all_comments = {}
-    likes_data = {}
+    comment_ids = []
+
+    for row in comment_rows:
+        image_id = row[1]
+        comment_id = row[0]
+        comment_ids.append(comment_id)
+        all_comments.setdefault(image_id, []).append(row)
+
+    if not comment_ids:
+        comment_ids = [-1]
+
+    # 3. Fetch likes per comment (batched)
+    placeholders = ','.join(['%s'] * len(comment_ids))
+    cur.execute(f"""
+        SELECT cl.comment_id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+        FROM comment_likes cl
+        JOIN users u ON cl.user_id = u.id
+        WHERE cl.comment_id IN ({placeholders})
+        ORDER BY cl.created_at DESC
+    """, tuple(comment_ids))
+    comment_like_rows = cur.fetchall()
+
     comment_likes_data = {}
+    for comment_id, display_name, created_at in comment_like_rows:
+        comment_likes_data.setdefault(comment_id, []).append((display_name, created_at))
 
-    for post in saved_posts:
-        image_id = post[0]  # images.image_id
+    # 4. Fetch likes per image (batch method)
+    cur.execute(f"""
+        SELECT l.image_id, u.first_name || ' ' || u.last_name AS display_name, l.created_at
+        FROM likes l
+        JOIN users u ON l.user_id = u.id
+        WHERE l.image_id IN ({placeholders})
+        ORDER BY l.created_at DESC
+    """, tuple(image_ids))
+    like_rows = cur.fetchall()
 
-        # 2. Fetch comments per image
-        cur.execute("""
-            SELECT comments.comment_id, comments.image_id, 
-                   users.first_name || ' ' || users.last_name AS display_name, 
-                   comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id
-            FROM comments
-            JOIN users ON comments.user_id = users.id
-            LEFT JOIN (
-                SELECT comment_id, COUNT(*) AS like_count
-                FROM comment_likes
-                GROUP BY comment_id
-            ) AS cl ON comments.comment_id = cl.comment_id
-            WHERE comments.image_id = %s
-            ORDER BY comments.created_at ASC
-        """, (image_id,))
-        comments = cur.fetchall()
-        all_comments[image_id] = comments
-
-        # 3. Likes per image
-        cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
-            FROM likes l
-            JOIN users u ON l.user_id = u.id
-            WHERE l.image_id = %s
-            ORDER BY l.created_at DESC
-        """, (image_id,))
-        likes_data[image_id] = cur.fetchall()
-
-        # 4. Likes per comment
-        for comment in comments:
-            comment_id = comment[0]
-            cur.execute("""
-                SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
-                FROM comment_likes cl
-                JOIN users u ON cl.user_id = u.id
-                WHERE cl.comment_id = %s
-                ORDER BY cl.created_at DESC
-            """, (comment_id,))
-            comment_likes_data[comment_id] = cur.fetchall()
+    likes_data = {}
+    for image_id, display_name, created_at in like_rows:
+        likes_data.setdefault(image_id, []).append((display_name, created_at))
 
     # 5. Notifications
     cur.execute("""
@@ -2245,8 +2262,8 @@ def saved():
         comment_likes_data=comment_likes_data,
         notifications=notifications,
         requests=requests,
-        verified=current_user.verified)
-
+        verified=current_user.verified
+    )
 
 @app.route('/save/<int:image_id>', methods=['POST'])
 @login_required
