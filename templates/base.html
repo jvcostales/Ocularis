@@ -926,6 +926,7 @@
                 button.addEventListener('click', function () {
                     const imageId = this.dataset.imageId;
                     const isSaved = this.classList.contains('saved');
+                    const frame = this.closest('.frame1');  // Find the parent frame1 element
 
                     fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
                         method: 'POST',
@@ -944,10 +945,15 @@
                                 button.classList.remove('saved');
                                 button.textContent = 'Save';
                             }
+
+                            if (frame) {
+                                frame.style.display = 'none';  // Hide the frame1 container
+                            }
                         })
                         .catch(error => console.error('Error:', error));
                 });
             });
+
 
 
 

@@ -24,10 +24,10 @@
         <div class="more-frame-wrapper">
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ loop.index }}">
-                <form id="unsave-form-{{ image[0] }}" action="{{ url_for('unsave_image', image_id=image[0]) }}"
-                    method="post" style="display: none;"></form>
-                <a href="#" class="save"
-                    onclick="document.getElementById('unsave-form-{{ image[0] }}').submit(); return false;">Unsave</a>
+                <a href="#" class="save-button {% if image[0] in saved_image_ids %}saved{% endif %}"
+                    data-image-id="{{ image[0] }}">
+                    {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
+                </a>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
             </div>
