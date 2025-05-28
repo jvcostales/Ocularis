@@ -2165,13 +2165,13 @@ def saved():
     """, (user_id,))
     saved_posts = cur.fetchall()
 
+    # Extract image_ids
     image_ids = [post[0] for post in saved_posts]
     if not image_ids:
-        image_ids = [-1]  # avoid empty IN clause
+        image_ids = [-1]  # Prevent empty IN clause
+    image_placeholders = ','.join(['%s'] * len(image_ids))
 
-    placeholders = ','.join(['%s'] * len(image_ids))
-
-    # 2. Fetch all comments for saved images in one query
+    # 2. Fetch all comments for those images in one query
     cur.execute(f"""
         SELECT comments.comment_id, comments.image_id, 
                users.first_name || ' ' || users.last_name AS display_name, 
@@ -2185,51 +2185,52 @@ def saved():
             FROM comment_likes
             GROUP BY comment_id
         ) AS cl ON comments.comment_id = cl.comment_id
-        WHERE comments.image_id IN ({placeholders})
+        WHERE comments.image_id IN ({image_placeholders})
         ORDER BY comments.created_at ASC
     """, tuple(image_ids))
-    comment_rows = cur.fetchall()
+    all_comment_rows = cur.fetchall()
 
+    # Organize comments per image
     all_comments = {}
     comment_ids = []
-
-    for row in comment_rows:
-        image_id = row[1]
-        comment_id = row[0]
+    for row in all_comment_rows:
+        comment_id, image_id = row[0], row[1]
         comment_ids.append(comment_id)
         all_comments.setdefault(image_id, []).append(row)
 
-    if not comment_ids:
-        comment_ids = [-1]
-
-    # 3. Fetch likes per comment (batched)
-    placeholders = ','.join(['%s'] * len(comment_ids))
-    cur.execute(f"""
-        SELECT cl.comment_id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
-        FROM comment_likes cl
-        JOIN users u ON cl.user_id = u.id
-        WHERE cl.comment_id IN ({placeholders})
-        ORDER BY cl.created_at DESC
-    """, tuple(comment_ids))
-    comment_like_rows = cur.fetchall()
-
-    comment_likes_data = {}
-    for comment_id, display_name, created_at in comment_like_rows:
-        comment_likes_data.setdefault(comment_id, []).append((display_name, created_at))
-
-    # 4. Fetch likes per image (batch method)
+    # 3. Fetch all image likes in one query
     cur.execute(f"""
         SELECT l.image_id, u.first_name || ' ' || u.last_name AS display_name, l.created_at
         FROM likes l
         JOIN users u ON l.user_id = u.id
-        WHERE l.image_id IN ({placeholders})
+        WHERE l.image_id IN ({image_placeholders})
         ORDER BY l.created_at DESC
     """, tuple(image_ids))
     like_rows = cur.fetchall()
 
     likes_data = {}
-    for image_id, display_name, created_at in like_rows:
-        likes_data.setdefault(image_id, []).append((display_name, created_at))
+    for row in like_rows:
+        image_id = row[0]
+        likes_data.setdefault(image_id, []).append(row[1:])
+
+    # 4. Fetch all comment likes in one query
+    if not comment_ids:
+        comment_ids = [-1]
+    comment_placeholders = ','.join(['%s'] * len(comment_ids))
+
+    cur.execute(f"""
+        SELECT cl.comment_id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+        FROM comment_likes cl
+        JOIN users u ON cl.user_id = u.id
+        WHERE cl.comment_id IN ({comment_placeholders})
+        ORDER BY cl.created_at DESC
+    """, tuple(comment_ids))
+    comment_like_rows = cur.fetchall()
+
+    comment_likes_data = {}
+    for row in comment_like_rows:
+        comment_id = row[0]
+        comment_likes_data.setdefault(comment_id, []).append(row[1:])
 
     # 5. Notifications
     cur.execute("""
@@ -2262,8 +2263,7 @@ def saved():
         comment_likes_data=comment_likes_data,
         notifications=notifications,
         requests=requests,
-        verified=current_user.verified
-    )
+        verified=current_user.verified)
 
 @app.route('/save/<int:image_id>', methods=['POST'])
 @login_required
