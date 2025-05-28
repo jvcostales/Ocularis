@@ -821,8 +821,8 @@
                                 const comment = data.comment;
 
                                 const newComment = document.createElement('div');
-                                newComment.className = 'profile-comment-wrapper';
-                                newComment.innerHTML = `
+newComment.className = 'profile-comment-wrapper';
+newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <img src="/static/pfp.jpg" class="pfp">
@@ -846,12 +846,12 @@
                 </div>
             </button>
         </form>
-<div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
-    <div class="metrics like-count" id="comment-like-count-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-        <span class="like-number">${comment.like_count}</span>
-        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
-    </div>
-</div>
+        <div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="metrics like-count" id="comment-like-count-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+                <span class="like-number">${like_count}</span>
+                <span class="like-text">${like_count === 1 ? 'Like' : 'Likes'}</span>
+            </div>
+        </div>
     </div>
 </div>
 
