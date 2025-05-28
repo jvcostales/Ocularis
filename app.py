@@ -972,10 +972,10 @@ def post_comment(image_id):
     try:
         # Insert the comment
         cur.execute(
-            "INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s) RETURNING created_at",
+            "INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s) RETURNING comment_id, created_at",
             (current_user.id, image_id, comment_text)
         )
-        created_at = cur.fetchone()[0]
+        comment_id, created_at = cur.fetchone()
 
         # Get the image owner
         cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
@@ -995,6 +995,7 @@ def post_comment(image_id):
     return jsonify({
         'status': 'success',
         'comment': {
+            'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
             'text': comment_text,
             'timestamp': created_at.isoformat()
@@ -1131,14 +1132,13 @@ def get_comment_likes(comment_id):
     )
     cur = conn.cursor()
     try:
-        # Verify comment exists
+        # Optional: Check if comment exists to avoid invalid comment_id
         cur.execute("SELECT 1 FROM comments WHERE comment_id = %s", (comment_id,))
         if not cur.fetchone():
             return jsonify({'error': 'Comment not found'}), 404
 
-        # Get all likers info: user id, full name, like timestamp
         cur.execute("""
-            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
             FROM comment_likes cl
             JOIN users u ON cl.user_id = u.id
             WHERE cl.comment_id = %s
@@ -1146,14 +1146,7 @@ def get_comment_likes(comment_id):
         """, (comment_id,))
         likes = cur.fetchall()
 
-        likers = [
-            {
-                'user_id': row[0],
-                'name': row[1],
-                'timestamp': row[2].isoformat()
-            }
-            for row in likes
-        ]
+        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
