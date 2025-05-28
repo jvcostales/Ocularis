@@ -994,11 +994,11 @@ def post_comment(image_id):
 
     return jsonify({
         'status': 'success',
-        'like_count': 0,
         'comment': {
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
             'text': comment_text,
+            'like_count': 0,
             'timestamp': created_at.isoformat()
         }
     })
