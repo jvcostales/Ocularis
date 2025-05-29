@@ -1040,36 +1040,49 @@ def delete_comment(comment_id):
 @app.route('/delete/<int:image_id>', methods=['POST'])
 @login_required
 def delete_image(image_id):
-    conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-                            dbname="ocularis_db", 
-                            user="ocularis_db_user", 
-                            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-                            port=5432)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
 
     try:
-        # Ensure only the owner can delete their post
-        cur.execute("SELECT id, image_url FROM images WHERE image_id = %s", (image_id,))
+        # Fetch image info and owner_id
+        cur.execute("SELECT owner_id, image_url FROM images WHERE image_id = %s", (image_id,))
         image = cur.fetchone()
 
-        if image and image[0] == current_user.id:
-            cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
-            conn.commit()
+        if not image:
+            return jsonify({'success': False, 'error': 'Image not found'}), 404
 
-            # Delete image file (optional)
-            filename = image[1].split("/")[-1]  # Extract filename from URL
+        owner_id, image_url = image
+
+        # Check if current user is the owner
+        if owner_id != current_user.id:
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+
+        # Delete image row
+        cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
+        conn.commit()
+
+        # Optionally delete file from disk
+        if image_url:
+            filename = image_url.split("/")[-1]
             file_path = os.path.join('/var/data', filename)
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-        else:
-            return "Unauthorized action", 403
+        return jsonify({'success': True})
+
+    except Exception as e:
+        # Log the error if needed here
+        return jsonify({'success': False, 'error': 'Server error'}), 500
 
     finally:
         cur.close()
         conn.close()
-
-    return redirect(url_for('feed'))
 
 @app.route('/comment/like/<int:comment_id>', methods=['POST'])
 @login_required
