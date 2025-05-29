@@ -103,7 +103,7 @@
         <div class="right-sidebar-container">
             <div class="right-sidebar">
                 <div class="pfp-frame-wrapper">
-                    <img src="{{ profile_pic or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp" />
+                    <img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp" />
                     <div class="frame2" id="frame2">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">

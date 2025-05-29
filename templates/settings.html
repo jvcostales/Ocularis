@@ -29,6 +29,14 @@
         <input type="text" name="role" value="{{ user.role or '' }}" />
     </label><br />
 
+    <p>User country: "{{ user.country }}"</p>
+
+    <ul>
+        {% for c in countries %}
+        <li>Country: {{ c.name }}, iso2: "{{ c.iso2 }}" {% if user.country == c.iso2 %} - MATCHED {% endif %}</li>
+        {% endfor %}
+    </ul>
+
     <label>Country:
         <select id="country" name="country" required>
             <option value="">Select Country</option>
