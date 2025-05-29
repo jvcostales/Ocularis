@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 from psycopg2.extras import RealDictCursor
-import traceback
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -529,21 +529,23 @@ def feed():
     if request.method == 'POST':
         if 'image' not in request.files:
             return 'No file part'
-        
+
         file = request.files['image']
         caption = request.form.get('caption', '')
         selected_tags = request.form.getlist('tags')
-        collaborator_id = request.form.get('collaborator')  # This will be None if not selected
-        
+        collaborator_id = request.form.get('collaborator')
+
         if file.filename == '':
             return 'No selected file'
-        
+
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join('/var/data', filename)
+            # Get original extension and generate unique filename
+            ext = os.path.splitext(secure_filename(file.filename))[1]
+            unique_filename = f"{uuid.uuid4().hex}{ext}"
+            file_path = os.path.join('/var/data', unique_filename)
             file.save(file_path)
 
-            image_url = f"https://ocular-zmcu.onrender.com/images/{filename}"
+            image_url = f"https://ocular-zmcu.onrender.com/images/{unique_filename}"
 
             conn = psycopg2.connect(
                 host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -554,7 +556,7 @@ def feed():
             )
             cur = conn.cursor()
 
-            # Insert collaborators (if any)
+            # Insert image with or without collaborator
             if collaborator_id:
                 cur.execute(
                     "INSERT INTO images (id, image_url, caption, collaborator_id) VALUES (%s, %s, %s, %s) RETURNING image_id",
@@ -568,9 +570,10 @@ def feed():
 
             image_id = cur.fetchone()[0]
 
+            # Insert tags
             for tag in selected_tags:
-                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))  
-  
+                cur.execute("INSERT INTO image_tags (image_id, tag) VALUES (%s, %s)", (image_id, tag))
+
             conn.commit()
             cur.close()
             conn.close()
