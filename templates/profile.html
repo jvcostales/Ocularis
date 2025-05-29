@@ -63,7 +63,7 @@
     </div>
 </div>
 {% for image in images %}
-<div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
+<div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="..\static\pfp.jpg" class="pfp">
@@ -91,6 +91,9 @@
                 </a>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
+                {% if current_user.id == image[4] or current_user.id == image[8] %}
+                <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+                {% endif %}
             </div>
         </div>
     </div>

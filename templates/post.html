@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post1" style="margin-bottom: 16px; margin-top: 0;">
+<div class="post1" id="image-{{ image[0] }}" style="margin-bottom: 16px; margin-top: 0;">
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="{{ url_for('static', filename='pfp.jpg') }}" class="pfp">
@@ -29,6 +29,9 @@
                 </a>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
+                {% if current_user.id == image[4] or current_user.id == image[8] %}
+                <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -113,8 +116,7 @@
                                 </div>
                             </button>
                         </form>
-                        <div id="openOverlayCommentLikes-1" role="button" tabindex="0"
-                            style="cursor: pointer;">
+                        <div id="openOverlayCommentLikes-1" role="button" tabindex="0" style="cursor: pointer;">
                             <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
                                 <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
