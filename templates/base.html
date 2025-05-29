@@ -966,7 +966,7 @@
 
 
 
-            function handleRequest(requestId, action) {
+            window.handleRequest = function (requestId, action) {
                 fetch(`/${action}_request/${requestId}`, {
                     method: 'POST',
                     headers: {
@@ -975,19 +975,17 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            const el = document.getElementById(`request-${requestId}`);
-                            if (el) el.remove();
-
-                            // Optional: show confirmation message
+                        const el = document.getElementById(`request-${requestId}`);
+                        if (data.success && el) {
+                            el.remove();
                             alert(data.message);
                         } else {
                             alert("Error: " + data.message);
                         }
                     })
                     .catch(error => {
-                        console.error('Request error:', error);
-                        alert("Something went wrong. Please try again.");
+                        console.error("AJAX error:", error);
+                        alert("Something went wrong.");
                     });
             }
 
