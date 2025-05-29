@@ -572,64 +572,61 @@
                 });
             });
 
+            document.addEventListener('submit', function (event) {
+                const form = event.target;
 
-            document.addEventListener('click', function (event) {
-                const button = event.target.closest('.like-form[data-comment-id]');
-                if (!button) return;
+                if (form.matches('.like-form[data-comment-id]')) {
+                    event.preventDefault();
 
-                event.preventDefault();
+                    const commentId = form.dataset.commentId;
+                    const icon = form.querySelector('.lcs-symbol');
+                    const label = form.querySelector('.partner-label');
+                    const countDiv = document.getElementById(`like-count-comment-${commentId}`);
+                    const numberSpan = countDiv?.querySelector('.like-number');
+                    const textSpan = countDiv?.querySelector('.like-text');
+                    const buttonDiv = document.getElementById(`like-button-${commentId}`);
 
-                const commentId = button.dataset.commentId;
-                const icon = button.querySelector('.lcs-symbol');
-                const label = button.querySelector('.partner-label');
-                const countDiv = document.getElementById(`comment-like-count-${commentId}`);
-                const numberSpan = countDiv?.querySelector('.like-number');
-                const textSpan = countDiv?.querySelector('.like-text');
-                const buttonDiv = document.getElementById(`comment-like-button-${commentId}`);
-
-                fetch(`/comment/like/${commentId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'include'
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data) throw new Error('No data returned');
-
-                        // Update icon and label
-                        if (data.status === 'liked') {
-                            icon.textContent = 'thumb_up_alt';
-                            label.textContent = 'Unlike';
-                        } else {
-                            icon.textContent = 'thumb_up';
-                            label.textContent = 'Like';
-                        }
-
-                        // Update like count
-                        if (numberSpan && textSpan) {
-                            numberSpan.textContent = data.like_count;
-                            textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-                        }
-
-                        // Toggle 'liked' class
-                        if (buttonDiv) {
-                            buttonDiv.classList.toggle('liked', data.status === 'liked');
-                        }
-
-                        // Update liker list
-                        if (typeof fetchCommentLikers === 'function') {
-                            fetchCommentLikers(commentId);
-                        }
+                    fetch(`/comment/like/${commentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include'
                     })
-                    .catch(error => {
-                        console.error('AJAX comment like error:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data) throw new Error('No data returned');
+
+                            // Update icon and label
+                            if (data.status === 'liked') {
+                                icon.textContent = 'thumb_up_alt';
+                                label.textContent = 'Unlike';
+                            } else {
+                                icon.textContent = 'thumb_up';
+                                label.textContent = 'Like';
+                            }
+
+                            // Update like count, if count elements exist
+                            if (numberSpan && textSpan) {
+                                numberSpan.textContent = data.like_count;
+                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                            }
+
+                            // Toggle 'liked' class
+                            if (buttonDiv) {
+                                buttonDiv.classList.toggle('liked', data.status === 'liked');
+                            }
+
+                            // Update liker list
+                            if (typeof fetchCommentLikers === 'function') {
+                                fetchCommentLikers(commentId);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('AJAX comment like error:', error);
+                        });
+                }
             });
-
-
-
 
             const modal = document.getElementById('profileModal');
             if (modal && modal.classList.contains('show')) {
@@ -847,14 +844,14 @@
     <div class="like-metrics-wrapper">
         <form class="like-form" data-comment-id="${comment.comment_id}">
             <button type="submit" style="all: unset;">
-                <div class="partner comment-like-button" id="comment-like-button-${comment.comment_id}">
+                <div class="partner like-button" id="comment-like-button-${comment.comment_id}">
                     <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
                     <div class="partner-label">Like</div>
                 </div>
             </button>
         </form>
 <div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
-    <div class="metrics like-count" id="comment-like-count-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+    <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
         <span class="like-number">${comment.like_count}</span>
         <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
     </div>
