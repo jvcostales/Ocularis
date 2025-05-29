@@ -155,21 +155,45 @@
                     <div class="requests-title">
                         Requests
                     </div>
-                    <div id="request-container">
-                        {% if requests %}
-                        {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                        <div class="request-bar" id="request-{{ request_id }}">
-                            ...
+                    {% if requests %}
+                    {% for request_id, sender_id, first_name, last_name, created_at in requests %}
+                    <div class="request-bar" id="request-{{ request_id }}">
+                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
+
+                        <div class="request-details">
+                            <div class="request-text">
+                                <span style="font-weight: 600;">
+                                    <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                        {{ first_name }} {{ last_name }}
+                                    </a>
+                                </span> sent you a friend request.
+                            </div>
+                            <div class="request-date">
+                                {{ created_at.strftime('%b') }} {{ created_at.day }}
+                            </div>
+                            <div class="request-icons">
+                                <button type="button" class="circled-icon-1"
+                                    onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
+                                    endif %}>
+                                    <span class="material-symbols-outlined close-symbol">close</span>
+                                </button>
+
+                                <button type="button" class="circled-icon-2"
+                                    onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
+                                    endif %}>
+                                    <span class="material-symbols-outlined check-symbol">check</span>
+                                </button>
+                            </div>
                         </div>
-                        {% endfor %}
-                        {% else %}
-                        <div class="notifs-empty" id="empty-state">
-                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                            <div class="oops">Oops!</div>
-                            <div class="nothing">Nothing to show here at the moment.</div>
-                        </div>
-                        {% endif %}
                     </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -954,20 +978,6 @@
                         const el = document.getElementById(`request-${requestId}`);
                         if (data.success && el) {
                             el.remove();
-
-                            // Check if any requests remain
-                            const remainingRequests = document.querySelectorAll('.request-bar');
-                            if (remainingRequests.length === 0) {
-                                const container = document.getElementById('request-container');
-                                container.innerHTML = `
-                    <div class="notifs-empty" id="empty-state">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
-                    </div>
-                `;
-                            }
-
                             alert(data.message);
                         } else {
                             alert("Error: " + data.message);
@@ -978,7 +988,6 @@
                         alert("Something went wrong.");
                     });
             }
-
 
 
 
