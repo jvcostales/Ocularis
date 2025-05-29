@@ -64,6 +64,7 @@
 <!--bakit naka-center ung post 1 kapag un lang ung content-->
 <!--fix class names-->
 {% for image in images %}
+<div id="image-{{ image[0] }}">
 <div class="post1" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
@@ -247,6 +248,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endfor %}
 {% endblock %}

@@ -1000,25 +1000,28 @@
                         'X-Requested-With': 'XMLHttpRequest',
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include' // Ensures session cookie is sent
+                    credentials: 'include' // Include session cookies
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.error || "Failed to delete image.");
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        if (data.success) {
-                            // Remove the image element from the page
-                            const imageElement = document.getElementById(`image-${imageId}`);
-                            if (imageElement) {
-                                imageElement.remove();
-                            }
-                        } else {
-                            alert(data.error || "Failed to delete image.");
+                        const imageElement = document.getElementById(`image-${imageId}`);
+                        if (imageElement) {
+                            imageElement.remove();
                         }
                     })
                     .catch(error => {
                         console.error('Error deleting image:', error);
-                        alert("An error occurred.");
+                        alert(error.message || "An error occurred.");
                     });
             }
+
 
 
 
