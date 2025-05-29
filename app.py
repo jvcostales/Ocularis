@@ -1980,6 +1980,17 @@ def browse_users():
         requests=requests,
         verified=current_user.verified
     )
+        
+UPLOAD_FOLDER = '/var/data'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/profile_pics/<filename>')
+def profile_pics(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -2018,12 +2029,22 @@ def settings():
         telegram = request.form.get('telegram')
 
         profile_pic = request.files.get('profile_pic')
+        profile_pic_filename = None
+
         if profile_pic and profile_pic.filename != '':
-            filename = f"user_{user_id}_profile.{profile_pic.filename.rsplit('.', 1)[1]}"
-            filepath = os.path.join('static/uploads/profile_pics', filename)
-            profile_pic.save(filepath)
-            # Update profile_pic path in DB
-            cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filepath, user_id))
+            if allowed_file(profile_pic.filename):
+                ext = profile_pic.filename.rsplit('.', 1)[1].lower()
+                profile_pic_filename = f"pfp_user_{user_id}.{ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename)
+                profile_pic.save(filepath)
+
+                # Update profile_pic filename in DB
+                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (profile_pic_filename, user_id))
+            else:
+                flash("Invalid profile picture file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
 
         # Update user data (assuming skills, preferences stored as arrays in DB)
         cur.execute("""
@@ -2115,7 +2136,6 @@ def settings():
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
-
 
 def save_post(user_id, image_id, conn):
     with conn.cursor() as cur:

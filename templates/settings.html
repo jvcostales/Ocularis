@@ -14,9 +14,8 @@
 {% endwith %}
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
-    <label>Profile Picture:
-        <input type="file" name="profile_pic" accept="image/*" />
-    </label><br />
+    <label for="profile_pic">Profile Picture:</label><br />
+    <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
 
     <label>First Name:
         <input type="text" name="first_name" value="{{ user.first_name }}" required />
@@ -59,11 +58,10 @@
         </select>
     </label><br />
 
-<label>Skills:</label><br />
-{% for category in categories %}
-  <label>
-    <input type="checkbox" name="skills[]" value="{{ category }}"
-      {% if category in user.skills.split(', ') %}checked{% endif %}>
+    <label>Skills:</label><br />
+    {% for category in categories %}
+    <label>
+        <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />
 {% endfor %}
@@ -72,7 +70,7 @@
 {% for category in categories %}
   <label>
     <input type="checkbox" name="preferences[]" value="{{ category }}"
-      {% if category in user.preferences.split(', ') %}checked{% endif %}>
+      {% if category in user.preferences.split(' , ') %}checked{% endif %}>
     {{ category }}
   </label><br />
 {% endfor %}
