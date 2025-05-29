@@ -1042,10 +1042,10 @@ def delete_comment(comment_id):
 @login_required
 def delete_image(image_id):
     conn = psycopg2.connect(
-        host="your-host",
-        dbname="your-db",
-        user="your-user",
-        password="your-password",
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
     cur = conn.cursor()
