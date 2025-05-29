@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 from psycopg2.extras import RealDictCursor
+import traceback
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -1050,7 +1051,7 @@ def delete_image(image_id):
     cur = conn.cursor()
 
     try:
-        # Fetch image info and owner_id
+        # Get the owner ID and image URL for verification
         cur.execute("SELECT owner_id, image_url FROM images WHERE image_id = %s", (image_id,))
         image = cur.fetchone()
 
@@ -1059,15 +1060,20 @@ def delete_image(image_id):
 
         owner_id, image_url = image
 
-        # Check if current user is the owner
+        # Ensure only the image owner can delete
         if owner_id != current_user.id:
             return jsonify({'success': False, 'error': 'Unauthorized'}), 403
 
-        # Delete image row
+        # Delete dependent records
+        cur.execute("DELETE FROM image_likes WHERE image_id = %s", (image_id,))
+        cur.execute("DELETE FROM comments WHERE image_id = %s", (image_id,))
+        cur.execute("DELETE FROM saved_images WHERE image_id = %s", (image_id,))
+
+        # Delete the image record itself
         cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
         conn.commit()
 
-        # Optionally delete file from disk
+        # Optionally delete the file from disk
         if image_url:
             filename = image_url.split("/")[-1]
             file_path = os.path.join('/var/data', filename)
@@ -1077,8 +1083,9 @@ def delete_image(image_id):
         return jsonify({'success': True})
 
     except Exception as e:
-        # Log the error if needed here
-        return jsonify({'success': False, 'error': 'Server error'}), 500
+        import traceback
+        traceback.print_exc()  # Logs error to console
+        return jsonify({'success': False, 'error': str(e)}), 500
 
     finally:
         cur.close()
