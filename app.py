@@ -595,17 +595,19 @@ def feed():
         # Fetch images with author and collaborator names
         cur.execute("""
             SELECT 
-                images.image_id,              -- 0
-                images.image_url,             -- 1
-                images.caption,               -- 2
-                COALESCE(like_count, 0),      -- 3
-                images.id,                    -- 4 (author's user ID)
-                author.first_name,            -- 5
-                author.last_name,             -- 6
-                images.created_at,            -- 7
-                collaborator.id,              -- 8 (collaborator's user ID)
-                collaborator.first_name,      -- 9
-                collaborator.last_name        -- 10
+                images.image_id,                   -- 0
+                images.image_url,                  -- 1
+                images.caption,                    -- 2
+                COALESCE(like_count, 0),           -- 3
+                images.id,                         -- 4 (author's user ID)
+                author.first_name,                 -- 5
+                author.last_name,                  -- 6
+                images.created_at,                 -- 7
+                collaborator.id,                   -- 8 (collaborator's user ID)
+                collaborator.first_name,           -- 9
+                collaborator.last_name,            -- 10
+                author.profile_pic,                -- 11 ✅
+                collaborator.profile_pic           -- 12 ✅
             FROM images
             JOIN users AS author ON images.id = author.id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
