@@ -693,6 +693,11 @@ def feed():
             comment_likes = cur.fetchall()
             comment_likes_data[comment_id] = comment_likes
 
+             # New query to get current user's profile_pic
+            cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+            result = cur.fetchone()
+            profile_pic = result[0] if result else None
+
         #setup_profile
         cur.execute("SELECT is_profile_complete FROM users WHERE id = %s", (current_user.id,))
         is_complete = cur.fetchone()[0]
@@ -740,7 +745,8 @@ def feed():
         cities=app.config['CITIES'],
         verified=current_user.verified,
         today=today,
-        saved_image_ids=saved_image_ids
+        saved_image_ids=saved_image_ids,
+        profile_pic=profile_pic
     )
 
 @app.route('/post/<int:image_id>')
