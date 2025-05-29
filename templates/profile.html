@@ -5,7 +5,8 @@
     <img src="..\static\pdsheader.png" alt="Banner" class="banner">
     <div class="info-button-wrapper">
         <div class="profile-info">
-            <img src="..\static\pfp.jpg" alt="Profile" class="avatar">
+            <img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}"
+                alt="Profile" class="avatar">
             <div class="details">
                 <div class="username-profile">{{ user[0] }} {{ user[1] }}</div>
                 <div class="icon-title-wrapper">
