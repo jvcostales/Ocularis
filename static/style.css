@@ -901,7 +901,8 @@ input[type="url"]::placeholder {
 
     .save,
     .hide,
-    .report {
+    .report,
+    .delete {
         color: #1a1a1a;
         cursor: pointer;
         width: min-content;
@@ -909,7 +910,8 @@ input[type="url"]::placeholder {
 
     .save:hover,
     .hide:hover,
-    .report:hover {
+    .report:hover,
+    .delete:hover {
         color: #c4c4c4;
     }
 
@@ -2572,7 +2574,8 @@ input[type="url"]::placeholder {
 
     .save,
     .hide,
-    .report {
+    .report,
+    .delete {
         color: #1a1a1a;
         cursor: pointer;
         width: min-content;
@@ -2580,8 +2583,9 @@ input[type="url"]::placeholder {
 
     .save:hover,
     .hide:hover,
-    .report:hover {
-        color: #1C46F5;
+    .report:hover,
+    .delete:hover {
+        color: #c4c4c4;
     }
 
     .pfp-frame-wrapper {
@@ -4245,7 +4249,8 @@ input[type="url"]::placeholder {
 
     .save,
     .hide,
-    .report {
+    .report,
+    .delete {
         color: #1a1a1a;
         cursor: pointer;
         width: min-content;
@@ -4253,8 +4258,9 @@ input[type="url"]::placeholder {
 
     .save:hover,
     .hide:hover,
-    .report:hover {
-        color: #1C46F5;
+    .report:hover,
+    .delete:hover {
+        color: #c4c4c4;
     }
 
     .pfp-frame-wrapper {

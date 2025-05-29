@@ -92,6 +92,9 @@
                 </a>
                 <div class="hide">Hide</div>
                 <div class="report">Report</div>
+                {% if current_user.id == image.id %}
+                <div class="delete" onclick="deleteImage({{ image.image_id }})">Delete</div>
+                {% endif %}
             </div>
         </div>
     </div>
