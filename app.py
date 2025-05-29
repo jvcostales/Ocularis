@@ -1051,29 +1051,26 @@ def delete_image(image_id):
     cur = conn.cursor()
 
     try:
-        # Get the owner ID and image URL for verification
-        cur.execute("SELECT owner_id, image_url FROM images WHERE image_id = %s", (image_id,))
+        # Use correct column name (id refers to user_id here)
+        cur.execute("SELECT id, image_url FROM images WHERE image_id = %s", (image_id,))
         image = cur.fetchone()
 
         if not image:
             return jsonify({'success': False, 'error': 'Image not found'}), 404
 
-        owner_id, image_url = image
+        user_id, image_url = image
 
-        # Ensure only the image owner can delete
-        if owner_id != current_user.id:
+        if user_id != current_user.id:
             return jsonify({'success': False, 'error': 'Unauthorized'}), 403
 
-        # Delete dependent records
+        # Delete dependencies first
         cur.execute("DELETE FROM image_likes WHERE image_id = %s", (image_id,))
         cur.execute("DELETE FROM comments WHERE image_id = %s", (image_id,))
         cur.execute("DELETE FROM saved_images WHERE image_id = %s", (image_id,))
-
-        # Delete the image record itself
         cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
         conn.commit()
 
-        # Optionally delete the file from disk
+        # Delete image file if it exists
         if image_url:
             filename = image_url.split("/")[-1]
             file_path = os.path.join('/var/data', filename)
@@ -1084,7 +1081,7 @@ def delete_image(image_id):
 
     except Exception as e:
         import traceback
-        traceback.print_exc()  # Logs error to console
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
     finally:
