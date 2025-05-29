@@ -1042,37 +1042,40 @@ def delete_comment(comment_id):
 @login_required
 def delete_image(image_id):
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="your-host",
+        dbname="your-db",
+        user="your-user",
+        password="your-password",
         port=5432
     )
     cur = conn.cursor()
 
     try:
-        # Use correct column name (id refers to user_id here)
+        # Fetch image info and owner
         cur.execute("SELECT id, image_url FROM images WHERE image_id = %s", (image_id,))
         image = cur.fetchone()
 
         if not image:
             return jsonify({'success': False, 'error': 'Image not found'}), 404
 
-        user_id, image_url = image
+        owner_id, image_url = image
 
-        if user_id != current_user.id:
+        if owner_id != current_user.id:
             return jsonify({'success': False, 'error': 'Unauthorized'}), 403
 
-        # Delete dependencies first
-        cur.execute("DELETE FROM image_likes WHERE image_id = %s", (image_id,))
+        # Delete related data if not using ON DELETE CASCADE
+        cur.execute("DELETE FROM likes WHERE image_id = %s", (image_id,))
         cur.execute("DELETE FROM comments WHERE image_id = %s", (image_id,))
-        cur.execute("DELETE FROM saved_images WHERE image_id = %s", (image_id,))
+        cur.execute("DELETE FROM saved_posts WHERE image_id = %s", (image_id,))
+        cur.execute("DELETE FROM notifications WHERE image_id = %s", (image_id,))
+
+        # Delete image
         cur.execute("DELETE FROM images WHERE image_id = %s", (image_id,))
         conn.commit()
 
-        # Delete image file if it exists
+        # Remove file from server
         if image_url:
-            filename = image_url.split("/")[-1]
+            filename = os.path.basename(image_url)
             file_path = os.path.join('/var/data', filename)
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -1080,9 +1083,8 @@ def delete_image(image_id):
         return jsonify({'success': True})
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': str(e)}), 500
+        print("Error deleting image:", e)
+        return jsonify({'success': False, 'error': 'Server error'}), 500
 
     finally:
         cur.close()
