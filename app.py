@@ -1054,17 +1054,18 @@ def delete_image(image_id):
     cur = conn.cursor()
 
     try:
-        # Fetch image info and owner
-        cur.execute("SELECT id, image_url FROM images WHERE image_id = %s", (image_id,))
+        # Fetch image info, owner, and collaborator
+        cur.execute("SELECT id, collaborator_id, image_url FROM images WHERE image_id = %s", (image_id,))
         image = cur.fetchone()
 
         if not image:
             return jsonify({'success': False, 'error': 'Image not found'}), 404
 
-        owner_id, image_url = image
+        owner_id, collaborator_id, image_url = image
 
-        if owner_id != current_user.id:
+        if current_user.id not in (owner_id, collaborator_id):
             return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+
 
         # Delete related data if not using ON DELETE CASCADE
         cur.execute("DELETE FROM likes WHERE image_id = %s", (image_id,))
