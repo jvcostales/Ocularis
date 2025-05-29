@@ -157,28 +157,32 @@
                     </div>
                     {% if requests %}
                     {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                    <div class="request-bar">
-                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                    <div class="request-bar" id="request-{{ request_id }}">
+                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
+
                         <div class="request-details">
                             <div class="request-text">
-                                <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=sender_id) }}">{{
-                                        first_name }} {{ last_name }}</a></span> sent you a
-                                friend request.
+                                <span style="font-weight: 600;">
+                                    <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                        {{ first_name }} {{ last_name }}
+                                    </a>
+                                </span> sent you a friend request.
                             </div>
                             <div class="request-date">
                                 {{ created_at.strftime('%b') }} {{ created_at.day }}
                             </div>
                             <div class="request-icons">
-                                <form action="{{ url_for('reject_request', request_id=request_id) }}" method="POST"
-                                    style="display:inline;">
-                                    <button class="circled-icon-1" {% if not verified %}disabled{% endif %}><span
-                                            class="material-symbols-outlined close-symbol">close</span></button>
-                                </form>
-                                <form action="{{ url_for('accept_request', request_id=request_id) }}" method="POST"
-                                    style="display:inline;">
-                                    <button class="circled-icon-2" {% if not verified %}disabled{% endif %}><span
-                                            class="material-symbols-outlined check-symbol">check</span></button>
-                                </form>
+                                <button type="button" class="circled-icon-1"
+                                    onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
+                                    endif %}>
+                                    <span class="material-symbols-outlined close-symbol">close</span>
+                                </button>
+
+                                <button type="button" class="circled-icon-2"
+                                    onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
+                                    endif %}>
+                                    <span class="material-symbols-outlined check-symbol">check</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -958,6 +962,34 @@
                         .catch(error => console.error('Error:', error));
                 });
             });
+
+
+
+
+            function handleRequest(requestId, action) {
+                fetch(`/${action}_request/${requestId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const el = document.getElementById(`request-${requestId}`);
+                            if (el) el.remove();
+
+                            // Optional: show confirmation message
+                            alert(data.message);
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Request error:', error);
+                        alert("Something went wrong. Please try again.");
+                    });
+            }
 
 
 

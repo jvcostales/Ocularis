@@ -957,7 +957,7 @@ def get_image_likes(image_id):
 def post_comment(image_id):
     comment_text = request.json.get('comment')  # Expect JSON from AJAX
 
-    if not comment_text.strip():
+    if not comment_text or not comment_text.strip():
         return jsonify({'error': 'Empty comment'}), 400
 
     conn = psycopg2.connect(
@@ -970,7 +970,7 @@ def post_comment(image_id):
     cur = conn.cursor()
 
     try:
-        # Insert the comment
+        # Insert the comment and get its id and creation time
         cur.execute(
             "INSERT INTO comments (user_id, image_id, comment_text) VALUES (%s, %s, %s) RETURNING comment_id, created_at",
             (current_user.id, image_id, comment_text)
@@ -987,6 +987,10 @@ def post_comment(image_id):
                 VALUES (%s, %s, %s, 'comment')
             """, (owner[0], current_user.id, image_id))
 
+        # Get current like count for the new comment
+        cur.execute("SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s", (comment_id,))
+        like_count = cur.fetchone()[0]
+
         conn.commit()
     finally:
         cur.close()
@@ -998,10 +1002,11 @@ def post_comment(image_id):
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
             'text': comment_text,
-            'like_count': 0,
+            'like_count': like_count,
             'timestamp': created_at.isoformat()
         }
     })
+
 
 @app.route('/comment/delete/<int:comment_id>', methods=['POST'])
 @login_required
@@ -1517,8 +1522,7 @@ def cancel_request(receiver_id):
 @login_required
 def accept_request(request_id):
     if not current_user.verified:
-        flash("Please verify your account before accepting friend requests.")
-        return redirect('/requests')
+        return jsonify({'success': False, 'message': "Verify your account before accepting requests."}), 403
 
     receiver_id = current_user.id
     conn = psycopg2.connect(
@@ -1531,7 +1535,6 @@ def accept_request(request_id):
     cur = conn.cursor()
 
     try:
-        # Fetch sender from request
         cur.execute("""
             SELECT sender_id FROM friend_requests 
             WHERE request_id = %s AND receiver_id = %s AND status = 'pending';
@@ -1539,45 +1542,27 @@ def accept_request(request_id):
         row = cur.fetchone()
 
         if not row:
-            flash("Friend request not found or already handled.")
-            return redirect('/requests')
+            return jsonify({'success': False, 'message': "Request not found or already handled."}), 404
 
         sender_id = row[0]
-
-        # Sort IDs for consistent friend record
         user1_id, user2_id = sorted((sender_id, receiver_id))
 
-        # Check if they are already friends (prevent accidental double insert)
-        cur.execute("""
-            SELECT 1 FROM friends WHERE user1_id = %s AND user2_id = %s;
-        """, (user1_id, user2_id))
+        cur.execute("SELECT 1 FROM friends WHERE user1_id = %s AND user2_id = %s;", (user1_id, user2_id))
         if cur.fetchone():
-            flash("You are already friends.")
-        else:
-            # Update request status
-            cur.execute("""
-                UPDATE friend_requests SET status = 'accepted'
-                WHERE request_id = %s;
-            """, (request_id,))
+            return jsonify({'success': False, 'message': "Already friends."})
 
-            # Add to friends table
-            cur.execute("""
-                INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);
-            """, (user1_id, user2_id))
-
-            flash("Friend request accepted.")
-
+        cur.execute("UPDATE friend_requests SET status = 'accepted' WHERE request_id = %s;", (request_id,))
+        cur.execute("INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);", (user1_id, user2_id))
         conn.commit()
+
+        return jsonify({'success': True, 'message': "Friend request accepted."})
 
     except Exception as e:
         conn.rollback()
-        flash(f"An error occurred: {e}")
+        return jsonify({'success': False, 'message': f"Error: {e}"}), 500
     finally:
         cur.close()
         conn.close()
-
-    return redirect('/feed')
-
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
@@ -1592,22 +1577,15 @@ def reject_request(request_id):
     cur = conn.cursor()
 
     try:
-        # Just delete the friend request with the given ID
-        cur.execute("""
-            DELETE FROM friend_requests
-            WHERE id = %s;
-        """, (request_id,))
-
+        cur.execute("DELETE FROM friend_requests WHERE request_id = %s;", (request_id,))
         conn.commit()
-        flash("Friend request rejected.")
+        return jsonify({'success': True, 'message': "Friend request rejected."})
     except Exception as e:
-        flash(f"Error while rejecting request: {e}")
         conn.rollback()
+        return jsonify({'success': False, 'message': f"Error: {e}"}), 500
     finally:
         cur.close()
         conn.close()
-
-    return redirect(url_for('profile', user_id=current_user.id))
 
 @app.route('/pairup')
 @login_required
