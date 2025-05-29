@@ -103,9 +103,9 @@
         <div class="right-sidebar-container">
             <div class="right-sidebar">
                 <div class="pfp-frame-wrapper">
-                    {% if user.profile_pic %}
-                    <img src="{% if user.profile_pic %}
-            {{ url_for('profile_pics', filename=user.profile_pic) }}
+                    {% if current_user.profile_pic %}
+                    <img src="{% if current_user.profile_pic %}
+            {{ url_for('profile_pics', filename=current_user.profile_pic) }}
           {% else %}
             {{ url_for('static', filename='pfp.jpg') }}
           {% endif %}" class="pfp right" id="pfp" />
