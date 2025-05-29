@@ -1638,7 +1638,7 @@ def pairup():
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches)
+    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified)
 
 @app.route('/match', methods=['POST'])
 @login_required
@@ -1783,7 +1783,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -1954,7 +1954,8 @@ def browse_users():
         'browse.html',
         users=users,
         notifications=notifications,
-        requests=requests
+        requests=requests,
+        verified=current_user.verified
     )
 
 
@@ -2087,7 +2088,7 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels)
+            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
