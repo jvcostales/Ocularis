@@ -1347,11 +1347,6 @@ def profile(user_id):
         SELECT image_id FROM saved_posts WHERE user_id = %s
     """, (user_id,))
     saved_image_ids = [row[0] for row in cur.fetchall()]
-
-    # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
-    result = cur.fetchone()
-    profile_pic = result[0] if result else None
     
     cur.close()
     conn.close()
@@ -1387,9 +1382,8 @@ def profile(user_id):
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        saved_image_ids=saved_image_ids,
-        profile_pic=profile_pic
-    )
+        saved_image_ids=saved_image_ids
+        )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
 @login_required
