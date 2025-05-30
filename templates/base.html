@@ -861,7 +861,7 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <img src="{{ url_for('profile_pics', filename=comment[7]) if comment[7] else url_for('static', filename='pfp.jpg') }}" class="pfp">
+        <img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp">
         <div class="profile-name-date">
             <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
