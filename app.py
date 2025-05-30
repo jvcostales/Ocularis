@@ -275,6 +275,7 @@ def signup():
 
         password = generate_password_hash(raw_password)
         token = secrets.token_urlsafe(32)
+        default_profile_pic = "pfp.jpg"
 
         try:
             conn = psycopg2.connect(
@@ -291,17 +292,17 @@ def signup():
             if cur.fetchone():
                 return "Email already exists."
 
-            # Insert user
+            # Insert user with default profile pic
             cur.execute("""
-                INSERT INTO users (first_name, last_name, email, password, verification_token, verified)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO users (first_name, last_name, email, password, verification_token, verified, profile_pic)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
-            """, (first_name, last_name, email, password, token, False))
+            """, (first_name, last_name, email, password, token, False, default_profile_pic))
 
             user_id = cur.fetchone()[0]
             conn.commit()
 
-            # Now send email
+            # Send verification email
             send_verification_email(email, token)
 
             return "Check your email to verify your account."
