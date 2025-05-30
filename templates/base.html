@@ -61,7 +61,7 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp3"></div>
+                    <div><img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp3"></div>
                     <div class="frame3" id="frame3">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -83,7 +83,7 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="..\static\pfp.jpg" class="pfp right" id="pfp4"></div>
+                    <div><img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp4"></div>
                     <div class="frame4" id="frame4">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -122,7 +122,7 @@
                     {% if notifications %}
                     {% for display_name, action, image_id, created_at, actor_id in notifications %}
                     <div class="notif-bar">
-                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp img-notif-request">
                         <div class="notif-details">
                             <div class="notif-text">
                                 <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{
@@ -158,7 +158,7 @@
                     {% if requests %}
                     {% for request_id, sender_id, first_name, last_name, created_at in requests %}
                     <div class="request-bar" id="request-{{ request_id }}">
-                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
+                        <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp img-notif-request">
 
                         <div class="request-details">
                             <div class="request-text">
@@ -861,7 +861,7 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <img src="/static/pfp.jpg" class="pfp">
+        <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
         <div class="profile-name-date">
             <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
