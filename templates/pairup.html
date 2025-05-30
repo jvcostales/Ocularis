@@ -22,7 +22,7 @@
     {% for match in recent_matches %}
     <div class="profile-more-wrapper-pairup">
         <div class="profile-post-pairup">
-            <img src="..\static\pfp.jpg" class="pfp">
+            <img src="{{ url_for('profile_pics', filename=match.profile_pic) if match.profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username"><a href="/profile/{{ match[0] }}">{{ match[1] }} {{ match[2] }}</a></div>
                 <div class="date">{{ match[3].strftime('%b') }} {{ match[3].day }}</div>

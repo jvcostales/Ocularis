@@ -4,7 +4,7 @@
 {% for user in users %}
 <div class="profile-more-wrapper-pairup">
     <div class="profile-post-pairup">
-        <img src="..\static\pfp.jpg" class="pfp">
+        <img src="{{ url_for('profile_pics', filename=user.profile_pic) if user.profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
         <div class="profile-name-date">
             <div class="username">
                 <a href="/profile/{{ user.id }}">

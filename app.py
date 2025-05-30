@@ -1680,9 +1680,16 @@ def pairup():
     requests = cur.fetchall()
 
 
-    # Fetch recent matches
+    # Fetch recent matches with viewed user details
     cur.execute("""
-        SELECT u.id, u.first_name, u.last_name, rm.matched_at
+        SELECT 
+            u.id, 
+            u.first_name, 
+            u.last_name, 
+            u.city,
+            u.role,
+            u.profile_pic,
+            rm.matched_at
         FROM recent_matches rm
         JOIN users u ON rm.matched_user_id = u.id
         WHERE rm.user_id = %s
@@ -1932,7 +1939,7 @@ def get_random_users():
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("""
-                SELECT id, first_name, last_name, city, role
+                SELECT id, first_name, last_name, city, role, profile_pic
                 FROM users
                 WHERE is_profile_complete = TRUE
                 AND id != %s
@@ -1948,6 +1955,7 @@ def get_random_users():
             """, (current_user.id, current_user.id, current_user.id))
 
             users = cur.fetchall()
+
 
     return users
 
