@@ -1679,17 +1679,14 @@ def pairup():
     """, (current_user.id,))
     requests = cur.fetchall()
 
-
-    # Fetch recent matches with viewed user details
+    # Fetch recent matches with viewed user's profile_pic added at the end
     cur.execute("""
         SELECT 
-            u.id, 
-            u.first_name, 
-            u.last_name, 
-            u.city,
-            u.role,
-            u.profile_pic,
-            rm.matched_at
+            u.id,                 -- match[0]
+            u.first_name,         -- match[1]
+            u.last_name,          -- match[2]
+            rm.matched_at,        -- match[3]
+            u.profile_pic         -- match[4] ✅ viewed user's profile_pic
         FROM recent_matches rm
         JOIN users u ON rm.matched_user_id = u.id
         WHERE rm.user_id = %s
