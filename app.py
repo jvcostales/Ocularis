@@ -864,7 +864,7 @@ def view_post(image_id):
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        saved_image_ids=saved_image_ids
+        saved_image_ids=saved_image_ids,
     )
 
 @app.route('/logout')
@@ -1212,12 +1212,13 @@ def profile(user_id):
     cur = conn.cursor()
     
     # Fetch user details
-    cur.execute("SELECT first_name, last_name, role, city, state, country FROM users WHERE id = %s", (user_id,))
+    cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
     role = user[2]
     city = user[3]
     state = user[4]
     country = user[5]
+    profile_pic = user[6]
 
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
