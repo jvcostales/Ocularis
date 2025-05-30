@@ -621,12 +621,20 @@ def feed():
         """)
         images = cur.fetchall()
 
-        # Fetch comments
+        for image in images:
+            author_profile_pic = image[11]
+
+        # Fetch comments with commenter profile picture
         cur.execute("""
-            SELECT comments.comment_id, comments.image_id, 
-                   users.first_name || ' ' || users.last_name AS display_name, 
-                   comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id
+            SELECT 
+                comments.comment_id,                   -- 0
+                comments.image_id,                     -- 1
+                users.first_name || ' ' || users.last_name AS display_name,  -- 2
+                comments.comment_text,                 -- 3
+                comments.created_at,                   -- 4
+                COALESCE(like_count, 0) AS like_count, -- 5
+                comments.user_id,                      -- 6
+                users.profile_pic                      -- 7 ✅ NEW: commenter's profile pic
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
@@ -637,6 +645,7 @@ def feed():
             ORDER BY comments.created_at ASC
         """)
         comments = cur.fetchall()
+
 
         # Fetch notifications
         cur.execute("""
@@ -746,7 +755,8 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic=profile_pic
+        profile_pic=profile_pic,
+        author_profile_pic=author_profile_pic
     )
 
 @app.route('/post/<int:image_id>')
