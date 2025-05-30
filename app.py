@@ -850,6 +850,11 @@ def view_post(image_id):
             SELECT image_id FROM saved_posts WHERE user_id = %s
         """, (current_user.id,))
         saved_image_ids = [row[0] for row in cur.fetchall()]
+
+                # New query to get current user's profile_pic
+        cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+        result = cur.fetchone()
+        profile_pic = result[0] if result else None
     
     finally:
         cur.close()
@@ -865,6 +870,7 @@ def view_post(image_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
+        profile_pic=profile_pic
     )
 
 @app.route('/logout')
@@ -1674,10 +1680,15 @@ def pairup():
     """, (current_user.id,))
     recent_matches = cur.fetchall()
 
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+    profile_pic = result[0] if result else None
+
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified)
+    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic=profile_pic)
 
 @app.route('/match', methods=['POST'])
 @login_required
@@ -1767,6 +1778,11 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+    profile_pic = result[0] if result else None
+
     # Prepare data for recommender
     users_data = []
     for row in rows:
@@ -1822,7 +1838,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic=profile_pic)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -1966,6 +1982,11 @@ def browse_users():
     """, (current_user.id,))
     requests = cur.fetchall()
 
+        # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+    profile_pic = result[0] if result else None
+
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             # 1. 24-hour collab action block check
@@ -1994,7 +2015,8 @@ def browse_users():
         users=users,
         notifications=notifications,
         requests=requests,
-        verified=current_user.verified
+        verified=current_user.verified,
+        profile_pic=profile_pic
     )
         
 UPLOAD_FOLDER = '/var/data'
@@ -2024,6 +2046,11 @@ def settings():
         port=5432
     )
     cur = conn.cursor()
+
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+    profile_pic = result[0] if result else None
 
     if request.method == 'POST':
         # Get form data
@@ -2148,7 +2175,7 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified)
+            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic=profile_pic)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
@@ -2282,6 +2309,11 @@ def saved():
     """, (user_id,))
     requests = cur.fetchall()
 
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+    profile_pic = result[0] if result else None
+
     cur.close()
     conn.close()
 
@@ -2293,7 +2325,8 @@ def saved():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        comments_by_image=all_comments  # just pass the original directly
+        comments_by_image=all_comments,  # just pass the original directly
+        profile_pic=profile_pic
     )
 
 @app.route('/save/<int:image_id>', methods=['POST'])
