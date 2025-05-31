@@ -1414,10 +1414,10 @@ def profile(user_id):
         outgoing_request is not None
     )
 
-    # Assuming you have these codes from the DB
-    country_code = user.country  # e.g., 'US'
-    state_code = user.state      # e.g., 'NY'
-    city_code = user.city        # e.g., 'NYC'
+    country_code = country
+    state_code = state
+    city_code = city
+
 
     # Lookup names from your config lists
     city_name = get_city_name(country_code, state_code, city_code)
