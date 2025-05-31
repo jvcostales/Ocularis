@@ -61,7 +61,7 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp3"></div>
+                    <div><img src="{{ profile_pic_url }}" class="pfp right" id="pfp3"></div>
                     <div class="frame3" id="frame3">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -83,7 +83,7 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp4"></div>
+                    <div><img src="{{ profile_pic_url }}" class="pfp right" id="pfp4"></div>
                     <div class="frame4" id="frame4">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -103,7 +103,7 @@
         <div class="right-sidebar-container">
             <div class="right-sidebar">
                 <div class="pfp-frame-wrapper">
-                    <img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp right" id="pfp" />
+                    <img src="{{ profile_pic_url }}" class="pfp right" id="pfp" />
                     <div class="frame2" id="frame2">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -861,7 +861,7 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <img src="{{ url_for('profile_pics', filename=profile_pic) or url_for('static', filename='pfp.jpg') }}" class="pfp">
+        <img src="{{ profile_pic_url }}" class="pfp">
         <div class="profile-name-date">
             <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>

@@ -703,10 +703,14 @@ def feed():
             comment_likes = cur.fetchall()
             comment_likes_data[comment_id] = comment_likes
 
-             # New query to get current user's profile_pic
+            # New query to get current user's profile_pic
             cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
             result = cur.fetchone()
-            profile_pic = result[0] if result else None
+
+            if result and result[0] and result[0] != 'pfp.jpg':
+                profile_pic_url = url_for('profile_pics', filename=result[0])
+            else:
+                profile_pic_url = url_for('static', filename='pfp.jpg')
 
         #setup_profile
         cur.execute("SELECT is_profile_complete FROM users WHERE id = %s", (current_user.id,))
@@ -756,7 +760,7 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic=profile_pic,
+        profile_pic_url=profile_pic_url,
         author_profile_pic=author_profile_pic
     )
 
@@ -862,10 +866,15 @@ def view_post(image_id):
         """, (current_user.id,))
         saved_image_ids = [row[0] for row in cur.fetchall()]
 
-                # New query to get current user's profile_pic
+        # New query to get current user's profile_pic
         cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
         result = cur.fetchone()
-        profile_pic = result[0] if result else None
+
+        if result and result[0] and result[0] != 'pfp.jpg':
+            profile_pic_url = url_for('profile_pics', filename=result[0])
+        else:
+            profile_pic_url = url_for('static', filename='pfp.jpg')
+
     
     finally:
         cur.close()
@@ -881,7 +890,7 @@ def view_post(image_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
-        profile_pic=profile_pic
+        profile_pic_url=profile_pic_url
     )
 
 @app.route('/logout')
@@ -1368,7 +1377,12 @@ def profile(user_id):
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
     
     cur.close()
     conn.close()
@@ -1405,7 +1419,7 @@ def profile(user_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
-        profile_pic=profile_pic,
+        profile_pic_url=profile_pic_url,
         viewed_user_profile_pic=viewed_user_profile_pic
     )
 
@@ -1698,12 +1712,17 @@ def pairup():
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
 
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic=profile_pic)
+    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic_url=profile_pic_url)
 
 @app.route('/match', methods=['POST'])
 @login_required
@@ -1796,7 +1815,12 @@ def match():
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
 
     # Prepare data for recommender
     users_data = []
@@ -1853,7 +1877,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic=profile_pic)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -2001,7 +2025,11 @@ def browse_users():
         # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
 
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -2032,7 +2060,7 @@ def browse_users():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        profile_pic=profile_pic
+        profile_pic_url=profile_pic_url
     )
         
 UPLOAD_FOLDER = '/var/data'
@@ -2066,7 +2094,12 @@ def settings():
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
 
     if request.method == 'POST':
         # Get form data
@@ -2191,7 +2224,7 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic=profile_pic)
+            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic_url=profile_pic_url)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
@@ -2328,7 +2361,12 @@ def saved():
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result[0] if result else None
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
 
     cur.close()
     conn.close()
@@ -2342,7 +2380,7 @@ def saved():
         requests=requests,
         verified=current_user.verified,
         comments_by_image=all_comments,  # just pass the original directly
-        profile_pic=profile_pic
+        profile_pic_url=profile_pic_url
     )
 
 @app.route('/save/<int:image_id>', methods=['POST'])

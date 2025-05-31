@@ -5,7 +5,7 @@
     <div class="post-title">Post</div>
     <div class="tagline-wrapper">
         <div class="tagline-wrapper-2">
-            <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <img src="{{ profile_pic_url }}" class="pfp">
             <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
         </div>
         <button class="image-button" id="openOverlay"><span
@@ -19,7 +19,7 @@
         <div class="overlay-title">Post</div>
         <div class="scrollable-div no-scroll" id="scrollableDiv">
             <div class="profile-post">
-                <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
+                <img src="{{ profile_pic_url }}" class="pfp">
                 <div class="profile-name-date">
                     <div class="username">Lorem ipsum dolor</div>
                     <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
@@ -215,7 +215,7 @@
             {% endif %}
         </div>
         <div class="comment-bar">
-            <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <img src="{{ profile_pic_url }}" class="pfp">
             <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
                 <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment"
                     required>
