@@ -70,7 +70,7 @@
 {% for category in categories %}
   <label>
     <input type="checkbox" name="preferences[]" value="{{ category }}"
-      {% if category in user.preferences.split(' , ') %}checked{% endif %}>
+      {% if category in user.preferences.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />
 {% endfor %}

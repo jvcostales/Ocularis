@@ -1222,6 +1222,25 @@ def get_comment_likes(comment_id):
         'like_count': len(likers)
     })
 
+def get_country_name(code):
+    for c in app.config['COUNTRIES']:
+        if c['iso2'].upper() == (code or '').upper():
+            return c['name']
+    return None
+
+def get_state_name(country_code, state_code):
+    for s in app.config['STATES']:
+        if s['country_code'].upper() == (country_code or '').upper() and s['state_code'] == state_code:
+            return s['name']
+    return None
+
+def get_city_name(country_code, state_code, city_code):
+    for city in app.config['CITIES']:
+        if (city['country_code'].upper() == (country_code or '').upper() and
+            city['state_code'] == state_code and
+            (city.get('city_code', city['name']) == city_code)):
+            return city['name']
+    return None
 
 @app.route('/profile/<int:user_id>')
 @login_required
@@ -1395,8 +1414,18 @@ def profile(user_id):
         outgoing_request is not None
     )
 
-    location = ", ".join(filter(None, [city, state, country]))
+    # Assuming you have these codes from the DB
+    country_code = user.country  # e.g., 'US'
+    state_code = user.state      # e.g., 'NY'
+    city_code = user.city        # e.g., 'NYC'
 
+    # Lookup names from your config lists
+    city_name = get_city_name(country_code, state_code, city_code)
+    state_name = get_state_name(country_code, state_code)
+    country_name = get_country_name(country_code)
+
+    # Build display string with actual names
+    location = ", ".join(filter(None, [city_name, state_name, country_name]))
 
     return render_template(
         "profile.html",
