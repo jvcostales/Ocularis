@@ -673,6 +673,26 @@
                 let allStates = [];
                 let allCities = [];
 
+                // Add this block to fetch countries and pre-select user's country
+                fetch('/api/get-countries')
+                    .then(res => res.json())
+                    .then(countries => {
+                        const userCountry = "{{ user.country or '' }}".toUpperCase();
+                        countrySelect.innerHTML = '<option value="">Select Country</option>';
+                        countries.forEach(c => {
+                            const option = document.createElement('option');
+                            option.value = c.iso2;
+                            option.textContent = c.name;
+                            option.dataset.iso = c.iso2;
+                            if (c.iso2.toUpperCase() === userCountry) {
+                                option.selected = true;
+                            }
+                            countrySelect.appendChild(option);
+                        });
+                        // Trigger change event so states load for selected country
+                        countrySelect.dispatchEvent(new Event('change'));
+                    });
+
                 fetch('/api/get-states')
                     .then(res => res.json())
                     .then(data => {
