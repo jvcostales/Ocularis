@@ -35,11 +35,9 @@
         <select id="country" name="country" required>
             <option value="">Select Country</option>
             {% for c in countries %}
-            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|upper==c.iso2|trim|upper
+            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.name|trim|lower
                 %}selected{% endif %}>
                 {{ c.name }}
-            </option>
-            {{ c.name }}
             </option>
             {% endfor %}
         </select>
@@ -75,7 +73,7 @@
     {% for category in categories %}
     <label>
         <input type="checkbox" name="preferences[]" value="{{ category }}"
-        {% if category in user.preferences.split(', ') %}checked{% endif %}>
+        {% if category in user.preferences.split(' , ') %}checked{% endif %}>
         {{ category }}
     </label><br />
     {% endfor %}
