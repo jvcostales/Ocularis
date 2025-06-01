@@ -2224,7 +2224,13 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic_url=profile_pic_url)
+            with open('data/states.json') as f:
+                all_states = json.load(f)
+
+            with open('data/cities.json') as f:
+                all_cities = json.load(f)
+
+            return render_template('settings.html', all_states=all_states, all_cities=all_cities, user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic_url=profile_pic_url)
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
