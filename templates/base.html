@@ -1295,7 +1295,6 @@
             }
 
             const profileForm = document.getElementById('profileForm');
-
             if (profileForm) {
                 console.log('Form found');
 
@@ -1305,10 +1304,12 @@
 
                     const formData = new FormData(this);
 
-                    // Debug: log all form data entries
+                    // Append all form data into a single array
+                    const dataArray = [];
                     for (const [key, value] of formData.entries()) {
-                        console.log(`Form field: ${key} =`, value);
+                        dataArray.push([key, value]);
                     }
+                    console.log('Form data as array:', dataArray);
 
                     try {
                         console.log('Sending data to the server...');
@@ -1318,22 +1319,12 @@
                         });
 
                         console.log('Response received:', response);
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
                         const result = await response.json();
                         console.log('Parsed result:', result);
 
                         if (result.success) {
                             console.log('Profile saved successfully');
-                            // Hide modal safely (check if modal exists)
-                            const profileModal = document.getElementById('profileModal');
-                            if (profileModal) {
-                                profileModal.style.display = 'none';
-                            }
-                            // Redirect user
+                            document.getElementById('profileModal').style.display = 'none';
                             window.location.href = result.redirect_url;
                         } else {
                             console.log('Something went wrong while saving the profile');
@@ -1348,31 +1339,26 @@
                 console.log('Form not found');
             }
 
-            const notifyBtn = document.getElementById('notify-btn');
-            if (notifyBtn) {
-                notifyBtn.addEventListener('click', function () {
-                    const recipientId = this.getAttribute('data-recipient-id');
+            document.getElementById('notify-btn').addEventListener('click', function () {
+                const recipientId = this.getAttribute('data-recipient-id');
 
-                    fetch('/notify/collab_check', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ recipient_id: recipientId })
+                fetch('/notify/collab_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ recipient_id: recipientId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert('Error: ' + data.error);
+                        } else {
+                            alert(data.message);
+                        }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.error) {
-                                alert('Error: ' + data.error);
-                            } else {
-                                alert(data.message);
-                            }
-                        })
-                        .catch(err => alert('Request failed: ' + err));
-                });
-            } else {
-                console.log('Notify button not found');
-            }
+                    .catch(err => alert('Request failed: ' + err));
+            });
 
 
 
