@@ -67,6 +67,7 @@
 <div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
+            <p>DEBUG: {{ viewed_user_profile_pic_url }}</p>
             <img src="{{ viewed_user_profile_pic_url }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username">
