@@ -2092,14 +2092,13 @@ def settings():
     cur = conn.cursor()
 
     # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
 
     if result and result[0] and result[0] != 'pfp.jpg':
         profile_pic_url = url_for('profile_pics', filename=result[0])
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
-
 
     if request.method == 'POST':
         # Get form data
@@ -2174,9 +2173,17 @@ def settings():
             user_id
         ))
 
+        conn.commit()
+
+        # Assign user_dict for fetching selected_state_name after update
+        user_dict = {
+            'country': country,
+            'state': state
+        }
+
+        # Fetch selected_state_name if possible
         selected_state_name = None
         if user_dict['state'] and user_dict['country']:
-            cur = conn.cursor()
             cur.execute("""
                 SELECT name FROM states
                 WHERE state_code = %s AND country_code = %s
@@ -2185,9 +2192,7 @@ def settings():
             result = cur.fetchone()
             if result:
                 selected_state_name = result[0]
-            cur.close()
 
-        conn.commit()
         cur.close()
         conn.close()
 
@@ -2202,9 +2207,8 @@ def settings():
             FROM users WHERE id = %s
         """, (user_id,))
         user = cur.fetchone()
-        cur.close()
-        conn.close()
 
+        # Prepare user_dict safely
         if user:
             user_dict = {
                 'first_name': user[0],
@@ -2223,6 +2227,18 @@ def settings():
                 'telegram': user[13]
             }
 
+            # Get selected_state_name based on user country/state
+            selected_state_name = None
+            if user_dict['state'] and user_dict['country']:
+                cur.execute("""
+                    SELECT name FROM states
+                    WHERE state_code = %s AND country_code = %s
+                    LIMIT 1
+                """, (user_dict['state'], user_dict['country']))
+                result = cur.fetchone()
+                if result:
+                    selected_state_name = result[0]
+
             countries = app.config['COUNTRIES']  # List of countries for dropdown
 
             categories = [
@@ -2237,10 +2253,25 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', selected_state_name=selected_state_name, user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic_url=profile_pic_url)
+            cur.close()
+            conn.close()
+
+            return render_template(
+                'settings.html',
+                selected_state_name=selected_state_name,
+                user=user_dict,
+                countries=countries,
+                categories=categories,
+                experience_levels=experience_levels,
+                verified=current_user.verified,
+                profile_pic_url=profile_pic_url
+            )
         else:
+            cur.close()
+            conn.close()
             flash("User not found.", "danger")
             return redirect(url_for('login'))
+
 
 def save_post(user_id, image_id, conn):
     with conn.cursor() as cur:
