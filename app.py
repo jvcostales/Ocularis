@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 from psycopg2.extras import RealDictCursor
+from psycopg2 import extras
 import uuid
 
 app = Flask(__name__)
@@ -2111,8 +2112,11 @@ def settings():
         city = request.form.get('city')         # city code
         experience_level = request.form.get('experience_level')
 
-        skills_list = request.form.getlist('skills[]')
-        preferences_list = request.form.getlist('preferences[]')
+        skills_list = request.form.getlist('skills[]')  # list of strings
+        preferences_list = request.form.getlist('preferences[]')  # list of strings
+
+        skills_str = ', '.join(skills_list) if skills_list else ''
+        preferences_str = ', '.join(preferences_list) if preferences_list else ''
 
         facebook = request.form.get('facebook')
         instagram = request.form.get('instagram')
@@ -2138,7 +2142,7 @@ def settings():
                 conn.close()
                 return redirect(url_for('settings'))
 
-        # Update user data (assuming skills, preferences stored as arrays in DB)
+        # Update user data (storing skills and preferences as comma-separated strings)
         cur.execute("""
             UPDATE users SET
                 first_name = %s,
@@ -2163,8 +2167,8 @@ def settings():
             country,
             state,
             city,
-            skills_list,
-            preferences_list,
+            skills_str,
+            preferences_str,
             experience_level,
             facebook,
             instagram,
