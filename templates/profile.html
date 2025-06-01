@@ -67,7 +67,7 @@
 <div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="..\static\pfp.jpg" class="pfp">
+            <img src="{{ viewed_user_profile_pic_url }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">
