@@ -58,40 +58,32 @@
         </select>
     </label><br />
 
-    {# Parse PostgreSQL-style array strings into lists #}
-    {% set skills = user.skills.strip('{}').replace('"', '').split(',') %}
-    {% set preferences = user.preferences.strip('{}').replace('"', '').split(',') %}
-
-    {# Optionally trim whitespace from each item (recommended) #}
-    {% set skills = skills | map('trim') | list %}
-    {% set preferences = preferences | map('trim') | list %}
-
     <label>Skills:</label><br />
     {% for category in categories %}
     <label>
-        <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in skills %}checked{% endif %}>
-        {{ category }}
-    </label><br />
+        <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
+    {{ category }}
+  </label><br />
     {% endfor %}
 
     <label>Preferences:</label><br />
     {% for category in categories %}
     <label>
-        <input type="checkbox" name="preferences[]" value="{{ category }}" {% if category in preferences %}checked{%
-            endif %}>
+        <input type="checkbox" name="preferences[]" value="{{ category }}"
+        {% if category in user.preferences.split(', ') %}checked{% endif %}>
         {{ category }}
     </label><br />
     {% endfor %}
 
-    <label>Experience Level:
-        <select name="experience_level">
-            {% for level_id, label in experience_levels %}
-            <option value="{{ level_id }}" {% if level_id==user.experience_level %}selected{% endif %}>
+<label>Experience Level:
+    <select name="experience_level">
+        {% for level_id, label in experience_levels %}
+            <option value="{{ level_id }}" {% if level_id == user.experience_level %}selected{% endif %}>
                 {{ label }}
             </option>
-            {% endfor %}
-        </select>
-    </label><br />
+        {% endfor %}
+    </select>
+</label><br />
 
 
     <h3>Linked Accounts</h3>
