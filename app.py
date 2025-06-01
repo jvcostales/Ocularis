@@ -1246,11 +1246,6 @@ def profile(user_id):
     country = user[5]
     viewed_user_profile_pic = user[6]
 
-    if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg':
-        viewed_user_profile_pic_url = url_for('profile_pics', filename=viewed_user_profile_pic)
-    else:
-        viewed_user_profile_pic_url = url_for('static', filename='pfp.jpg')
-
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
         SELECT COUNT(*) FROM friends 
