@@ -979,9 +979,29 @@
                                 return;
                             }
 
-                            const html = `<ul>` + data.likers
-                                .map(liker => `<li>${liker.name} (at ${new Date(liker.timestamp).toLocaleString()})</li>`)
-                                .join('') + `</ul>`;
+                            const html = data.likers.length > 0 ?
+                                data.likers.map(liker => `
+        <div class="profile-follow-wrapper">
+            <div class="profile-post-likes">
+                <img src="/static/pfp.jpg" class="pfp">
+                <div class="profile-name-date">
+                    <div class="username">${liker.name}</div>
+                    <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    })}</div>
+                </div>
+            </div>
+            <button class="follow-button">Befriend</button>
+        </div>
+    `).join('')
+                                : `
+        <div class="likes-empty">
+            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
+            <div class="oops">Oops!</div>
+            <div class="nothing">Nothing to show here at the moment.</div>
+        </div>
+    `;
 
                             scrollableDiv.innerHTML = html;
                         })
