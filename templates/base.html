@@ -680,7 +680,7 @@
 
                         // Populate states for pre-selected country (on page load)
                         const selectedCountryIso = countrySelect.value;
-                        const selectedStateCode = "{{ user.state }}";
+                        const selectedStateCode = "{{ user.state | default('') }}";
 
                         if (selectedCountryIso) {
                             const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
