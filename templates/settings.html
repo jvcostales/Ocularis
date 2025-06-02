@@ -35,7 +35,7 @@
         <select id="country" name="country" required>
             <option value="">Select Country</option>
             {% for c in countries %}
-            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.name|trim|lower
+            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.iso2|trim|lower
                 %}selected{% endif %}>
                 {{ c.name }}
             </option>

@@ -677,7 +677,25 @@
                     .then(res => res.json())
                     .then(data => {
                         allStates = data;
-                        console.log('Fetched States:', allStates);
+
+                        // Populate states for pre-selected country (on page load)
+                        const selectedCountryIso = countrySelect.value;
+                        const selectedStateCode = "{{ user.state }}";
+
+                        if (selectedCountryIso) {
+                            const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
+                            stateSelect.innerHTML = '<option value="">Select State</option>';
+
+                            filteredStates.forEach(state => {
+                                const option = document.createElement('option');
+                                option.value = state.state_code;
+                                option.textContent = state.name;
+                                if (state.state_code === selectedStateCode) {
+                                    option.selected = true;
+                                }
+                                stateSelect.appendChild(option);
+                            });
+                        }
                     });
 
                 fetch('/api/get-cities')
