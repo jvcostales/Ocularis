@@ -678,9 +678,7 @@
                     .then(data => {
                         allStates = data;
 
-                        // Populate states for pre-selected country (on page load)
                         const selectedCountryIso = countrySelect.value;
-                        const selectedStateCode = "{{ user.state }}";
 
                         if (selectedCountryIso) {
                             const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
