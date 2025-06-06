@@ -2,7 +2,8 @@
 {% block content %}
 
 <div class="profile-card">
-    <img src="..\static\pdsheader.png" alt="Banner" class="banner">
+    <img src="{{ url_for('cover_photos', filename=viewed_user_profile_cover) if viewed_user_profile_cover else url_for('static', filename='profile_cover.png') }}"
+        alt="Banner" class="banner">
     <div class="info-button-wrapper">
         <div class="profile-info">
             <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}"
@@ -67,7 +68,8 @@
 <div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
+            <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}"
+                class="pfp">
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">

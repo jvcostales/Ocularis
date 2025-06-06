@@ -276,6 +276,7 @@ def signup():
         password = generate_password_hash(raw_password)
         token = secrets.token_urlsafe(32)
         default_profile_pic = "pfp.jpg"
+        default_cover_photo = "default_cover.jpg"
 
         try:
             conn = psycopg2.connect(
@@ -292,12 +293,12 @@ def signup():
             if cur.fetchone():
                 return "Email already exists."
 
-            # Insert user with default profile pic
+            # Insert user with default profile pic and cover photo
             cur.execute("""
-                INSERT INTO users (first_name, last_name, email, password, verification_token, verified, profile_pic)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO users (first_name, last_name, email, password, verification_token, verified, profile_pic, cover_photo)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
-            """, (first_name, last_name, email, password, token, False, default_profile_pic))
+            """, (first_name, last_name, email, password, token, False, default_profile_pic, default_cover_photo))
 
             user_id = cur.fetchone()[0]
             conn.commit()
@@ -1238,13 +1239,14 @@ def profile(user_id):
     cur = conn.cursor()
     
     # Fetch user details
-    cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic FROM users WHERE id = %s", (user_id,))
+    cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
     role = user[2]
     city = user[3]
     state = user[4]
     country = user[5]
     viewed_user_profile_pic = user[6]
+    viewed_user_profile_cover = user[7]
 
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
@@ -1420,7 +1422,8 @@ def profile(user_id):
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
         profile_pic_url=profile_pic_url,
-        viewed_user_profile_pic=viewed_user_profile_pic
+        viewed_user_profile_pic=viewed_user_profile_pic,
+        viewed_user_profile_cover=viewed_user_profile_cover
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
@@ -2065,14 +2068,18 @@ def browse_users():
         
 UPLOAD_FOLDER = '/var/data'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['COVER_PHOTO_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 @app.route('/profile_pics/<filename>')
 def profile_pics(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/cover_photos/<filename>')
+def cover_photos(filename):
+    return send_from_directory(app.config['COVER_PHOTO_FOLDER'], filename)
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -2091,46 +2098,41 @@ def settings():
     )
     cur = conn.cursor()
 
-    # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    # Get profile and cover photo filenames
+    cur.execute("SELECT profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
 
-    if result and result[0] and result[0] != 'pfp.jpg':
-        profile_pic_url = url_for('profile_pics', filename=result[0])
-    else:
-        profile_pic_url = url_for('static', filename='pfp.jpg')
+    # Set profile pic URL
+    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
+    # Set cover photo URL
+    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] else url_for('static', filename='default_cover.jpg')
 
     if request.method == 'POST':
         # Get form data
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
-        country = request.form.get('country')   # should be country code (iso2)
-        state = request.form.get('state')       # state code
-        city = request.form.get('city')         # city code
+        country = request.form.get('country')
+        state = request.form.get('state')
+        city = request.form.get('city')
         experience_level = request.form.get('experience_level')
-
         skills_list = request.form.getlist('skills[]')
         preferences_list = request.form.getlist('preferences[]')
-
         facebook = request.form.get('facebook')
         instagram = request.form.get('instagram')
         x = request.form.get('x')
         linkedin = request.form.get('linkedin')
         telegram = request.form.get('telegram')
 
+        # Handle profile picture upload
         profile_pic = request.files.get('profile_pic')
-        profile_pic_filename = None
-
         if profile_pic and profile_pic.filename != '':
             if allowed_file(profile_pic.filename):
                 ext = profile_pic.filename.rsplit('.', 1)[1].lower()
                 profile_pic_filename = f"pfp_user_{user_id}.{ext}"
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename)
                 profile_pic.save(filepath)
-
-                # Update profile_pic filename in DB
                 cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (profile_pic_filename, user_id))
             else:
                 flash("Invalid profile picture file type.", "danger")
@@ -2138,7 +2140,22 @@ def settings():
                 conn.close()
                 return redirect(url_for('settings'))
 
-        # Update user data (assuming skills, preferences stored as arrays in DB)
+        # Handle cover photo upload
+        cover_photo = request.files.get('cover_photo')
+        if cover_photo and cover_photo.filename != '':
+            if allowed_file(cover_photo.filename):
+                ext = cover_photo.filename.rsplit('.', 1)[1].lower()
+                cover_photo_filename = f"cover_user_{user_id}.{ext}"
+                cover_filepath = os.path.join(app.config['COVER_PHOTO_FOLDER'], cover_photo_filename)
+                cover_photo.save(cover_filepath)
+                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (cover_photo_filename, user_id))
+            else:
+                flash("Invalid cover photo file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
+
+        # Update user info
         cur.execute("""
             UPDATE users SET
                 first_name = %s,
@@ -2157,20 +2174,9 @@ def settings():
                 telegram = %s
             WHERE id = %s
         """, (
-            first_name,
-            last_name,
-            role,
-            country,
-            state,
-            city,
-            skills_list,
-            preferences_list,
-            experience_level,
-            facebook,
-            instagram,
-            x,
-            linkedin,
-            telegram,
+            first_name, last_name, role, country, state, city,
+            skills_list, preferences_list, experience_level,
+            facebook, instagram, x, linkedin, telegram,
             user_id
         ))
 
@@ -2182,7 +2188,7 @@ def settings():
         return redirect(url_for('settings'))
 
     else:
-        # GET: fetch user info + countries list
+        # GET: fetch user info
         cur.execute("""
             SELECT first_name, last_name, role, country, state, city, skills, preferences,
                    experience_level, facebook, instagram, x, linkedin, telegram
@@ -2210,7 +2216,7 @@ def settings():
                 'telegram': user[13]
             }
 
-            countries = app.config['COUNTRIES']  # List of countries for dropdown
+            countries = app.config['COUNTRIES']
 
             categories = [
                 "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
@@ -2224,10 +2230,20 @@ def settings():
                 (4, "Expert")
             ]
 
-            return render_template('settings.html', user=user_dict, countries=countries, categories=categories, experience_levels=experience_levels, verified=current_user.verified, profile_pic_url=profile_pic_url)
+            return render_template(
+                'settings.html',
+                user=user_dict,
+                countries=countries,
+                categories=categories,
+                experience_levels=experience_levels,
+                verified=current_user.verified,
+                profile_pic_url=profile_pic_url,
+                cover_photo_url=cover_photo_url
+            )
         else:
             flash("User not found.", "danger")
             return redirect(url_for('login'))
+
 
 def save_post(user_id, image_id, conn):
     with conn.cursor() as cur:

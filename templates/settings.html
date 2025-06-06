@@ -14,12 +14,15 @@
 {% endwith %}
 
 <script>
-const selectedStateCode = "{{ user.state }}";
+    const selectedStateCode = "{{ user.state }}";
 </script>
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
     <label for="profile_pic">Profile Picture:</label><br />
     <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
+
+    <label for="cover_photo">Cover Photo:</label><br />
+    <input id="cover_photo" type="file" name="cover_photo" accept="image/*" /><br /><br />
 
     <label>First Name:
         <input type="text" name="first_name" value="{{ user.first_name }}" required />
@@ -77,7 +80,7 @@ const selectedStateCode = "{{ user.state }}";
     {% for category in categories %}
     <label>
         <input type="checkbox" name="preferences[]" value="{{ category }}"
-        {% if category in user.preferences.split(', ') %}checked{% endif %}>
+        {% if category in user.preferences.split(' , ') %}checked{% endif %}>
         {{ category }}
     </label><br />
     {% endfor %}
