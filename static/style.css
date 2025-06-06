@@ -201,6 +201,8 @@ input[type="url"]::placeholder {
         width: 56px;
         height: 56px;
         border-radius: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     .post-title {
@@ -1412,6 +1414,8 @@ input[type="url"]::placeholder {
         height: 98px;
         border-radius: 100px;
         margin-bottom: 24px;
+        object-fit: cover;
+        object-position: center;
     }
 
     .heading {
@@ -2145,7 +2149,10 @@ input[type="url"]::placeholder {
         height: 56px;
         border-radius: 100%;
         display: block;
+        object-fit: cover;
+        object-position: center;
     }
+
 
     .post-title {
         font-size: 1.125rem;
@@ -3092,6 +3099,8 @@ input[type="url"]::placeholder {
         height: 98px;
         border-radius: 100px;
         margin-bottom: 24px;
+        object-fit: cover;
+        object-position: center;
     }
 
     .heading {
@@ -3819,6 +3828,8 @@ input[type="url"]::placeholder {
         height: 56px;
         border-radius: 100%;
         display: block;
+        object-fit: cover;
+        object-position: center;
     }
 
     .post-title {
@@ -4768,6 +4779,8 @@ input[type="url"]::placeholder {
         height: 98px;
         border-radius: 100px;
         margin-bottom: 24px;
+        object-fit: cover;
+        object-position: center;
     }
 
     .heading {
