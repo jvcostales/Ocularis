@@ -234,8 +234,8 @@
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
             <div class="icon-grid">
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ post_url | urlencode }}&quote={{ ('Check out my post: ' ~ image[2]) | urlencode }}"
-                    target="_blank" rel="noopener noreferrer">
+                <a href="#"
+                    onclick="shareWithQuote('{{ post_url }}', 'Check out my post: {{ image[2] }}'); return false;">
                     <img src="{{ url_for('static', filename='fb.png') }}" class="fb">
                 </a>
                 <img src="..\static\ig.png" class="ig">

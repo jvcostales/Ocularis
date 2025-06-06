@@ -834,9 +834,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })}</div>
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>
@@ -987,9 +987,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })}</div>
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>
@@ -1422,6 +1422,18 @@
         });
 
 
+    </script>
+
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+    <script>
+        function shareWithQuote(url, quote) {
+            FB.ui({
+                method: 'share',
+                href: url,
+                quote: quote
+            }, function (response) { });
+        }
     </script>
 </body>
 
