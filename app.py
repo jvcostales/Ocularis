@@ -881,8 +881,6 @@ def view_post(image_id):
         cur.close()
         conn.close()
 
-    post_url = url_for('view_post', image_id=image_id, _external=True)
-
     return render_template(
         'post.html',
         image=image,
@@ -893,8 +891,7 @@ def view_post(image_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url,
-        post_url=post_url
+        profile_pic_url=profile_pic_url
     )
 
 @app.route('/logout')
