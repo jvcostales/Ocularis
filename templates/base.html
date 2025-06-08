@@ -500,12 +500,6 @@
     </div>
 
     <script>
-        function shareOnFacebook(imageId) {
-            const postUrl = `${window.location.origin}/post/${imageId}`;
-            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}&quote=${encodeURIComponent("Check out my post on Ocularis:")}`;
-            window.open(shareUrl, '_blank');
-        }
-
         let currentStep = 1;
         const totalSteps = 7;
 
@@ -840,9 +834,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                })}</div>
+                        month: 'short',
+                        day: 'numeric'
+                    })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>
@@ -993,9 +987,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                })}</div>
+                        month: 'short',
+                        day: 'numeric'
+                    })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>

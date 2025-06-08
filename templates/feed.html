@@ -67,8 +67,7 @@
 <div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}"
-                class="pfp">
+            <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">
@@ -156,8 +155,7 @@
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
-                        <img src="{{ url_for('profile_pics', filename=comment[7]) if comment[7] else url_for('static', filename='pfp.jpg') }}"
-                            class="pfp">
+                        <img src="{{ url_for('profile_pics', filename=comment[7]) if comment[7] else url_for('static', filename='pfp.jpg') }}" class="pfp">
                         <div class="profile-name-date">
                             <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
                                     comment[2] }}</a></div>
@@ -234,8 +232,7 @@
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
             <div class="icon-grid">
-                <a href="javascript:void(0);" onclick="shareOnFacebook({{ image.image_id }})"><img
-                        src="..\static\fb.png" class="fb"></a>
+                <img src="..\static\fb.png" class="fb">
                 <img src="..\static\ig.png" class="ig">
                 <img src="..\static\x.png" class="x">
                 <img src="..\static\gmail.png" class="gmail">
