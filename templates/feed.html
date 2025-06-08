@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+
+{% block head %}
+{{ super() }} {# keeps the default head content too #}
+<meta property="og:title" content="Check my post on Ocularis!" />
+<meta property="og:url" content="{{ url_for('view_post', image_id=image[0], _external=True) }}" />
+{% endblock %}
+
 {% block content %}
 
 <div class="post">
@@ -235,8 +242,10 @@
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
             <div class="icon-grid">
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ post_url }}" target="_blank"
-                    rel="noopener noreferrer"><img src="..\static\fb.png" class="fb"></a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ post_urls[image[0]] }}" target="_blank"
+                    rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename='fb.png') }}" class="fb">
+                </a>
                 <img src="..\static\ig.png" class="ig">
                 <img src="..\static\x.png" class="x">
                 <img src="..\static\gmail.png" class="gmail">
