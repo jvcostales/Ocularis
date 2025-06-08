@@ -626,8 +626,6 @@ def feed():
         for image in images:
             author_profile_pic = image[11]
 
-        post_urls = {img[0]: url_for('view_post', image_id=img[0], _external=True) for img in images}
-
         # Fetch comments with commenter profile picture
         cur.execute("""
             SELECT 
@@ -764,8 +762,7 @@ def feed():
         today=today,
         saved_image_ids=saved_image_ids,
         profile_pic_url=profile_pic_url,
-        author_profile_pic=author_profile_pic,
-        post_urls=post_urls
+        author_profile_pic=author_profile_pic
     )
 
 @app.route('/post/<int:image_id>')
@@ -2109,7 +2106,7 @@ def settings():
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
     # Set cover photo URL
-    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[1] != 'default_cover.png' else url_for('static', filename='default_cover.png')
+    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[] != 'default_cover.png' else url_for('static', filename='default_cover.png')
 
     if request.method == 'POST':
         # Get form data
