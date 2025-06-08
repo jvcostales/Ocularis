@@ -64,6 +64,7 @@
 <!--bakit naka-center ung post 1 kapag un lang ung content-->
 <!--fix class names-->
 {% for image in images %}
+{% set post_url = post_urls[image[0]] %}
 <div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
@@ -234,10 +235,8 @@
         <div class="share-wrapper">
             <div class="share-via">Share via</div>
             <div class="icon-grid">
-                <a href="#"
-                    onclick="shareWithQuote('{{ post_url }}', 'Check out my post: {{ image[2] }}'); return false;">
-                    <img src="{{ url_for('static', filename='fb.png') }}" class="fb">
-                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ post_url }}" target="_blank"
+                    rel="noopener noreferrer"><img src="..\static\fb.png" class="fb"></a>
                 <img src="..\static\ig.png" class="ig">
                 <img src="..\static\x.png" class="x">
                 <img src="..\static\gmail.png" class="gmail">

@@ -12,6 +12,9 @@
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <meta property="og:url" content="{{ url_for('view_post', image_id=image[0], _external=True) }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Check my post on Ocularis!" />
 </head>
 
 <body>
@@ -1422,18 +1425,6 @@
         });
 
 
-    </script>
-
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-
-    <script>
-        function shareWithQuote(url, quote) {
-            FB.ui({
-                method: 'share',
-                href: url,
-                quote: quote
-            }, function (response) { });
-        }
     </script>
 </body>
 
