@@ -2109,7 +2109,7 @@ def settings():
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
     # Set cover photo URL
-    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[] != 'default_cover.png' else url_for('static', filename='default_cover.png')
+    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[1] != 'default_cover.png' else url_for('static', filename='default_cover.png')
 
     if request.method == 'POST':
         # Get form data
