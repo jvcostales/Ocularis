@@ -822,7 +822,11 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.likers.length === 0) {
-                                scrollableDiv.innerHTML = `<p>No likes yet.</p>`;
+                                scrollableDiv.innerHTML = `<div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    </div>`;
                                 return;
                             }
 
@@ -834,9 +838,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })}</div>
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>
@@ -975,7 +979,11 @@
                         })
                         .then(data => {
                             if (!data.likers || data.likers.length === 0) {
-                                scrollableDiv.innerHTML = `<p>No likes yet.</p>`;
+                                scrollableDiv.innerHTML = `<div class="notifs-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    </div>`;
                                 return;
                             }
 
@@ -987,9 +995,9 @@
                 <div class="profile-name-date">
                     <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    })}</div>
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}</div>
                 </div>
             </div>
             <button class="follow-button">Befriend</button>
