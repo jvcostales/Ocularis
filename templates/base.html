@@ -839,9 +839,9 @@
                                 data.likers.map(liker => `
         <div class="profile-follow-wrapper">
             <div class="profile-post-likes">
-                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
+                <img src="/static/pfp.jpg" class="pfp">
                 <div class="profile-name-date">
-                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
+                    <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
@@ -906,9 +906,9 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <a href="/profile/${comment.user_id}"><img src="{{ profile_pic_url }}" class="pfp"></a>
+        <img src="{{ profile_pic_url }}" class="pfp">
         <div class="profile-name-date">
-            <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
+            <div class="username">${comment.name}</div>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
         </div>
     </div>
@@ -996,9 +996,9 @@
                                 data.likers.map(liker => `
         <div class="profile-follow-wrapper">
             <div class="profile-post-likes">
-                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
+                <img src="/static/pfp.jpg" class="pfp">
                 <div class="profile-name-date">
-                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
+                    <div class="username">${liker.name}</div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'

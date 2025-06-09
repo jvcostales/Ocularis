@@ -976,7 +976,7 @@ def get_image_likes(image_id):
 
     try:
         cur.execute("""
-            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
             FROM likes l
             JOIN users u ON l.user_id = u.id
             WHERE l.image_id = %s
@@ -984,14 +984,7 @@ def get_image_likes(image_id):
         """, (image_id,))
         likes = cur.fetchall()
 
-        likers = [
-            {
-                'id': row[0],
-                'name': row[1],
-                'timestamp': row[2].isoformat()
-            }
-            for row in likes
-        ]
+        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
     finally:
         cur.close()
         conn.close()
@@ -1213,7 +1206,7 @@ def get_comment_likes(comment_id):
             return jsonify({'error': 'Comment not found'}), 404
 
         cur.execute("""
-            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
             FROM comment_likes cl
             JOIN users u ON cl.user_id = u.id
             WHERE cl.comment_id = %s
@@ -1221,14 +1214,7 @@ def get_comment_likes(comment_id):
         """, (comment_id,))
         likes = cur.fetchall()
 
-        likers = [
-            {
-                'id': row[0],
-                'name': row[1],
-                'timestamp': row[2].isoformat()
-            }
-            for row in likes
-        ]
+        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
