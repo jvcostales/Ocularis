@@ -123,9 +123,9 @@
                         Notifs
                     </div>
                     {% if notifications %}
-                    {% for display_name, action, image_id, created_at, actor_id in notifications %}
+                    {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
                     <div class="notif-bar">
-                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="..\static\pfp.jpg"
+                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
                                 class="pfp img-notif-request"></a>
                         <div class="notif-details">
                             <div class="notif-text">
