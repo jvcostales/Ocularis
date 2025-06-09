@@ -1251,17 +1251,6 @@ def profile(user_id):
     viewed_user_profile_pic = user[6]
     viewed_user_profile_cover = user[7]
 
-    # Build lookup dicts:
-    countries_dict = {c['iso2']: c['name'] for c in app.config['COUNTRIES']}
-    states_dict = {}
-    for country_code, states_list in app.config['STATES'].items():
-        states_dict[country_code] = {s['state_code']: s['name'] for s in states_list}
-
-    country_name = countries_dict.get(country, country)
-    state_name = states_dict.get(country, {}).get(state, state)
-
-    location = ", ".join(filter(None, [city, state_name, country_name]))
-
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
         SELECT COUNT(*) FROM friends 
@@ -1269,20 +1258,21 @@ def profile(user_id):
     """, (user_id, user_id))
     friend_count = cur.fetchone()[0]
 
+
     # Fetch images with author and collaborator names for a specific user
     cur.execute("""
         SELECT 
-            images.image_id,
-            images.image_url,
-            images.caption,
-            COALESCE(like_count, 0),
-            images.id,
-            author.first_name,
-            author.last_name,
-            images.created_at,
-            collaborator.id,
-            collaborator.first_name,
-            collaborator.last_name
+            images.image_id,              -- 0
+            images.image_url,             -- 1
+            images.caption,               -- 2
+            COALESCE(like_count, 0),      -- 3
+            images.id,                    -- 4 (author's user ID)
+            author.first_name,            -- 5
+            author.last_name,             -- 6
+            images.created_at,            -- 7
+            collaborator.id,              -- 8 (collaborator's user ID)
+            collaborator.first_name,      -- 9
+            collaborator.last_name        -- 10
         FROM images
         JOIN users AS author ON images.id = author.id
         LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
@@ -1296,6 +1286,7 @@ def profile(user_id):
         ORDER BY images.created_at DESC;
     """, (user_id, user_id))
     images = cur.fetchall()
+
 
     # Fetch comments on the user's posts
     cur.execute("""
@@ -1324,6 +1315,7 @@ def profile(user_id):
         WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
     """, (current_user.id, user_id))
     outgoing_request = cur.fetchone()
+
 
     # INCOMING (They sent a request)
     cur.execute("""
@@ -1360,7 +1352,7 @@ def profile(user_id):
         comment_likes = cur.fetchall()
         comment_likes_data[comment_id] = comment_likes
 
-    # Fetch notifications
+                # Fetch notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
                notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
@@ -1387,24 +1379,30 @@ def profile(user_id):
     """, (user_id,))
     saved_image_ids = [row[0] for row in cur.fetchall()]
 
-    # Get current user's profile_pic
+    # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
+
     if result and result[0] and result[0] != 'pfp.jpg':
         profile_pic_url = url_for('profile_pics', filename=result[0])
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
 
+    
     cur.close()
     conn.close()
 
+    # Determine whether to disable "Add Friend" button
     disable_add_friend = (
         is_friend or
         current_user_id == user_id or
-        incoming_request is not None or
+        incoming_request is not None or # you cannot add if they already sent you a request
         outgoing_request is not None
     )
-    
+
+    location = ", ".join(filter(None, [city, state, country]))
+
+
     return render_template(
         "profile.html",
         current_page='profile',
