@@ -203,6 +203,15 @@ input[type="url"]::placeholder {
         border-radius: 100%;
         object-fit: cover;
         object-position: center;
+        cursor: pointer;
+    }
+
+    .pfp:hover {
+        filter: brightness(75%);
+    }
+
+    .pfp:active {
+        filter: brightness(60%);
     }
 
     .post-title {
@@ -2151,8 +2160,16 @@ input[type="url"]::placeholder {
         display: block;
         object-fit: cover;
         object-position: center;
+        cursor: pointer;
     }
 
+    .pfp:hover {
+        filter: brightness(75%);
+    }
+
+    .pfp:active {
+        filter: brightness(60%);
+    }
 
     .post-title {
         font-size: 1.125rem;
@@ -3860,6 +3877,15 @@ input[type="url"]::placeholder {
         display: block;
         object-fit: cover;
         object-position: center;
+        cursor: pointer;
+    }
+
+    .pfp:hover {
+        filter: brightness(75%);
+    }
+
+    .pfp:active {
+        filter: brightness(60%);
     }
 
     .post-title {
