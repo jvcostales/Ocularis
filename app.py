@@ -766,8 +766,11 @@ def feed():
     )
 
 @app.route('/post/<int:image_id>')
-@login_required
 def view_post(image_id):
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('login', next=request.url))
+    
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
