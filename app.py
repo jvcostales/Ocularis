@@ -1251,9 +1251,16 @@ def profile(user_id):
     viewed_user_profile_pic = user[6]
     viewed_user_profile_cover = user[7]
 
-    # Map country/state to full name
-    country_name = app.config['COUNTRIES'].get(country, country)
-    state_name = app.config.get('STATES', {}).get(country, {}).get(state, state)
+    # Build lookup dicts:
+    countries_dict = {c['iso2']: c['name'] for c in app.config['COUNTRIES']}
+    states_dict = {}
+    for country_code, states_list in app.config['STATES'].items():
+        states_dict[country_code] = {s['state_code']: s['name'] for s in states_list}
+
+    country_name = countries_dict.get(country, country)
+    state_name = states_dict.get(country, {}).get(state, state)
+
+    location = ", ".join(filter(None, [city, state_name, country_name]))
 
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
@@ -1397,9 +1404,7 @@ def profile(user_id):
         incoming_request is not None or
         outgoing_request is not None
     )
-
-    location = ", ".join(filter(None, [city, state_name, country_name]))
-
+    
     return render_template(
         "profile.html",
         current_page='profile',
