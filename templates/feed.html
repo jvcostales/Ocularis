@@ -239,7 +239,7 @@
                 <a href="instagram.com"><img src="..\static\ig.png" class="ig"></a>
                 <a href="https://twitter.com/intent/tweet?url={{ url_for('view_post', image_id=image[0], _external=True) }}&text={{ 'Check out my post on Ocularis!' | urlencode }}"
                     target="_blank" rel="noopener noreferrer"><img src="..\static\x.png" class="x"></a>
-                <a href="mailto:?subject=Check out my post on Ocularis!&body=Check out my post on Ocularis: {{ url_for('view_post', image_id=image[0], _external=True) }}"
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=&su=Check out my post on Ocularis!&body=Check out my post on Ocularis: {{ url_for('view_post', image_id=image[0], _external=True) | urlencode }}"
                     target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
                 <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_for('view_post', image_id=image[0], _external=True) }}"
                     target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png" class="linkedin"></a>
