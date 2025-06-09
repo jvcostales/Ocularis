@@ -125,7 +125,8 @@
                     {% if notifications %}
                     {% for display_name, action, image_id, created_at, actor_id in notifications %}
                     <div class="notif-bar">
-                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="..\static\pfp.jpg" class="pfp img-notif-request"></a>
+                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="..\static\pfp.jpg"
+                                class="pfp img-notif-request"></a>
                         <div class="notif-details">
                             <div class="notif-text">
                                 <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{
@@ -161,7 +162,8 @@
                     {% if requests %}
                     {% for request_id, sender_id, first_name, last_name, created_at in requests %}
                     <div class="request-bar" id="request-{{ request_id }}">
-                        <a href="{{ url_for('profile', user_id=sender_id) }}"><img src="../static/pfp.jpg" class="pfp img-notif-request"></a>
+                        <a href="{{ url_for('profile', user_id=sender_id) }}"><img src="../static/pfp.jpg"
+                                class="pfp img-notif-request"></a>
 
                         <div class="request-details">
                             <div class="request-text">
@@ -837,9 +839,9 @@
                                 data.likers.map(liker => `
         <div class="profile-follow-wrapper">
             <div class="profile-post-likes">
-                <img src="/static/pfp.jpg" class="pfp">
+                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
                 <div class="profile-name-date">
-                    <div class="username">${liker.name}</div>
+                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
@@ -904,7 +906,7 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <img src="{{ profile_pic_url }}" class="pfp">
+        <a href="/profile/${comment.user_id}"><img src="{{ profile_pic_url }}" class="pfp"></a>
         <div class="profile-name-date">
             <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
@@ -994,9 +996,9 @@
                                 data.likers.map(liker => `
         <div class="profile-follow-wrapper">
             <div class="profile-post-likes">
-                <img src="/static/pfp.jpg" class="pfp">
+                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
                 <div class="profile-name-date">
-                    <div class="username">${liker.name}</div>
+                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
                     <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
