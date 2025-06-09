@@ -61,7 +61,8 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="{{ profile_pic_url }}" class="pfp right" id="pfp3"></div>
+                    <a href="{{ url_for('profile', user_id=current_user.id) }}"><img src="{{ profile_pic_url }}"
+                            class="pfp right" id="pfp3"></a>
                     <div class="frame3" id="frame3">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -83,7 +84,8 @@
                 <button class="notifs-button"><span
                         class="material-symbols-outlined notifs-symbol">notifications</span></button>
                 <div class="pfp-frame-wrapper">
-                    <div><img src="{{ profile_pic_url }}" class="pfp right" id="pfp4"></div>
+                    <a href="{{ url_for('profile', user_id=current_user.id) }}"><img src="{{ profile_pic_url }}"
+                            class="pfp right" id="pfp4"></a>
                     <div class="frame4" id="frame4">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -103,7 +105,8 @@
         <div class="right-sidebar-container">
             <div class="right-sidebar">
                 <div class="pfp-frame-wrapper">
-                    <img src="{{ profile_pic_url }}" class="pfp right" id="pfp" />
+                    <a href="{{ url_for('profile', user_id=current_user.id) }}"><img src="{{ profile_pic_url }}"
+                            class="pfp right" id="pfp" /></a>
                     <div class="frame2" id="frame2">
                         <div class="frame-username">
                             <a href="{{ url_for('profile', user_id=current_user.id) }}">
@@ -122,7 +125,7 @@
                     {% if notifications %}
                     {% for display_name, action, image_id, created_at, actor_id in notifications %}
                     <div class="notif-bar">
-                        <img src="..\static\pfp.jpg" class="pfp img-notif-request">
+                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="..\static\pfp.jpg" class="pfp img-notif-request"></a>
                         <div class="notif-details">
                             <div class="notif-text">
                                 <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{
@@ -158,7 +161,7 @@
                     {% if requests %}
                     {% for request_id, sender_id, first_name, last_name, created_at in requests %}
                     <div class="request-bar" id="request-{{ request_id }}">
-                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
+                        <a href="{{ url_for('profile', user_id=sender_id) }}"><img src="../static/pfp.jpg" class="pfp img-notif-request"></a>
 
                         <div class="request-details">
                             <div class="request-text">
