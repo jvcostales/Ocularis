@@ -839,29 +839,69 @@
                                 return;
                             }
 
-                            const html = data.likers.length > 0 ?
-                                data.likers.map(liker => `
-        <div class="profile-follow-wrapper">
-            <div class="profile-post-likes">
-                <img src="/static/pfp.jpg" class="pfp">
-                <div class="profile-name-date">
-                    <div class="username">${liker.name}</div>
-                    <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
+                            const html = data.likers.map(liker => {
+                                const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
-                                })}</div>
-                </div>
-            </div>
-            <button class="follow-button">Befriend</button>
-        </div>
-    `).join('')
-                                : `
-        <div class="likes-empty">
-            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
-            <div class="oops">Oops!</div>
-            <div class="nothing">Nothing to show here at the moment.</div>
-        </div>
-    `;
+                                });
+
+                                let buttonHtml = '';
+                                switch (liker.relationship) {
+                                    case 'self':
+                                        buttonHtml = '';
+                                        break;
+                                    case 'friends':
+                                        buttonHtml = `
+                                <form action="/unfriend/${liker.id}" method="post">
+                                    <button type="submit" class="follow-button">Unfriend</button>
+                                </form>`;
+                                        break;
+                                    case 'incoming_pending':
+                                        buttonHtml = `
+                                <div class="response-wrapper">
+                                    <form action="/accept_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button no-margin">Confirm</button>
+                                    </form>
+                                    <form action="/reject_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button-secondary no-margin">Decline</button>
+                                    </form>
+                                </div>`;
+                                        break;
+                                    case 'outgoing_pending':
+                                        buttonHtml = `
+                                <form action="/cancel_request/${liker.id}" method="post">
+                                    <button type="submit" class="follow-button-cancel">Cancel Request</button>
+                                </form>`;
+                                        break;
+                                    case 'outgoing_rejected':
+                                    case 'not_friends':
+                                        if (liker.verified) {
+                                            buttonHtml = `
+                                    <form action="/send_request/${liker.id}" method="post">
+                                        <button type="submit" class="follow-button">Befriend</button>
+                                    </form>`;
+                                        } else {
+                                            buttonHtml = `
+                                    <button class="follow-button-disabled" disabled>Befriend</button>`;
+                                        }
+                                        break;
+                                    default:
+                                        buttonHtml = '';
+                                }
+
+                                return `
+                        <div class="profile-follow-wrapper">
+                            <div class="profile-post-likes">
+                                <img src="/static/pfp.jpg" class="pfp">
+                                <div class="profile-name-date">
+                                    <div class="username">${liker.name}</div>
+                                    <div class="date">${dateStr}</div>
+                                </div>
+                            </div>
+                            ${buttonHtml}
+                        </div>
+                    `;
+                            }).join('');
 
                             scrollableDiv.innerHTML = html;
                         })
@@ -871,6 +911,7 @@
                         });
                 });
             });
+
 
 
 

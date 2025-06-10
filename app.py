@@ -973,10 +973,12 @@ def get_image_likes(image_id):
         port=5432
     )
     cur = conn.cursor()
+    current_user_id = current_user.id
 
     try:
+        # Get likers
         cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, l.created_at, u.verified
             FROM likes l
             JOIN users u ON l.user_id = u.id
             WHERE l.image_id = %s
@@ -984,7 +986,64 @@ def get_image_likes(image_id):
         """, (image_id,))
         likes = cur.fetchall()
 
-        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
+        likers = []
+        for liker_id, display_name, created_at, verified in likes:
+            if liker_id == current_user_id:
+                relationship = 'self'
+                request_id = None
+            else:
+                # Check if they are already friends
+                cur.execute("""
+                    SELECT 1 FROM friends 
+                    WHERE (user1_id = %s AND user2_id = %s)
+                       OR (user1_id = %s AND user2_id = %s);
+                """, (current_user_id, liker_id, liker_id, current_user_id))
+                is_friend = cur.fetchone() is not None
+
+                if is_friend:
+                    relationship = 'friends'
+                    request_id = None
+                else:
+                    # Outgoing request (you sent)
+                    cur.execute("""
+                        SELECT status FROM friend_requests
+                        WHERE sender_id = %s AND receiver_id = %s;
+                    """, (current_user_id, liker_id))
+                    outgoing = cur.fetchone()
+
+                    if outgoing:
+                        status = outgoing[0]
+                        if status == 'pending':
+                            relationship = 'outgoing_pending'
+                        elif status == 'rejected':
+                            relationship = 'outgoing_rejected'
+                        else:
+                            relationship = 'not_friends'
+                        request_id = None
+                    else:
+                        # Incoming request (they sent)
+                        cur.execute("""
+                            SELECT request_id FROM friend_requests
+                            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+                        """, (liker_id, current_user_id))
+                        incoming = cur.fetchone()
+
+                        if incoming:
+                            relationship = 'incoming_pending'
+                            request_id = incoming[0]
+                        else:
+                            relationship = 'not_friends'
+                            request_id = None
+
+            likers.append({
+                'id': liker_id,
+                'name': display_name,
+                'timestamp': created_at.isoformat(),
+                'relationship': relationship,
+                'request_id': request_id,
+                'verified': verified
+            })
+
     finally:
         cur.close()
         conn.close()
