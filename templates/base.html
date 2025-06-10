@@ -853,7 +853,7 @@
                                     case 'friends':
                                         buttonHtml = `
                                 <form action="/unfriend/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button">Unfriend</button>
+                                    <button type="submit" class="follow-button no-margin">Unfriend</button>
                                 </form>`;
                                         break;
                                     case 'incoming_pending':
@@ -870,7 +870,7 @@
                                     case 'outgoing_pending':
                                         buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
+                                    <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                 </form>`;
                                         break;
                                     case 'outgoing_rejected':
@@ -878,11 +878,11 @@
                                         if (liker.verified) {
                                             buttonHtml = `
                                     <form action="/send_request/${liker.id}" method="post">
-                                        <button type="submit" class="follow-button-profile">Befriend</button>
+                                        <button type="submit" class="follow-button-profile no-margin">Befriend</button>
                                     </form>`;
                                         } else {
                                             buttonHtml = `
-                                    <button class="follow-button-profile-disabled" disabled>Befriend</button>`;
+                                    <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
                                         }
                                         break;
                                     default:
