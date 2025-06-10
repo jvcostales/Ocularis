@@ -955,11 +955,11 @@
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
-        <a href="/user/${comment.user_id}">
+        <a href="/profile/${comment.user_id}">
             <img src="${comment.profile_pic_url}" class="pfp">
-        </a>S
+        </a>
         <div class="profile-name-date">
-            <a href="/user/${comment.user_id}" class="username">${comment.name}</a>
+            <a href="/profile/${comment.user_id}" class="username">${comment.name}</a>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
         </div>
     </div>
