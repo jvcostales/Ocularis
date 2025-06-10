@@ -125,7 +125,8 @@
                     {% if notifications %}
                     {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
                     <div class="notif-bar">
-                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img
+                                src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
                                 class="pfp img-notif-request"></a>
                         <div class="notif-details">
                             <div class="notif-text">
@@ -960,8 +961,19 @@
                 });
             });
 
+            document.querySelectorAll('.profile-more-wrapper');
 
-
+            if (commentWrappers.length > 1) {
+                commentWrappers.forEach((wrapper, idx) => {
+                    if (idx < commentWrappers.length - 1) {
+                        wrapper.style.marginBottom = '16px';  // Add margin to all but last comment
+                    } else {
+                        wrapper.style.marginBottom = '0';      // No margin for last comment
+                    }
+                });
+            } else if (commentWrappers.length === 1) {
+                commentWrappers[0].style.marginBottom = '0';  // No margin if only one comment
+            }
 
             // Setup comment like overlay data fetch
             document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
