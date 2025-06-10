@@ -860,17 +860,17 @@
                                         buttonHtml = `
                                 <div class="response-wrapper">
                                     <form action="/accept_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button no-margin">Confirm</button>
+                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
                                     </form>
                                     <form action="/reject_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-secondary no-margin">Decline</button>
+                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
                                     </form>
                                 </div>`;
                                         break;
                                     case 'outgoing_pending':
                                         buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-cancel">Cancel Request</button>
+                                    <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
                                 </form>`;
                                         break;
                                     case 'outgoing_rejected':
@@ -878,11 +878,11 @@
                                         if (liker.verified) {
                                             buttonHtml = `
                                     <form action="/send_request/${liker.id}" method="post">
-                                        <button type="submit" class="follow-button">Befriend</button>
+                                        <button type="submit" class="follow-button-profile">Befriend</button>
                                     </form>`;
                                         } else {
                                             buttonHtml = `
-                                    <button class="follow-button-disabled" disabled>Befriend</button>`;
+                                    <button class="follow-button-profile-disabled" disabled>Befriend</button>`;
                                         }
                                         break;
                                     default:
