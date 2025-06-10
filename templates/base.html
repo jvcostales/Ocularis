@@ -959,7 +959,7 @@
             <img src="/static/pfp.jpg" class="pfp">
         </a>
         <div class="profile-name-date">
-            <a href="/profile/${comment.user_id}" class="username">${comment.name}</a>
+            <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
         </div>
     </div>
