@@ -36,12 +36,15 @@
                                 <div>Match</div>
                             </div>
                         </a></li>
-                    <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
-                            <div class="icon-text-wrapper {% if current_page == 'profile' %}current{% endif %}">
+                    <li>
+                        <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                            <div class="icon-text-wrapper 
+            {% if current_page == 'profile' and is_own_profile %}current{% endif %}">
                                 <span class="material-symbols-outlined sidebar-symbol">person</span>
                                 <div>Profile</div>
                             </div>
-                        </a></li>
+                        </a>
+                    </li>
                     <li><a href="{{ url_for('logout') }}">
                             <div class="icon-text-wrapper">
                                 <span class="material-symbols-outlined sidebar-symbol">logout</span>
@@ -1431,15 +1434,6 @@
             });
 
 
-            document.getElementById('scrollButton').addEventListener('click', () => {
-                const containers = document.querySelectorAll('.scrollable-div-comments');
-                containers.forEach(container => {
-                    container.scrollTo({
-                        top: container.scrollHeight,
-                        behavior: 'smooth'  // Optional: makes it scroll smoothly
-                    });
-                });
-            });
 
 
         });

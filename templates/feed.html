@@ -148,6 +148,7 @@
                 id="closeOverlayComments-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+            <div id="commentList-{{ image[0] }}"></div>
             {% set ns = namespace(has_comments=false) %}
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
@@ -214,14 +215,13 @@
                 <div class="nothing">Nothing to show here at the moment.</div>
             </div>
             {% endif %}
-            <div id="commentList-{{ image[0] }}"></div>
         </div>
         <div class="comment-bar">
             <img src="{{ profile_pic_url }}" class="pfp">
             <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
                 <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment"
                     required>
-                <button class="send-button" id="scrollButton" type="submit">Send</button>
+                <button class="send-button" type="submit">Send</button>
             </form>
         </div>
     </div>
