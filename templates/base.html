@@ -415,113 +415,97 @@
                 </div>
 
                 <!-- Step 1: Skills
-                <div class="form-step" id="step-1">
-                    <h2>Your Skills</h2>
-                    {% for category in categories %}
-                    <label>
-                        <input type="checkbox" name="skills" value="{{ category }}">
-                        {{ category }}
-                    </label><br>
-                    {% endfor %}
-                    <button type="button" onclick="nextStep()">Next</button>
-                </div>-->
+               <div class="form-step" id="step-1">
+                   <h2>Your Skills</h2>
+                   {% for category in categories %}
+                   <label>
+                       <input type="checkbox" name="skills" value="{{ category }}">
+                       {{ category }}
+                   </label><br>
+                   {% endfor %}
+                   <button type="button" onclick="nextStep()">Next</button>
+               </div>-->
 
                 <!-- Step 2: Preferences
-                <div class="form-step" id="step-2" style="display:none;">
-                    <h2>Your Preferences</h2>
-                    {% for category in categories %}
-                    <label>
-                        <input type="checkbox" name="preferences" value="{{ category }}">
-                        {{ category }}
-                    </label><br>
-                    {% endfor %}
-                    <button type="button" onclick="prevStep()">Previous</button>
-                    <button type="button" onclick="nextStep()">Next</button>
-                </div> -->
+               <div class="form-step" id="step-2" style="display:none;">
+                   <h2>Your Preferences</h2>
+                   {% for category in categories %}
+                   <label>
+                       <input type="checkbox" name="preferences" value="{{ category }}">
+                       {{ category }}
+                   </label><br>
+                   {% endfor %}
+                   <button type="button" onclick="prevStep()">Previous</button>
+                   <button type="button" onclick="nextStep()">Next</button>
+               </div> -->
 
                 <!-- Step 3: Experience
-                <div class="form-step" id="step-3" style="display:none;">
-                    <h2>Experience Level</h2>
-                    <label for="experience_level">Select your level:</label><br>
-                    <select name="experience_level" id="experience_level" required>
-                        {% for value, label in experience_levels %}
-                        <option value="{{ value }}">{{ label }}</option>
-                        {% endfor %}
-                    </select><br><br>
-                    <button type="button" onclick="prevStep()">Previous</button>
-                    <button type="button" onclick="nextStep()">Next</button>
-                </div> -->
+               <div class="form-step" id="step-3" style="display:none;">
+                   <h2>Experience Level</h2>
+                   <label for="experience_level">Select your level:</label><br>
+                   <select name="experience_level" id="experience_level" required>
+                       {% for value, label in experience_levels %}
+                       <option value="{{ value }}">{{ label }}</option>
+                       {% endfor %}
+                   </select><br><br>
+                   <button type="button" onclick="prevStep()">Previous</button>
+                   <button type="button" onclick="nextStep()">Next</button>
+               </div> -->
 
                 <!-- Step 4: Role
-                <div class="form-step" id="step-4" style="display:none;">
-                    <h2>Your Role</h2>
-                    <input type="text" id="role" name="role" maxlength="100" required><br><br>
-                    <button type="button" onclick="prevStep()">Previous</button>
-                    <button type="button" onclick="nextStep()">Next</button>
-                </div> -->
+               <div class="form-step" id="step-4" style="display:none;">
+                   <h2>Your Role</h2>
+                   <input type="text" id="role" name="role" maxlength="100" required><br><br>
+                   <button type="button" onclick="prevStep()">Previous</button>
+                   <button type="button" onclick="nextStep()">Next</button>
+               </div> -->
 
                 <!-- Step 5: Location
-                <div class="form-step" id="step-5" style="display:none;">
-                    <h2>Location</h2>
-                    <label for="country">Country:</label><br>
-                    <select id="country" name="country" required>
-                        <option value="">Select Country</option>
-                        {% for country in countries %}
-                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
-                        {% endfor %}
-                    </select><br><br>
+               <div class="form-step" id="step-5" style="display:none;">
+                   <h2>Location</h2>
+                   <label for="country">Country:</label><br>
+                   <select id="country" name="country" required>
+                       <option value="">Select Country</option>
+                       {% for country in countries %}
+                       <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{ country.name }}</option>
+                       {% endfor %}
+                   </select><br><br>
 
-                    <label for="state">State/Region:</label><br>
-                    <select id="state" name="state" required>
-                        <option value="">Select State</option>
-                    </select><br><br>
+                   <label for="state">State/Region:</label><br>
+                   <select id="state" name="state" required>
+                       <option value="">Select State</option>
+                   </select><br><br>
 
-                    <label for="city">City:</label><br>
-                    <select id="city" name="city" required>
-                        <option value="">Select City</option>
-                    </select><br><br>
+                   <label for="city">City:</label><br>
+                   <select id="city" name="city" required>
+                       <option value="">Select City</option>
+                   </select><br><br>
 
-                    <button type="button" onclick="prevStep()">Previous</button>
-                    <button type="button" onclick="nextStep()">Next</button>
-                </div> -->
+                   <button type="button" onclick="prevStep()">Previous</button>
+                   <button type="button" onclick="nextStep()">Next</button>
+               </div> -->
 
                 <!-- Step 6: Social Links
-                <div class="form-step" id="step-6" style="display:none;">
-                    <h2>Social Media Links</h2>
-                    <input type="url" id="facebook" name="facebook"
-                        placeholder="https://facebook.com/yourprofile"><br><br>
-                    <input type="url" id="instagram" name="instagram"
-                        placeholder="https://instagram.com/yourprofile"><br><br>
-                    <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
-                    <input type="url" id="linkedin" name="linkedin"
-                        placeholder="https://linkedin.com/in/yourprofile"><br><br>
-                    <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
+               <div class="form-step" id="step-6" style="display:none;">
+                   <h2>Social Media Links</h2>
+                   <input type="url" id="facebook" name="facebook"
+                       placeholder="https://facebook.com/yourprofile"><br><br>
+                   <input type="url" id="instagram" name="instagram"
+                       placeholder="https://instagram.com/yourprofile"><br><br>
+                   <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile"><br><br>
+                   <input type="url" id="linkedin" name="linkedin"
+                       placeholder="https://linkedin.com/in/yourprofile"><br><br>
+                   <input type="url" id="telegram" name="telegram" placeholder="https://t.me/yourusername"><br><br>
 
-                    <button type="button" onclick="prevStep()">Previous</button>
-                    <button type="submit">Save Profile</button>
-                </div> -->
+                   <button type="button" onclick="prevStep()">Previous</button>
+                   <button type="submit">Save Profile</button>
+               </div> -->
             </form>
         </div>
         {% endif %}
     </div>
 
     <script>
-
-
-        document.querySelectorAll('.profile-more-wrapper');
-
-        if (commentWrappers.length > 1) {
-            commentWrappers.forEach((wrapper, idx) => {
-                if (idx < commentWrappers.length - 1) {
-                    wrapper.style.marginBottom = '16px';  // Add margin to all but last comment
-                } else {
-                    wrapper.style.marginBottom = '0';      // No margin for last comment
-                }
-            });
-        } else if (commentWrappers.length === 1) {
-            commentWrappers[0].style.marginBottom = '0';  // No margin if only one comment
-        }
-        
         let currentStep = 1;
         const totalSteps = 7;
 
@@ -845,36 +829,38 @@
                         .then(data => {
                             if (data.likers.length === 0) {
                                 scrollableDiv.innerHTML = `<div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
-                    </div>`;
+                       <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                       <div class="oops">Oops!</div>
+                       <div class="nothing">Nothing to show here at the moment.</div>
+                   </div>`;
                                 return;
                             }
 
                             const html = data.likers.length > 0 ?
                                 data.likers.map(liker => `
-        <div class="profile-follow-wrapper">
-            <div class="profile-post-likes">
+       <div class="profile-follow-wrapper">
+           <div class="profile-post-likes">
+                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
                 <img src="/static/pfp.jpg" class="pfp">
-                <div class="profile-name-date">
+               <div class="profile-name-date">
+                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
                     <div class="username">${liker.name}</div>
-                    <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
+                   <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
                                 })}</div>
-                </div>
-            </div>
-            <button class="follow-button">Befriend</button>
-        </div>
-    `).join('')
+               </div>
+           </div>
+           <button class="follow-button">Befriend</button>
+       </div>
+   `).join('')
                                 : `
-        <div class="likes-empty">
-            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
-            <div class="oops">Oops!</div>
-            <div class="nothing">Nothing to show here at the moment.</div>
-        </div>
-    `;
+       <div class="likes-empty">
+           <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
+           <div class="oops">Oops!</div>
+           <div class="nothing">Nothing to show here at the moment.</div>
+       </div>
+   `;
 
                             scrollableDiv.innerHTML = html;
                         })
@@ -922,47 +908,49 @@
                                 newComment.className = 'profile-comment-wrapper';
                                 newComment.innerHTML = `
 <div class="profile-more-wrapper">
-    <div class="profile-post-comments">
+   <div class="profile-post-comments">
+        <a href="/profile/${comment.user_id}"><img src="{{ profile_pic_url }}" class="pfp"></a>
         <img src="{{ profile_pic_url }}" class="pfp">
-        <div class="profile-name-date">
+       <div class="profile-name-date">
+            <div class="username"><a href="/profile/${comment.user_id}">${comment.name}</a></div>
             <div class="username">${comment.name}</div>
-            <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
-        </div>
-    </div>
-    <div class="more-frame-wrapper">
-        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
-    </div>
+           <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
+       </div>
+   </div>
+   <div class="more-frame-wrapper">
+       <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+   </div>
 </div>
 <div class="comment-like-wrapper">
-    <div class="comment">${comment.text}</div>
-    <div class="like-metrics-wrapper">
-        <form class="like-form" data-comment-id="${comment.comment_id}">
-            <button type="submit" style="all: unset;">
-                <div class="partner like-button" id="comment-like-button-${comment.comment_id}">
-                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                    <div class="partner-label">Like</div>
-                </div>
-            </button>
-        </form>
+   <div class="comment">${comment.text}</div>
+   <div class="like-metrics-wrapper">
+       <form class="like-form" data-comment-id="${comment.comment_id}">
+           <button type="submit" style="all: unset;">
+               <div class="partner like-button" id="comment-like-button-${comment.comment_id}">
+                   <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                   <div class="partner-label">Like</div>
+               </div>
+           </button>
+       </form>
 <div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
-    <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-        <span class="like-number">${comment.like_count}</span>
-        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
-    </div>
+   <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+       <span class="like-number">${comment.like_count}</span>
+       <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
+   </div>
 </div>
-    </div>
+   </div>
 </div>
 
 <div class="overlayLikes" id="overlayCommentLikes-0">
-    <div class="overlay-content-likes">
-        <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-0">close</span>
-        </button>
-        <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-0" data-comment-id="${comment.comment_id}">
-            <p class="loading-msg" style="display: none;">Loading likes...</p>
-        </div>
-    </div>
+   <div class="overlay-content-likes">
+       <button class="close-icon">
+           <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-0">close</span>
+       </button>
+       <div class="overlay-title">Likes</div>
+       <div class="scrollable-div-likes" id="scrollableDivCommentLikes-0" data-comment-id="${comment.comment_id}">
+           <p class="loading-msg" style="display: none;">Loading likes...</p>
+       </div>
+   </div>
 </div>
 <div class="line-comments"></div>
 `;
@@ -975,7 +963,9 @@
                         })
                         .catch(err => console.error('Error:', err));
                 });
-            })
+            });
+
+
 
 
             // Setup comment like overlay data fetch
@@ -1000,36 +990,38 @@
                         .then(data => {
                             if (!data.likers || data.likers.length === 0) {
                                 scrollableDiv.innerHTML = `<div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
-                    </div>`;
+                       <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                       <div class="oops">Oops!</div>
+                       <div class="nothing">Nothing to show here at the moment.</div>
+                   </div>`;
                                 return;
                             }
 
                             const html = data.likers.length > 0 ?
                                 data.likers.map(liker => `
-        <div class="profile-follow-wrapper">
-            <div class="profile-post-likes">
+       <div class="profile-follow-wrapper">
+           <div class="profile-post-likes">
+                <a href="/profile/${liker.id}"><img src="/static/pfp.jpg" class="pfp"></a>
                 <img src="/static/pfp.jpg" class="pfp">
-                <div class="profile-name-date">
+               <div class="profile-name-date">
+                    <div class="username"><a href="/profile/${liker.id}">${liker.name}</a></div>
                     <div class="username">${liker.name}</div>
-                    <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
+                   <div class="date">${new Date(liker.timestamp).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
                                 })}</div>
-                </div>
-            </div>
-            <button class="follow-button">Befriend</button>
-        </div>
-    `).join('')
+               </div>
+           </div>
+           <button class="follow-button">Befriend</button>
+       </div>
+   `).join('')
                                 : `
-        <div class="likes-empty">
-            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
-            <div class="oops">Oops!</div>
-            <div class="nothing">Nothing to show here at the moment.</div>
-        </div>
-    `;
+       <div class="likes-empty">
+           <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>More actions
+           <div class="oops">Oops!</div>
+           <div class="nothing">Nothing to show here at the moment.</div>
+       </div>
+   `;
 
                             scrollableDiv.innerHTML = html;
                         })
@@ -1452,5 +1444,3 @@
 
     </script>
 </body>
-
-</html>
