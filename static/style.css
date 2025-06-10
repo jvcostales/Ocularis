@@ -785,6 +785,11 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         text-align: center;
         padding: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .upload.dragover {
+        background-color: #f0f8ff;
     }
 
     .image-button-wrapper {
@@ -2470,6 +2475,11 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         text-align: center;
         padding: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .upload.dragover {
+        background-color: #f0f8ff;
     }
 
     .image-button-wrapper {
@@ -4188,6 +4198,11 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         text-align: center;
         padding: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .upload.dragover {
+        background-color: #f0f8ff;
     }
 
     .image-button-wrapper {
