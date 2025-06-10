@@ -1258,14 +1258,17 @@ def get_comment_likes(comment_id):
         port=5432
     )
     cur = conn.cursor()
+    current_user_id = current_user.id
+
     try:
-        # Optional: Check if comment exists to avoid invalid comment_id
+        # Optional: Check if comment exists
         cur.execute("SELECT 1 FROM comments WHERE comment_id = %s", (comment_id,))
         if not cur.fetchone():
             return jsonify({'error': 'Comment not found'}), 404
 
+        # Get comment likers
         cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at, u.verified
             FROM comment_likes cl
             JOIN users u ON cl.user_id = u.id
             WHERE cl.comment_id = %s
@@ -1273,7 +1276,64 @@ def get_comment_likes(comment_id):
         """, (comment_id,))
         likes = cur.fetchall()
 
-        likers = [{'name': row[0], 'timestamp': row[1].isoformat()} for row in likes]
+        likers = []
+        for liker_id, display_name, created_at, verified in likes:
+            if liker_id == current_user_id:
+                relationship = 'self'
+                request_id = None
+            else:
+                # Check if already friends
+                cur.execute("""
+                    SELECT 1 FROM friends 
+                    WHERE (user1_id = %s AND user2_id = %s)
+                       OR (user1_id = %s AND user2_id = %s);
+                """, (current_user_id, liker_id, liker_id, current_user_id))
+                is_friend = cur.fetchone() is not None
+
+                if is_friend:
+                    relationship = 'friends'
+                    request_id = None
+                else:
+                    # Check outgoing friend request
+                    cur.execute("""
+                        SELECT status FROM friend_requests
+                        WHERE sender_id = %s AND receiver_id = %s;
+                    """, (current_user_id, liker_id))
+                    outgoing = cur.fetchone()
+
+                    if outgoing:
+                        status = outgoing[0]
+                        if status == 'pending':
+                            relationship = 'outgoing_pending'
+                        elif status == 'rejected':
+                            relationship = 'outgoing_rejected'
+                        else:
+                            relationship = 'not_friends'
+                        request_id = None
+                    else:
+                        # Check incoming friend request
+                        cur.execute("""
+                            SELECT request_id FROM friend_requests
+                            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+                        """, (liker_id, current_user_id))
+                        incoming = cur.fetchone()
+
+                        if incoming:
+                            relationship = 'incoming_pending'
+                            request_id = incoming[0]
+                        else:
+                            relationship = 'not_friends'
+                            request_id = None
+
+            likers.append({
+                'id': liker_id,
+                'name': display_name,
+                'timestamp': created_at.isoformat(),
+                'relationship': relationship,
+                'request_id': request_id,
+                'verified': verified
+            })
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
