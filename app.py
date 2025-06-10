@@ -1103,6 +1103,7 @@ def post_comment(image_id):
         'comment': {
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
+            'user_id': current_user.id,  # Add this
             'text': comment_text,
             'like_count': like_count,
             'timestamp': created_at.isoformat()
