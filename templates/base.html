@@ -890,17 +890,21 @@
                                 }
 
                                 return `
-                        <div class="profile-follow-wrapper">
-                            <div class="profile-post-likes">
-                                <img src="/static/pfp.jpg" class="pfp">
-                                <div class="profile-name-date">
-                                    <div class="username">${liker.name}</div>
-                                    <div class="date">${dateStr}</div>
-                                </div>
-                            </div>
-                            ${buttonHtml}
-                        </div>
-                    `;
+                                    <div class="profile-follow-wrapper">
+                                        <div class="profile-post-likes">
+                                            <a href="/profile/${liker.id}" class="pfp-link">
+                                                <img src="/static/pfp.jpg" class="pfp">
+                                            </a>
+                                            <div class="profile-name-date">
+                                                <a href="/profile/${liker.id}" class="username-link">
+                                                    <div class="username">${liker.name}</div>
+                                                </a>
+                                                <div class="date">${dateStr}</div>
+                                            </div>
+                                        </div>
+                                        ${buttonHtml}
+                                    </div>
+                                `;
                             }).join('');
 
                             scrollableDiv.innerHTML = html;
@@ -1082,17 +1086,21 @@
                                 }
 
                                 return `
-                        <div class="profile-follow-wrapper">
-                            <div class="profile-post-likes">
-                                <img src="/static/pfp.jpg" class="pfp">
-                                <div class="profile-name-date">
-                                    <div class="username">${liker.name}</div>
-                                    <div class="date">${dateStr}</div>
-                                </div>
-                            </div>
-                            ${buttonHtml}
-                        </div>
-                    `;
+                                    <div class="profile-follow-wrapper">
+                                        <div class="profile-post-likes">
+                                            <a href="/profile/${liker.id}" class="pfp-link">
+                                                <img src="/static/pfp.jpg" class="pfp">
+                                            </a>
+                                            <div class="profile-name-date">
+                                                <a href="/profile/${liker.id}" class="username-link">
+                                                    <div class="username">${liker.name}</div>
+                                                </a>
+                                                <div class="date">${dateStr}</div>
+                                            </div>
+                                        </div>
+                                        ${buttonHtml}
+                                    </div>
+                                `;
                             }).join('');
 
                             scrollableDiv.innerHTML = html;
