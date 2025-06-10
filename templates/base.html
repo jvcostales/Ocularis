@@ -506,6 +506,22 @@
     </div>
 
     <script>
+
+
+        document.querySelectorAll('.profile-more-wrapper');
+
+        if (commentWrappers.length > 1) {
+            commentWrappers.forEach((wrapper, idx) => {
+                if (idx < commentWrappers.length - 1) {
+                    wrapper.style.marginBottom = '16px';  // Add margin to all but last comment
+                } else {
+                    wrapper.style.marginBottom = '0';      // No margin for last comment
+                }
+            });
+        } else if (commentWrappers.length === 1) {
+            commentWrappers[0].style.marginBottom = '0';  // No margin if only one comment
+        }
+        
         let currentStep = 1;
         const totalSteps = 7;
 
@@ -959,21 +975,8 @@
                         })
                         .catch(err => console.error('Error:', err));
                 });
-            });
+            })
 
-            document.querySelectorAll('.profile-more-wrapper');
-
-            if (commentWrappers.length > 1) {
-                commentWrappers.forEach((wrapper, idx) => {
-                    if (idx < commentWrappers.length - 1) {
-                        wrapper.style.marginBottom = '24px';  // Add margin to all but last comment
-                    } else {
-                        wrapper.style.marginBottom = '0';      // No margin for last comment
-                    }
-                });
-            } else if (commentWrappers.length === 1) {
-                commentWrappers[0].style.marginBottom = '0';  // No margin if only one comment
-            }
 
             // Setup comment like overlay data fetch
             document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
