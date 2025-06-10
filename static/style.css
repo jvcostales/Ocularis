@@ -1162,6 +1162,14 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
     }
 
+    .scrollable-div-comments .line-comments:last-of-type {
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
+        box-sizing: border-box;
+    }
+
     .comment-bar {
         display: flex;
         gap: 16px;
@@ -2839,6 +2847,14 @@ input[type="url"]::placeholder {
         width: 100%;
         margin-top: 16px;
         margin-bottom: 24px;
+        box-sizing: border-box;
+    }
+
+    .scrollable-div-comments .line-comments:last-of-type {
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
         box-sizing: border-box;
     }
 
@@ -4550,6 +4566,14 @@ input[type="url"]::placeholder {
         width: 100%;
         margin-top: 16px;
         margin-bottom: 24px;
+        box-sizing: border-box;
+    }
+
+    .scrollable-div-comments .line-comments:last-of-type {
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 0;
         box-sizing: border-box;
     }
 
