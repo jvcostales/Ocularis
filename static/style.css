@@ -3672,6 +3672,13 @@ input[type="url"]::placeholder {
         background-color: white;
         min-width: 250px;
         border-radius: 10px;
+        /* Dynamically scale to viewport with a max */
+        max-height: 80vh;
+        /* Adjusts to screen size */
+        overflow: hidden;
+        /* Prevent outer scroll */
+        display: flex;
+        flex-direction: column;
     }
 
     .line-alerts {
@@ -3685,21 +3692,23 @@ input[type="url"]::placeholder {
         display: block;
     }
 
-    .notifs {
+    /* Shared styles for notifs and requests */
+    .notifs,
+    .requests {
         background: #fff;
         border-radius: 10px;
-        padding-top: 24px;
-        padding-bottom: 24px;
-        padding-left: 24px;
-        padding-right: 6px;
-        /*due to scrollbar*/
+        padding: 24px 6px 24px 24px;
+        /* shorthand for spacing */
         box-sizing: border-box;
-        overflow-x: hidden;
         overflow-y: auto;
+        overflow-x: hidden;
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
-        max-height: 350px;
+        /* Fill available space */
+        flex: 1 1 auto;
+        min-height: 0;
+        /* Required for flex children to scroll properly */
     }
 
     .notifs-empty {
@@ -3747,24 +3756,6 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
-    }
-
-    .requests {
-        background: #fff;
-        border-radius: 10px;
-        padding-top: 24px;
-        padding-bottom: 24px;
-        padding-left: 24px;
-        padding-right: 6px;
-        /*due to scrollbar*/
-        box-sizing: border-box;
-        overflow-x: hidden;
-        /*not sure*/
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        display: flex;
-        flex-direction: column;
-        max-height: 350px;
     }
 
     .requests::-webkit-scrollbar {
