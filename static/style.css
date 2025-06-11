@@ -789,7 +789,7 @@ input[type="url"]::placeholder {
     }
 
     .upload.dragover {
-        background-color: #f0f8ff;
+        background-color: #F5FAFD;
     }
 
     .image-button-wrapper {
@@ -861,7 +861,7 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: #888888;
     }
 
     .browse-file:hover {
@@ -2479,7 +2479,7 @@ input[type="url"]::placeholder {
     }
 
     .upload.dragover {
-        background-color: #f0f8ff;
+        background-color: #F5FAFD;
     }
 
     .image-button-wrapper {
@@ -2552,7 +2552,7 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: #888888;
     }
 
     .browse-file:hover {
@@ -4202,7 +4202,7 @@ input[type="url"]::placeholder {
     }
 
     .upload.dragover {
-        background-color: #f0f8ff;
+        background-color: #F5FAFD;
     }
 
     .image-button-wrapper {
@@ -4275,7 +4275,7 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: #888888;
     }
 
     .browse-file:hover {
