@@ -3658,110 +3658,6 @@ input[type="url"]::placeholder {
         gap: 16px;
     }
 
-    .request-icons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .circled-icon-1 {
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        background-color: transparent;
-        border: 0.5px solid #c4c4c4;
-        color: #c4c4c4;
-    }
-
-    .circled-icon-1:hover {
-        border: 0.5px solid #e2e2e2;
-        color: #e2e2e2;
-    }
-
-    .circled-icon-1:active {
-        border: 0.5px solid #a6a6a6;
-        color: #a6a6a6;
-    }
-
-    .circled-icon-1[disabled] {
-        border: 0.5px solid #DDDEDF;
-        color: #DDDEDF;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
-    .circled-icon-2 {
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        background-color: #D3F36A;
-    }
-
-    .circled-icon-2:hover {
-        background-color: #E2F89A;
-    }
-
-    .circled-icon-2:active {
-        background-color: #9BB35B;
-    }
-
-    .circled-icon-2[disabled] {
-        cursor: not-allowed;
-        pointer-events: none;
-        background-color: #DDDEDF;
-    }
-
-    span.close-symbol {
-        font-variation-settings: 'FILL' 1;
-        font-size: 24px;
-    }
-
-    span.check-symbol {
-        font-variation-settings: 'FILL' 1;
-        font-size: 24px;
-        color: #f6f6f6;
-    }
-
-    .notifs-empty {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-top: -24px;
-    }
-
-    .empty-symbol {
-        font-variation-settings: 'FILL' 1;
-        font-size: 56px !important;
-        color: #e2e2e2;
-        margin-bottom: 12px;
-    }
-
-    .oops {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-
-    .nothing {
-        font-size: 1rem;
-        color: #c4c4c4;
-        text-align: center;
-    }
-
     .notifs-wrapper {
         position: relative;
         display: inline-block;
@@ -3774,8 +3670,14 @@ input[type="url"]::placeholder {
         right: 0;
         z-index: 100;
         background-color: white;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         min-width: 250px;
+        border-radius: 10px;
+    }
+
+    .line-alerts {
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     /* Show the dropdown when hovering over the button or the dropdown itself */
@@ -3785,7 +3687,6 @@ input[type="url"]::placeholder {
 
     .notifs {
         background: #fff;
-        border-radius: 10px;
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
@@ -3798,6 +3699,7 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
+        max-height: 350px;
     }
 
     .notifs-empty {
@@ -3848,7 +3750,6 @@ input[type="url"]::placeholder {
 
     .requests {
         background: #fff;
-        border-radius: 10px;
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
@@ -3861,6 +3762,7 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
+        max-height: 350px;
     }
 
     .requests::-webkit-scrollbar {
