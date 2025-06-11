@@ -3761,6 +3761,32 @@ input[type="url"]::placeholder {
         color: #c4c4c4;
         text-align: center;
     }
+
+    .notifs-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .notifs-requests-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 100;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        min-width: 300px;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    /* Show the dropdown when hovering over the button or the dropdown itself */
+    .notifs-wrapper:hover .notifs-requests-dropdown {
+        display: block;
+    }
+
+
+
 }
 
 /* Mobile: 4-column layout */
