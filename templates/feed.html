@@ -43,19 +43,21 @@
                     <button class="circled-icon-1-overlay-version"><span
                             class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
                 </div>
-                <label for="collaborator">Select a collaborator (optional):</label>
-                <select name="collaborator" id="collaborator">
-                    <option value="">-- None --</option>
-                    {% for user in matched_users %}
-                    <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
-                    {% endfor %}
-                </select>
-                <label for="tags">Tags:</label>
-                <select name="tags" id="tags" multiple size="6">
-                    {% for tag in tags %}
-                    <option value="{{ tag }}">{{ tag }}</option>
-                    {% endfor %}
-                </select>
+                <div id="collaboratorTagSection" style="display: none;">
+                    <label for="collaborator">Select a collaborator (optional):</label>
+                    <select name="collaborator" id="collaborator">
+                        <option value="">-- None --</option>
+                        {% for user in matched_users %}
+                        <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="tags">Tags:</label>
+                    <select name="tags" id="tags" multiple size="6">
+                        {% for tag in tags %}
+                        <option value="{{ tag }}">{{ tag }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
         </div>
         <input type="submit" value="Post" class="post-button">
         </form>

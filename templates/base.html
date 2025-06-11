@@ -1406,6 +1406,7 @@
             const imagePreview = document.getElementById('uploadedImagePreview');
             const closeButton = document.getElementById('closeButton');
             const scrollableDiv = document.querySelector('.scrollable-div');
+            const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
 
             if (imageInputPreview) {
                 imageInputPreview.addEventListener('change', function () {
@@ -1416,11 +1417,19 @@
                         reader.onload = function (e) {
                             imagePreview.src = e.target.result;
                             imageWrapper.style.display = 'block';
+
+                            if (collaboratorTagSection) {
+                                collaboratorTagSection.style.display = 'block';
+                            }
                         };
                         reader.readAsDataURL(file);
                     } else {
                         imagePreview.src = '';
                         imageWrapper.style.display = 'none';
+
+                        if (collaboratorTagSection) {
+                            collaboratorTagSection.style.display = 'none';
+                        }
                     }
                 });
             }
@@ -1431,6 +1440,10 @@
                     imagePreview.src = '';
                     imageWrapper.style.display = 'none';
                     imageInputPreview.value = '';
+
+                    if (collaboratorTagSection) {
+                        collaboratorTagSection.style.display = 'none';
+                    }
 
                     if (scrollableDiv) {
                         scrollableDiv.classList.remove('has-scroll');
@@ -1445,6 +1458,10 @@
                     document.getElementById('uploadedImagePreview').src = '';
                     document.getElementById('image').value = '';
                     document.getElementById('imageWrapper').style.display = 'none';
+
+                    if (collaboratorTagSection) {
+                        collaboratorTagSection.style.display = 'none';
+                    }
 
                     if (scrollableDiv) {
                         scrollableDiv.classList.remove('has-scroll');
