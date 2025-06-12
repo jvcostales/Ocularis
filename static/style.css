@@ -3672,16 +3672,13 @@ input[type="url"]::placeholder {
         display: none;
     }
 
-    /* Show dropdown */
-    .notifs-requests-dropdown.show {
-        display: flex;
-    }
-
+    /* Dropdown wrapper */
     .notifs-wrapper {
         position: relative;
         display: inline-block;
     }
 
+    /* Dropdown: hidden by default */
     .notifs-requests-dropdown {
         display: none;
         position: absolute;
@@ -3693,15 +3690,21 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         max-height: 80vh;
         overflow: hidden;
-        display: flex;
         flex-direction: column;
     }
 
+    /* Dropdown: visible when toggled via JS */
+    .notifs-requests-dropdown.dropdown-visible {
+        display: flex;
+    }
+
+    /* Divider line */
     .line-alerts {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
         box-sizing: border-box;
     }
+
 
     /* Shared styles for notifs and requests */
     .notifs,
