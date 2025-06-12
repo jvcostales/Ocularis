@@ -3708,20 +3708,14 @@ input[type="url"]::placeholder {
     /* Shared styles for notifs and requests */
     .notifs,
     .requests {
-        background: #fff;
-        border-radius: 10px;
-        padding: 24px 6px 24px 24px;
-        /* shorthand for spacing */
-        box-sizing: border-box;
+        flex: 1 1 50%;
+        /* Each takes 50% of parent height */
         overflow-y: auto;
-        overflow-x: hidden;
-        overscroll-behavior: contain;
+        padding: 24px 6px 24px 24px;
         display: flex;
         flex-direction: column;
-        /* Fill available space */
-        flex: 1 1 auto;
+        box-sizing: border-box;
         min-height: 0;
-        /* Required for flex children to scroll properly */
     }
 
     .notifs-empty {
