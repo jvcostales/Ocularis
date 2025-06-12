@@ -54,6 +54,7 @@
                 </ul>
             </div>
         </div>
+        <div class="backdrop" id="backdrop"></div>
         <div class="header">
             <form class="search-wrapper hide-mobile" action="{{ url_for('search.search_results') }}" method="GET">
                 <input class="search" type="text" name="query" placeholder="Search" required>
@@ -597,9 +598,6 @@
         </div>
         {% endif %}
     </div>
-
-    <div id="overlay-bg"></div>
-
 
     <script>
         let currentStep = 1;
@@ -1407,56 +1405,6 @@
                 }
             });
 
-
-
-
-
-            const notifBtn = document.querySelector('.notifs-button');
-            const notifDropdown = document.querySelector('.notifs-requests-dropdown');
-            const overlay = document.getElementById('overlay-bg');
-
-            if (notifBtn && notifDropdown && overlay) {
-                notifBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const isOpen = notifDropdown.classList.contains('show');
-
-                    if (isOpen) {
-                        notifDropdown.classList.remove('show');
-                        overlay.style.display = 'none';
-                    } else {
-                        notifDropdown.classList.add('show');
-                        overlay.style.display = 'block';
-                    }
-                });
-
-                overlay.addEventListener('click', () => {
-                    notifDropdown.classList.remove('show');
-                    overlay.style.display = 'none';
-                });
-
-                notifDropdown.addEventListener('click', (e) => {
-                    e.stopPropagation(); // allow interaction inside
-                });
-
-                document.addEventListener('click', () => {
-                    notifDropdown.classList.remove('show');
-                    overlay.style.display = 'none';
-                });
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             function checkScrollbar() {
                 const imageInput = document.getElementById('image');
                 const div = document.getElementById('scrollableDiv');
@@ -1682,11 +1630,54 @@
 
 
 
+
+
+
+            const notifsButton = document.querySelector('.notifs-button');
+            const dropdown = document.querySelector('.notifs-requests-dropdown');
+            const backdrop = document.getElementById('backdrop');
+
+            function closeDropdown() {
+                dropdown.classList.remove('show');
+                backdrop.style.display = 'none';
+            }
+
+            notifsButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent it from triggering document click
+                const isVisible = dropdown.classList.contains('show');
+                if (!isVisible) {
+                    dropdown.classList.add('show');
+                    backdrop.style.display = 'block';
+                } else {
+                    closeDropdown();
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                const isClickInside = dropdown.contains(e.target) || notifsButton.contains(e.target);
+                if (!isClickInside) {
+                    closeDropdown();
+                }
+            });
+
+            // Also close on backdrop click
+            backdrop.addEventListener('click', closeDropdown);
+
+
+
+
+
+
+
+
+
+
+
         });
 
 
     </script>
-
 </body>
 
 </html>
