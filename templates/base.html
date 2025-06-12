@@ -69,7 +69,7 @@
                     </button>
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" id="dropdown-desktop">
+                    <div class="notifs-requests-dropdown" data-group="notifs" id="dropdown-desktop">
                         <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
@@ -192,7 +192,7 @@
                     </button>
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" id="dropdown-mobile">
+                    <div class="notifs-requests-dropdown" data-group="notifs" id="dropdown-mobile">
                         <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
@@ -764,7 +764,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             const backdrop = document.getElementById('backdrop');
-            let lastOpenedDropdownId = null;
+            let lastOpenedGroup = null;
 
             // Close all dropdowns
             function closeAllDropdowns() {
@@ -772,18 +772,18 @@
                     dropdown.classList.remove('dropdown-visible');
                 });
                 backdrop.style.display = 'none';
-                lastOpenedDropdownId = null;
+                lastOpenedGroup = null;
             }
 
-            // Open specific dropdown
+            // Open a dropdown
             function openDropdown(dropdown) {
                 closeAllDropdowns();
                 dropdown.classList.add('dropdown-visible');
                 backdrop.style.display = 'block';
-                lastOpenedDropdownId = dropdown.id || null;
+                lastOpenedGroup = dropdown.dataset.group || null;
             }
 
-            // Add click listener to each button
+            // Add event listeners to each button/dropdown
             document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
                 const button = wrapper.querySelector('.notifs-button');
                 const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
@@ -803,30 +803,32 @@
                 }
             });
 
-            // Close dropdowns when clicking outside
+            // Click outside to close
             document.addEventListener('click', (e) => {
-                const isClickInsideAnyWrapper = Array.from(document.querySelectorAll('.notifs-wrapper'))
+                const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
                     .some(wrapper => wrapper.contains(e.target));
-                if (!isClickInsideAnyWrapper) {
+                if (!clickedInside) {
                     closeAllDropdowns();
                 }
             });
 
-            // Close on backdrop click
+            // Backdrop click closes all
             backdrop.addEventListener('click', closeAllDropdowns);
 
-            // Handle screen resize: reopen the equivalent dropdown if it exists
+            // On resize, reopen the dropdown in the current view if the group still exists
             window.addEventListener('resize', () => {
-                if (lastOpenedDropdownId) {
-                    const nextDropdown = document.getElementById(lastOpenedDropdownId);
-                    if (nextDropdown && nextDropdown.offsetParent !== null) { // visible in current layout
-                        nextDropdown.classList.add('dropdown-visible');
+                if (lastOpenedGroup) {
+                    const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
+                        .find(dropdown => dropdown.offsetParent !== null); // Check if visible
+                    if (visibleDropdown) {
+                        visibleDropdown.classList.add('dropdown-visible');
                         backdrop.style.display = 'block';
                     } else {
-                        closeAllDropdowns(); // dropdown not visible in this layout
+                        closeAllDropdowns(); // fallback
                     }
                 }
             });
+
 
 
 
