@@ -159,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="backdrop" id="backdrop"></div>
+                <div class="backdrop" id="backdrop-tablet"></div>
 
 
 
@@ -282,7 +282,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="backdrop" id="backdrop"></div>
+                <div class="backdrop" id="backdrop-mobile"></div>
 
                 <div class="pfp-frame-wrapper">
                     <img src="{{ profile_pic_url }}" class="pfp right" id="pfp4">
@@ -763,27 +763,34 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            const backdrop = document.getElementById('backdrop');
+            const backdropMobile = document.getElementById('backdrop-mobile');
+            const backdropTablet = document.getElementById('backdrop-tablet');
             let lastOpenedGroup = null;
 
-            // Close all dropdowns
+            function getActiveBackdrop() {
+                return window.innerWidth <= 768 ? backdropMobile : backdropTablet;
+            }
+
+            function getInactiveBackdrop() {
+                return window.innerWidth <= 768 ? backdropTablet : backdropMobile;
+            }
+
             function closeAllDropdowns() {
                 document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
                     dropdown.classList.remove('dropdown-visible');
                 });
-                backdrop.style.display = 'none';
+                backdropMobile.style.display = 'none';
+                backdropTablet.style.display = 'none';
                 lastOpenedGroup = null;
             }
 
-            // Open a dropdown
             function openDropdown(dropdown) {
                 closeAllDropdowns();
                 dropdown.classList.add('dropdown-visible');
-                backdrop.style.display = 'block';
+                getActiveBackdrop().style.display = 'block';
                 lastOpenedGroup = dropdown.dataset.group || null;
             }
 
-            // Add event listeners to each button/dropdown
             document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
                 const button = wrapper.querySelector('.notifs-button');
                 const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
@@ -791,9 +798,7 @@
                 if (button && dropdown) {
                     button.addEventListener('click', (e) => {
                         e.stopPropagation();
-
                         const isVisible = dropdown.classList.contains('dropdown-visible');
-
                         if (!isVisible) {
                             openDropdown(dropdown);
                         } else {
@@ -803,7 +808,6 @@
                 }
             });
 
-            // Click outside to close
             document.addEventListener('click', (e) => {
                 const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
                     .some(wrapper => wrapper.contains(e.target));
@@ -812,22 +816,29 @@
                 }
             });
 
-            // Backdrop click closes all
-            backdrop.addEventListener('click', closeAllDropdowns);
+            backdropMobile.addEventListener('click', closeAllDropdowns);
+            backdropTablet.addEventListener('click', closeAllDropdowns);
 
-            // On resize, reopen the dropdown in the current view if the group still exists
+            // ✅ Delayed resize logic for stable dropdown re-open
             window.addEventListener('resize', () => {
                 if (lastOpenedGroup) {
-                    const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
-                        .find(dropdown => dropdown.offsetParent !== null); // Check if visible
-                    if (visibleDropdown) {
-                        visibleDropdown.classList.add('dropdown-visible');
-                        backdrop.style.display = 'block';
-                    } else {
-                        closeAllDropdowns(); // fallback
-                    }
+                    setTimeout(() => {
+                        const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
+                            .find(dropdown => dropdown.offsetParent !== null);
+                        if (visibleDropdown) {
+                            visibleDropdown.classList.add('dropdown-visible');
+
+                            const active = getActiveBackdrop();
+                            const inactive = getInactiveBackdrop();
+                            active.style.display = 'block';
+                            inactive.style.display = 'none';
+                        } else {
+                            closeAllDropdowns();
+                        }
+                    }, 100); // Delay allows layout to stabilize
                 }
             });
+
 
 
 
