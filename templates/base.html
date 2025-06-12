@@ -818,7 +818,7 @@
             // On resize, reopen the dropdown in the current view if the group still exists
             window.addEventListener('resize', () => {
                 if (lastOpenedGroup) {
-                    const visibleDropdown = Array.from(document.querySelectorAll(.notifs - requests - dropdown[data - group="${lastOpenedGroup}"]))
+                    const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
                         .find(dropdown => dropdown.offsetParent !== null); // Check if visible
                     if (visibleDropdown) {
                         visibleDropdown.classList.add('dropdown-visible');
@@ -828,7 +828,6 @@
                     }
                 }
             });
-
 
 
 
