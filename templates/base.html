@@ -830,7 +830,13 @@
                         .find(dropdown => dropdown.offsetParent !== null); // Check if visible
                     if (visibleDropdown) {
                         visibleDropdown.classList.add('dropdown-visible');
-                        getActiveBackdrop().style.display = 'block';
+
+                        // Show correct backdrop
+                        const active = getActiveBackdrop();
+                        const inactive = active === backdropMobile ? backdropTablet : backdropMobile;
+
+                        active.style.display = 'block';
+                        inactive.style.display = 'none';
                     } else {
                         closeAllDropdowns(); // fallback
                     }
