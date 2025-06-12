@@ -3698,12 +3698,19 @@ input[type="url"]::placeholder {
         display: flex;
     }
 
-    /* Divider line */
+    /* Divider line positioned absolutely at 50% height */
     .line-alerts {
-        border-top: 1px solid rgba(196, 196, 196, 0.5);
+        position: absolute;
+        top: 50%;
+        left: 0;
         width: 100%;
-        box-sizing: border-box;
+        height: 1px;
+        background-color: rgba(196, 196, 196, 0.5);
+        z-index: 1;
+        pointer-events: none;
+        /* ensures it doesn't block clicks */
     }
+
 
     /* Shared styles for notifs and requests */
     .notifs,
