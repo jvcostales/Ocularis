@@ -61,17 +61,15 @@
                         class="material-symbols-outlined search-symbol">search</span></button>
             </form>
             <div class="hide-pfp">
-                <!-- Backdrop overlay (outside wrapper) -->
-                <div class="backdrop" id="backdrop"></div>
 
                 <!-- Notification wrapper -->
-                <div class="notifs-wrapper">
+                <div class="notifs-wrapper desktop-wrapper">
                     <button class="notifs-button">
                         <span class="material-symbols-outlined notifs-symbol">notifications</span>
                     </button>
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown">
+                    <div class="notifs-requests-dropdown" id="dropdown-desktop">
                         <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
@@ -187,8 +185,105 @@
             <div class="button-pfp-wrapper">
                 <button class="search-button"><span
                         class="material-symbols-outlined search-symbol">search</span></button>
-                <button class="notifs-button"><span
-                        class="material-symbols-outlined notifs-symbol">notifications</span></button>
+                <!-- Notification wrapper -->
+                <div class="notifs-wrapper mobile-wrapper">
+                    <button class="notifs-button">
+                        <span class="material-symbols-outlined notifs-symbol">notifications</span>
+                    </button>
+
+                    <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
+                    <div class="notifs-requests-dropdown" id="dropdown-mobile">
+                        <div class="notifs" id="notifs-tablet">
+                            <div class="notifs-title">Notifs</div>
+
+                            {% if notifications %}
+                            {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
+                            <div class="notif-bar">
+                                <a href="{{ url_for('profile', user_id=actor_id) }}">
+                                    <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                        class="pfp img-notif-request">
+                                </a>
+                                <div class="notif-details">
+                                    <div class="notif-text">
+                                        <span style="font-weight: 600;">
+                                            <a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name }}</a>
+                                        </span>
+                                        {% if action == 'like' %}
+                                        liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                style="font-weight: 600;">post</span></a>.
+                                        {% elif action == 'comment' %}
+                                        commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                style="font-weight: 600;">post</span></a>.
+                                        {% elif action == 'collab_check' %}
+                                        found you as a match.
+                                        {% endif %}
+                                    </div>
+                                    <div class="notif-date">
+                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="notifs-empty">
+                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                <div class="oops">Oops!</div>
+                                <div class="nothing">Nothing to show here at the moment.</div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="line-alerts"></div>
+
+                        <div class="requests" id="requests-tablet">
+                            <div class="requests-title">Requests</div>
+
+                            {% if requests %}
+                            {% for request_id, sender_id, first_name, last_name, created_at in requests %}
+                            <div class="request-bar" id="request-{{ request_id }}">
+                                <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                    <img src="../static/pfp.jpg" class="pfp img-notif-request">
+                                </a>
+
+                                <div class="request-details">
+                                    <div class="request-text">
+                                        <span style="font-weight: 600;">
+                                            <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                                {{ first_name }} {{ last_name }}
+                                            </a>
+                                        </span> sent you a friend request.
+                                    </div>
+                                    <div class="request-date">
+                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                    </div>
+                                    <div class="request-icons">
+                                        <button type="button" class="circled-icon-1"
+                                            onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
+                                            %}disabled{% endif %}>
+                                            <span class="material-symbols-outlined close-symbol">close</span>
+                                        </button>
+
+                                        <button type="button" class="circled-icon-2"
+                                            onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
+                                            %}disabled{% endif %}>
+                                            <span class="material-symbols-outlined check-symbol">check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="notifs-empty">
+                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                <div class="oops">Oops!</div>
+                                <div class="nothing">Nothing to show here at the moment.</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="backdrop" id="backdrop"></div>
+
                 <div class="pfp-frame-wrapper">
                     <img src="{{ profile_pic_url }}" class="pfp right" id="pfp4">
                     <div class="frame4" id="frame4">
@@ -669,6 +764,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             const backdrop = document.getElementById('backdrop');
+            let lastOpenedDropdownId = null;
 
             // Close all dropdowns
             function closeAllDropdowns() {
@@ -676,6 +772,15 @@
                     dropdown.classList.remove('dropdown-visible');
                 });
                 backdrop.style.display = 'none';
+                lastOpenedDropdownId = null;
+            }
+
+            // Open specific dropdown
+            function openDropdown(dropdown) {
+                closeAllDropdowns();
+                dropdown.classList.add('dropdown-visible');
+                backdrop.style.display = 'block';
+                lastOpenedDropdownId = dropdown.id || null;
             }
 
             // Add click listener to each button
@@ -683,18 +788,19 @@
                 const button = wrapper.querySelector('.notifs-button');
                 const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
 
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                if (button && dropdown) {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
 
-                    const isVisible = dropdown.classList.contains('dropdown-visible');
+                        const isVisible = dropdown.classList.contains('dropdown-visible');
 
-                    closeAllDropdowns(); // close any open dropdown first
-
-                    if (!isVisible) {
-                        dropdown.classList.add('dropdown-visible');
-                        backdrop.style.display = 'block';
-                    }
-                });
+                        if (!isVisible) {
+                            openDropdown(dropdown);
+                        } else {
+                            closeAllDropdowns();
+                        }
+                    });
+                }
             });
 
             // Close dropdowns when clicking outside
@@ -708,6 +814,19 @@
 
             // Close on backdrop click
             backdrop.addEventListener('click', closeAllDropdowns);
+
+            // Handle screen resize: reopen the equivalent dropdown if it exists
+            window.addEventListener('resize', () => {
+                if (lastOpenedDropdownId) {
+                    const nextDropdown = document.getElementById(lastOpenedDropdownId);
+                    if (nextDropdown && nextDropdown.offsetParent !== null) { // visible in current layout
+                        nextDropdown.classList.add('dropdown-visible');
+                        backdrop.style.display = 'block';
+                    } else {
+                        closeAllDropdowns(); // dropdown not visible in this layout
+                    }
+                }
+            });
 
 
 
