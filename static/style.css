@@ -5575,7 +5575,7 @@ input[type="url"]::placeholder {
         right: 0;
         z-index: 100;
         background-color: white;
-        width: 25vw;
+        width: 50vw;
         border-radius: 10px;
         height: 75vh;
         overflow: hidden;

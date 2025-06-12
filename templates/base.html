@@ -159,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="backdrop" id="backdrop-tablet"></div>
+                <div class="backdrop" id="backdrop"></div>
 
 
 
@@ -282,7 +282,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="backdrop" id="backdrop-mobile"></div>
+                <div class="backdrop" id="backdrop"></div>
 
                 <div class="pfp-frame-wrapper">
                     <img src="{{ profile_pic_url }}" class="pfp right" id="pfp4">
@@ -763,13 +763,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            const backdropTablet = document.getElementById('backdrop-tablet');
-            const backdropMobile = document.getElementById('backdrop-mobile');
-
-            function getActiveBackdrop() {
-                return window.innerWidth < 768 ? backdropMobile : backdropTablet;
-            }
-
+            const backdrop = document.getElementById('backdrop');
             let lastOpenedGroup = null;
 
             // Close all dropdowns
@@ -777,8 +771,7 @@
                 document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
                     dropdown.classList.remove('dropdown-visible');
                 });
-                backdropTablet.style.display = 'none';
-                backdropMobile.style.display = 'none';
+                backdrop.style.display = 'none';
                 lastOpenedGroup = null;
             }
 
@@ -786,7 +779,7 @@
             function openDropdown(dropdown) {
                 closeAllDropdowns();
                 dropdown.classList.add('dropdown-visible');
-                getActiveBackdrop().style.display = 'block';
+                backdrop.style.display = 'block';
                 lastOpenedGroup = dropdown.dataset.group || null;
             }
 
@@ -820,23 +813,16 @@
             });
 
             // Backdrop click closes all
-            backdropTablet.addEventListener('click', closeAllDropdowns);
-            backdropMobile.addEventListener('click', closeAllDropdowns);
+            backdrop.addEventListener('click', closeAllDropdowns);
 
             // On resize, reopen the dropdown in the current view if the group still exists
             window.addEventListener('resize', () => {
                 if (lastOpenedGroup) {
-                    const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
+                    const visibleDropdown = Array.from(document.querySelectorAll(.notifs - requests - dropdown[data - group="${lastOpenedGroup}"]))
                         .find(dropdown => dropdown.offsetParent !== null); // Check if visible
                     if (visibleDropdown) {
                         visibleDropdown.classList.add('dropdown-visible');
-
-                        // Show correct backdrop
-                        const active = getActiveBackdrop();
-                        const inactive = active === backdropMobile ? backdropTablet : backdropMobile;
-
-                        active.style.display = 'block';
-                        inactive.style.display = 'none';
+                        backdrop.style.display = 'block';
                     } else {
                         closeAllDropdowns(); // fallback
                     }
