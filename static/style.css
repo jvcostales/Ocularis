@@ -3658,6 +3658,25 @@ input[type="url"]::placeholder {
         gap: 16px;
     }
 
+    /* Backdrop overlay */
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* semi-transparent dark */
+        z-index: 99;
+        /* behind dropdown */
+        display: none;
+    }
+
+    /* Show dropdown */
+    .notifs-requests-dropdown.show {
+        display: flex;
+    }
+
     .notifs-wrapper {
         position: relative;
         display: inline-block;
@@ -3672,16 +3691,10 @@ input[type="url"]::placeholder {
         background-color: white;
         min-width: 250px;
         border-radius: 10px;
-
-        /* THIS IS IMPORTANT */
         max-height: 80vh;
-        height: auto;
-        /* or remove this line if unnecessary */
-
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        /* don't scroll the dropdown itself */
     }
 
     .line-alerts {
@@ -3690,27 +3703,23 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
     }
 
-    /* Show the dropdown when hovering over the button or the dropdown itself */
-    .notifs-wrapper:hover .notifs-requests-dropdown {
-        display: flex;
-        /* Important: must match the actual display type */
-    }
-
     /* Shared styles for notifs and requests */
     .notifs,
     .requests {
         background: #fff;
         border-radius: 10px;
         padding: 24px 6px 24px 24px;
+        /* shorthand for spacing */
         box-sizing: border-box;
-
         overflow-y: auto;
         overflow-x: hidden;
         overscroll-behavior: contain;
-
+        display: flex;
+        flex-direction: column;
+        /* Fill available space */
         flex: 1 1 auto;
         min-height: 0;
-        /* This is critical when using flexbox */
+        /* Required for flex children to scroll properly */
     }
 
     .notifs-empty {
