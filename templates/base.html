@@ -72,7 +72,7 @@
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
                     <div class="notifs-requests-dropdown">
-                        <div class="notifs" id="notifs">
+                        <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
                             {% if notifications %}
@@ -114,7 +114,7 @@
 
                         <div class="line-alerts"></div>
 
-                        <div class="requests" id="requests">
+                        <div class="requests" id="requests-tablet">
                             <div class="requests-title">Requests</div>
 
                             {% if requests %}
@@ -1465,7 +1465,6 @@
                 const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
                 const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
                 const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-                const notifs = document.getElementById('notifs');
 
                 if (imageInput && div) {
                     div.classList.remove('no-scroll', 'has-scroll');
@@ -1503,11 +1502,21 @@
                 });
             }
 
-            // Run it on page load
-            window.addEventListener("load", adjustRightPaddingOnScrollCheck);
+            function adjustRightPaddingOnScrollCheckAll() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                        el.style.paddingRight = hasScroll ? "6px" : "24px";
+                    }
+                });
+            }
 
-            // Optional: Update on resize
-            window.addEventListener("resize", adjustRightPaddingOnScrollCheck);
+            // Run on page load and resize
+            window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
+            window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
+
 
             const imageInput = document.getElementById('image');
             if (imageInput) {
