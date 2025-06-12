@@ -3688,7 +3688,7 @@ input[type="url"]::placeholder {
         background-color: white;
         width: 25vw;
         border-radius: 10px;
-        max-height: 75vh;
+        height: 75vh;
         overflow: hidden;
         flex-direction: column;
     }
