@@ -3687,18 +3687,22 @@ input[type="url"]::placeholder {
         z-index: 100;
         background-color: white;
         width: 25vw;
-        border-radius: 10px;
         max-height: 75vh;
+        height: 75vh;
+        /* ensure fixed height to split */
+        border-radius: 10px;
         overflow: hidden;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* Dropdown: visible when toggled */
+    .notifs-requests-dropdown.dropdown-visible {
+        display: flex;
         flex-direction: column;
     }
 
-    /* Dropdown: visible when toggled via JS */
-    .notifs-requests-dropdown.dropdown-visible {
-        display: flex;
-    }
-
-    /* Divider line positioned absolutely at 50% height */
+    /* Divider line */
     .line-alerts {
         position: absolute;
         top: 50%;
@@ -3708,21 +3712,23 @@ input[type="url"]::placeholder {
         background-color: rgba(196, 196, 196, 0.5);
         z-index: 1;
         pointer-events: none;
-        /* ensures it doesn't block clicks */
     }
 
 
-    /* Shared styles for notifs and requests */
+    /* Notifications and Requests */
     .notifs,
     .requests {
-        flex: 1 1 50%;
-        /* Each takes 50% of parent height */
-        overflow-y: auto;
+        height: 50%;
+        /* ensure equal height */
         padding: 24px 6px 24px 24px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        box-sizing: border-box;
-        min-height: 0;
+        position: relative;
+        z-index: 2;
+        /* so they appear above the line */
     }
 
     .notifs-empty {
