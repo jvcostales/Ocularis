@@ -764,68 +764,61 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             const backdrop = document.getElementById('backdrop');
-            let lastOpenedGroup = null;
 
-            // Close all dropdowns
             function closeAllDropdowns() {
                 document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
                     dropdown.classList.remove('dropdown-visible');
                 });
                 backdrop.style.display = 'none';
-                lastOpenedGroup = null;
             }
 
-            // Open a dropdown
             function openDropdown(dropdown) {
                 closeAllDropdowns();
                 dropdown.classList.add('dropdown-visible');
                 backdrop.style.display = 'block';
-                lastOpenedGroup = dropdown.dataset.group || null;
             }
 
-            // Add event listeners to each button/dropdown
+            // Track the currently open dropdown to re-show on resize
+            let currentOpenDropdown = null;
+
+            // Add click listeners to all buttons
             document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
                 const button = wrapper.querySelector('.notifs-button');
                 const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
 
-                if (button && dropdown) {
-                    button.addEventListener('click', (e) => {
-                        e.stopPropagation();
-
-                        const isVisible = dropdown.classList.contains('dropdown-visible');
-
-                        if (!isVisible) {
-                            openDropdown(dropdown);
-                        } else {
-                            closeAllDropdowns();
-                        }
-                    });
-                }
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = dropdown.classList.contains('dropdown-visible');
+                    if (!isVisible) {
+                        openDropdown(dropdown);
+                        currentOpenDropdown = dropdown;
+                    } else {
+                        closeAllDropdowns();
+                        currentOpenDropdown = null;
+                    }
+                });
             });
 
-            // Click outside to close
+            // Close when clicking outside
             document.addEventListener('click', (e) => {
                 const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
                     .some(wrapper => wrapper.contains(e.target));
                 if (!clickedInside) {
                     closeAllDropdowns();
+                    currentOpenDropdown = null;
                 }
             });
 
-            // Backdrop click closes all
-            backdrop.addEventListener('click', closeAllDropdowns);
+            // Close on backdrop click
+            backdrop.addEventListener('click', () => {
+                closeAllDropdowns();
+                currentOpenDropdown = null;
+            });
 
-            // On resize, reopen the dropdown in the current view if the group still exists
+            // Reopen the dropdown on resize if it was open before
             window.addEventListener('resize', () => {
-                if (lastOpenedGroup) {
-                    const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
-                        .find(dropdown => dropdown.offsetParent !== null); // Check if visible
-                    if (visibleDropdown) {
-                        visibleDropdown.classList.add('dropdown-visible');
-                        backdrop.style.display = 'block';
-                    } else {
-                        closeAllDropdowns(); // fallback
-                    }
+                if (currentOpenDropdown) {
+                    openDropdown(currentOpenDropdown);
                 }
             });
 
