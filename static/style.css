@@ -3687,48 +3687,43 @@ input[type="url"]::placeholder {
         z-index: 100;
         background-color: white;
         width: 25vw;
-        max-height: 75vh;
-        height: 75vh;
-        /* ensure fixed height to split */
         border-radius: 10px;
+        max-height: 75vh;
         overflow: hidden;
         flex-direction: column;
-        position: relative;
     }
 
-    /* Dropdown: visible when toggled */
+    /* Dropdown: visible when toggled via JS */
     .notifs-requests-dropdown.dropdown-visible {
         display: flex;
-        flex-direction: column;
     }
 
     /* Divider line */
     .line-alerts {
-        position: absolute;
-        top: 50%;
-        left: 0;
+        border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
-        height: 1px;
-        background-color: rgba(196, 196, 196, 0.5);
-        z-index: 1;
-        pointer-events: none;
+        box-sizing: border-box;
     }
 
-
-    /* Notifications and Requests */
+    /* Shared styles for notifs and requests */
     .notifs,
     .requests {
-        height: 50%;
-        /* ensure equal height */
+        background: #fff;
+        border-radius: 10px;
         padding: 24px 6px 24px 24px;
+        /* shorthand for spacing */
+        box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
-        box-sizing: border-box;
+        overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
-        position: relative;
-        z-index: 2;
-        /* so they appear above the line */
+        /* Fill available space */
+        flex: 1 1 auto;
+        min-height: 0;
+        height: 50%;
+        /* ensure equal height */
+        /* Required for flex children to scroll properly */
     }
 
     .notifs-empty {
