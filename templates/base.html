@@ -1643,36 +1643,49 @@
 
 
 
-            const notifsButton = document.querySelector('.notifs-button');
-            const dropdown = document.querySelector('.notifs-requests-dropdown');
-            const backdrop = document.getElementById('backdrop');
+            document.addEventListener('DOMContentLoaded', () => {
+                const backdrop = document.getElementById('backdrop');
 
-            function closeDropdown() {
-                dropdown.classList.remove('dropdown-visible');
-                backdrop.style.display = 'none';
-            }
-
-            notifsButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent it from triggering document click
-                const isVisible = dropdown.classList.contains('dropdown-visible');
-                if (!isVisible) {
-                    dropdown.classList.add('dropdown-visible');
-                    backdrop.style.display = 'block';
-                } else {
-                    closeDropdown();
+                // Close all dropdowns
+                function closeAllDropdowns() {
+                    document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('dropdown-visible');
+                    });
+                    backdrop.style.display = 'none';
                 }
+
+                // Add click listener to each button
+                document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
+                    const button = wrapper.querySelector('.notifs-button');
+                    const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
+
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+
+                        const isVisible = dropdown.classList.contains('dropdown-visible');
+
+                        closeAllDropdowns(); // close any open dropdown first
+
+                        if (!isVisible) {
+                            dropdown.classList.add('dropdown-visible');
+                            backdrop.style.display = 'block';
+                        }
+                    });
+                });
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', (e) => {
+                    const isClickInsideAnyWrapper = Array.from(document.querySelectorAll('.notifs-wrapper'))
+                        .some(wrapper => wrapper.contains(e.target));
+                    if (!isClickInsideAnyWrapper) {
+                        closeAllDropdowns();
+                    }
+                });
+
+                // Close on backdrop click
+                backdrop.addEventListener('click', closeAllDropdowns);
             });
 
-            // Close when clicking outside
-            document.addEventListener('click', (e) => {
-                const isClickInside = dropdown.contains(e.target) || notifsButton.contains(e.target);
-                if (!isClickInside) {
-                    closeDropdown();
-                }
-            });
-
-            // Also close on backdrop click
-            backdrop.addEventListener('click', closeDropdown);
 
 
 
