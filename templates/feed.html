@@ -66,7 +66,7 @@
 <!--bakit naka-center ung post 1 kapag un lang ung content-->
 <!--fix class names-->
 {% for image in images %}
-<div class="post1" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
+<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}"
@@ -93,7 +93,7 @@
                     data-image-id="{{ image[0] }}">
                     {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
                 </a>
-                <div class="hide">Hide</div>
+                <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
                 <div class="report">Report</div>
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
                 <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>

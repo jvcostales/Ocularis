@@ -199,6 +199,14 @@ CREATE TABLE IF NOT EXISTS saved_posts (
 );
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS hidden_posts (
+    user_id INTEGER REFERENCES users(id),
+    image_id INTEGER REFERENCES images(image_id),
+    PRIMARY KEY (user_id, image_id)
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -597,19 +605,10 @@ def feed():
         # Fetch images with author and collaborator names
         cur.execute("""
             SELECT 
-                images.image_id,                   -- 0
-                images.image_url,                  -- 1
-                images.caption,                    -- 2
-                COALESCE(like_count, 0),           -- 3
-                images.id,                         -- 4 (author's user ID)
-                author.first_name,                 -- 5
-                author.last_name,                  -- 6
-                images.created_at,                 -- 7
-                collaborator.id,                   -- 8 (collaborator's user ID)
-                collaborator.first_name,           -- 9
-                collaborator.last_name,            -- 10
-                author.profile_pic,                -- 11 ✅
-                collaborator.profile_pic           -- 12 ✅
+                images.image_id, images.image_url, images.caption, 
+                COALESCE(like_count, 0), images.id, author.first_name, author.last_name, 
+                images.created_at, collaborator.id, collaborator.first_name, collaborator.last_name, 
+                author.profile_pic, collaborator.profile_pic
             FROM images
             JOIN users AS author ON images.id = author.id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
@@ -617,8 +616,9 @@ def feed():
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
                 GROUP BY image_id
-            ) AS likes 
-            ON images.image_id = likes.image_id
+            ) AS likes ON images.image_id = likes.image_id
+            LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
+            WHERE hp.image_id IS NULL
             ORDER BY images.created_at DESC;
         """)
         images = cur.fetchall()
@@ -897,6 +897,34 @@ def view_post(image_id):
         saved_image_ids=saved_image_ids,
         profile_pic_url=profile_pic_url
     )
+
+@app.route('/hide_post/<int:image_id>', methods=['POST'])
+@login_required
+def hide_post(image_id):
+    user_id = current_user.id
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+    try:
+        # Insert or ignore if already hidden
+        cur.execute("""
+            INSERT INTO hidden_posts (user_id, image_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING
+        """, (user_id, image_id))
+        conn.commit()
+        return jsonify({'status': 'success', 'message': 'Post hidden'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
 
 @app.route('/logout')
 @login_required

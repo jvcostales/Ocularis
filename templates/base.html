@@ -1830,6 +1830,28 @@
 
 
 
+            function hidePost(imageId) {
+                fetch(`/hide_post/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}' // include only if you use CSRF protection
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Remove the post container from the DOM
+                            const post = document.querySelector(`[data-image-id="${imageId}"]`);
+                            if (post) post.remove();
+                        } else {
+                            alert('Failed to hide post: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        alert('Error hiding post: ' + err);
+                    });
+            }
 
 
 
