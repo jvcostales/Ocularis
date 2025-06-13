@@ -771,8 +771,7 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url,
-        author_profile_pic=author_profile_pic
+        profile_pic_url=profile_pic_url
     )
 
 @app.route('/post/<int:image_id>')
