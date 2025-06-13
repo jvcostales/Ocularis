@@ -2638,7 +2638,7 @@ def delete_account_route():
         session.clear()
         logout_user()
         flash('Your account has been deleted.', 'success')
-        return redirect(url_for('landing'))  # or wherever you want
+        return redirect(url_for('login'))  # or wherever you want
     except Exception as e:
         app.logger.error(f"Error deleting account: {e}")
         flash('An error occurred while deleting your account.', 'danger')
