@@ -2073,7 +2073,10 @@ def notify_collab_check():
         if conn:
             conn.close()
 
-    return jsonify({'message': 'Notification sent to collaborator'}), 201
+    return jsonify({
+        'message': 'Notification sent to collaborator',
+        'redirect_url': url_for('pairup')
+    }), 201
 
 
 

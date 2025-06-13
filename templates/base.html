@@ -1804,55 +1804,50 @@
             document.getElementById('notify-btn').addEventListener('click', function () {
                 const recipientId = this.getAttribute('data-recipient-id');
 
-                document.getElementById('notify-btn').addEventListener('click', function () {
-                    const recipientId = this.getAttribute('data-recipient-id');
-
-                    fetch('/notify/collab_check', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ recipient_id: recipientId })
+                fetch('/notify/collab_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ recipient_id: recipientId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert('Error: ' + data.error);
+                        } else {
+                            alert(data.message);
+                            // Redirect after showing alert
+                            setTimeout(() => {
+                                window.location.href = data.redirect_url;
+                            }, 1000);  // 1 second delay so user can see alert message
+                        }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.error) {
-                                alert('Error: ' + data.error);
-                            } else {
-                                // Optional: alert the user first
-                                alert(data.message);
-
-                                // Then redirect to /pairup
-                                window.location.href = '/pairup';
-                            }
-                        })
-                        .catch(err => {
-                            alert('Request failed: ' + err);
-                        });
-                });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    .catch(err => alert('Request failed: ' + err));
             });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        });
 
 
     </script>
