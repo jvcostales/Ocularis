@@ -402,9 +402,11 @@ def api_setup_profile():
     x = request.form['x']
     linkedin = request.form['linkedin']
     telegram = request.form['telegram']
-    country = request.form['country']
-    state = request.form['state']
-    city = request.form['city']
+
+    # Make sure these values come from <option value="{{ code }}">
+    country = request.form['country'].strip().upper()  # ISO2, e.g. "US"
+    state = request.form['state'].strip()  # state code, e.g. "CA"
+    city = request.form['city'].strip()  # city name, e.g. "Los Angeles"
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -414,6 +416,7 @@ def api_setup_profile():
         port=5432
     )
     cur = conn.cursor()
+
     cur.execute("""
         UPDATE users
         SET skills = %s,
@@ -429,13 +432,18 @@ def api_setup_profile():
             state = %s,
             city = %s
         WHERE id = %s
-    """, (skills, prefs, level, role, facebook, instagram, x, linkedin, telegram, country, state, city, current_user.id))
+    """, (
+        skills, prefs, level, role,
+        facebook, instagram, x, linkedin, telegram,
+        country, state, city,
+        current_user.id
+    ))
 
     cur.execute("""
-    UPDATE users
-    SET is_profile_complete = TRUE
-    WHERE id = %s
-""", (current_user.id,))
+        UPDATE users
+        SET is_profile_complete = TRUE
+        WHERE id = %s
+    """, (current_user.id,))
     
     conn.commit()
     cur.close()
