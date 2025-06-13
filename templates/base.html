@@ -1835,7 +1835,6 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token() }}' // include only if you use CSRF protection
                     }
                 })
                     .then(response => response.json())
