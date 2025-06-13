@@ -1816,33 +1816,36 @@
                         if (data.error) {
                             alert('Error: ' + data.error);
                         } else {
+                            // Optional: show alert before redirect
                             alert(data.message);
+                            // Redirect to /pairup after successful check
+                            window.location.href = '/pairup';
                         }
                     })
                     .catch(err => alert('Request failed: ' + err));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        });
 
 
     </script>
