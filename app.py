@@ -2633,10 +2633,16 @@ def delete_account(user_id):
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account_route():
-    delete_account(session['user_id'])
-    session.clear()
-    flash('Your account has been deleted.', 'info')
-    return redirect(url_for('login'))
+    try:
+        delete_account(current_user.id)
+        session.clear()
+        logout_user()
+        flash('Your account has been deleted.', 'success')
+        return redirect(url_for('landing'))  # or wherever you want
+    except Exception as e:
+        app.logger.error(f"Error deleting account: {e}")
+        flash('An error occurred while deleting your account.', 'danger')
+        return redirect(url_for('settings'))
 
 
 if __name__ == '__main__':
