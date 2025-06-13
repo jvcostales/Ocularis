@@ -1817,14 +1817,13 @@
                             alert('Error: ' + data.error);
                         } else {
                             alert(data.message);
-                            // Redirect after showing alert
-                            setTimeout(() => {
-                                window.location.href = data.redirect_url;
-                            }, 1000);  // 1 second delay so user can see alert message
+                            // Immediately redirect after alert is dismissed
+                            window.location.href = data.redirect_url;
                         }
                     })
                     .catch(err => alert('Request failed: ' + err));
             });
+
 
 
 
