@@ -69,7 +69,7 @@
                     </button>
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" data-group="notifs" id="dropdown-desktop">
+                    <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-desktop">
                         <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
@@ -192,7 +192,7 @@
                     </button>
 
                     <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" data-group="notifs" id="dropdown-mobile">
+                    <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-mobile">
                         <div class="notifs" id="notifs-tablet">
                             <div class="notifs-title">Notifs</div>
 
@@ -819,25 +819,25 @@
             backdropMobile.addEventListener('click', closeAllDropdowns);
             backdropTablet.addEventListener('click', closeAllDropdowns);
 
-            // ✅ Delayed resize logic for stable dropdown re-open
+            // ✅ Resize logic — try reopening matching dropdown even if it's currently hidden
             window.addEventListener('resize', () => {
                 if (lastOpenedGroup) {
-                    setTimeout(() => {
-                        const visibleDropdown = Array.from(document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`))
-                            .find(dropdown => dropdown.offsetParent !== null);
-                        if (visibleDropdown) {
-                            visibleDropdown.classList.add('dropdown-visible');
+                    const dropdowns = document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`);
 
-                            const active = getActiveBackdrop();
-                            const inactive = getInactiveBackdrop();
-                            active.style.display = 'block';
-                            inactive.style.display = 'none';
-                        } else {
-                            closeAllDropdowns();
+                    for (const dropdown of dropdowns) {
+                        // Check if it's in the currently visible layout
+                        const wrapper = dropdown.closest('.notifs-wrapper');
+                        if (wrapper && wrapper.offsetParent !== null) {
+                            openDropdown(dropdown);
+                            return;
                         }
-                    }, 100); // Delay allows layout to stabilize
+                    }
+
+                    // Fallback: close if none match
+                    closeAllDropdowns();
                 }
             });
+
 
 
 
