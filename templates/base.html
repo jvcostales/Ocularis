@@ -705,6 +705,31 @@
     </div>
 
     <script>
+
+        window.hidePost = function (imageId) {
+            fetch(`/hide_post/${imageId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const post = document.querySelector(`[data-image-id="${imageId}"]`);
+                        if (post) post.remove();
+                    } else {
+                        alert('Failed to hide post: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    alert('Error hiding post: ' + err);
+                });
+        };
+
+
+
+        
         let currentStep = 1;
         const totalSteps = 7;
 
@@ -1823,46 +1848,6 @@
                     })
                     .catch(err => alert('Request failed: ' + err));
             });
-
-
-
-
-
-
-
-            function hidePost(imageId) {
-                fetch(`/hide_post/${imageId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            // Remove the post container from the DOM
-                            const post = document.querySelector(`[data-image-id="${imageId}"]`);
-                            if (post) post.remove();
-                        } else {
-                            alert('Failed to hide post: ' + data.message);
-                        }
-                    })
-                    .catch(err => {
-                        alert('Error hiding post: ' + err);
-                    });
-            }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
