@@ -2247,68 +2247,167 @@ def cover_photos(filename):
     return send_from_directory(app.config['COVER_PHOTO_FOLDER'], filename)
 
 
-@app.route('/api/setup-profile', methods=['POST'])
+@app.route('/settings', methods=['GET', 'POST'])
 @login_required
-def api_setup_profile():
-    # Collect form values
-    skills = request.form.getlist('skills')
-    prefs = request.form.getlist('preferences')
-    level = int(request.form.get('experience_level') or 1)
-    role = request.form.get('role')
-    facebook = request.form.get('facebook')
-    instagram = request.form.get('instagram')
-    x = request.form.get('x')
-    linkedin = request.form.get('linkedin')
-    telegram = request.form.get('telegram')
-    country = request.form.get('country')
-    state = request.form.get('state')
-    city = request.form.get('city')
+def settings():
+    user_id = current_user.id
+    if not user_id:
+        return redirect(url_for('login'))
 
-    # Log values for debugging
-    print("--- PROFILE SETUP DEBUG ---")
-    print("Country:", country)
-    print("State:", state)
-    print("City:", city)
-    print("Skills:", skills)
-    print("Preferences:", prefs)
-
-    # Save to database
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("""
-        UPDATE users
-        SET skills = %s,
-            preferences = %s,
-            experience_level = %s,
-            role = %s,
-            facebook = %s,
-            instagram = %s,
-            x = %s,
-            linkedin = %s,
-            telegram = %s,
-            country = %s,
-            state = %s,
-            city = %s
-        WHERE id = %s
-    """, (
-        skills, prefs, level, role, facebook, instagram, x, linkedin, telegram,
-        country, state, city, current_user.id
-    ))
 
-    # Mark profile as complete
-    cur.execute("UPDATE users SET is_profile_complete = TRUE WHERE id = %s", (current_user.id,))
+    # Get profile and cover photo filenames
+    cur.execute("SELECT profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
+    result = cur.fetchone()
 
-    conn.commit()
-    cur.close()
-    conn.close()
+    # Set profile pic URL
+    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    return jsonify({'success': True, 'redirect_url': url_for('feed')})
+    # Set cover photo URL
+    cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[1] != 'default_cover.png' else url_for('static', filename='default_cover.png')
+
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        role = request.form.get('role')
+        country = request.form.get('country')
+        state = request.form.get('state')
+        city = request.form.get('city')
+        experience_level = request.form.get('experience_level')
+        skills_list = request.form.getlist('skills[]')
+        preferences_list = request.form.getlist('preferences[]')
+        facebook = request.form.get('facebook')
+        instagram = request.form.get('instagram')
+        x = request.form.get('x')
+        linkedin = request.form.get('linkedin')
+        telegram = request.form.get('telegram')
+
+        # Handle profile picture upload
+        profile_pic = request.files.get('profile_pic')
+        if profile_pic and profile_pic.filename != '':
+            if allowed_file(profile_pic.filename):
+                ext = profile_pic.filename.rsplit('.', 1)[1].lower()
+                profile_pic_filename = f"pfp_user_{user_id}.{ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename)
+                profile_pic.save(filepath)
+                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (profile_pic_filename, user_id))
+            else:
+                flash("Invalid profile picture file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
+
+        # Handle cover photo upload
+        cover_photo = request.files.get('cover_photo')
+        if cover_photo and cover_photo.filename != '':
+            if allowed_file(cover_photo.filename):
+                ext = cover_photo.filename.rsplit('.', 1)[1].lower()
+                cover_photo_filename = f"cover_user_{user_id}.{ext}"
+                cover_filepath = os.path.join(app.config['COVER_PHOTO_FOLDER'], cover_photo_filename)
+                cover_photo.save(cover_filepath)
+                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (cover_photo_filename, user_id))
+            else:
+                flash("Invalid cover photo file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
+
+        # Update user info
+        cur.execute("""
+            UPDATE users SET
+                first_name = %s,
+                last_name = %s,
+                role = %s,
+                country = %s,
+                state = %s,
+                city = %s,
+                skills = %s,
+                preferences = %s,
+                experience_level = %s,
+                facebook = %s,
+                instagram = %s,
+                x = %s,
+                linkedin = %s,
+                telegram = %s
+            WHERE id = %s
+        """, (
+            first_name, last_name, role, country, state, city,
+            skills_list, preferences_list, experience_level,
+            facebook, instagram, x, linkedin, telegram,
+            user_id
+        ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        flash("Settings updated successfully.", "success")
+        return redirect(url_for('settings'))
+
+    else:
+        # GET: fetch user info
+        cur.execute("""
+            SELECT first_name, last_name, role, country, state, city, skills, preferences,
+                   experience_level, facebook, instagram, x, linkedin, telegram
+            FROM users WHERE id = %s
+        """, (user_id,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if user:
+            user_dict = {
+                'first_name': user[0],
+                'last_name': user[1],
+                'role': user[2],
+                'country': user[3],
+                'state': user[4],
+                'city': user[5],
+                'skills': ', '.join(user[6]) if user[6] else '',
+                'preferences': ', '.join(user[7]) if user[7] else '',
+                'experience_level': user[8],
+                'facebook': user[9],
+                'instagram': user[10],
+                'x': user[11],
+                'linkedin': user[12],
+                'telegram': user[13]
+            }
+
+            countries = app.config['COUNTRIES']
+
+            categories = [
+                "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+                "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
+            ]
+
+            experience_levels = [
+                (1, "Beginner"),
+                (2, "Intermediate"),
+                (3, "Advanced"),
+                (4, "Expert")
+            ]
+
+            return render_template(
+                'settings.html',
+                user=user_dict,
+                countries=countries,
+                categories=categories,
+                experience_levels=experience_levels,
+                verified=current_user.verified,
+                profile_pic_url=profile_pic_url,
+                cover_photo_url=cover_photo_url
+            )
+        else:
+            flash("User not found.", "danger")
+            return redirect(url_for('login'))
 
 
 def save_post(user_id, image_id, conn):

@@ -451,9 +451,7 @@
                                     <select class="location" id="country" name="country" required>
                                         <option disabled selected>Select your country</option>
                                         {% for country in countries %}
-                                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{
-                                            country.name
-                                            }}</option>
+                                        <option value="{{ country.iso2 }}">{{ country.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
@@ -729,7 +727,7 @@
 
 
 
-        
+
         let currentStep = 1;
         const totalSteps = 7;
 
