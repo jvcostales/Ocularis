@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS images (
     collaborator_id INT,
     caption TEXT,
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (collaborator_id) REFERENCES users(id)
+    FOREIGN KEY (collaborator_id) REFERENCES users(id) ON DELETE SET NULL
 );
 """)
 
@@ -2607,6 +2607,36 @@ def unsave_image(image_id):
     conn.close()
 
     return jsonify({'status': 'unsaved'})
+
+def delete_account(user_id):
+    try:
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+            dbname="ocularis_db", 
+            user="ocularis_db_user", 
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+            port=5432
+        )
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        # Delete user by ID
+        cur.execute("DELETE FROM users WHERE id = %s;", (user_id,))
+        print(f"User {user_id} deleted successfully.")
+
+        cur.close()
+        conn.close()
+        
+    except Exception as e:
+        print("Error deleting account:", e)
+
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account_route():
+    delete_account(session['user_id'])
+    session.clear()
+    flash('Your account has been deleted.', 'info')
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

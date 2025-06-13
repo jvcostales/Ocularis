@@ -121,4 +121,9 @@
     <button type="submit">Update Settings</button>
 </form>
 
+<form method="POST" action="{{ url_for('delete_account_route') }}">
+    <button type="submit" class="danger-btn">Delete Account</button>
+</form>
+
+
 {% endblock %}
