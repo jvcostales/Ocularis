@@ -1608,13 +1608,14 @@ input[type="url"]::placeholder {
         width: 452px;
         margin: 0 48px;
         margin-bottom: 36px;
-        border: 1px solid #dcdcdc;
+        border: 1px solid #ddd;
         border-radius: 5px;
         overflow: hidden;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .social-table tr {
-        border-bottom: 1px solid #dcdcdc;
+        border-bottom: 1px solid #eee;
     }
 
     .social-table tr:last-child {
@@ -1630,7 +1631,7 @@ input[type="url"]::placeholder {
     }
 
     .social-table td:last-child {
-        color: #dcdcdc;
+        color: #c4c4c4;
         word-break: break-word;
     }
 

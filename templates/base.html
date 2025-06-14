@@ -458,10 +458,10 @@
                                     </select>
                                     <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
                                 </div>
-                                <div class="label">Region</div>
+                                <div class="label">Region or Province</div>
                                 <div class="label-wrapper">
                                     <select class="location" id="state" name="state" required>
-                                        <option value="">Select your region</option>
+                                        <option value="">Select your region or province</option>
                                     </select>
                                     <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
                                 </div>
@@ -990,7 +990,7 @@
 
                         if (selectedCountryIso) {
                             const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
-                            stateSelect.innerHTML = '<option value="">Select State</option>';
+                            stateSelect.innerHTML = '<option value="">Select your region or province</option>';
 
                             filteredStates.forEach(state => {
                                 const option = document.createElement('option');
@@ -1013,8 +1013,8 @@
 
                 countrySelect.addEventListener('change', () => {
                     const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-                    stateSelect.innerHTML = '<option value="">Select State</option>';
-                    citySelect.innerHTML = '<option value="">Select City</option>';
+                    stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+                    citySelect.innerHTML = '<option value="">Select your city</option>';
 
                     if (!selectedIso) return;
 
@@ -1033,7 +1033,7 @@
                     const selectedStateCode = stateSelect.value;
                     const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
 
-                    citySelect.innerHTML = '<option value="">Select City</option>';
+                    citySelect.innerHTML = '<option value="">Select your city</option>';
 
                     console.log('Selected country ISO:', selectedCountryIso);
                     console.log('Selected state code:', selectedStateCode);
