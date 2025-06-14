@@ -15,13 +15,6 @@
 </head>
 
 <body>
-
-    <script>
-        const selectedCountryCode = "{{ user.country }}";
-        const selectedStateCode = "{{ user.state }}";
-        const selectedCityName = "{{ user.city }}";
-    </script>
-
     <div class="container">
         <div class="left-sidebar-container">
             <div class="left-sidebar">
@@ -571,8 +564,8 @@
                     <div class="overlay-content-setup">
                         <div class="overlay-title-setup">Setup</div>
                         <div class="div-setup" id="divSetup7">
-                            <div class="heading">What is your experience level?</div>
-                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                            <div class="heading">Link your external accounts.</div>
+                            <div class="subheading">Let your profiles speak for you.</div>
                             <table class="social-table">
                                 <tr>
                                     <td><label for="facebook">Facebook</label></td>
@@ -980,19 +973,23 @@
                 showStep(currentStep);
             }
 
+            const countrySelect = document.getElementById('country');
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+
             if (countrySelect && stateSelect && citySelect) {
                 let allStates = [];
                 let allCities = [];
 
-                // First fetch states and populate based on selected country
                 fetch('/api/get-states')
                     .then(res => res.json())
-                    .then(states => {
-                        allStates = states;
-                        if (selectedCountryCode) {
-                            const filteredStates = allStates.filter(
-                                s => s.country_code === selectedCountryCode
-                            );
+                    .then(data => {
+                        allStates = data;
+
+                        const selectedCountryIso = countrySelect.value;
+
+                        if (selectedCountryIso) {
+                            const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
                             stateSelect.innerHTML = '<option value="">Select your region or province</option>';
 
                             filteredStates.forEach(state => {
@@ -1005,27 +1002,59 @@
                                 stateSelect.appendChild(option);
                             });
                         }
+                    });
 
-                        // Now fetch cities
-                        return fetch(`/api/get-cities?country=${selectedCountryCode}&state=${selectedStateCode}`);
-                    })
+                fetch('/api/get-cities')
                     .then(res => res.json())
-                    .then(cities => {
-                        allCities = cities;
-                        citySelect.innerHTML = '<option value="">Select your city</option>';
-                        allCities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city.name;
-                            option.textContent = city.name;
-                            if (city.name === selectedCityName) {
-                                option.selected = true;
-                            }
-                            citySelect.appendChild(option);
-                        });
-                    })
-                    .catch(err => console.error('Dropdown error:', err));
-            }
+                    .then(data => {
+                        allCities = data;
+                        console.log('Fetched Cities:', allCities);
+                    });
 
+                countrySelect.addEventListener('change', () => {
+                    const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                    stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+                    citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                    if (!selectedIso) return;
+
+                    const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                    console.log('Filtered States:', filteredStates);
+
+                    filteredStates.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state.state_code;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                    });
+                });
+
+                stateSelect.addEventListener('change', () => {
+                    const selectedStateCode = stateSelect.value;
+                    const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                    citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                    console.log('Selected country ISO:', selectedCountryIso);
+                    console.log('Selected state code:', selectedStateCode);
+
+                    if (!selectedStateCode || !selectedCountryIso) return;
+
+                    fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                        .then(res => res.json())
+                        .then(filteredCities => {
+                            filteredCities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.name;
+                                option.textContent = city.name;
+                                citySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cities:', error);
+                        });
+                });
+            }
 
             let scrollPosition = 0;
 
