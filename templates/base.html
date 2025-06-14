@@ -449,11 +449,12 @@
                                 <div class="label">Country</div>
                                 <div class="label-wrapper">
                                     <select class="location" id="country" name="country" required>
-                                        <option disabled selected>Select your country</option>
+                                        <option value="">Select your country</option>
                                         {% for country in countries %}
-                                        <option value="{{ country.name }}" data-iso="{{ country.iso2 }}">{{
-                                            country.name
-                                            }}</option>
+                                        <option value="{{ country.iso2 }}" data-iso="{{ country.iso2 }}" {% if
+                                            user.country|trim|lower==country.iso2|trim|lower %}selected{% endif %}>
+                                            {{ country.name }}
+                                        </option>
                                         {% endfor %}
                                     </select>
                                     <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
@@ -462,6 +463,12 @@
                                 <div class="label-wrapper">
                                     <select class="location" id="state" name="state" required>
                                         <option value="">Select your region or province</option>
+                                        {% for state in states if state.country_code == user.country %}
+                                        <option value="{{ state.state_code }}" {% if state.state_code==user.state
+                                            %}selected{% endif %}>
+                                            {{ state.name }}
+                                        </option>
+                                        {% endfor %}
                                     </select>
                                     <span class="material-symbols-outlined down-symbol">keyboard_arrow_down</span>
                                 </div>
@@ -977,17 +984,20 @@
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
 
+            const selectedStateCode = "{{ user.state|default('') }}";
+            const selectedCityName = "{{ user.city|default('') }}";
+
             if (countrySelect && stateSelect && citySelect) {
                 let allStates = [];
                 let allCities = [];
 
+                // Fetch all states
                 fetch('/api/get-states')
                     .then(res => res.json())
                     .then(data => {
                         allStates = data;
 
                         const selectedCountryIso = countrySelect.value;
-
                         if (selectedCountryIso) {
                             const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
                             stateSelect.innerHTML = '<option value="">Select your region or province</option>';
@@ -1000,10 +1010,18 @@
                                     option.selected = true;
                                 }
                                 stateSelect.appendChild(option);
-                            });
+                            }
+
+                            );
+
+                            // If state was already selected, trigger the city fetch too
+                            if (selectedStateCode) {
+                                fetchCities(selectedCountryIso, selectedStateCode);
+                            }
                         }
                     });
 
+                // Fetch all cities (needed for change listener fallback)
                 fetch('/api/get-cities')
                     .then(res => res.json())
                     .then(data => {
@@ -1019,8 +1037,6 @@
                     if (!selectedIso) return;
 
                     const filteredStates = allStates.filter(state => state.country_code === selectedIso);
-                    console.log('Filtered States:', filteredStates);
-
                     filteredStates.forEach(state => {
                         const option = document.createElement('option');
                         option.value = state.state_code;
@@ -1035,25 +1051,29 @@
 
                     citySelect.innerHTML = '<option value="">Select your city</option>';
 
-                    console.log('Selected country ISO:', selectedCountryIso);
-                    console.log('Selected state code:', selectedStateCode);
-
                     if (!selectedStateCode || !selectedCountryIso) return;
 
-                    fetch(`/api/get-cities?country=${selectedCountryIso}&state=${selectedStateCode}`)
+                    fetchCities(selectedCountryIso, selectedStateCode);
+                });
+
+                function fetchCities(countryIso, stateCode) {
+                    fetch(`/api/get-cities?country=${countryIso}&state=${stateCode}`)
                         .then(res => res.json())
                         .then(filteredCities => {
                             filteredCities.forEach(city => {
                                 const option = document.createElement('option');
                                 option.value = city.name;
                                 option.textContent = city.name;
+                                if (city.name === selectedCityName) {
+                                    option.selected = true;
+                                }
                                 citySelect.appendChild(option);
                             });
                         })
                         .catch(error => {
                             console.error('Error fetching cities:', error);
                         });
-                });
+                }
             }
 
             let scrollPosition = 0;
