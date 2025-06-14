@@ -754,6 +754,7 @@ def feed():
     return render_template(
         'feed.html',
         current_page='feed',
+        user=current_user,
         tags=tags,
         matched_users=matched_users,
         images=images,
