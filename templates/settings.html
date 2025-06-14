@@ -38,18 +38,17 @@
 
     <p>User country: {{ user.country }}</p>
 
-    <label for="country">Country:</label>
-    <select id="country" name="country" required>
-        <option value="">Select Country</option>
-        {% for c in countries %}
-        <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country and
-            user.country|trim|lower==c.iso2|trim|lower %}selected{% endif %}>
-            {{ c.name }}
-        </option>
-        {% endfor %}
-    </select>
-    <br />
-
+    <label>Country:
+        <select id="country" name="country" required>
+            <option value="">Select Country</option>
+            {% for c in countries %}
+            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.iso2|trim|lower
+                %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </label><br />
 
     <label>State/Province:
         <select id="state" name="state" required>
@@ -81,7 +80,7 @@
     {% for category in categories %}
     <label>
         <input type="checkbox" name="preferences[]" value="{{ category }}"
-        {% if category in user.preferences.split(' , ') %}checked{% endif %}>
+        {% if category in user.preferences.split(', ') %}checked{% endif %}>
         {{ category }}
     </label><br />
     {% endfor %}
@@ -122,8 +121,10 @@
     <button type="submit">Update Settings</button>
 </form>
 
-<form method="POST" action="{{ url_for(' delete_account_route') }}">
-        <button type="submit" class="danger-btn">Delete Account</button>
+<div>Delete Account</div>
+
+<form method="POST" action="{{ url_for('delete_account_route') }}">
+    <button type="submit" class="danger-btn">Delete Account</button>
 </form>
 
 {% endblock %}
