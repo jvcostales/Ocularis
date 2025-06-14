@@ -1468,7 +1468,7 @@ input[type="url"]::placeholder {
     }
 
     .setup2-field {
-        border: 1px solid #c4c4c4;
+        border: 1px solid #dcdcdc;
         border-radius: 5px;
         color: #1a1a1a;
         font-size: 1rem;
@@ -1508,7 +1508,7 @@ input[type="url"]::placeholder {
     }
 
     .location {
-        border: 1px solid #c4c4c4;
+        border: 1px solid #dcdcdc;
         border-radius: 5px;
         color: #c4c4c4;
         font-size: 1rem;
@@ -1529,6 +1529,7 @@ input[type="url"]::placeholder {
         top: 50%;
         transform: translateY(-50%);
         pointer-events: none;
+        color: #1a1a1a;
     }
 
     .button-wrapper {
@@ -1607,14 +1608,13 @@ input[type="url"]::placeholder {
         width: 452px;
         margin: 0 48px;
         margin-bottom: 36px;
-        border: 1px solid #ddd;
+        border: 1px solid #dcdcdc;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .social-table tr {
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #dcdcdc;
     }
 
     .social-table tr:last-child {
@@ -1630,7 +1630,7 @@ input[type="url"]::placeholder {
     }
 
     .social-table td:last-child {
-        color: #c4c4c4;
+        color: #dcdcdc;
         word-break: break-word;
     }
 
