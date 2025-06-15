@@ -2101,6 +2101,11 @@ input[type="url"]::placeholder {
         background-color: #152FAE;
     }
 
+    .button-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
     .location-settings {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
