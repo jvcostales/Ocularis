@@ -49,7 +49,7 @@
             <div class="subname">Location</div>
             <div class="sub-location-wrapper">
                 <div class="label-wrapper">
-                    <select class="location" id="country" name="country" required>
+                    <select class="location-settings" id="country" name="country" required>
                         <option value="">Select your country</option>
                         {% for c in countries %}
                         <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
@@ -61,7 +61,7 @@
                     <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
                 </div>
                 <div class="label-wrapper">
-                    <select class="location" id="state" name="state" required>
+                    <select class="location-settings" id="state" name="state" required>
                         <option value="">Select your region or province</option>
                         {% if user.state %}
                         <option selected value="{{ user.state }}">{{ user.state }}</option>
@@ -70,7 +70,7 @@
                     <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
                 </div>
                 <div class="label-wrapper">
-                    <select class="location" id="city" name="city" required>
+                    <select class="location-settings" id="city" name="city" required>
                         <option value="">Select your city</option>
                         {% if user.city %}
                         <option selected value="{{ user.city }}">{{ user.city }}</option>
