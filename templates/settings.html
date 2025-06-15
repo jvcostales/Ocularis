@@ -133,75 +133,75 @@
 
     <h1>Account Settings</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <ul>
-        {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul>
+    {% for category, message in messages %}
+    <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
 
-    <script>
-        const selectedStateCode = "{{ user.state }}";
-    </script>
+<script>
+    const selectedStateCode = "{{ user.state }}";
+</script>
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
-        <label for="profile_pic">Profile Picture:</label><br />
-        <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
+    <label for="profile_pic">Profile Picture:</label><br />
+    <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
 
-        <label for="cover_photo">Cover Photo:</label><br />
-        <input id="cover_photo" type="file" name="cover_photo" accept="image/*" /><br /><br />
+    <label for="cover_photo">Cover Photo:</label><br />
+    <input id="cover_photo" type="file" name="cover_photo" accept="image/*" /><br /><br />
 
-        <label>First Name:
-            <input type="text" name="first_name" value="{{ user.first_name }}" required />
-        </label><br />
+    <label>First Name:
+        <input type="text" name="first_name" value="{{ user.first_name }}" required />
+    </label><br />
 
-        <label>Last Name:
-            <input type="text" name="last_name" value="{{ user.last_name }}" required />
-        </label><br />
+    <label>Last Name:
+        <input type="text" name="last_name" value="{{ user.last_name }}" required />
+    </label><br />
 
-        <label>Role:
-            <input type="text" name="role" value="{{ user.role or '' }}" />
-        </label><br />
+    <label>Role:
+        <input type="text" name="role" value="{{ user.role or '' }}" />
+    </label><br />
 
-        <p>User country: {{ user.country }}</p>
+    <p>User country: {{ user.country }}</p>
 
-        <label>Country:
-            <select id="country" name="country" required>
-                <option value="">Select Country</option>
-                {% for c in countries %}
-                <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.iso2|trim|lower
-                    %}selected{% endif %}>
-                    {{ c.name }}
-                </option>
-                {% endfor %}
-            </select>
-        </label><br />
+    <label>Country:
+        <select id="country" name="country" required>
+            <option value="">Select Country</option>
+            {% for c in countries %}
+            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if user.country|trim|lower==c.iso2|trim|lower
+                %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </label><br />
 
-        <label>State/Province:
-            <select id="state" name="state" required>
-                <option value="">Select State</option>
-                {% if user.state %}
-                <option selected value="{{ user.state }}">{{ user.state }}</option>
-                {% endif %}
-            </select>
-        </label><br />
+    <label>State/Province:
+        <select id="state" name="state" required>
+            <option value="">Select State</option>
+            {% if user.state %}
+            <option selected value="{{ user.state }}">{{ user.state }}</option>
+            {% endif %}
+        </select>
+    </label><br />
 
-        <label>City:
-            <select id="city" name="city" required>
-                <option value="">Select City</option>
-                {% if user.city %}
-                <option selected value="{{ user.city }}">{{ user.city }}</option>
-                {% endif %}
-            </select>
-        </label><br />
+    <label>City:
+        <select id="city" name="city" required>
+            <option value="">Select City</option>
+            {% if user.city %}
+            <option selected value="{{ user.city }}">{{ user.city }}</option>
+            {% endif %}
+        </select>
+    </label><br />
 
-        <label>Skills:</label><br />
-        {% for category in categories %}
-        <label>
-            <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
+    <label>Skills:</label><br />
+    {% for category in categories %}
+    <label>
+        <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />
     {% endfor %}
@@ -210,7 +210,7 @@
     {% for category in categories %}
     <label>
         <input type="checkbox" name="preferences[]" value="{{ category }}"
-        {% if category in user.preferences.split(' , ') %}checked{% endif %}>
+        {% if category in user.preferences.split(', ') %}checked{% endif %}>
         {{ category }}
     </label><br />
     {% endfor %}
@@ -253,9 +253,9 @@
 
 <div>Delete Account</div>
 
-<form method="POST" action="{{ url_for(' delete_account_route') }}">
-            <button type="submit" class="danger-btn">Delete Account</button>
-    </form>
+<form method="POST" action="{{ url_for('delete_account_route') }}">
+    <button type="submit" class="danger-btn">Delete Account</button>
+</form>
 </div>
 
 {% endblock %}
