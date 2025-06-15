@@ -1970,7 +1970,7 @@ input[type="url"]::placeholder {
     .post-title-settings {
         font-size: 1.125rem;
         color: #c4c4c4;
-        margin-bottom: 96px;
+        margin-bottom: 24px;
         font-weight: 500;
     }
 
@@ -1986,6 +1986,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 26px;
+        padding-bottom: 24px;
     }
 
     .section-sub {
@@ -1997,7 +1998,7 @@ input[type="url"]::placeholder {
     .selected-section {
         background-color: #D3F36A;
         color: #9BB35B !important;
-        padding: 8.5px 10px;
+        padding: 7px 12px;
         border-radius: 999px;
         display: inline-block;
         text-align: center;
@@ -2015,6 +2016,7 @@ input[type="url"]::placeholder {
         font-size: 1.25rem;
         font-weight: 600;
         color: #1a1a1a;
+        padding-bottom: 16px;
     }
 
     .section-tagline {
@@ -2027,6 +2029,7 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         font-weight: 500;
         color: #1a1a1a;
+        width: 129px;
     }
 
     .sub-wrapper {
@@ -2041,39 +2044,62 @@ input[type="url"]::placeholder {
         gap: 12px;
     }
 
-    .first-name-field {
+    .settings-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
         color: #1a1a1a;
         font-size: 1rem;
-        width: 452px;
+        width: 313px;
         height: 36px;
         padding: 0 16px;
         outline: none;
         box-sizing: border-box;
     }
 
-    .last-name-field::placeholder {
+    .settings-field::placeholder {
         color: #c4c4c4;
     }
 
-    .first-name-field {
-        border: 1px solid #dcdcdc;
-        border-radius: 5px;
-        color: #1a1a1a;
+    .sub-sub-wrapper {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .edit-photo {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .settings-photo {
+        width: 72px;
+        height: 72px;
+        border-radius: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .save-changes-button {
         font-size: 1rem;
-        width: 452px;
-        height: 36px;
-        padding: 0 16px;
-        outline: none;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
         box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
     }
 
-    .last-name-field::placeholder {
-        color: #c4c4c4;
+    .save-changes-button:hover {
+        background-color: #4F72F7;
     }
 
-
+    .save-changes-button:active {
+        background-color: #152FAE;
+    }
 }
 
 /* Tablet: 8-column layout */
