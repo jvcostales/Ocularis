@@ -1886,7 +1886,7 @@ def pairup():
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic_url=profile_pic_url)
+    return render_template("pairup.html", user=current_user, notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic_url=profile_pic_url)
 
 @app.route('/match', methods=['POST'])
 @login_required
