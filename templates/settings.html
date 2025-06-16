@@ -20,17 +20,19 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Photo</div>
+            <div class="section-space"></div>
             <div class="sub-sub-wrapper">
                 <img class="settings-photo" src="../static/pfp.jpg">
                 <div class="edit-photo">
-                    <div class="edit-photo-button">Delete</div>
-                    <div class="edit-photo-button">Update</div>
+                    <div class="delete-photo">Delete</div>
+                    <div class="update-photo">Update</div>
                 </div>
             </div>
         </div>
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Name</div>
+            <div class="section-space"></div>
             <div class="name-field-wrapper">
                 <input class="settings-field" type="text" placeholder="First Name" id="first-name" name="role"
                     maxlength="100" required>
@@ -41,12 +43,14 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Role</div>
+            <div class="section-space"></div>
             <input class="settings-field" type="text" placeholder="ex. Graphic Designer" id="role" name="role"
                 maxlength="100" required>
         </div>
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Location</div>
+            <div class="section-space"></div>
             <div class="sub-location-wrapper">
                 <div class="label-wrapper" style="margin-bottom: 12px">
                     <select class="location-settings" id="country" name="country" required>
@@ -83,6 +87,7 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Skills</div>
+            <div class="section-space"></div>
             <div class="checkbox-grid" style="margin-bottom: 0">
                 {% for category in categories %}
                 <label class="checkbox-item">
@@ -96,6 +101,7 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Preferences</div>
+            <div class="section-space"></div>
             <div class="checkbox-grid" style="margin-bottom: 0">
                 {% for category in categories %}
                 <label class="checkbox-item">
@@ -109,6 +115,7 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Experience Level</div>
+            <div class="section-space"></div>
             <div class="left-align" style="margin-bottom: 0">
                 {% for value, label in experience_levels %}
                 <label class="radio-item">
@@ -120,6 +127,7 @@
         <div class="line-comments-section"></div>
         <div class="sub-wrapper">
             <div class="subname">Linked Accounts</div>
+            <div class="section-space"></div>
             <table class="social-table" style="margin: 0">
                 <tr>
                     <td><label for="facebook">Facebook</label></td>

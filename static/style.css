@@ -2035,7 +2035,10 @@ input[type="url"]::placeholder {
     .sub-wrapper {
         display: flex;
         align-items: flex-start;
-        gap: 156px;
+    }
+
+    .section-space {
+        max-width: 156px;
     }
 
     .name-field-wrapper {
