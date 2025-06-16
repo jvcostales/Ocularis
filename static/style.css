@@ -2063,12 +2063,38 @@ input[type="url"]::placeholder {
     .sub-sub-wrapper {
         display: flex;
         justify-content: space-between;
+        width: 100%;
+        align-items: flex-start;
     }
 
     .edit-photo {
         display: flex;
         align-items: center;
         gap: 16px;
+    }
+
+    .delete-photo {
+        font-size: 1rem;
+        color: #c4c4c4;
+        font-weight: 400;
+    }
+
+    .delete-photo:hover {
+        font-size: 1rem;
+        color: #a6a6a6;
+        font-weight: 400;
+    }
+
+    .update-photo {
+        font-size: 1rem;
+        color: #1C46F5;
+        font-weight: 400;
+    }
+
+    .update-photo:hover {
+        font-size: 1rem;
+        color: #4F72F7;
+        font-weight: 400;
     }
 
     .settings-photo {
