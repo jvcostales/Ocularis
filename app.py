@@ -2225,6 +2225,7 @@ def browse_users():
 
     return render_template(
         'browse.html',
+        user=current_user,
         users=users,
         notifications=notifications,
         requests=requests,
