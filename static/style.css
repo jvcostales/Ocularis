@@ -5,8 +5,9 @@ body {
 }
 
 .no-scroll-body {
-    overflow: hidden;
-    height: 100vh;
+    overflow-y: scroll;   /* Keep scrollbar visible */
+    position: fixed;      /* Prevent background from scrolling */
+    width: 100%;          /* Prevent shift due to scrollbar disappearing */
 }
 
 a {
