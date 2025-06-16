@@ -14,7 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body>
+<body class="{% if show_profile_modal %}no-scroll-body{% endif %}">
     <div class="container">
         <div class="left-sidebar-container">
             <div class="left-sidebar">
@@ -174,8 +174,12 @@
                             </a>
                         </div>
                         <div class="line"></div>
-                        <a href="{{ url_for('saved') }}"><div class="saved">Saved</div></a>
-                        <a href="{{ url_for('settings') }}"><div class="settings">Settings</div></a>
+                        <a href="{{ url_for('saved') }}">
+                            <div class="saved">Saved</div>
+                        </a>
+                        <a href="{{ url_for('settings') }}">
+                            <div class="settings">Settings</div>
+                        </a>
                     </div>
                 </div>
             </div>
