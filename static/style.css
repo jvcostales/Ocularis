@@ -2038,6 +2038,7 @@ input[type="url"]::placeholder {
     }
 
     .section-space {
+        flex-grow: 1;
         max-width: 156px;
     }
 
