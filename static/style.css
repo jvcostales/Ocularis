@@ -341,6 +341,7 @@ input[type="url"]::placeholder {
 
     .image-container {
         margin-bottom: 24px;
+        cursor: pointer;
     }
 
     .partner {
@@ -821,6 +822,22 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 16px;
+        right: 16px;
+    }
+
+    .circled-icon-1-overview-version {
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
         background-color: #fff;
         position: absolute;
         z-index: 1;
@@ -2520,7 +2537,8 @@ input[type="url"]::placeholder {
     }
 
     .image-container {
-        padding-bottom: 24px;
+        margin-bottom: 24px;
+        cursor: pointer;
     }
 
     .partner {
@@ -4589,7 +4607,8 @@ input[type="url"]::placeholder {
     }
 
     .image-container {
-        padding-bottom: 24px;
+        margin-bottom: 24px;
+        cursor: pointer;
     }
 
     .partner {
