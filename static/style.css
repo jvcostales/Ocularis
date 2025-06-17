@@ -832,8 +832,8 @@ input[type="url"]::placeholder {
     .circled-icon-1-overview-version {
         border: none;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 56px;
+        height: 56px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -863,6 +863,12 @@ input[type="url"]::placeholder {
     span.close-symbol-overlay-version {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
+        color: #c4c4c4;
+    }
+
+    span.close-symbol-overview-version {
+        font-variation-settings: 'FILL' 1;
+        font-size: 32px;
         color: #c4c4c4;
     }
 
