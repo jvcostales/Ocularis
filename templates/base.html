@@ -802,25 +802,23 @@
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        function openImageModal(src) {
+            const modal = document.getElementById("imageModal");
+            const img = document.getElementById("modalImage");
+            img.src = src;
+            modal.classList.add("show");
+            document.body.classList.add("no-scroll-view");
+        }
 
-
-            function openImageModal(src) {
+        function closeImageModal(event) {
+            if (event.target.id === "imageModal" || event.target.classList.contains("close-btn")) {
                 const modal = document.getElementById("imageModal");
-                const img = document.getElementById("modalImage");
-                img.src = src;
-                modal.classList.add("show");
-                document.body.classList.add("no-scroll-view");
+                modal.classList.remove("show");
+                document.body.classList.remove("no-scroll-view");
             }
+        }
 
-            function closeImageModal(event) {
-                if (event.target.id === "imageModal" || event.target.classList.contains("close-btn")) {
-                    const modal = document.getElementById("imageModal");
-                    modal.classList.remove("show");
-                    document.body.classList.remove("no-scroll-view");
-                }
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {
             const backdropMobile = document.getElementById('backdrop-mobile');
             const backdropTablet = document.getElementById('backdrop-tablet');
             let lastOpenedGroup = null;
