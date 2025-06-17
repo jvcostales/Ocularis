@@ -109,7 +109,13 @@
     <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
         {{ image[2] }}
     </div>
-    <div class="image-container"><img src="{{ image[1] }}" class="image-post"></div>
+    <div class="image-container" onclick="openImageModal('{{ image[1] }}')"><img src="{{ image[1] }}"
+            class="image-post"></div>
+    <!-- Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
+        <span class="close-btn" onclick="closeImageModal(event)">&times;</span>
+        <img id="modalImage" class="modal-image" src="">
+    </div>
     <div class="interactions">
         <div class="lcs">
             <form class="like-form" data-image-id="{{ image[0] }}">
