@@ -1932,6 +1932,8 @@
         });
 
         window.respondToRequest = function (requestId, action, buttonElement) {
+            const userId = buttonElement.getAttribute('data-userid');
+
             fetch(`/${action}_request/${requestId}`, {
                 method: 'POST',
                 headers: {
@@ -1943,17 +1945,25 @@
                 .then(data => {
                     if (data.success) {
                         const wrapper = buttonElement.closest('.response-wrapper');
-                        if (wrapper) {
-                            if (action === 'accept') {
-                                wrapper.innerHTML = `
-                        <form action="/unfriend/${buttonElement.dataset.userid}" method="post">
-                            <button type="submit" class="follow-button-profile">Unfriend</button>
-                        </form>
-                    `;
-                            } else if (action === 'reject') {
-                                wrapper.remove(); // or set wrapper.innerHTML = '' to just clear the UI
-                            }
+                        if (!wrapper) return;
+
+                        if (action === 'accept') {
+                            wrapper.innerHTML = `
+                            <button type="button" class="follow-button-profile"
+                                onclick="handleFriendship(${userId}, 'unfriend', this)">
+                                Unfriend
+                            </button>
+                        `;
+                        } else if (action === 'reject') {
+                            wrapper.innerHTML = `
+                                <button type="button" class="follow-button-profile"
+                                    onclick="handleFriendship(${userId}, 'send_request', this)">
+                                    Befriend
+                                </button>
+                            `;
                         }
+
+
                     } else {
                         alert(data.message || 'Something went wrong.');
                     }
@@ -1963,10 +1973,6 @@
                     alert('Error performing action.');
                 });
         };
-
-
-
-
     </script>
 </body>
 
