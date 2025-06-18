@@ -135,16 +135,18 @@
                                     </div>
                                     <div class="request-icons">
                                         <button type="button" class="circled-icon-1"
-                                            onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{% endif %}>
+                                            onclick="respondToRequest(event, {{ request_id }}, 'reject')" {% if not
+                                            verified %}disabled{% endif %}>
                                             <span class="material-symbols-outlined close-symbol">close</span>
                                         </button>
 
                                         <button type="button" class="circled-icon-2"
-                                            onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{% endif %}>
+                                            onclick="respondToRequest(event, {{ request_id }}, 'accept')" {% if not
+                                            verified %}disabled{% endif %}>
                                             <span class="material-symbols-outlined check-symbol">check</span>
                                         </button>
-
                                     </div>
+
                                 </div>
                             </div>
                             {% endfor %}
@@ -389,17 +391,18 @@
                             </div>
                             <div class="request-icons">
                                 <button type="button" class="circled-icon-1"
-                                    onclick="respondToRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
-                                    endif %}>
+                                    onclick="respondToRequest(event, {{ request_id }}, 'reject')"
+                                    {% if not verified %}disabled{% endif %}>
                                     <span class="material-symbols-outlined close-symbol">close</span>
                                 </button>
 
                                 <button type="button" class="circled-icon-2"
-                                    onclick="respondToRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
-                                    endif %}>
+                                    onclick="respondToRequest(event, {{ request_id }}, 'accept')"
+                                    {% if not verified %}disabled{% endif %}>
                                     <span class="material-symbols-outlined check-symbol">check</span>
                                 </button>
                             </div>
+
                         </div>
                     </div>
                     {% endfor %}
@@ -1233,9 +1236,9 @@
                                                 onclick="handleFriendship(${liker.id}, 'unfriend', this)">
                                                 Unfriend
                                             </button>`;
-                                                                        break;
-                                                                    case 'incoming_pending':
-                                                                        buttonHtml = `
+                                        break;
+                                    case 'incoming_pending':
+                                        buttonHtml = `
                                             <div class="response-wrapper">
                                                 <button type="button" class="follow-button-profile no-margin"
                                                     onclick="respondToRequest(${liker.request_id}, 'accept')">Confirm</button>
@@ -1243,9 +1246,9 @@
                                                 <button type="button" class="follow-button-profile-secondary no-margin"
                                                     onclick="respondToRequest(${liker.request_id}, 'reject')">Decline</button>
                                             </div>`;
-                                                                        break;
-                                                                    case 'outgoing_pending':
-                                                                        buttonHtml = `
+                                        break;
+                                    case 'outgoing_pending':
+                                        buttonHtml = `
                                             <form action="/cancel_request/${liker.id}" method="post">
                                                 <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                             </form>`;
@@ -1258,8 +1261,8 @@
                                                     onclick="handleFriendship(${liker.id}, 'send_request', this)">
                                                     Befriend
                                                 </button>`;
-                                                                        } else {
-                                                                            buttonHtml = `
+                                        } else {
+                                            buttonHtml = `
                                                 <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
                                         }
                                         break;
@@ -1928,7 +1931,10 @@
 
 
         });
-        function respondToRequest(requestId, action) {
+        function respondToRequest(event, requestId, action) {
+            // Prevent any default behavior (form submission, page reload)
+            if (event) event.preventDefault();
+
             fetch(`/${action}_request/${requestId}`, {
                 method: 'POST',
                 headers: {
@@ -1939,7 +1945,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        // Remove the request card from the UI
                         const card = document.getElementById(`request-${requestId}`);
                         if (card) card.remove();
                     } else {
@@ -1950,6 +1955,8 @@
                     console.error(`${action} request error:`, err);
                     alert('Error performing action.');
                 });
+
+            return false; // 🛑 Explicitly stop any bubbling/default
         }
     </script>
 </body>
