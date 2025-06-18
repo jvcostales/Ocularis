@@ -728,6 +728,12 @@
     <script>
 
         window.handleFriendship = function (userId, action, buttonElement) {
+            if (!userId || userId === 'null') {
+                console.error('Invalid userId:', userId);
+                alert('User ID missing or invalid.');
+                return;
+            }
+
             fetch(`/${action}/${userId}`, {
                 method: 'POST',
                 headers: {
@@ -735,7 +741,10 @@
                 },
                 credentials: 'include'
             })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Server error or route not found.');
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         if (action === 'unfriend') {
@@ -748,7 +757,6 @@
                             buttonElement.textContent = 'Befriend';
                             buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
                         }
-
                     } else {
                         alert(data.message || 'Something went wrong.');
                     }
@@ -758,6 +766,7 @@
                     alert('Error performing action.');
                 });
         };
+
 
         window.hidePost = function (imageId) {
             fetch(`/hide_post/${imageId}`, {
