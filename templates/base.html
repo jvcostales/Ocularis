@@ -1198,9 +1198,10 @@
                                         break;
                                     case 'friends':
                                         buttonHtml = `
-                                <form action="/unfriend/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
-                                </form>`;
+                                <button type="button" class="follow-button-profile no-margin"
+                                        onclick="handleFriendship('{{ liker.id }}', 'unfriend', this)">
+                                    Unfriend
+                                </button>`;
                                         break;
                                     case 'incoming_pending':
                                         buttonHtml = `
@@ -1223,9 +1224,10 @@
                                     case 'not_friends':
                                         if (liker.verified) {
                                             buttonHtml = `
-                                    <form action="/send_request/${liker.id}" method="post">
-                                        <button type="submit" class="follow-button-profile no-margin">Befriend</button>
-                                    </form>`;
+                                    <button type="button" class="follow-button-profile no-margin"
+                                            onclick="handleFriendship(${liker.id}, 'send_request', this)">
+                                        Befriend
+                                    </button>`;
                                         } else {
                                             buttonHtml = `
                                     <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
@@ -1892,6 +1894,39 @@
                     })
                     .catch(err => alert('Request failed: ' + err));
             });
+
+
+            window.handleFriendship = function (userId, action, buttonElement) {
+                fetch(`/${action}/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Optionally update the UI
+                            if (action === 'unfriend') {
+                                buttonElement.textContent = 'Befriend';
+                                buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                            } else if (action === 'send_request') {
+                                buttonElement.textContent = 'Cancel Request';
+                                buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
+                            } else if (action === 'cancel_request') {
+                                buttonElement.textContent = 'Befriend';
+                                buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                            }
+                        } else {
+                            alert(data.message || 'Something went wrong.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Friendship error:', err);
+                        alert('Error performing action.');
+                    });
+            }
 
 
 

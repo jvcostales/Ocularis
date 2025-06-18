@@ -1593,12 +1593,17 @@ def send_request(receiver_id):
 
     # ❌ Block if not verified
     if not current_user.verified:
-        flash("You must verify your account before sending friend requests.")
+        message = "You must verify your account before sending friend requests."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=message), 403
+        flash(message)
         return redirect(url_for('profile', user_id=receiver_id))
 
-    # Prevent sending a request to yourself
     if sender_id == receiver_id:
-        flash("You cannot send a friend request to yourself.")
+        message = "You cannot send a friend request to yourself."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=message), 400
+        flash(message)
         return redirect(url_for('profile', user_id=receiver_id))
 
     conn = psycopg2.connect(
@@ -1611,10 +1616,8 @@ def send_request(receiver_id):
     cur = conn.cursor()
 
     try:
-        # ✅ Sort the IDs to match how the friends table stores relationships
         user1_id, user2_id = sorted((sender_id, receiver_id))
 
-        # Prevent sending a request if already friends
         cur.execute("""
             SELECT * FROM friends
             WHERE user1_id = %s AND user2_id = %s;
@@ -1622,10 +1625,12 @@ def send_request(receiver_id):
         already_friends = cur.fetchone()
 
         if already_friends:
-            flash("You are already friends with this user.")
+            message = "You are already friends with this user."
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(success=False, message=message), 409
+            flash(message)
             return redirect(url_for('profile', user_id=receiver_id))
 
-        # Prevent sending a duplicate pending request
         cur.execute("""
             SELECT * FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
@@ -1633,30 +1638,39 @@ def send_request(receiver_id):
         existing_request = cur.fetchone()
 
         if existing_request:
-            flash("Friend request already sent.")
+            message = "Friend request already sent."
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(success=False, message=message), 409
+            flash(message)
         else:
-            # Handle rejected request and allow sending a new one
+            # Allow resending after rejection
             cur.execute("""
                 DELETE FROM friend_requests
                 WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
             """, (sender_id, receiver_id))
             conn.commit()
 
-            # Insert new friend request
             cur.execute("""
                 INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
                 VALUES (%s, %s, 'pending', NOW());
             """, (sender_id, receiver_id))
             conn.commit()
+
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(success=True, message="Friend request sent.")
+
             flash("Friend request sent.")
     except Exception as e:
-        flash(f"An error occurred: {e}")
         conn.rollback()
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=str(e)), 500
+        flash(f"An error occurred: {e}")
     finally:
         cur.close()
         conn.close()
 
     return redirect(url_for('profile', user_id=receiver_id))
+
 
 
 @app.route('/unfriend/<int:other_user_id>', methods=['POST'])
