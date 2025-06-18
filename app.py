@@ -1618,48 +1618,66 @@ def send_request(receiver_id):
     try:
         user1_id, user2_id = sorted((sender_id, receiver_id))
 
+        # ✅ Prevent if already friends
         cur.execute("""
-            SELECT * FROM friends
+            SELECT 1 FROM friends
             WHERE user1_id = %s AND user2_id = %s;
         """, (user1_id, user2_id))
-        already_friends = cur.fetchone()
-
-        if already_friends:
+        if cur.fetchone():
             message = "You are already friends with this user."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
             return redirect(url_for('profile', user_id=receiver_id))
 
+        # ✅ Check for mutual request: if receiver already sent you a request
         cur.execute("""
-            SELECT * FROM friend_requests
+            SELECT request_id FROM friend_requests
+            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
+        """, (receiver_id, sender_id))
+        mutual_request = cur.fetchone()
+
+        if mutual_request:
+            # If mutual request exists, don't insert another
+            request_id = mutual_request[0]
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(success=True, status="incoming_pending", request_id=request_id)
+            flash("This user already sent you a request.")
+            return redirect(url_for('profile', user_id=receiver_id))
+
+        # ✅ Check if request already exists
+        cur.execute("""
+            SELECT 1 FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
         """, (sender_id, receiver_id))
-        existing_request = cur.fetchone()
-
-        if existing_request:
+        if cur.fetchone():
             message = "Friend request already sent."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
-        else:
-            # Allow resending after rejection
-            cur.execute("""
-                DELETE FROM friend_requests
-                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
-            """, (sender_id, receiver_id))
-            conn.commit()
+            return redirect(url_for('profile', user_id=receiver_id))
 
-            cur.execute("""
-                INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-                VALUES (%s, %s, 'pending', NOW());
-            """, (sender_id, receiver_id))
-            conn.commit()
+        # ✅ Allow resend after rejection
+        cur.execute("""
+            DELETE FROM friend_requests
+            WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
+        """, (sender_id, receiver_id))
+        conn.commit()
 
-            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-                return jsonify(success=True, message="Friend request sent.")
+        # ✅ Insert new request and return its ID
+        cur.execute("""
+            INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
+            VALUES (%s, %s, 'pending', NOW())
+            RETURNING request_id;
+        """, (sender_id, receiver_id))
+        request_id = cur.fetchone()[0]
+        conn.commit()
 
-            flash("Friend request sent.")
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=True, message="Friend request sent.", request_id=request_id)
+
+        flash("Friend request sent.")
+
     except Exception as e:
         conn.rollback()
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -1671,9 +1689,6 @@ def send_request(receiver_id):
 
     return redirect(url_for('profile', user_id=receiver_id))
 
-
-
-from flask import request, jsonify
 
 @app.route('/unfriend/<int:other_user_id>', methods=['POST'])
 @login_required

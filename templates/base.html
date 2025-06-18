@@ -737,16 +737,38 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
-                        if (action === 'unfriend' || action === 'cancel_request') {
-                            buttonElement.textContent = 'Befriend';
-                            buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
-                        } else if (action === 'send_request') {
+                    if (!data.success) {
+                        alert(data.message || 'Something went wrong.');
+                        return;
+                    }
+
+                    // Unfriend or Cancel Request → Reset to Befriend
+                    if (action === 'unfriend' || action === 'cancel_request') {
+                        buttonElement.textContent = 'Befriend';
+                        buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                    }
+
+                    // Send Request → Check if there's already a pending request from the other user
+                    else if (action === 'send_request') {
+                        if (data.request_id && data.status === 'incoming_pending') {
+                            // Replace button with confirm/decline UI
+                            buttonElement.outerHTML = `
+                    <div class="response-wrapper" id="request-${data.request_id}">
+                        <button type="button" class="follow-button-profile no-margin"
+                            onclick="respondToRequest(${data.request_id}, 'accept', this)" data-userid="${userId}">
+                            Confirm
+                        </button>
+                        <button type="button" class="follow-button-profile-secondary no-margin"
+                            onclick="respondToRequest(${data.request_id}, 'reject', this)" data-userid="${userId}">
+                            Decline
+                        </button>
+                    </div>
+                `;
+                        } else {
+                            // Normal pending request
                             buttonElement.textContent = 'Cancel Request';
                             buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
                         }
-                    } else {
-                        alert(data.message || 'Something went wrong.');
                     }
                 })
                 .catch(err => {
@@ -754,6 +776,7 @@
                     alert('Error performing action.');
                 });
         };
+
 
 
 
