@@ -725,6 +725,37 @@
 
     <script>
 
+        window.handleFriendship = function (userId, action, buttonElement) {
+            fetch(`/${action}/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'include'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (action === 'unfriend') {
+                            buttonElement.textContent = 'Befriend';
+                            buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
+                        } else if (action === 'send_request') {
+                            buttonElement.textContent = 'Cancel Request';
+                            buttonElement.onclick = () => window.handleFriendship(userId, 'cancel_request', buttonElement);
+                        } else if (action === 'cancel_request') {
+                            buttonElement.textContent = 'Befriend';
+                            buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
+                        }
+                    } else {
+                        alert(data.message || 'Something went wrong.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Friendship error:', err);
+                    alert('Error performing action.');
+                });
+        };
+
         window.hidePost = function (imageId) {
             fetch(`/hide_post/${imageId}`, {
                 method: 'POST',
@@ -1895,36 +1926,7 @@
                     .catch(err => alert('Request failed: ' + err));
             });
 
-            window.handleFriendship = function (userId, action, buttonElement) {
-                fetch(`/${action}/${userId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'include'
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (action === 'unfriend') {
-                                buttonElement.textContent = 'Befriend';
-                                buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
-                            } else if (action === 'send_request') {
-                                buttonElement.textContent = 'Cancel Request';
-                                buttonElement.onclick = () => window.handleFriendship(userId, 'cancel_request', buttonElement);
-                            } else if (action === 'cancel_request') {
-                                buttonElement.textContent = 'Befriend';
-                                buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
-                            }
-                        } else {
-                            alert(data.message || 'Something went wrong.');
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Friendship error:', err);
-                        alert('Error performing action.');
-                    });
-            };
+
         });
 
 
