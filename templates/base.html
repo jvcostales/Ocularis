@@ -135,18 +135,17 @@
                                     </div>
                                     <div class="request-icons">
                                         <button type="button" class="circled-icon-1"
-                                            onclick="respondToRequest(event, {{ request_id }}, 'reject')" {% if not
-                                            verified %}disabled{% endif %}>
+                                            onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
+                                            %}disabled{% endif %}>
                                             <span class="material-symbols-outlined close-symbol">close</span>
                                         </button>
 
                                         <button type="button" class="circled-icon-2"
-                                            onclick="respondToRequest(event, {{ request_id }}, 'accept')" {% if not
-                                            verified %}disabled{% endif %}>
+                                            onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
+                                            %}disabled{% endif %}>
                                             <span class="material-symbols-outlined check-symbol">check</span>
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                             {% endfor %}
@@ -245,7 +244,7 @@
 
                             {% if requests %}
                             {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                            <div class="request-bar" id="request-card-{{ request_id }}">
+                            <div class="request-bar" id="request-{{ request_id }}">
                                 <a href="{{ url_for('profile', user_id=sender_id) }}">
                                     <img src="../static/pfp.jpg" class="pfp img-notif-request">
                                 </a>
@@ -391,18 +390,18 @@
                             </div>
                             <div class="request-icons">
                                 <button type="button" class="circled-icon-1"
-                                    onclick="(event => respondToRequest(event, {{ request_id }}, 'reject'))(event)" {%
-                                    if not verified %}disabled{% endif %}>
+                                    onclick="respondToRequest({{ request_id }}, 'reject', this)" {% if not verified
+                                    %}disabled{% endif %}>
                                     <span class="material-symbols-outlined close-symbol">close</span>
                                 </button>
 
                                 <button type="button" class="circled-icon-2"
-                                    onclick="(event => respondToRequest(event, {{ request_id }}, 'accept'))(event)" {%
-                                    if not verified %}disabled{% endif %}>
+                                    onclick="respondToRequest({{ request_id }}, 'accept', this)" {% if not verified
+                                    %}disabled{% endif %}>
                                     <span class="material-symbols-outlined check-symbol">check</span>
                                 </button>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -1232,44 +1231,44 @@
                                         break;
                                     case 'friends':
                                         buttonHtml = `
-                                            <button type="button" class="follow-button-profile no-margin"
-                                                onclick="handleFriendship(${liker.id}, 'unfriend', this)">
-                                                Unfriend
-                                            </button>`;
+                                <button type="button" class="follow-button-profile no-margin"
+                                        onclick="handleFriendship(${liker.id}, 'unfriend', this)">
+                                    Unfriend
+                                </button>`;
                                         break;
                                     case 'incoming_pending':
                                         buttonHtml = `
-                                            <div class="response-wrapper">
-                                                <button type="button" class="follow-button-profile no-margin"
-                                                    onclick="respondToRequest(${liker.request_id}, 'accept')">Confirm</button>
-
-                                                <button type="button" class="follow-button-profile-secondary no-margin"
-                                                    onclick="respondToRequest(${liker.request_id}, 'reject')">Decline</button>
-                                            </div>`;
+                                <div class="response-wrapper">
+                                    <form action="/accept_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+                                    </form>
+                                    <form action="/reject_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
+                                    </form>
+                                </div>`;
                                         break;
                                     case 'outgoing_pending':
                                         buttonHtml = `
-                                            <form action="/cancel_request/${liker.id}" method="post">
-                                                <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
-                                            </form>`;
+                                <form action="/cancel_request/${liker.id}" method="post">
+                                    <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
+                                </form>`;
                                         break;
                                     case 'outgoing_rejected':
                                     case 'not_friends':
                                         if (liker.verified) {
                                             buttonHtml = `
-                                                <button type="button" class="follow-button-profile no-margin"
-                                                    onclick="handleFriendship(${liker.id}, 'send_request', this)">
-                                                    Befriend
-                                                </button>`;
+                                    <button type="button" class="follow-button-profile no-margin"
+                                            onclick="handleFriendship(${liker.id}, 'send_request', this)">
+                                        Befriend
+                                    </button>`;
                                         } else {
                                             buttonHtml = `
-                                                <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
+                                    <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
                                         }
                                         break;
                                     default:
                                         buttonHtml = '';
                                 }
-
 
                                 return `
                                     <div class="profile-follow-wrapper">
@@ -1439,15 +1438,12 @@
                                     case 'incoming_pending':
                                         buttonHtml = `
                                 <div class="response-wrapper">
-                                    <button type="button" class="follow-button-profile no-margin"
-                                        onclick="respondToRequest(${liker.request_id}, 'accept', this)">
-                                        Confirm
-                                    </button>
-
-                                    <button type="button" class="follow-button-profile-secondary no-margin"
-                                        onclick="respondToRequest(${liker.request_id}, 'reject', this)">
-                                        Decline
-                                    </button>
+                                    <form action="/accept_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+                                    </form>
+                                    <form action="/reject_request/${liker.request_id}" method="post">
+                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
+                                    </form>
                                 </div>`;
                                         break;
                                     case 'outgoing_pending':
@@ -1934,6 +1930,7 @@
 
 
         });
+
         window.respondToRequest = function (requestId, action, buttonElement) {
             fetch(`/${action}_request/${requestId}`, {
                 method: 'POST',
@@ -1945,9 +1942,9 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        const card = document.getElementById(`request-${requestId}`);
-                        if (card) {
-                            card.remove();
+                        const wrapper = buttonElement.closest(`#request-${requestId}`);
+                        if (wrapper) {
+                            wrapper.remove(); // or update with a message instead
                         }
                     } else {
                         alert(data.message || 'Something went wrong.');

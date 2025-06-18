@@ -1828,6 +1828,7 @@ def accept_request(request_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify({'success': True, 'message': "Friend request accepted."})
 
+
         flash("Friend request accepted.")
     except Exception as e:
         conn.rollback()
@@ -1861,7 +1862,8 @@ def reject_request(request_id):
         conn.commit()
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({'success': True, 'message': "Friend request rejected."})
+            return jsonify({'success': True, 'message': "Friend request reject."})
+
 
         flash("Friend request rejected.")
     except Exception as e:

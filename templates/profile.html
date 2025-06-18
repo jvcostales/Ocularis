@@ -29,14 +29,17 @@
         </form>
         {% elif incoming_request %}
         {% if incoming_request[1] == 'pending' %}
-        <div class="response-wrapper">
-            <form action="{{ url_for('accept_request', request_id=incoming_request[0]) }}" method="post">
-                <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-            </form>
-            <form action="{{ url_for('reject_request', request_id=incoming_request[0]) }}" method="post">
-                <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-            </form>
+        <div class="response-wrapper" id="request-{{ incoming_request[0] }}">
+            <button type="button" class="follow-button-profile no-margin"
+                onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)">
+                Confirm
+            </button>
+            <button type="button" class="follow-button-profile-secondary no-margin"
+                onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)">
+                Decline
+            </button>
         </div>
+
         {% endif %}
         {% elif outgoing_request %}
         {% if outgoing_request[0] == 'pending' %}
