@@ -728,12 +728,6 @@
     <script>
 
         window.handleFriendship = function (userId, action, buttonElement) {
-            if (!userId || userId === 'null') {
-                console.error('Invalid userId:', userId);
-                alert('User ID missing or invalid.');
-                return;
-            }
-
             fetch(`/${action}/${userId}`, {
                 method: 'POST',
                 headers: {
@@ -741,21 +735,15 @@
                 },
                 credentials: 'include'
             })
-                .then(res => {
-                    if (!res.ok) throw new Error('Server error or route not found.');
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        if (action === 'unfriend') {
+                        if (action === 'unfriend' || action === 'cancel_request') {
                             buttonElement.textContent = 'Befriend';
-                            buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
+                            buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
                         } else if (action === 'send_request') {
                             buttonElement.textContent = 'Cancel Request';
-                            buttonElement.onclick = () => window.handleFriendship(userId, 'cancel_request', buttonElement);
-                        } else if (action === 'cancel_request') {
-                            buttonElement.textContent = 'Befriend';
-                            buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
+                            buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
                         }
                     } else {
                         alert(data.message || 'Something went wrong.');
@@ -766,6 +754,7 @@
                     alert('Error performing action.');
                 });
         };
+
 
 
         window.hidePost = function (imageId) {
@@ -1982,9 +1971,6 @@
                     alert('Error performing action.');
                 });
         };
-
-
-
 
 
     </script>

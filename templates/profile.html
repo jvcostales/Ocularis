@@ -34,11 +34,12 @@
             {% if incoming_request[1] == 'pending' %}
             <div class="response-wrapper" id="request-{{ incoming_request[0] }}">
                 <button type="button" class="follow-button-profile no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)">
+                    onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)" data-userid="{{ user_id }}">
                     Confirm
                 </button>
+
                 <button type="button" class="follow-button-profile-secondary no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)">
+                    onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)" data-userid="{{ user_id }}">
                     Decline
                 </button>
             </div>
