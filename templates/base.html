@@ -391,14 +391,14 @@
                             </div>
                             <div class="request-icons">
                                 <button type="button" class="circled-icon-1"
-                                    onclick="respondToRequest(event, {{ request_id }}, 'reject')"
-                                    {% if not verified %}disabled{% endif %}>
+                                    onclick="(event => respondToRequest(event, {{ request_id }}, 'reject'))(event)" {%
+                                    if not verified %}disabled{% endif %}>
                                     <span class="material-symbols-outlined close-symbol">close</span>
                                 </button>
 
                                 <button type="button" class="circled-icon-2"
-                                    onclick="respondToRequest(event, {{ request_id }}, 'accept')"
-                                    {% if not verified %}disabled{% endif %}>
+                                    onclick="(event => respondToRequest(event, {{ request_id }}, 'accept'))(event)" {%
+                                    if not verified %}disabled{% endif %}>
                                     <span class="material-symbols-outlined check-symbol">check</span>
                                 </button>
                             </div>
@@ -1932,6 +1932,7 @@
 
         });
         function respondToRequest(event, requestId, action) {
+            console.log("Handling:", action, "Request ID:", requestId);
             // Prevent any default behavior (form submission, page reload)
             if (event) event.preventDefault();
 
