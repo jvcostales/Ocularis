@@ -1439,12 +1439,15 @@
                                     case 'incoming_pending':
                                         buttonHtml = `
                                 <div class="response-wrapper">
-                                    <form action="/accept_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-                                    </form>
-                                    <form action="/reject_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-                                    </form>
+                                    <button type="button" class="follow-button-profile no-margin"
+                                        onclick="respondToRequest(${liker.request_id}, 'accept', this)">
+                                        Confirm
+                                    </button>
+
+                                    <button type="button" class="follow-button-profile-secondary no-margin"
+                                        onclick="respondToRequest(${liker.request_id}, 'reject', this)">
+                                        Decline
+                                    </button>
                                 </div>`;
                                         break;
                                     case 'outgoing_pending':
@@ -1931,11 +1934,7 @@
 
 
         });
-        function respondToRequest(event, requestId, action) {
-            console.log("Handling:", action, "Request ID:", requestId);
-            // Prevent any default behavior (form submission, page reload)
-            if (event) event.preventDefault();
-
+        window.respondToRequest = function (requestId, action, buttonElement) {
             fetch(`/${action}_request/${requestId}`, {
                 method: 'POST',
                 headers: {
@@ -1947,7 +1946,9 @@
                 .then(data => {
                     if (data.success) {
                         const card = document.getElementById(`request-${requestId}`);
-                        if (card) card.remove();
+                        if (card) {
+                            card.remove(); // or update the innerHTML if you prefer
+                        }
                     } else {
                         alert(data.message || 'Something went wrong.');
                     }
@@ -1956,9 +1957,8 @@
                     console.error(`${action} request error:`, err);
                     alert('Error performing action.');
                 });
+        };
 
-            return false; // 🛑 Explicitly stop any bubbling/default
-        }
     </script>
 </body>
 
