@@ -1586,11 +1586,12 @@ def profile(user_id):
         viewed_user_profile_cover=viewed_user_profile_cover
     )
 
-@app.route('/send_request/int:receiver_id', methods=['POST'])
+@app.route('/send_request/<int:receiver_id>', methods=['POST'])
 @login_required
 def send_request(receiver_id):
     sender_id = current_user.id
 
+    # ❌ Block if not verified
     if not current_user.verified:
         message = "You must verify your account before sending friend requests."
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -1615,65 +1616,50 @@ def send_request(receiver_id):
     cur = conn.cursor()
 
     try:
-        # Prevent duplicate friendship
         user1_id, user2_id = sorted((sender_id, receiver_id))
+
         cur.execute("""
-            SELECT 1 FROM friends
+            SELECT * FROM friends
             WHERE user1_id = %s AND user2_id = %s;
         """, (user1_id, user2_id))
-        if cur.fetchone():
+        already_friends = cur.fetchone()
+
+        if already_friends:
             message = "You are already friends with this user."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
             return redirect(url_for('profile', user_id=receiver_id))
 
-        # Check if receiver already sent a request to sender
         cur.execute("""
-            SELECT request_id FROM friend_requests
-            WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-        """, (receiver_id, sender_id))
-        incoming_request = cur.fetchone()
-
-        if incoming_request:
-            # Show Confirm/Decline UI instead
-            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-                return jsonify(success=True, status='incoming_pending', request_id=incoming_request[0])
-            flash("You already have a request from this user.")
-            return redirect(url_for('profile', user_id=receiver_id))
-
-        # Prevent sending duplicate outgoing request
-        cur.execute("""
-            SELECT 1 FROM friend_requests
+            SELECT * FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
         """, (sender_id, receiver_id))
-        if cur.fetchone():
+        existing_request = cur.fetchone()
+
+        if existing_request:
             message = "Friend request already sent."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
-            return redirect(url_for('profile', user_id=receiver_id))
+        else:
+            # Allow resending after rejection
+            cur.execute("""
+                DELETE FROM friend_requests
+                WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
+            """, (sender_id, receiver_id))
+            conn.commit()
 
-        # Clear any rejected ones
-        cur.execute("""
-            DELETE FROM friend_requests
-            WHERE sender_id = %s AND receiver_id = %s AND status = 'rejected';
-        """, (sender_id, receiver_id))
-        conn.commit()
+            cur.execute("""
+                INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
+                VALUES (%s, %s, 'pending', NOW());
+            """, (sender_id, receiver_id))
+            conn.commit()
 
-        # Insert new friend request
-        cur.execute("""
-            INSERT INTO friend_requests (sender_id, receiver_id, status, created_at)
-            VALUES (%s, %s, 'pending', NOW())
-            RETURNING request_id;
-        """, (sender_id, receiver_id))
-        request_id = cur.fetchone()[0]
-        conn.commit()
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(success=True, message="Friend request sent.")
 
-        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify(success=True, status='outgoing_pending', request_id=request_id)
-
-        flash("Friend request sent.")
+            flash("Friend request sent.")
     except Exception as e:
         conn.rollback()
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
