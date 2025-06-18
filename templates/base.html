@@ -1941,7 +1941,7 @@
                 .then(data => {
                     if (data.success) {
                         // Remove the request card from the UI
-                        const card = document.getElementById(`request-card-${requestId}`);
+                        const card = document.getElementById(`request-${requestId}`);
                         if (card) card.remove();
                     } else {
                         alert(data.message || 'Something went wrong.');

@@ -1776,7 +1776,6 @@ def cancel_request(user_id):
 
     return redirect(url_for('profile', user_id=user_id))
 
-
 @app.route('/accept_request/<int:request_id>', methods=['POST'])
 @login_required
 def accept_request(request_id):
@@ -1785,7 +1784,7 @@ def accept_request(request_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify({'success': False, 'message': message}), 403
         flash(message)
-        return redirect(url_for('feed'))
+        return redirect(request.referrer or url_for('feed'))
 
     receiver_id = current_user.id
     conn = psycopg2.connect(
@@ -1809,7 +1808,7 @@ def accept_request(request_id):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({'success': False, 'message': message}), 404
             flash(message)
-            return redirect(url_for('feed'))
+            return redirect(request.referrer or url_for('feed'))
 
         sender_id = row[0]
         user1_id, user2_id = sorted((sender_id, receiver_id))
@@ -1820,7 +1819,7 @@ def accept_request(request_id):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({'success': False, 'message': message}), 400
             flash(message)
-            return redirect(url_for('feed'))
+            return redirect(request.referrer or url_for('feed'))
 
         cur.execute("UPDATE friend_requests SET status = 'accepted' WHERE request_id = %s;", (request_id,))
         cur.execute("INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);", (user1_id, user2_id))
@@ -1840,7 +1839,7 @@ def accept_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('feed'))
+    return redirect(request.referrer or url_for('feed'))
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
@@ -1872,7 +1871,7 @@ def reject_request(request_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('feed'))
+    return redirect(request.referrer or url_for('feed'))
 
 @app.route('/pairup')
 @login_required
