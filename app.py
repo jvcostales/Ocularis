@@ -1672,6 +1672,9 @@ def send_request(receiver_id):
     return redirect(url_for('profile', user_id=receiver_id))
 
 
+
+from flask import request, jsonify
+
 @app.route('/unfriend/<int:other_user_id>', methods=['POST'])
 @login_required
 def unfriend(other_user_id):
