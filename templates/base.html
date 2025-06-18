@@ -1895,7 +1895,6 @@
                     .catch(err => alert('Request failed: ' + err));
             });
 
-
             window.handleFriendship = function (userId, action, buttonElement) {
                 fetch(`/${action}/${userId}`, {
                     method: 'POST',
@@ -1907,16 +1906,15 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            // Optionally update the UI
                             if (action === 'unfriend') {
                                 buttonElement.textContent = 'Befriend';
-                                buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                                buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
                             } else if (action === 'send_request') {
                                 buttonElement.textContent = 'Cancel Request';
-                                buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
+                                buttonElement.onclick = () => window.handleFriendship(userId, 'cancel_request', buttonElement);
                             } else if (action === 'cancel_request') {
                                 buttonElement.textContent = 'Befriend';
-                                buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                                buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
                             }
                         } else {
                             alert(data.message || 'Something went wrong.');
@@ -1926,11 +1924,7 @@
                         console.error('Friendship error:', err);
                         alert('Error performing action.');
                     });
-            }
-
-
-
-
+            };
         });
 
 
