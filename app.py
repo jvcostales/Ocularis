@@ -1728,6 +1728,14 @@ def unfriend(other_user_id):
 
     return redirect(url_for('profile', user_id=other_user_id))
 
+@app.route('/friend_action_partial/<int:user_id>')
+@login_required
+def friend_action_partial(user_id):
+    user = get_user(user_id)  # your method to get the user
+    incoming_request = get_incoming_request(user.id, current_user.id)  # if you have one
+    is_friend = are_friends(current_user.id, user.id)  # your friend-checking logic
+    return render_template('partials/friend_action_partial.html', user_id=user.id,
+                           is_friend=is_friend, incoming_request=incoming_request)
 
 
 

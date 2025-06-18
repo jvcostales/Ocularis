@@ -1942,9 +1942,17 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        const wrapper = buttonElement.closest(`#request-${requestId}`);
+                        const wrapper = buttonElement.closest('.response-wrapper');
                         if (wrapper) {
-                            wrapper.remove(); // or update with a message instead
+                            if (action === 'accept') {
+                                wrapper.innerHTML = `
+                        <form action="/unfriend/${buttonElement.dataset.userid}" method="post">
+                            <button type="submit" class="follow-button-profile">Unfriend</button>
+                        </form>
+                    `;
+                            } else if (action === 'reject') {
+                                wrapper.remove(); // or set wrapper.innerHTML = '' to just clear the UI
+                            }
                         }
                     } else {
                         alert(data.message || 'Something went wrong.');
@@ -1955,6 +1963,8 @@
                     alert('Error performing action.');
                 });
         };
+
+
 
 
     </script>
