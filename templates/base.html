@@ -389,13 +389,13 @@
                             </div>
                             <div class="request-icons">
                                 <button type="button" class="circled-icon-1"
-                                    onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
+                                    onclick="respondToRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
                                     endif %}>
                                     <span class="material-symbols-outlined close-symbol">close</span>
                                 </button>
 
                                 <button type="button" class="circled-icon-2"
-                                    onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
+                                    onclick="respondToRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
                                     endif %}>
                                     <span class="material-symbols-outlined check-symbol">check</span>
                                 </button>
