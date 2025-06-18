@@ -244,7 +244,7 @@
 
                             {% if requests %}
                             {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                            <div class="request-bar" id="request-{{ request_id }}">
+                            <div class="request-bar" id="request-card-{{ request_id }}">
                                 <a href="{{ url_for('profile', user_id=sender_id) }}">
                                     <img src="../static/pfp.jpg" class="pfp img-notif-request">
                                 </a>
@@ -1238,12 +1238,11 @@
                                     case 'incoming_pending':
                                         buttonHtml = `
                                 <div class="response-wrapper">
-                                    <form action="/accept_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-                                    </form>
-                                    <form action="/reject_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-                                    </form>
+                                    <button type="button" class="follow-button-profile no-margin"
+                                            onclick="respondToRequest('{{ request.id }}', 'accept')">Confirm</button>
+
+                                    <button type="button" class="follow-button-profile-secondary no-margin"
+                                            onclick="respondToRequest('{{ request.id }}', 'reject')">Decline</button>
                                 </div>`;
                                         break;
                                     case 'outgoing_pending':
@@ -1929,8 +1928,29 @@
 
 
         });
-
-
+        function respondToRequest(requestId, action) {
+            fetch(`/${action}_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'include'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the request card from the UI
+                        const card = document.getElementById(`request-card-${requestId}`);
+                        if (card) card.remove();
+                    } else {
+                        alert(data.message || 'Something went wrong.');
+                    }
+                })
+                .catch(err => {
+                    console.error(`${action} request error:`, err);
+                    alert('Error performing action.');
+                });
+        }
     </script>
 </body>
 
