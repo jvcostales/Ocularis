@@ -1199,7 +1199,7 @@
                                     case 'friends':
                                         buttonHtml = `
                                 <button type="button" class="follow-button-profile no-margin"
-                                        onclick="handleFriendship('{{ liker.id }}', 'unfriend', this)">
+                                        onclick="handleFriendship(${liker.id}, 'unfriend', this)">
                                     Unfriend
                                 </button>`;
                                         break;
