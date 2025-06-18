@@ -1673,13 +1673,18 @@ def send_request(receiver_id):
 
 
 
+from flask import request, jsonify
+
 @app.route('/unfriend/<int:other_user_id>', methods=['POST'])
 @login_required
 def unfriend(other_user_id):
     user_id = current_user.id
 
     if user_id == other_user_id:
-        flash("You cannot unfriend yourself.")
+        message = "You cannot unfriend yourself."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=message), 400
+        flash(message)
         return redirect(url_for('profile', user_id=other_user_id))
 
     conn = psycopg2.connect(
@@ -1692,14 +1697,12 @@ def unfriend(other_user_id):
     cur = conn.cursor()
 
     try:
-        # Delete from friends table
         user1_id, user2_id = sorted((user_id, other_user_id))
         cur.execute("""
             DELETE FROM friends
             WHERE user1_id = %s AND user2_id = %s;
         """, (user1_id, user2_id))
 
-        # Delete any existing friend requests between these users (in either direction)
         cur.execute("""
             DELETE FROM friend_requests
             WHERE (sender_id = %s AND receiver_id = %s)
@@ -1708,15 +1711,23 @@ def unfriend(other_user_id):
 
         conn.commit()
 
-        flash("You have unfriended this user and cleared any past friend requests.")
+        message = "You have unfriended this user and cleared any past friend requests."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=True, message=message)
+
+        flash(message)
     except Exception as e:
-        flash(f"Error while unfriending: {e}")
         conn.rollback()
+        error_msg = f"Error while unfriending: {e}"
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=error_msg), 500
+        flash(error_msg)
     finally:
         cur.close()
         conn.close()
 
     return redirect(url_for('profile', user_id=other_user_id))
+
 
 
 
