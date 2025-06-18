@@ -1839,7 +1839,10 @@ def accept_request(request_id):
         cur.close()
         conn.close()
 
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({'success': True, 'message': "Friend request accepted."})
     return redirect(request.referrer or url_for('feed'))
+
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
 @login_required
@@ -1871,7 +1874,10 @@ def reject_request(request_id):
         cur.close()
         conn.close()
 
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({'success': True, 'message': "Friend request rejected."})
     return redirect(request.referrer or url_for('feed'))
+
 
 @app.route('/pairup')
 @login_required

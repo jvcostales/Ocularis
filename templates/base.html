@@ -1947,7 +1947,7 @@
                     if (data.success) {
                         const card = document.getElementById(`request-${requestId}`);
                         if (card) {
-                            card.remove(); // or update the innerHTML if you prefer
+                            card.remove();
                         }
                     } else {
                         alert(data.message || 'Something went wrong.');
@@ -1958,6 +1958,7 @@
                     alert('Error performing action.');
                 });
         };
+
 
     </script>
 </body>
