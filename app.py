@@ -1731,10 +1731,17 @@ def unfriend(other_user_id):
 
 
 
-@app.route('/cancel_request/<int:receiver_id>', methods=['POST'])
+@app.route('/cancel_request/<int:user_id>', methods=['POST'])
 @login_required
-def cancel_request(receiver_id):
+def cancel_request(user_id):
     sender_id = current_user.id
+
+    if sender_id == user_id:
+        message = "You cannot cancel a request to yourself."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=message), 400
+        flash(message)
+        return redirect(url_for('profile', user_id=user_id))
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -1746,34 +1753,28 @@ def cancel_request(receiver_id):
     cur = conn.cursor()
 
     try:
-        # ✅ Check if already friends
-        user1_id, user2_id = sorted((sender_id, receiver_id))
-        cur.execute("""
-            SELECT * FROM friends
-            WHERE user1_id = %s AND user2_id = %s;
-        """, (user1_id, user2_id))
-        already_friends = cur.fetchone()
-
-        if already_friends:
-            flash("You are already friends with this user.")
-            return redirect(url_for('profile', user_id=receiver_id))
-
-        # ❌ Only delete pending friend requests
         cur.execute("""
             DELETE FROM friend_requests
             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
-        """, (sender_id, receiver_id))
+        """, (sender_id, user_id))
         conn.commit()
 
-        flash("Friend request cancelled.")
+        message = "Friend request cancelled."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=True, message=message)
+
+        flash(message)
     except Exception as e:
-        flash(f"An error occurred: {e}")
         conn.rollback()
+        error_msg = f"Error cancelling request: {e}"
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(success=False, message=error_msg), 500
+        flash(error_msg)
     finally:
         cur.close()
         conn.close()
 
-    return redirect(url_for('profile', user_id=receiver_id))
+    return redirect(url_for('profile', user_id=user_id))
 
 
 @app.route('/accept_request/<int:request_id>', methods=['POST'])

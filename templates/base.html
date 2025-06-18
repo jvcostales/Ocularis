@@ -746,6 +746,7 @@
                             buttonElement.textContent = 'Befriend';
                             buttonElement.onclick = () => window.handleFriendship(userId, 'send_request', buttonElement);
                         }
+
                     } else {
                         alert(data.message || 'Something went wrong.');
                     }
