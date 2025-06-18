@@ -1230,43 +1230,44 @@
                                         break;
                                     case 'friends':
                                         buttonHtml = `
-                                <button type="button" class="follow-button-profile no-margin"
-                                        onclick="handleFriendship(${liker.id}, 'unfriend', this)">
-                                    Unfriend
-                                </button>`;
-                                        break;
-                                    case 'incoming_pending':
-                                        buttonHtml = `
-                                <div class="response-wrapper">
-                                    <button type="button" class="follow-button-profile no-margin"
-                                            onclick="respondToRequest('{{ request.id }}', 'accept')">Confirm</button>
+                                            <button type="button" class="follow-button-profile no-margin"
+                                                onclick="handleFriendship(${liker.id}, 'unfriend', this)">
+                                                Unfriend
+                                            </button>`;
+                                                                        break;
+                                                                    case 'incoming_pending':
+                                                                        buttonHtml = `
+                                            <div class="response-wrapper">
+                                                <button type="button" class="follow-button-profile no-margin"
+                                                    onclick="respondToRequest(${liker.request_id}, 'accept')">Confirm</button>
 
-                                    <button type="button" class="follow-button-profile-secondary no-margin"
-                                            onclick="respondToRequest('{{ request.id }}', 'reject')">Decline</button>
-                                </div>`;
-                                        break;
-                                    case 'outgoing_pending':
-                                        buttonHtml = `
-                                <form action="/cancel_request/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
-                                </form>`;
+                                                <button type="button" class="follow-button-profile-secondary no-margin"
+                                                    onclick="respondToRequest(${liker.request_id}, 'reject')">Decline</button>
+                                            </div>`;
+                                                                        break;
+                                                                    case 'outgoing_pending':
+                                                                        buttonHtml = `
+                                            <form action="/cancel_request/${liker.id}" method="post">
+                                                <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
+                                            </form>`;
                                         break;
                                     case 'outgoing_rejected':
                                     case 'not_friends':
                                         if (liker.verified) {
                                             buttonHtml = `
-                                    <button type="button" class="follow-button-profile no-margin"
-                                            onclick="handleFriendship(${liker.id}, 'send_request', this)">
-                                        Befriend
-                                    </button>`;
-                                        } else {
-                                            buttonHtml = `
-                                    <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
+                                                <button type="button" class="follow-button-profile no-margin"
+                                                    onclick="handleFriendship(${liker.id}, 'send_request', this)">
+                                                    Befriend
+                                                </button>`;
+                                                                        } else {
+                                                                            buttonHtml = `
+                                                <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
                                         }
                                         break;
                                     default:
                                         buttonHtml = '';
                                 }
+
 
                                 return `
                                     <div class="profile-follow-wrapper">
