@@ -390,17 +390,19 @@
                             </div>
                             <div class="request-icons">
                                 <button type="button" class="circled-icon-1"
-                                    onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
-                                    endif %}>
+                                    onclick="respondToRequest({{ request_id }}, 'reject', this)" {% if not verified
+                                    %}disabled{% endif %}>
                                     <span class="material-symbols-outlined close-symbol">close</span>
                                 </button>
 
                                 <button type="button" class="circled-icon-2"
-                                    onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disabled{%
-                                    endif %}>
+                                    onclick="respondToRequest({{ request_id }}, 'accept', this)" {% if not verified
+                                    %}disabled{% endif %}>
                                     <span class="material-symbols-outlined check-symbol">check</span>
                                 </button>
                             </div>
+
+
                         </div>
                     </div>
                     {% endfor %}
@@ -1929,6 +1931,51 @@
 
 
         });
+
+        window.respondToRequest = function (requestId, action, buttonElement) {
+            const userId = buttonElement.getAttribute('data-userid');
+
+            fetch(`/${action}_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'include'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert(data.message || 'Something went wrong.');
+                        return;
+                    }
+
+                    const wrapper = buttonElement.closest('.response-wrapper');
+                    if (!wrapper) return;
+
+                    if (action === 'accept') {
+                        wrapper.innerHTML = `
+                <button type="button" class="follow-button-profile"
+                    onclick="handleFriendship(${userId}, 'unfriend', this)">
+                    Unfriend
+                </button>
+            `;
+                    } else if (action === 'reject') {
+                        wrapper.innerHTML = `
+                <button type="button" class="follow-button-profile"
+                    onclick="handleFriendship(${userId}, 'send_request', this)">
+                    Befriend
+                </button>
+            `;
+                    }
+                })
+                .catch(err => {
+                    console.error(`${action} request error:`, err);
+                    alert('Error performing action.');
+                });
+        };
+
+
+
 
 
     </script>

@@ -28,24 +28,20 @@
             <form action="{{ url_for('unfriend', other_user_id=user_id) }}" method="post">
                 <button type="submit" class="follow-button-profile">Unfriend</button>
             </form>
-
             {% elif incoming_request %}
             {% if incoming_request[1] == 'pending' %}
             <div class="response-wrapper" id="request-{{ incoming_request[0] }}">
                 <button type="button" class="follow-button-profile no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)" data-userid="{{ user_id }}">
+                    onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)">
                     Confirm
                 </button>
-
                 <button type="button" class="follow-button-profile-secondary no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)" data-userid="{{ user_id }}">
+                    onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)">
                     Decline
                 </button>
-
             </div>
             {% endif %}
         </div>
-
         {% elif outgoing_request %}
         {% if outgoing_request[0] == 'pending' %}
         <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
