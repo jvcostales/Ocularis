@@ -24,11 +24,9 @@
         <div class="more-frame-wrapper">
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ loop.index }}">
-                <a href="#" class="save-button {% if image[0] in saved_image_ids %}saved{% endif %}"
-                    data-image-id="{{ image[0] }}">
-                    {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
+                <a href="#" class="save-button saved" data-image-id="{{ image[0] }}">
+                    Unsave
                 </a>
-                <div class="hide">Hide</div>
                 <div class="report">Report</div>
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
                 <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
