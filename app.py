@@ -2631,6 +2631,7 @@ def saved():
     conn.close()
 
     return render_template('saved.html',
+        user=current_user,
         saved_posts=saved_posts,
         comments=all_comments,
         likes_data=likes_data,
