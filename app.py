@@ -2599,7 +2599,7 @@ def saved():
     # 5. Notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
-               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id
+               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
