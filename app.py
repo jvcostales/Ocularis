@@ -666,7 +666,8 @@ def feed():
                 notifications.image_id,
                 notifications.created_at,
                 notifications.actor_id,
-                users.profile_pic
+                users.profile_pic,
+                notifications.id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
@@ -855,8 +856,14 @@ def view_post(image_id):
 
                 # Fetch notifications
         cur.execute("""
-            SELECT users.first_name || ' ' || users.last_name AS display_name,
-                   notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic
+            SELECT                 
+                users.first_name || ' ' || users.last_name AS display_name,
+                notifications.action_type,
+                notifications.image_id,
+                notifications.created_at,
+                notifications.actor_id,
+                users.profile_pic,
+                notifications.id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
@@ -1511,8 +1518,14 @@ def profile(user_id):
 
                 # Fetch notifications
     cur.execute("""
-        SELECT users.first_name || ' ' || users.last_name AS display_name,
-               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic
+        SELECT  
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id,
+            users.profile_pic,
+            notifications.id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -1916,7 +1929,8 @@ def pairup():
             notifications.image_id,
             notifications.created_at,
             notifications.actor_id,
-            users.profile_pic
+            users.profile_pic,
+            notifications.id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -2035,7 +2049,8 @@ def match():
             notifications.image_id,
             notifications.created_at,
             notifications.actor_id,
-            users.profile_pic
+            users.profile_pic,
+            notifications.id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -2213,50 +2228,26 @@ def decline_match():
         )
         with conn:
             with conn.cursor() as cur:
+                # Delete the mutual match
                 cur.execute("""
                     DELETE FROM recent_matches
                     WHERE (user_id = %s AND matched_user_id = %s)
                        OR (user_id = %s AND matched_user_id = %s)
                 """, (user_id, other_user_id, other_user_id, user_id))
 
-        return jsonify({'message': 'Match declined'}), 200
+                # Delete the notification
+                cur.execute("""
+                    DELETE FROM notifications
+                    WHERE recipient_id = %s AND actor_id = %s AND action_type = 'collab_check'
+                """, (user_id, other_user_id))
+
+        return jsonify({'message': 'Match and notification removed'}), 200
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
         if conn:
             conn.close()
-
-def get_random_users():
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-        port=5432
-    )
-
-    with conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("""
-                SELECT id, first_name, last_name, city, role, profile_pic
-                FROM users
-                WHERE is_profile_complete = TRUE
-                AND id != %s
-                AND id NOT IN (
-                    SELECT recipient_id FROM notifications 
-                    WHERE actor_id = %s AND action_type = 'collab_check'
-                    UNION
-                    SELECT actor_id FROM notifications 
-                    WHERE recipient_id = %s AND action_type = 'collab_check'
-                )
-                ORDER BY RANDOM()
-                LIMIT 20;
-            """, (current_user.id, current_user.id, current_user.id))
-
-            users = cur.fetchall()
-
-
-    return users
 
 
 @app.route('/browse', methods=['POST'])
@@ -2282,7 +2273,8 @@ def browse_users():
             notifications.image_id,
             notifications.created_at,
             notifications.actor_id,
-            users.profile_pic
+            users.profile_pic,
+            notifications.id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s

@@ -74,7 +74,8 @@
                             <div class="notifs-title">Notifs</div>
 
                             {% if notifications %}
-                            {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
+                            {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
+                            notifications %}
                             <div class="notif-bar">
                                 <a href="{{ url_for('profile', user_id=actor_id) }}">
                                     <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
@@ -94,10 +95,9 @@
                                         {% elif action == 'collab_check' %}
                                         found you as a
                                         <span class="open-modal" data-user-id="{{ actor_id }}"
-                                            data-display-name="{{ display_name }}"
+                                            data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
                                             style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                            match
-                                        </span>.
+                                            match</span>.
                                         {% endif %}
                                     </div>
                                     <div class="notif-date">
@@ -206,7 +206,8 @@
                             <div class="notifs-title">Notifs</div>
 
                             {% if notifications %}
-                            {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
+                            {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
+                            notifications %}
                             <div class="notif-bar">
                                 <a href="{{ url_for('profile', user_id=actor_id) }}">
                                     <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
@@ -225,10 +226,9 @@
                                                 style="font-weight: 600;">post</span></a>.
                                         {% elif action == 'collab_check' %}
                                         found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                            data-display-name="{{ display_name }}"
+                                            data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
                                             style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                            match
-                                        </span>.
+                                            match</span>.
                                         {% endif %}
                                     </div>
                                     <div class="notif-date">
@@ -343,8 +343,9 @@
                         Notifs
                     </div>
                     {% if notifications %}
-                    {% for display_name, action, image_id, created_at, actor_id, profile_pic in notifications %}
-                    <div class="notif-bar">
+                    {% for display_name, action, image_id, created_at, actor_id, profile_pic, notification_id in
+                    notifications %}
+                    <div class="notif-bar" id="notif-{{ notification_id }}">
                         <a href="{{ url_for('profile', user_id=actor_id) }}"><img
                                 src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
                                 class="pfp img-notif-request"></a>
@@ -360,10 +361,9 @@
                                         style="font-weight: 600;">post</span></a>.
                                 {% elif action == 'collab_check' %}
                                 found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                    data-display-name="{{ display_name }}"
+                                    data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
                                     style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                    match
-                                </span>.
+                                    match</span>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
