@@ -667,7 +667,7 @@ def feed():
                 notifications.created_at,
                 notifications.actor_id,
                 users.profile_pic,
-                notifications.id
+                notifications.notification_id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
@@ -863,7 +863,7 @@ def view_post(image_id):
                 notifications.created_at,
                 notifications.actor_id,
                 users.profile_pic,
-                notifications.id
+                notifications.notification_id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
@@ -1525,7 +1525,7 @@ def profile(user_id):
             notifications.created_at,
             notifications.actor_id,
             users.profile_pic,
-            notifications.id
+            notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -1930,7 +1930,7 @@ def pairup():
             notifications.created_at,
             notifications.actor_id,
             users.profile_pic,
-            notifications.id
+            notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -2050,7 +2050,7 @@ def match():
             notifications.created_at,
             notifications.actor_id,
             users.profile_pic,
-            notifications.id
+            notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
@@ -2274,7 +2274,7 @@ def browse_users():
             notifications.created_at,
             notifications.actor_id,
             users.profile_pic,
-            notifications.id
+            notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
