@@ -912,23 +912,19 @@
 
             document.getElementById('decline-match').addEventListener('click', function () {
                 const otherUserId = this.getAttribute('data-user-id');
-                const notifId = this.getAttribute('data-notif-id');
 
                 fetch('/decline_match', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ other_user_id: otherUserId, notification_id: notifId })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ other_user_id: otherUserId })
                 })
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message || data.error);
                         document.getElementById('matchModal').style.display = 'none';
-
-                        // ✅ Remove the notification element from the page
-                        if (notifId) {
-                            const notifElem = document.getElementById('notif-' + notifId);
-                            if (notifElem) notifElem.remove();
-                        }
+                        // Optionally remove or gray out the notification
                     });
             });
 
