@@ -104,17 +104,6 @@
                                         {{ created_at.strftime('%b') }} {{ created_at.day }}
                                     </div>
                                 </div>
-                                <!-- Match modal -->
-                                <div id="matchModal" class="modal" style="display: none;">
-                                    <div class="modal-content">
-                                        <p>You were matched with <span id="match-username"
-                                                style="font-weight: 600;"></span>.</p>
-                                        <p>Would you like to decline this match?</p>
-                                        <button id="decline-match" class="btn-decline">Decline Match</button>
-                                        <button onclick="document.getElementById('matchModal').style.display='none'"
-                                            class="btn-cancel">Cancel</button>
-                                    </div>
-                                </div>
                             </div>
                             {% endfor %}
                             {% else %}
@@ -235,7 +224,11 @@
                                         commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                 style="font-weight: 600;">post</span></a>.
                                         {% elif action == 'collab_check' %}
-                                        found you as a match.
+                                        found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
+                                            data-display-name="{{ display_name }}"
+                                            style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                            match
+                                        </span>.
                                         {% endif %}
                                     </div>
                                     <div class="notif-date">
@@ -366,7 +359,11 @@
                                 commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                         style="font-weight: 600;">post</span></a>.
                                 {% elif action == 'collab_check' %}
-                                found you as a match.
+                                found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
+                                    data-display-name="{{ display_name }}"
+                                    style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                    match
+                                </span>.
                                 {% endif %}
                             </div>
                             <div class="notif-date">
@@ -741,6 +738,17 @@
         {% endif %}
     </div>
 
+    <!-- Match modal -->
+    <div id="matchModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p>You were matched with <span id="match-username" style="font-weight: 600;"></span>.</p>
+            <p>Would you like to decline this match?</p>
+            <button id="decline-match" class="btn-decline">Decline Match</button>
+            <button onclick="document.getElementById('matchModal').style.display='none'"
+                class="btn-cancel">Cancel</button>
+        </div>
+    </div>
+
     <script>
 
         window.handleFriendship = function (userId, action, buttonElement) {
@@ -919,7 +927,7 @@
                         // Optionally remove or gray out the notification
                     });
             });
-            
+
             const backdropMobile = document.getElementById('backdrop-mobile');
             const backdropTablet = document.getElementById('backdrop-tablet');
             let lastOpenedGroup = null;

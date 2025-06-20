@@ -2191,7 +2191,40 @@ def notify_collab_check():
         'redirect_url': url_for('pairup')
     }), 201
 
+@app.route('/decline_match', methods=['POST'])
+@login_required
+def decline_match():
+    data = request.get_json()
+    try:
+        other_user_id = int(data.get('other_user_id'))
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid user ID'}), 400
 
+    user_id = current_user.id
+    conn = None
+
+    try:
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+            dbname="ocularis_db", 
+            user="ocularis_db_user", 
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+            port=5432
+        )
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    DELETE FROM recent_matches
+                    WHERE (user_id = %s AND matched_user_id = %s)
+                       OR (user_id = %s AND matched_user_id = %s)
+                """, (user_id, other_user_id, other_user_id, user_id))
+
+        return jsonify({'message': 'Match declined'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if conn:
+            conn.close()
 
 def get_random_users():
     conn = psycopg2.connect(
