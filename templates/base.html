@@ -751,6 +751,33 @@
 
     <script>
 
+        const sections = Array.from(document.querySelectorAll('.nav-section'));
+        let currentIndex = 0;
+
+        function showSection(index) {
+            sections.forEach((sec, i) => {
+                sec.classList.toggle('active', i === index);
+            });
+        }
+
+        sections.forEach((section, index) => {
+            section.addEventListener('click', function (e) {
+                const clickX = e.clientX - this.getBoundingClientRect().left;
+                const width = this.offsetWidth;
+
+                if (clickX < width / 2) {
+                    // Left side clicked
+                    currentIndex = (currentIndex - 1 + sections.length) % sections.length;
+                } else {
+                    // Right side clicked
+                    currentIndex = (currentIndex + 1) % sections.length;
+                }
+
+                showSection(currentIndex);
+            });
+        });
+        
+
         window.handleFriendship = function (userId, action, buttonElement) {
             fetch(`/${action}/${userId}`, {
                 method: 'POST',

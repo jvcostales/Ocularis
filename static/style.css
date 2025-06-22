@@ -2210,6 +2210,11 @@ input[type="url"]::placeholder {
         overflow: hidden;
     }
 
+
+
+
+
+
     /* Modal overlay */
     #matchModal.modal {
         position: fixed;
@@ -2274,7 +2279,21 @@ input[type="url"]::placeholder {
         background-color: #5a6268;
     }
 
+    .nav-section {
+        display: none;
+        width: 100%;
+        height: 300px;
+        background: #eee;
+        cursor: ew-resize;
+        /* left-right arrow cursor */
+        padding: 20px;
+        box-sizing: border-box;
+        transition: all 0.3s ease-in-out;
+    }
 
+    .nav-section.active {
+        display: block;
+    }
 }
 
 /* Tablet: 8-column layout */
