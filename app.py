@@ -2250,6 +2250,37 @@ def decline_match():
         if conn:
             conn.close()
 
+def get_random_users():
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+
+    with conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("""
+                SELECT id, first_name, last_name, city, role, profile_pic
+                FROM users
+                WHERE is_profile_complete = TRUE
+                AND id != %s
+                AND id NOT IN (
+                    SELECT recipient_id FROM notifications 
+                    WHERE actor_id = %s AND action_type = 'collab_check'
+                    UNION
+                    SELECT actor_id FROM notifications 
+                    WHERE recipient_id = %s AND action_type = 'collab_check'
+                )
+                ORDER BY RANDOM()
+                LIMIT 20;
+            """, (current_user.id, current_user.id, current_user.id))
+
+            users = cur.fetchall()
+
+
+    return users
 
 @app.route('/browse', methods=['POST'])
 @login_required
