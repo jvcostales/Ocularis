@@ -2250,7 +2250,7 @@ def decline_match():
         if conn:
             conn.close()
 
-def get_random_users():
+def get_random_users(user_id):
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -2275,12 +2275,12 @@ def get_random_users():
                 )
                 ORDER BY RANDOM()
                 LIMIT 20;
-            """, (current_user.id, current_user.id, current_user.id))
+            """, (user_id, user_id, user_id))
 
             users = cur.fetchall()
 
-
     return users
+
 
 @app.route('/browse', methods=['POST'])
 @login_required
@@ -2354,7 +2354,7 @@ def browse_users():
                     return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
 
     # 4. Get filtered random users
-    users = get_random_users()
+    users = get_random_users(user_id)
 
     return render_template(
         'browse.html',
