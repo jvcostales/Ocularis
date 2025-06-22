@@ -2288,6 +2288,32 @@ input[type="url"]::placeholder {
     .nav-section.active {
         display: flex;
     }
+
+
+    .info-title {
+        font-size: 1.25rem;
+        color: #9BB35B;
+        margin-bottom: 16px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .info-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .info-one {
+        background-color: transparent;
+        color: #9BB35B !important;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid #9BB35B;
+        display: inline-block;
+        text-align: center;
+    }
 }
 
 /* Tablet: 8-column layout */
@@ -4438,6 +4464,80 @@ input[type="url"]::placeholder {
         -moz-appearance: none;
         padding-left: 16px;
     }
+
+    /* Modal overlay */
+    #matchModal.modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        /* solid black overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Modal content */
+    .modal-content {
+        background-color: #fff;
+        padding: 24px 32px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+    }
+
+    /* Buttons */
+    .btn-decline {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .btn-decline:hover {
+        background-color: #4F72F7;
+    }
+
+    .btn-decline:active {
+        background-color: #152FAE;
+    }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        margin: 10px 5px 0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+    .nav-section {
+        display: none;
+        cursor: ew-resize;
+        /* left-right arrow cursor */
+    }
+
+    .nav-section.active {
+        display: flex;
+    }
 }
 
 /* Mobile: 4-column layout */
@@ -6326,5 +6426,79 @@ input[type="url"]::placeholder {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
         color: #f6f6f6;
+    }
+
+    /* Modal overlay */
+    #matchModal.modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        /* solid black overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Modal content */
+    .modal-content {
+        background-color: #fff;
+        padding: 24px 32px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+    }
+
+    /* Buttons */
+    .btn-decline {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .btn-decline:hover {
+        background-color: #4F72F7;
+    }
+
+    .btn-decline:active {
+        background-color: #152FAE;
+    }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        margin: 10px 5px 0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+    .nav-section {
+        display: none;
+        cursor: ew-resize;
+        /* left-right arrow cursor */
+    }
+
+    .nav-section.active {
+        display: flex;
     }
 }
