@@ -2238,8 +2238,9 @@ def decline_match():
                 # Delete the notification
                 cur.execute("""
                     DELETE FROM notifications
-                    WHERE recipient_id = %s AND actor_id = %s AND action_type = 'collab_check'
-                """, (user_id, other_user_id))
+                    WHERE ((recipient_id = %s AND actor_id = %s) OR (recipient_id = %s AND actor_id = %s))
+                        AND action_type = 'collab_check'
+                """, (user_id, other_user_id, other_user_id, user_id))
 
         return jsonify({'message': 'Match and notification removed'}), 200
 
