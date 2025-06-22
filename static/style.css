@@ -2289,6 +2289,13 @@ input[type="url"]::placeholder {
         display: flex;
     }
 
+    .card-content-two {
+        display: flex;
+        height: 350px;
+        margin-bottom: 24px;
+        align-items: center;
+        justify-content: center;
+    }
 
     .info-title {
         font-size: 1.25rem;
