@@ -928,38 +928,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            const sections = Array.from(document.querySelectorAll('.nav-section'));
-            let currentIndex = 0;
-
-            function showSection(index) {
-                sections.forEach((sec, i) => {
-                    sec.classList.toggle('active', i === index);
-                });
-            }
-
-            sections.forEach((section) => {
-                section.addEventListener('click', function (e) {
-                    const width = this.offsetWidth;
-                    const clickX = e.clientX - this.getBoundingClientRect().left;
-
-                    currentIndex = clickX < width / 2
-                        ? (currentIndex - 1 + sections.length) % sections.length
-                        : (currentIndex + 1) % sections.length;
-
-                    showSection(currentIndex);
-                });
-
-                section.addEventListener('mousemove', function (e) {
-                    const width = this.offsetWidth;
-                    const clickX = e.clientX - this.getBoundingClientRect().left;
-                    this.style.cursor = clickX < width / 2 ? 'w-resize' : 'e-resize';
-                });
-
-                section.addEventListener('mouseleave', function () {
-                    this.style.cursor = 'default';
-                });
-            });
-
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const otherUserId = this.dataset.id;
