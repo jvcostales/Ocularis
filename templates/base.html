@@ -899,6 +899,30 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            document.querySelectorAll('.delete-match').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const otherUserId = this.dataset.id;
+
+                    fetch('/decline_match', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'  // if using Flask-WTF CSRF
+                        },
+                        body: JSON.stringify({ other_user_id: otherUserId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                // Remove the entire match entry from the DOM
+                                this.closest('.profile-more-wrapper-pairup').remove();
+                            } else {
+                                alert('Error: ' + (data.error || 'Could not delete match.'));
+                            }
+                        });
+                });
+            });
+
             document.querySelectorAll('.open-modal').forEach(elem => {
                 elem.addEventListener('click', function () {
                     const userId = this.getAttribute('data-user-id');
