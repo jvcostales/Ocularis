@@ -778,22 +778,6 @@
         });
 
 
-        sections.forEach((section) => {
-            section.addEventListener('mousemove', function (e) {
-                const width = this.offsetWidth;
-                const clickX = e.clientX - this.getBoundingClientRect().left;
-
-                if (clickX < width / 2) {
-                    this.style.cursor = 'w-resize'; // left arrow
-                } else {
-                    this.style.cursor = 'e-resize'; // right arrow
-                }
-            });
-        });
-
-        section.addEventListener('mouseleave', function () {
-            this.style.cursor = 'default';
-        });
 
 
         window.handleFriendship = function (userId, action, buttonElement) {
@@ -943,6 +927,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+
+            sections.forEach((section) => {
+                section.addEventListener('mousemove', function (e) {
+                    const width = this.offsetWidth;
+                    const clickX = e.clientX - this.getBoundingClientRect().left;
+
+                    if (clickX < width / 2) {
+                        this.style.cursor = 'w-resize'; // left arrow
+                    } else {
+                        this.style.cursor = 'e-resize'; // right arrow
+                    }
+                });
+            });
+
+            section.addEventListener('mouseleave', function () {
+                this.style.cursor = 'default';
+            });
 
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
