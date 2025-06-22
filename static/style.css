@@ -2294,7 +2294,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         align-items: center;
         justify-content: center;
-        border-radius: 0 10px 10px 0;
+        border-radius: 10px;
         background-color: #D3F36A;
     }
 
