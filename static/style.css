@@ -2286,7 +2286,7 @@ input[type="url"]::placeholder {
     }
 
     .nav-section.active {
-        display: block;
+        display: flex;
     }
 }
 
