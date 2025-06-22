@@ -760,23 +760,16 @@
             });
         }
 
-        sections.forEach((section, index) => {
+        sections.forEach((section) => {
             section.addEventListener('click', function (e) {
                 const clickX = e.clientX - this.getBoundingClientRect().left;
                 const width = this.offsetWidth;
 
-                if (clickX < width / 2) {
-                    // Left side clicked
-                    currentIndex = (currentIndex - 1 + sections.length) % sections.length;
-                } else {
-                    // Right side clicked
-                    currentIndex = (currentIndex + 1) % sections.length;
-                }
-
+                // Toggle between 0 and 1 only
+                currentIndex = clickX < width / 2 ? 0 : 1;
                 showSection(currentIndex);
             });
         });
-        
 
         window.handleFriendship = function (userId, action, buttonElement) {
             fetch(`/${action}/${userId}`, {
