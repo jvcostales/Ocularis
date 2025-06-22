@@ -2210,6 +2210,71 @@ input[type="url"]::placeholder {
         overflow: hidden;
     }
 
+    /* Modal overlay */
+    #matchModal.modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        /* solid black overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Modal content */
+    .modal-content {
+        background-color: #fff;
+        padding: 24px 32px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+    }
+
+    /* Buttons */
+    .btn-decline {
+        font-size: 1rem;
+        font-family: 'Schibsted Grotesk', sans-serif;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        border: none;
+        background-color: #1C46F5;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f6f6f6;
+        text-align: center;
+    }
+
+    .btn-decline:hover {
+        background-color: #4F72F7;
+    }
+
+    .btn-decline:active {
+        background-color: #152FAE;
+    }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        margin: 10px 5px 0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+
 }
 
 /* Tablet: 8-column layout */
