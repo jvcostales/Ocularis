@@ -2,11 +2,11 @@
 {% block content %}
 
 <div class="profile-card">
-    <img src="{{ url_for('cover_photos', filename=viewed_user_profile_cover) if viewed_user_profile_cover else url_for('static', filename='profile_cover.png') }}"
+    <img src="{{ url_for('cover_photos', filename=viewed_user_profile_cover) if viewed_user_profile_cover and viewed_user_profile_cover != 'profile_cover.png' else url_for('static', filename='profile_cover.png') }}"
         alt="Banner" class="banner">
     <div class="info-button-wrapper">
         <div class="profile-info">
-            <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic else url_for('static', filename='pfp.jpg') }}"
+            <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
                 alt="Profile" class="avatar">
             <div class="details">
                 <div class="username-profile">{{ user[0] }} {{ user[1] }}</div>
