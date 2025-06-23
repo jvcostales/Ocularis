@@ -927,6 +927,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            const matchBtn = document.getElementById('matchBtn');
+            const browseBtn = document.getElementById('browseBtn');
+
+            {% if match_locked %}
+            if (matchBtn) {
+                matchBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Matching is locked for {{ time_remaining }}.');
+                });
+            }
+            {% endif %}
+
+            {% if browse_locked %}
+            if (browseBtn) {
+                browseBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Browsing is locked for {{ time_remaining }}.');
+                });
+            }
+            {% endif %}
 
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
