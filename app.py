@@ -284,7 +284,7 @@ def signup():
         password = generate_password_hash(raw_password)
         token = secrets.token_urlsafe(32)
         default_profile_pic = "pfp.jpg"
-        default_cover_photo = "default_cover.jpg"
+        default_cover_photo = "default_cover.png"
 
         try:
             conn = psycopg2.connect(
