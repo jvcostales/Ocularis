@@ -1570,6 +1570,18 @@ def profile(user_id):
         outgoing_request is not None
     )
 
+    # Get country name from code
+    if country:
+        cur.execute("SELECT name FROM countries WHERE iso2 = %s", (country,))
+        country_row = cur.fetchone()
+        country = country_row[0] if country_row else country
+
+    # Get state name from code
+    if state:
+        cur.execute("SELECT name FROM states WHERE state_code = %s", (state,))
+        state_row = cur.fetchone()
+        state = state_row[0] if state_row else state
+
     location = ", ".join(filter(None, [city, state, country]))
 
 
