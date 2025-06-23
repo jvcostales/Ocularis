@@ -1922,7 +1922,7 @@ def pairup():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
     # 🔒 Check for match lock (based on collab_actions)
     cur.execute("""
@@ -1938,7 +1938,7 @@ def pairup():
     time_remaining = None
 
     if result:
-        last_action_time = result["action_time"]
+        last_action_time = result[0]
         if last_action_time.tzinfo is None:
             last_action_time = last_action_time.replace(tzinfo=timezone.utc)
 
