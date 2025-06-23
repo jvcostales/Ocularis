@@ -1391,7 +1391,7 @@ def get_comment_likes(comment_id):
         'like_count': len(likers)
     })
 
-@app.route('/profile/<int:user_id>')
+@app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
     current_user_id = current_user.id
