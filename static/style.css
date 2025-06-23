@@ -1681,6 +1681,14 @@ input[type="url"]::placeholder {
         display: block;
     }
 
+    .banner:hover {
+        filter: brightness(75%);
+    }
+
+    .banner:active {
+        filter: brightness(60%);
+    }
+
     .profile-info {
         position: relative;
         margin-bottom: 24px;
@@ -3708,6 +3716,14 @@ input[type="url"]::placeholder {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         display: block;
+    }
+
+    .banner:hover {
+        filter: brightness(75%);
+    }
+
+    .banner:active {
+        filter: brightness(60%);
     }
 
     .profile-info {
@@ -5859,6 +5875,14 @@ input[type="url"]::placeholder {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         display: block;
+    }
+
+    .banner:hover {
+        filter: brightness(75%);
+    }
+
+    .banner:active {
+        filter: brightness(60%);
     }
 
     .profile-info {
