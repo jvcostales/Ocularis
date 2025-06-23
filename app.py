@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -1557,18 +1557,6 @@ def profile(user_id):
         profile_pic_url = url_for('profile_pics', filename=result[0])
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
-
-    # Get country name from code
-    if country:
-        cur.execute("SELECT name FROM countries WHERE iso2 = %s", (country,))
-        country_row = cur.fetchone()
-        country = country_row[0] if country_row else country
-
-    # Get state name from code
-    if state:
-        cur.execute("SELECT name FROM states WHERE state_code = %s", (state,))
-        state_row = cur.fetchone()
-        state = state_row[0] if state_row else state
     
     cur.close()
     conn.close()
@@ -1581,8 +1569,16 @@ def profile(user_id):
         outgoing_request is not None
     )
 
-    location = ", ".join(filter(None, [city, state, country]))
+    countries = current_app.config['COUNTRIES']
+    states = current_app.config['STATES']
 
+    iso_to_country = {c["iso2"]: c["name"] for c in countries}
+    state_code_to_name = {s["state_code"]: s["name"] for s in states}
+
+    country = iso_to_country.get(country, country)
+    state = state_code_to_name.get(state, state)
+
+    location = ", ".join(filter(None, [city, state, country]))
 
     return render_template(
         "profile.html",
