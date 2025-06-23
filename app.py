@@ -1921,6 +1921,28 @@ def pairup():
     )
     cur = conn.cursor()
 
+    # 🔐 Check 24-hour collab lock
+    cur.execute("""
+        SELECT action_time FROM collab_actions
+        WHERE user_id = %s
+        ORDER BY action_time DESC
+        LIMIT 1
+    """, (current_user.id,))
+    result = cur.fetchone()
+
+    locked = False
+    unlock_time = None
+
+    if result:
+        last_action_time = result[0]
+        if last_action_time.tzinfo is None:
+            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+
+        now_utc = datetime.now(timezone.utc)
+        if now_utc - last_action_time < timedelta(hours=24):
+            locked = True
+            unlock_time = last_action_time + timedelta(hours=24)
+
     # Fetch notifications
     cur.execute("""
         SELECT 
@@ -1972,11 +1994,18 @@ def pairup():
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
 
-
     cur.close()
     conn.close()
 
-    return render_template("pairup.html", user=current_user, notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic_url=profile_pic_url)
+    return render_template("pairup.html",
+                           user=current_user,
+                           notifications=notifications,
+                           requests=requests,
+                           recent_matches=recent_matches,
+                           verified=current_user.verified,
+                           profile_pic_url=profile_pic_url,
+                           locked=locked,
+                           unlock_time=unlock_time)
 
 @app.route('/match', methods=['POST'])
 @login_required
@@ -1991,29 +2020,6 @@ def match():
         port=5432
     )
     cur = conn.cursor()
-
-    # Check last collab action
-    cur.execute("""
-        SELECT action_time FROM collab_actions
-        WHERE user_id = %s
-        ORDER BY action_time DESC
-        LIMIT 1
-    """, (user_id,))
-    result = cur.fetchone()
-
-    if result:
-        last_action_time = result[0]
-
-        # Ensure timezone-awareness (assuming stored in UTC)
-        if last_action_time.tzinfo is None:
-            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
-
-        now_utc = datetime.now(timezone.utc)
-
-        if now_utc - last_action_time < timedelta(hours=24):
-            cur.close()
-            conn.close()
-            return jsonify({'error': 'Access to /match is locked for 24 hours after collab check.'}), 403
 
     # Get all matched user IDs for current user
     cur.execute("""
@@ -2332,26 +2338,6 @@ def browse_users():
         profile_pic_url = url_for('profile_pics', filename=result[0])
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
-
-    with conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # 1. 24-hour collab action block check
-            cur.execute("""
-                SELECT action_time FROM collab_actions
-                WHERE user_id = %s
-                ORDER BY action_time DESC
-                LIMIT 1
-            """, (user_id,))
-            result = cur.fetchone()
-
-            if result:
-                last_action_time = result["action_time"]
-                if last_action_time.tzinfo is None:
-                    last_action_time = last_action_time.replace(tzinfo=timezone.utc)
-
-                now_utc = datetime.now(timezone.utc)
-                if now_utc - last_action_time < timedelta(hours=24):
-                    return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
 
     # 4. Get filtered random users
     users = get_random_users(user_id)

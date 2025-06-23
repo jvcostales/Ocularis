@@ -8,10 +8,10 @@
     </div>
     <div class="pairup-buttons">
         <form action="/match" method="post">
-            <button type="submit" class="match-button">Match</button>
+            <button type="submit" class="match-button" {% if locked %}disabled{% endif %}>Match</button>
         </form>
         <form action="/browse" method="post">
-            <button type="submit" class="browse-button">Browse</button>
+            <button type="submit" class="browse-button" {% if locked %}disabled{% endif %}>Browse</button>
         </form>
     </div>
 </div>
@@ -45,5 +45,13 @@
     </div>
     {% endif %}
 </div>
+
+{% if locked %}
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        alert("Access to Match and Browse is temporarily locked.\nYou can try again after:\n{{ unlock_time.strftime('%Y-%m-%d %H:%M:%S') }} UTC");
+    });
+</script>
+{% endif %}
 
 {% endblock %}
