@@ -1396,6 +1396,38 @@ def get_comment_likes(comment_id):
 def profile(user_id):
     current_user_id = current_user.id
 
+    if request.method == 'POST':
+        if current_user.id != user_id:
+            flash("You can only update your own cover photo.", "danger")
+            return redirect(url_for('profile', user_id=user_id))
+
+        cover_photo = request.files.get('cover_photo')
+        if cover_photo and cover_photo.filename != '':
+            if allowed_file(cover_photo.filename):
+                ext = cover_photo.filename.rsplit('.', 1)[1].lower()
+                cover_photo_filename = f"cover_user_{user_id}.{ext}"
+                cover_filepath = os.path.join(app.config['COVER_PHOTO_FOLDER'], cover_photo_filename)
+                cover_photo.save(cover_filepath)
+
+                conn = psycopg2.connect(
+                    host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+                    dbname="ocularis_db",
+                    user="ocularis_db_user",
+                    password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+                    port=5432
+                )
+                cur = conn.cursor()
+                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (cover_photo_filename, user_id))
+                conn.commit()
+                cur.close()
+                conn.close()
+
+                flash("Cover photo updated!", "success")
+                return redirect(url_for('profile', user_id=user_id))
+            else:
+                flash("Invalid cover photo file type.", "danger")
+                return redirect(url_for('profile', user_id=user_id))
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
         dbname="ocularis_db",
