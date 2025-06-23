@@ -21,8 +21,7 @@
                 <div class="subname">Photo</div>
                 <div class="section-space"></div>
                 <div class="sub-sub-wrapper">
-                    <img id="preview-photo" class="settings-photo"
-                        src="{{ url_for('profile_pics', filename=user.profile_pic or 'pfp.jpg') }}">
+                    <img id="preview-photo" class="settings-photo" src="{{ profile_pic_url }}">
                     <div class="edit-photo">
                         <div class="delete-photo">Delete</div>
                         <div>
@@ -312,7 +311,7 @@
         </form>
     </div>
 
-    <script>
+<script>
 document.getElementById('profile_pic').addEventListener('change', function (event) {
     const file = event.target.files[0];
     if (file) {
