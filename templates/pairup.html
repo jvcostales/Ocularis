@@ -50,4 +50,37 @@
     {% endif %}
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const matchBtn = document.getElementById('matchBtn');
+        const browseBtn = document.getElementById('browseBtn');
+
+        const matchLocked = {{ 'true' if match_locked else 'false' }};
+        const browseLocked = {{ 'true' if browse_locked else 'false' }};
+        const timeRemaining = "{{ time_remaining or '' }}";
+
+        if (matchBtn) {
+            matchBtn.addEventListener('click', function (e) {
+                if (matchLocked) {
+                    e.preventDefault();
+                    alert('Matching is locked for ' + timeRemaining + '.');
+                } else {
+                    window.location.href = '/match';  // replace with actual match route
+                }
+            });
+        }
+
+        if (browseBtn) {
+            browseBtn.addEventListener('click', function (e) {
+                if (browseLocked) {
+                    e.preventDefault();
+                    alert('Browsing is locked for ' + timeRemaining + '.');
+                } else {
+                    window.location.href = '/browse';  // replace with actual browse route
+                }
+            });
+        }
+    });
+</script>
+
 {% endblock %}
