@@ -201,8 +201,8 @@ CREATE TABLE IF NOT EXISTS saved_posts (
 
 cur.execute("""
 CREATE TABLE IF NOT EXISTS hidden_posts (
-    user_id INTEGER REFERENCES users(id),
-    image_id INTEGER REFERENCES images(image_id),
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    image_id INTEGER NOT NULL REFERENCES images(image_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, image_id)
 );
 """)
