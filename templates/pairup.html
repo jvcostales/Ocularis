@@ -7,6 +7,11 @@
         <br>consectetur
     </div>
     <div class="pairup-buttons">
+        <!-- Hidden forms for POST submission -->
+        <form id="matchForm" action="/match" method="POST" style="display: none;"></form>
+        <form id="browseForm" action="/browse" method="POST" style="display: none;"></form>
+
+        <!-- Action buttons -->
         <button id="matchBtn" class="match-button">
             Match
         </button>
@@ -14,6 +19,7 @@
             Browse
         </button>
     </div>
+
 </div>
 
 <p>Match locked: {{ match_locked }}</p>
@@ -55,31 +61,35 @@
         const matchBtn = document.getElementById('matchBtn');
         const browseBtn = document.getElementById('browseBtn');
 
-        const matchLocked = {{ 'true' if match_locked else 'false' }};
-        const browseLocked = {{ 'true' if browse_locked else 'false' }};
-        const timeRemaining = "{{ time_remaining or '' }}";
-
+        {% if match_locked %}
         if (matchBtn) {
             matchBtn.addEventListener('click', function (e) {
-                if (matchLocked) {
-                    e.preventDefault();
-                    alert('Matching is locked for ' + timeRemaining + '.');
-                } else {
-                    window.location.href = '/match';  // replace with actual match route
-                }
+                e.preventDefault();
+                alert('Matching is locked for {{ time_remaining }}.');
             });
         }
+        {% else %}
+        if (matchBtn) {
+            matchBtn.addEventListener('click', function () {
+                document.getElementById('matchForm').submit();
+            });
+        }
+        {% endif %}
 
+        {% if browse_locked %}
         if (browseBtn) {
             browseBtn.addEventListener('click', function (e) {
-                if (browseLocked) {
-                    e.preventDefault();
-                    alert('Browsing is locked for ' + timeRemaining + '.');
-                } else {
-                    window.location.href = '/browse';  // replace with actual browse route
-                }
+                e.preventDefault();
+                alert('Browsing is locked for {{ time_remaining }}.');
             });
         }
+        {% else %}
+        if (browseBtn) {
+            browseBtn.addEventListener('click', function () {
+                document.getElementById('browseForm').submit();
+            });
+        }
+        {% endif %}
     });
 </script>
 
