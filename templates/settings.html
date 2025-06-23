@@ -21,12 +21,13 @@
                 <div class="subname">Photo</div>
                 <div class="section-space"></div>
                 <div class="sub-sub-wrapper">
-                    <img class="settings-photo"
+                    <img id="preview-photo" class="settings-photo"
                         src="{{ url_for('profile_pics', filename=user.profile_pic or 'pfp.jpg') }}">
                     <div class="edit-photo">
                         <div class="delete-photo">Delete</div>
                         <div class="update-photo">
-                            <input type="file" name="profile_pic" accept="image/*">
+                            <label for="profile_pic" class="update-label">Update</label>
+                            <input type="file" id="profile_pic" name="profile_pic" accept="image/*" style="display: none;">
                         </div>
                     </div>
                 </div>
@@ -92,34 +93,7 @@
                     </div>
                 </div>
             </div>
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Skills</div>
-                <div class="section-space"></div>
-                <div class="checkbox-grid" style="margin-bottom: 0">
-                    {% for category in categories %}
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="skills" value="{{ category }}">
-                        {{ category }}
-                    </label>
-                    {% endfor %}
-                    <!--<a href="#" class="view-more">View all fields...</a>-->
-                </div>
-            </div>
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Preferences</div>
-                <div class="section-space"></div>
-                <div class="checkbox-grid" style="margin-bottom: 0">
-                    {% for category in categories %}
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="skills" value="{{ category }}">
-                        {{ category }}
-                    </label>
-                    {% endfor %}
-                    <!--<a href="#" class="view-more">View all fields...</a>-->
-                </div>
-            </div>
+
             <!-- SKILLS -->
             <div class="line-comments-section"></div>
             <div class="sub-wrapper">
@@ -337,5 +311,19 @@
                             <button type="submit" class="danger-btn">Delete Account</button>
         </form>
     </div>
+
+    <script>
+document.getElementById('profile_pic').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('preview-photo').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
 
     {% endblock %}
