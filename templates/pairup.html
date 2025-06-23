@@ -7,21 +7,12 @@
         <br>consectetur
     </div>
     <div class="pairup-buttons">
-        <!-- Match Button -->
-        <button id="matchBtn" class="match-button">
-            Match
-        </button>
-        {% if match_locked %}
-        <div class="lock-message">Locked for {{ time_remaining }}</div>
-        {% endif %}
-
-        <!-- Browse Button -->
-        <button id="browseBtn" class="browse-button">
-            Browse
-        </button>
-        {% if browse_locked %}
-        <div class="lock-message">Locked for {{ time_remaining }}</div>
-        {% endif %}
+        <form action="/match" method="post">
+            <button type="submit" class="match-button">Match</button>
+        </form>
+        <form action="/browse" method="post">
+            <button type="submit" class="browse-button">Browse</button>
+        </form>
     </div>
 </div>
 
@@ -54,31 +45,5 @@
     </div>
     {% endif %}
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const matchBtn = document.getElementById('matchBtn');
-        const browseBtn = document.getElementById('browseBtn');
-
-        {% if match_locked %}
-        if (matchBtn) {
-            matchBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Matching is locked for {{ time_remaining }}.');
-            });
-        }
-        {% endif %}
-
-        {% if browse_locked %}
-        if (browseBtn) {
-            browseBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Browsing is locked for {{ time_remaining }}.');
-            });
-        }
-        {% endif %}
-    });
-</script>
-
 
 {% endblock %}

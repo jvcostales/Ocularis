@@ -1912,9 +1912,6 @@ def reject_request(request_id):
 @app.route('/pairup')
 @login_required
 def pairup():
-    user_id = current_user.id
-    now_utc = datetime.now(timezone.utc)
-
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1922,33 +1919,9 @@ def pairup():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
-    # 🔒 Check last collab action time for match/browse lock
-    cur.execute("""
-        SELECT action_time FROM collab_actions
-        WHERE user_id = %s
-        ORDER BY action_time DESC
-        LIMIT 1
-    """, (user_id,))
-    result = cur.fetchone()
-
-    match_locked = False
-    browse_locked = False
-    time_remaining = None
-
-    if result:
-        last_action_time = result["action_time"]
-        if last_action_time.tzinfo is None:
-            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
-
-        time_diff = now_utc - last_action_time
-        if time_diff < timedelta(hours=24):
-            match_locked = True
-            browse_locked = True
-            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]  # hh:mm:ss
-
-    # 📨 Fetch notifications
+    # Fetch notifications
     cur.execute("""
         SELECT 
             users.first_name || ' ' || users.last_name AS display_name,
@@ -1962,55 +1935,48 @@ def pairup():
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
-    """, (user_id,))
+    """, (current_user.id,))
     notifications = cur.fetchall()
 
-    # 👫 Fetch friend requests
+    # Fetch friend requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
         JOIN users u ON fr.sender_id = u.id
         WHERE fr.receiver_id = %s AND fr.status = 'pending'
         ORDER BY fr.created_at DESC
-    """, (user_id,))
+    """, (current_user.id,))
     requests = cur.fetchall()
 
-    # 💕 Fetch recent matches
+    # Fetch recent matches with viewed user's profile_pic added at the end
     cur.execute("""
         SELECT 
-            u.id,
-            u.first_name,
-            u.last_name,
-            rm.matched_at,
-            u.profile_pic
+            u.id,                 -- match[0]
+            u.first_name,         -- match[1]
+            u.last_name,          -- match[2]
+            rm.matched_at,        -- match[3]
+            u.profile_pic         -- match[4] ✅ viewed user's profile_pic
         FROM recent_matches rm
         JOIN users u ON rm.matched_user_id = u.id
         WHERE rm.user_id = %s
         ORDER BY rm.matched_at DESC
-    """, (user_id,))
+    """, (current_user.id,))
     recent_matches = cur.fetchall()
 
-    # 🖼️ Get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic = result['profile_pic'] if result and result['profile_pic'] else 'pfp.jpg'
-    profile_pic_url = url_for('profile_pics', filename=profile_pic) if profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+
 
     cur.close()
     conn.close()
 
-    return render_template(
-        "pairup.html",
-        user=current_user,
-        notifications=notifications,
-        requests=requests,
-        recent_matches=recent_matches,
-        verified=current_user.verified,
-        profile_pic_url=profile_pic_url,
-        match_locked=match_locked,
-        browse_locked=browse_locked,
-        time_remaining=time_remaining
-    )
+    return render_template("pairup.html", user=current_user, notifications=notifications, requests=requests, recent_matches=recent_matches, verified=current_user.verified, profile_pic_url=profile_pic_url)
 
 @app.route('/match', methods=['POST'])
 @login_required
@@ -2025,6 +1991,29 @@ def match():
         port=5432
     )
     cur = conn.cursor()
+
+    # Check last collab action
+    cur.execute("""
+        SELECT action_time FROM collab_actions
+        WHERE user_id = %s
+        ORDER BY action_time DESC
+        LIMIT 1
+    """, (user_id,))
+    result = cur.fetchone()
+
+    if result:
+        last_action_time = result[0]
+
+        # Ensure timezone-awareness (assuming stored in UTC)
+        if last_action_time.tzinfo is None:
+            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+
+        now_utc = datetime.now(timezone.utc)
+
+        if now_utc - last_action_time < timedelta(hours=24):
+            cur.close()
+            conn.close()
+            return jsonify({'error': 'Access to /match is locked for 24 hours after collab check.'}), 403
 
     # Get all matched user IDs for current user
     cur.execute("""
@@ -2343,6 +2332,26 @@ def browse_users():
         profile_pic_url = url_for('profile_pics', filename=result[0])
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
+
+    with conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            # 1. 24-hour collab action block check
+            cur.execute("""
+                SELECT action_time FROM collab_actions
+                WHERE user_id = %s
+                ORDER BY action_time DESC
+                LIMIT 1
+            """, (user_id,))
+            result = cur.fetchone()
+
+            if result:
+                last_action_time = result["action_time"]
+                if last_action_time.tzinfo is None:
+                    last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+
+                now_utc = datetime.now(timezone.utc)
+                if now_utc - last_action_time < timedelta(hours=24):
+                    return jsonify({'error': 'Access to /browse is locked for 24 hours after collab check.'}), 403
 
     # 4. Get filtered random users
     users = get_random_users(user_id)
