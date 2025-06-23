@@ -1912,6 +1912,9 @@ def reject_request(request_id):
 @app.route('/pairup')
 @login_required
 def pairup():
+    user_id = current_user.id
+    now_utc = datetime.now(timezone.utc)
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -1919,29 +1922,31 @@ def pairup():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
 
-    # 🔐 Check 24-hour collab lock
+    # 🔒 Check for match lock (based on collab_actions)
     cur.execute("""
         SELECT action_time FROM collab_actions
         WHERE user_id = %s
         ORDER BY action_time DESC
         LIMIT 1
-    """, (current_user.id,))
+    """, (user_id,))
     result = cur.fetchone()
 
-    locked = False
-    unlock_time = None
+    match_locked = False
+    browse_locked = False
+    time_remaining = None
 
     if result:
-        last_action_time = result[0]
+        last_action_time = result["action_time"]
         if last_action_time.tzinfo is None:
             last_action_time = last_action_time.replace(tzinfo=timezone.utc)
 
-        now_utc = datetime.now(timezone.utc)
-        if now_utc - last_action_time < timedelta(hours=24):
-            locked = True
-            unlock_time = last_action_time + timedelta(hours=24)
+        time_diff = now_utc - last_action_time
+        if time_diff < timedelta(hours=24):
+            match_locked = True
+            browse_locked = True
+            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]  # hh:mm:ss
 
     # Fetch notifications
     cur.execute("""
@@ -1997,15 +2002,18 @@ def pairup():
     cur.close()
     conn.close()
 
-    return render_template("pairup.html",
-                           user=current_user,
-                           notifications=notifications,
-                           requests=requests,
-                           recent_matches=recent_matches,
-                           verified=current_user.verified,
-                           profile_pic_url=profile_pic_url,
-                           locked=locked,
-                           unlock_time=unlock_time)
+    return render_template(
+        "pairup.html",
+        user=current_user,
+        notifications=notifications,
+        requests=requests,
+        recent_matches=recent_matches,
+        verified=current_user.verified,
+        profile_pic_url=profile_pic_url,
+        match_locked=match_locked,
+        browse_locked=browse_locked,
+        time_remaining=time_remaining
+    )
 
 @app.route('/match', methods=['POST'])
 @login_required
