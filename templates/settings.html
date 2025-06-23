@@ -221,7 +221,7 @@
     {% endif %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for(' settings') }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
                         <label for="profile_pic">Profile Picture:</label><br />
                         <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
 
@@ -333,7 +333,7 @@
 
 <div>Delete Account</div>
 
-<form method="POST" action="{{ url_for(' delete_account_route') }}">
+<form method="POST" action="{{ url_for('delete_account_route') }}">
                             <button type="submit" class="danger-btn">Delete Account</button>
         </form>
     </div>
