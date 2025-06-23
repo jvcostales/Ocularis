@@ -1558,18 +1558,6 @@ def profile(user_id):
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
 
-    
-    cur.close()
-    conn.close()
-
-    # Determine whether to disable "Add Friend" button
-    disable_add_friend = (
-        is_friend or
-        current_user_id == user_id or
-        incoming_request is not None or # you cannot add if they already sent you a request
-        outgoing_request is not None
-    )
-
     # Get country name from code
     if country:
         cur.execute("SELECT name FROM countries WHERE iso2 = %s", (country,))
@@ -1581,6 +1569,17 @@ def profile(user_id):
         cur.execute("SELECT name FROM states WHERE state_code = %s", (state,))
         state_row = cur.fetchone()
         state = state_row[0] if state_row else state
+    
+    cur.close()
+    conn.close()
+
+    # Determine whether to disable "Add Friend" button
+    disable_add_friend = (
+        is_friend or
+        current_user_id == user_id or
+        incoming_request is not None or # you cannot add if they already sent you a request
+        outgoing_request is not None
+    )
 
     location = ", ".join(filter(None, [city, state, country]))
 
