@@ -1022,6 +1022,11 @@
                 document.getElementById('matchModal').style.display = 'none';
             }
 
+            // Expose to global scope so inline HTML can access them
+            window.showMatchStep = showMatchStep;
+            window.declineMatch = declineMatch;
+            window.closeModal = closeModal;
+
 
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
