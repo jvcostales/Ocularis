@@ -766,8 +766,9 @@
             <!-- Step 2 -->
             <div class="modal-step" id="match-step-2" style="display: none;">
                 <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
-                    class="btn-cancel"><span
-                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                    class="btn-cancel">
+                    <span class="material-symbols-outlined overlay-close-symbol">close</span>
+                </button>
                 <h2>Match</h2>
                 <img id="match-photo-2" src="profile.jpg" alt="Profile Photo" class="profile-pic">
                 <h3 id="match-name-2">Jane Doe</h3>
@@ -794,6 +795,7 @@
                 </div>
 
                 <div class="button-group">
+                    <button onclick="showMatchStep(1)" class="btn-back">Back</button>
                     <button id="decline-match" class="btn-decline">Decline Match</button>
                     <button class="btn-next" onclick="showMatchStep(3)">Next</button>
                 </div>
@@ -802,8 +804,9 @@
             <!-- Step 3 -->
             <div class="modal-step" id="match-step-3" style="display: none;">
                 <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
-                    class="btn-cancel"><span
-                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                    class="btn-cancel">
+                    <span class="material-symbols-outlined overlay-close-symbol">close</span>
+                </button>
                 <div class="overlay-title">Share</div>
                 <div class="share-wrapper">
                     <div class="share-via">Share via</div>
@@ -819,13 +822,17 @@
                         <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
                     </div>
                 </div>
+                <div class="button-group">
+                    <button onclick="showMatchStep(2)" class="btn-back">Back</button>
+                    <button onclick="document.getElementById('matchModal').style.display='none'"
+                        class="btn-cancel">Done</button>
+                </div>
             </div>
+
             <button onclick="document.getElementById('matchModal').style.display='none'"
                 class="btn-cancel">Done</button>
         </div>
     </div>
-    </div>
-
 
 
 
