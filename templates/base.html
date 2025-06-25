@@ -760,7 +760,7 @@
                 <img id="match-photo-1" src="profile.jpg" alt="Profile Photo" class="profile-pic">
                 <p><span id="match-username" style="font-weight: 600;"></span> found you as a match!</p>
                 <p>You're now connected, unless you say otherwise.</p>
-                <button class="btn-next" onclick="showStep(2)">Next</button>
+                <button class="btn-next" onclick="showMatchStep(2)">Next</button>
             </div>
 
             <!-- Step 2 -->
@@ -795,7 +795,7 @@
 
                 <div class="button-group">
                     <button id="decline-match" class="btn-decline">Decline Match</button>
-                    <button class="btn-next" onclick="showStep(3)">Next</button>
+                    <button class="btn-next" onclick="showMatchStep(3)">Next</button>
                 </div>
             </div>
 
@@ -1008,7 +1008,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            function showStep(step) {
+            function showMatchStep(step) {
                 document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
                 document.getElementById(`match-step-${step}`).style.display = 'block';
             }
@@ -1022,10 +1022,6 @@
                 document.getElementById('matchModal').style.display = 'none';
             }
 
-            // Optional: Expose functions globally if needed elsewhere
-            window.showStep = showStep;
-            window.declineMatch = declineMatch;
-            window.closeModal = closeModal;
 
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
