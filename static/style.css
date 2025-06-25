@@ -2222,32 +2222,32 @@ input[type="url"]::placeholder {
 
 
 
-
     /* Modal overlay */
     #matchModal.modal {
         position: fixed;
-        z-index: 1000;
-        left: 0;
         top: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.6);
-        /* solid black overlay */
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        visibility: visible;
+        opacity: 1;
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 100;
+        /*scroll when screen is small*/
+        /*close when background is clicked*/
     }
 
     /* Modal content */
     .modal-content {
-        background-color: #fff;
-        padding: 24px 32px;
+        background: #fff;
+        box-sizing: border-box;
         border-radius: 10px;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
+        width: 548px;
+        height: min-content;
+        box-sizing: border-box;
     }
 
     /* Buttons */
@@ -2327,6 +2327,31 @@ input[type="url"]::placeholder {
         padding: 7px 12px;
         border-radius: 999px;
         border: 1px solid #9BB35B;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .match-wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        justify-content: left;
+    }
+
+    .info-title-match {
+        font-size: 1.25rem;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .info-one-match {
+        background-color: transparent;
+        color: #1a1a1a !important;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid #1a1a1a;
         display: inline-block;
         text-align: center;
     }
