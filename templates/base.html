@@ -738,7 +738,7 @@
         {% endif %}
     </div>
 
-    <!-- Match modal -->
+    <!-- Match modal
     <div id="matchModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p>You were matched with <span id="match-username" style="font-weight: 600;"></span>.</p>
@@ -747,7 +747,91 @@
             <button onclick="document.getElementById('matchModal').style.display='none'"
                 class="btn-cancel">Cancel</button>
         </div>
+    </div> -->
+
+    <div id="matchModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <!-- Step 1 -->
+            <div class="modal-step" id="match-step-1">
+                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
+                    class="btn-cancel"><span
+                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                <h2>Match</h2>
+                <img id="match-photo-1" src="profile.jpg" alt="Profile Photo" class="profile-pic">
+                <p><span id="match-username" style="font-weight: 600;"></span> found you as a match!</p>
+                <p>You're now connected, unless you say otherwise.</p>
+                <button class="btn-next" onclick="showStep(2)">Next</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="modal-step" id="match-step-2" style="display: none;">
+                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
+                    class="btn-cancel"><span
+                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                <h2>Match</h2>
+                <img id="match-photo-2" src="profile.jpg" alt="Profile Photo" class="profile-pic">
+                <h3 id="match-name-2">Jane Doe</h3>
+                <p class="muted">Graphic Designer</p>
+                <p class="muted"><i class="fa fa-map-marker"></i> Manila, Metro Manila, Philippines</p>
+
+                <div class="tag-section">
+                    <strong>Skills</strong><br>
+                    <span class="tag">Expert</span>
+                    <span class="tag">Advertising</span>
+                    <span class="tag">Web Design</span>
+                </div>
+
+                <div class="tag-section">
+                    <strong>Preferences</strong><br>
+                    <span class="tag">Expert</span>
+                    <span class="tag">Advertising</span>
+                    <span class="tag">Web Design</span>
+                </div>
+
+                <div class="tag-section">
+                    <strong>Experience Level</strong><br>
+                    <span class="tag">Expert</span>
+                </div>
+
+                <div class="button-group">
+                    <button id="decline-match" class="btn-decline">Decline Match</button>
+                    <button class="btn-next" onclick="showStep(3)">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="modal-step" id="match-step-3" style="display: none;">
+                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
+                    class="btn-cancel"><span
+                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                <div class="overlay-content-share">
+                    <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlayShare-{{ loop.index }}">close</span></button>
+                    <div class="overlay-title">Share</div>
+                    <div class="share-wrapper">
+                        <div class="share-via">Share via</div>
+                        <div class="icon-grid">
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
+                                    class="fb"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                                    class="ig"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
+                                    class="x"></a>
+                            <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
+                                    class="linkedin"></a>
+                            <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('matchModal').style.display='none'"
+                class="btn-cancel">Done</button>
+            </div>
+        </div>
     </div>
+
+
+
 
     <script>
 
@@ -927,26 +1011,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const matchBtn = document.getElementById('matchBtn');
-            const browseBtn = document.getElementById('browseBtn');
 
-            {% if match_locked %}
-            if (matchBtn) {
-                matchBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    alert('Matching is locked for {{ time_remaining }}.');
-                });
+            function showStep(step) {
+                document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
+                document.getElementById(`match-step-${step}`).style.display = 'block';
             }
-            {% endif %}
 
-            {% if browse_locked %}
-            if (browseBtn) {
-                browseBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    alert('Browsing is locked for {{ time_remaining }}.');
-                });
+            function declineMatch() {
+                alert('You have declined the match.');
+                closeModal();
             }
-            {% endif %}
+
+            function closeModal() {
+                document.getElementById('matchModal').style.display = 'none';
+            }
+
+            // Optional: Expose functions globally if needed elsewhere
+            window.showStep = showStep;
+            window.declineMatch = declineMatch;
+            window.closeModal = closeModal;
 
             document.querySelectorAll('.delete-match').forEach(btn => {
                 btn.addEventListener('click', function () {
