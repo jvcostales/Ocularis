@@ -683,7 +683,8 @@ def feed():
         for actor_id in actor_ids:
             cur.execute("""
                 SELECT first_name, last_name, role, city, state, country, 
-                    profile_pic, cover_photo, skills, preferences, experience_level 
+                    profile_pic, cover_photo, skills, preferences, experience_level,
+                    facebook, instagram, x, linkedin, telegram, email
                 FROM users WHERE id = %s
             """, (actor_id,))
             user = cur.fetchone()
@@ -699,7 +700,13 @@ def feed():
                     "cover_photo": user[7],
                     "skills": user[8],               # PostgreSQL array
                     "preferences": user[9],          # PostgreSQL array
-                    "experience_level": user[10]     # int (1–4)
+                    "experience_level": user[10],    # int (1–4)
+                    "facebook": user[11],
+                    "instagram": user[12],
+                    "x": user[13],
+                    "linkedin": user[14],
+                    "telegram": user[15],
+                    "email": user[16]
                 }
 
         # Fetch friend requests
