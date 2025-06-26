@@ -2350,7 +2350,7 @@ input[type="url"]::placeholder {
         margin-bottom: 12px;
     }
 
-    .modal-step {
+    .padding-match {
         padding-bottom: 24px;
         padding-left: 48px;
         padding-right: 48px;
@@ -2361,6 +2361,21 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         gap: 16px;
+    }
+
+    .partner-back-match {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #c4c4c4;
+        cursor: pointer;
+        user-select: none;
+        position: absolute;
+        left: 0px;
+    }
+
+    .partner-back-match:hover {
+        color: #a6a6a6;
     }
 }
 
@@ -4648,7 +4663,7 @@ input[type="url"]::placeholder {
         margin-bottom: 12px;
     }
 
-    .modal-step {
+    .padding-match {
         padding-bottom: 24px;
         padding-left: 48px;
         padding-right: 48px;
@@ -4659,6 +4674,21 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         gap: 16px;
+    }
+
+    .partner-back-match {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #c4c4c4;
+        cursor: pointer;
+        user-select: none;
+        position: absolute;
+        left: 0px;
+    }
+
+    .partner-back-match:hover {
+        color: #a6a6a6;
     }
 }
 
@@ -6966,7 +6996,7 @@ input[type="url"]::placeholder {
         margin-bottom: 12px;
     }
 
-    .modal-step {
+    .padding-match {
         padding-bottom: 24px;
         padding-left: 48px;
         padding-right: 48px;
@@ -6977,5 +7007,20 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         gap: 16px;
+    }
+
+    .partner-back-match {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #c4c4c4;
+        cursor: pointer;
+        user-select: none;
+        position: absolute;
+        left: 0px;
+    }
+
+    .partner-back-match:hover {
+        color: #a6a6a6;
     }
 }

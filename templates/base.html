@@ -757,13 +757,16 @@
                     class="btn-cancel"><span
                         class="material-symbols-outlined overlay-close-symbol">close</span></button>
                 <div class="overlay-title">Match</div>
-                <div class="div-setup">
-                    <img src="..\static\pfp.jpg" class="pfpsetup1">
-                    <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a
-                        match!
+                <div class="padding-match">
+
+                    <div class="div-setup">
+                        <img src="..\static\pfp.jpg" class="pfpsetup1">
+                        <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a
+                            match!
+                        </div>
+                        <div class="subheading">You're now connected, unless you say otherwise.</div>
+                        <button class="next-button" onclick="showMatchStep(2)">Next</button>
                     </div>
-                    <div class="subheading">You're now connected, unless you say otherwise.</div>
-                    <button class="next-button" onclick="showMatchStep(2)">Next</button>
                 </div>
             </div>
 
@@ -774,53 +777,55 @@
                     <span class="material-symbols-outlined overlay-close-symbol">close</span>
                 </button>
                 <div class="overlay-title">Match</div>
-                <div class="match-wrapper">
-                    <img src="..\static\pfp.jpg" class="pfpsetup1">
-                    <div>
-                        <div class="username-profile">Jane Doe</div>
-                        <div class="icon-title-wrapper">
-                            <span class="material-symbols-outlined person-symbol">person</span>
-                            <div class="title">Graphic Designer</div>
+                <div class="padding-match">
+                    <div class="match-wrapper">
+                        <img src="..\static\pfp.jpg" class="pfpsetup1">
+                        <div>
+                            <div class="username-profile">Jane Doe</div>
+                            <div class="icon-title-wrapper">
+                                <span class="material-symbols-outlined person-symbol">person</span>
+                                <div class="title">Graphic Designer</div>
+                            </div>
+                            <div class="icon-title-wrapper">
+                                <span class="material-symbols-outlined world-symbol">public</span>
+                                <div class="location-profile">Manila, Metro Manila, Philippines</div>
+                            </div>
                         </div>
-                        <div class="icon-title-wrapper">
-                            <span class="material-symbols-outlined world-symbol">public</span>
-                            <div class="location-profile">Manila, Metro Manila, Philippines</div>
+                    </div>
+                    <div class="info-sandp">
+                        <div class="info-title-match">Skills</div>
+                        <div class="info-content-match">
+                            <div class="info-one-match">Expert</div>
+                            <div class="info-one-match">Advertising</div>
+                            <div class="info-one-match">Web Design</div>
                         </div>
                     </div>
-                </div>
-                <div class="info-sandp">
-                    <div class="info-title-match">Skills</div>
-                    <div class="info-content-match">
-                        <div class="info-one-match">Expert</div>
-                        <div class="info-one-match">Advertising</div>
-                        <div class="info-one-match">Web Design</div>
-                    </div>
-                </div>
 
-                <div class="info-sandp">
-                    <div class="info-title-match">Preferences</div>
-                    <div class="info-content-match">
-                        <div class="info-one-match">Expert</div>
-                        <div class="info-one-match">Advertising</div>
-                        <div class="info-one-match">Web Design</div>
+                    <div class="info-sandp">
+                        <div class="info-title-match">Preferences</div>
+                        <div class="info-content-match">
+                            <div class="info-one-match">Expert</div>
+                            <div class="info-one-match">Advertising</div>
+                            <div class="info-one-match">Web Design</div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="info-sandp">
-                    <div class="info-title-match">Experience Level</div>
-                    <div class="info-content-match">
-                        <div class="info-one-match">Expert</div>
+                    <div class="info-sandp">
+                        <div class="info-title-match">Experience Level</div>
+                        <div class="info-content-match">
+                            <div class="info-one-match">Expert</div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="button-wrapper">
-                    <div class="partner-back" onclick="showMatchStep(1)">
-                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                        <div class="partner-label-back">Back</div>
-                    </div>
-                    <div class="match-button-wrapper">
-                        <button id="decline-match" class="browse-button">Decline Match</button>
-                        <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                    <div class="button-wrapper">
+                        <div class="partner-back-match" onclick="showMatchStep(1)">
+                            <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                            <div class="partner-label-back">Back</div>
+                        </div>
+                        <div class="match-button-wrapper">
+                            <button id="decline-match" class="browse-button">Decline Match</button>
+                            <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -832,27 +837,30 @@
                     <span class="material-symbols-outlined overlay-close-symbol">close</span>
                 </button>
                 <div class="overlay-title">Match</div>
-                <div class="share-wrapper">
-                    <div class="share-via">Reach out via</div>
-                    <div class="icon-grid">
-                        <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
-                                class="fb"></a>
-                        <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
-                                class="ig"></a>
-                        <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png" class="x"></a>
-                        <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
-                        <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
-                                class="linkedin"></a>
-                        <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                <div class="padding-match">
+                    <div class="share-wrapper">
+                        <div class="share-via">Reach out via</div>
+                        <div class="icon-grid">
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
+                                    class="fb"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                                    class="ig"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
+                                    class="x"></a>
+                            <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
+                                    class="linkedin"></a>
+                            <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                        </div>
                     </div>
-                </div>
-                <div class="button-wrapper">
-                    <div class="partner-back" onclick="showMatchStep(1)">
-                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                        <div class="partner-label-back">Back</div>
+                    <div class="button-wrapper">
+                        <div class="partner-back" onclick="showMatchStep(2)">
+                            <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                            <div class="partner-label-back">Back</div>
+                        </div>
+                        <button onclick="document.getElementById('matchModal').style.display='none'"
+                            class="next-button">Done</button>
                     </div>
-                    <button onclick="document.getElementById('matchModal').style.display='none'"
-                        class="next-button">Done</button>
                 </div>
             </div>
         </div>
