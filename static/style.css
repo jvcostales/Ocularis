@@ -4536,6 +4536,34 @@ input[type="url"]::placeholder {
         padding-left: 16px;
     }
 
+    .image-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.75);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .image-modal.show {
+        display: flex;
+    }
+
+    .modal-image {
+        max-width: 95vw;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .no-scroll-view {
+        overflow: hidden;
+    }
+
     /* Modal overlay */
     #matchModal.modal {
         position: fixed;
@@ -6588,53 +6616,32 @@ input[type="url"]::placeholder {
         color: #f6f6f6;
     }
 
-    /* Modal overlay */
-    #matchModal.modal {
+    .image-modal {
+        display: none;
         position: fixed;
-        z-index: 1000;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(0, 0, 0, 0.6);
-        /* solid black overlay */
-        display: flex;
+        background-color: rgba(0, 0, 0, 0.75);
         justify-content: center;
         align-items: center;
+        z-index: 9999;
     }
 
-    /* Modal content */
-    .modal-content {
-        background-color: #fff;
-        padding: 24px 32px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
+    .image-modal.show {
+        display: flex;
     }
 
-    /* Buttons */
-    .btn-decline {
-        font-size: 1rem;
-        font-family: 'Schibsted Grotesk', sans-serif;
-        padding: 12px 24px;
-        box-sizing: border-box;
-        border: none;
-        background-color: #1C46F5;
-        border-radius: 10px;
-        cursor: pointer;
-        color: #f6f6f6;
-        text-align: center;
+    .modal-image {
+        max-width: 95vw;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 8px;
     }
 
-    .btn-decline:hover {
-        background-color: #4F72F7;
-    }
-
-    .btn-decline:active {
-        background-color: #152FAE;
+    .no-scroll-view {
+        overflow: hidden;
     }
 
     .nav-section {
