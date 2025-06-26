@@ -751,6 +751,9 @@
 
     <div id="matchModal" class="modal" style="display: none;">
         <div class="modal-content">
+            {% for notif in notifications %}
+            {% set actor_id = notif[4] %}
+            {% set actor = actor_details[actor_id] %}
             <!-- Step 1 -->
             <div class="modal-step" id="match-step-1">
                 <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
@@ -760,9 +763,11 @@
                 <div class="padding-match">
 
                     <div class="div-setup">
-                        <img src="..\static\pfp.jpg" class="pfpsetup1">
+                        <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
+            if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
+            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
                         <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a
-                            match!
+                            match.
                         </div>
                         <div class="subheading">You're now connected, unless you say otherwise.</div>
                         <button class="next-button" onclick="showMatchStep(2)">Next</button>
@@ -779,9 +784,6 @@
                 <div class="overlay-title">Match</div>
                 <div class="padding-match">
                     <div class="match-wrapper">
-                        {% for notif in notifications %}
-                        {% set actor_id = notif[4] %}
-                        {% set actor = actor_details[actor_id] %}
                         <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
             if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
             else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
@@ -802,28 +804,32 @@
                         {% endfor %}
 
                     </div>
+                    <!-- Skills -->
                     <div class="info-sandp">
                         <div class="info-title-match">Skills</div>
                         <div class="info-content-match">
-                            <div class="info-one-match">Expert</div>
-                            <div class="info-one-match">Advertising</div>
-                            <div class="info-one-match">Web Design</div>
+                            {% for skill in actor.skills %}
+                            <div class="info-one-match">{{ skill }}</div>
+                            {% endfor %}
                         </div>
                     </div>
 
+                    <!-- Preferences -->
                     <div class="info-sandp">
                         <div class="info-title-match">Preferences</div>
                         <div class="info-content-match">
-                            <div class="info-one-match">Expert</div>
-                            <div class="info-one-match">Advertising</div>
-                            <div class="info-one-match">Web Design</div>
+                            {% for pref in actor.preferences %}
+                            <div class="info-one-match">{{ pref }}</div>
+                            {% endfor %}
                         </div>
                     </div>
 
+                    <!-- Experience Level -->
                     <div class="info-sandp">
                         <div class="info-title-match">Experience Level</div>
                         <div class="info-content-match">
-                            <div class="info-one-match">Expert</div>
+                            {% set levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+                            <div class="info-one-match">{{ levels[actor.experience_level] }}</div>
                         </div>
                     </div>
 
