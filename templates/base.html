@@ -779,12 +779,13 @@
                 <div class="overlay-title">Match</div>
                 <div class="padding-match">
                     <div class="match-wrapper">
-                        <img src="{{ url_for('static', filename='profile_pics/' ~ actor.profile_pic) 
-            if actor.profile_pic and actor.profile_pic != 'pfp.jpg' 
-            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
                         {% for notif in notifications %}
                         {% set actor_id = notif[4] %}
                         {% set actor = actor_details[actor_id] %}
+                        <img src="{{ url_for('static', filename='profile_pics/' ~ actor.profile_pic) 
+            if actor.profile_pic and actor.profile_pic != 'pfp.jpg' 
+            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
+
 
                         <div class="match-card">
                             <div class="username-profile">{{ actor.full_name }}</div>
