@@ -856,37 +856,16 @@
                     <div class="share-wrapper">
                         <div class="share-via">Reach out via</div>
                         <div class="icon-grid">
-                            {% if user.facebook %}
-                            <a href="{{ user.facebook }}" target="_blank" rel="noopener noreferrer">
-                                <img src="..\static\fb.png" class="fb">
-                            </a>
-                            {% endif %}
-                            {% if user.instagram %}
-                            <a href="{{ user.instagram }}" target="_blank" rel="noopener noreferrer">
-                                <img src="..\static\ig.png" class="ig">
-                            </a>
-                            {% endif %}
-                            {% if user.x %}
-                            <a href="{{ user.x }}" target="_blank" rel="noopener noreferrer">
-                                <img src="..\static\x.png" class="x">
-                            </a>
-                            {% endif %}
-                            {% if user.email %}
-                            <a
-                                href="mailto:staceymariecostales@gmail.com?subject=Hello%20from%20Ocularis&body=Hi%20,%0D%0A%0D%0AI%20found%20your%20profile%20on%20Ocularis%20and%20would%20love%20to%20connect.%0D%0A%0D%0ABest,%0D%0A[Your%20Name]">
-                                <img src="..\static\gmail.png" class="gmail">
-                            </a>
-                            {% endif %}
-                            {% if user.linkedin %}
-                            <a href="{{ user.linkedin }}" target="_blank" rel="noopener noreferrer">
-                                <img src="..\static\linkedin.png" class="linkedin">
-                            </a>
-                            {% endif %}
-                            {% if user.telegram %}
-                            <a href="{{ user.telegram }}" target="_blank" rel="noopener noreferrer">
-                                <img src="..\static\telegram.png" class="telegram">
-                            </a>
-                            {% endif %}
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
+                                    class="fb"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                                    class="ig"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
+                                    class="x"></a>
+                            <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
+                                    class="linkedin"></a>
+                            <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
                         </div>
                     </div>
                     <div class="button-wrapper">
@@ -899,7 +878,7 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
+                                    {% endfor %}
 
         </div>
     </div>
