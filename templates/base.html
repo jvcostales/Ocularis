@@ -757,11 +757,14 @@
                     class="btn-cancel"><span
                         class="material-symbols-outlined overlay-close-symbol">close</span></button>
                 <div class="overlay-title">Match</div>
-                <img src="..\static\pfp.jpg" class="pfpsetup1">
-                <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a match!
+                <div class="div-setup">
+                    <img src="..\static\pfp.jpg" class="pfpsetup1">
+                    <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a
+                        match!
+                    </div>
+                    <div class="subheading">You're now connected, unless you say otherwise.</div>
+                    <button class="next-button" onclick="showMatchStep(2)">Next</button>
                 </div>
-                <div class="subheading">You're now connected, unless you say otherwise.</div>
-                <button class="btn-next" onclick="showMatchStep(2)">Next</button>
             </div>
 
             <!-- Step 2 -->
@@ -773,7 +776,7 @@
                 <div class="overlay-title">Match</div>
                 <div class="match-wrapper">
                     <img src="..\static\pfp.jpg" class="pfpsetup1">
-                    <div class="details">
+                    <div>
                         <div class="username-profile">Jane Doe</div>
                         <div class="icon-title-wrapper">
                             <span class="material-symbols-outlined person-symbol">person</span>
@@ -787,7 +790,7 @@
                 </div>
                 <div class="info-sandp">
                     <div class="info-title-match">Skills</div>
-                    <div class="info-content">
+                    <div class="info-content-match">
                         <div class="info-one-match">Expert</div>
                         <div class="info-one-match">Advertising</div>
                         <div class="info-one-match">Web Design</div>
@@ -796,7 +799,7 @@
 
                 <div class="info-sandp">
                     <div class="info-title-match">Preferences</div>
-                    <div class="info-content">
+                    <div class="info-content-match">
                         <div class="info-one-match">Expert</div>
                         <div class="info-one-match">Advertising</div>
                         <div class="info-one-match">Web Design</div>
@@ -804,8 +807,8 @@
                 </div>
 
                 <div class="info-sandp">
-                    <div class="info-title">Experience Level</div>
-                    <div class="info-content">
+                    <div class="info-title-match">Experience Level</div>
+                    <div class="info-content-match">
                         <div class="info-one-match">Expert</div>
                     </div>
                 </div>
@@ -815,8 +818,10 @@
                         <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
                         <div class="partner-label-back">Back</div>
                     </div>
-                    <button id="decline-match" class="browse-button">Decline Match</button>
-                    <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                    <div class="match-button-wrapper">
+                        <button id="decline-match" class="browse-button">Decline Match</button>
+                        <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                    </div>
                 </div>
             </div>
 
@@ -847,7 +852,7 @@
                         <div class="partner-label-back">Back</div>
                     </div>
                     <button onclick="document.getElementById('matchModal').style.display='none'"
-                        class="btn-cancel next-button">Done</button>
+                        class="next-button">Done</button>
                 </div>
             </div>
         </div>
