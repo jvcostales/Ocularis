@@ -1049,7 +1049,7 @@
 
             function showMatchStep(step) {
                 document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
-                document.getElementById(`match-step-${step}`).style.display = 'flex';
+                document.getElementById(`match-step-${step}`).style.display = 'block';
             }
 
             function declineMatch() {
@@ -1097,7 +1097,7 @@
 
                     document.getElementById('match-username').textContent = displayName;
                     document.getElementById('decline-match').setAttribute('data-user-id', userId);
-                    document.getElementById('matchModal').style.display = 'block';
+                    document.getElementById('matchModal').style.display = 'flex';
                 });
             });
 
