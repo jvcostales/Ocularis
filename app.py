@@ -632,9 +632,6 @@ def feed():
         """, (user_id,))
         images = cur.fetchall()
 
-        for image in images:
-            author_profile_pic = image[11]
-
         # Fetch comments with commenter profile picture
         cur.execute("""
             SELECT 
