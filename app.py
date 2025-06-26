@@ -676,16 +676,29 @@ def feed():
 
         notifications = cur.fetchall()
 
-            # Fetch user details
-        cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        role = user[2]
-        city = user[3]
-        state = user[4]
-        country = user[5]
-        viewed_user_profile_pic = user[6]
-        viewed_user_profile_cover = user[7]
+    # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
 
+    # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+    # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo 
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7]
+            }
 
         # Fetch friend requests
         cur.execute("""
@@ -762,23 +775,10 @@ def feed():
 
     today = datetime.today()
 
-    countries = current_app.config['COUNTRIES']
-    states = current_app.config['STATES']
-
-    iso_to_country = {c["iso2"]: c["name"] for c in countries}
-    state_code_to_name = {s["state_code"]: s["name"] for s in states}
-
-    country = iso_to_country.get(country, country)
-    state = state_code_to_name.get(state, state)
-
-    location = ", ".join(filter(None, [city, state, country]))
-
     return render_template(
         'feed.html',
         current_page='feed',
         user=current_user,
-        role=role,
-        location=location,
         tags=tags,
         matched_users=matched_users,
         images=images,
@@ -796,9 +796,7 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url,
-        viewed_user_profile_pic=viewed_user_profile_pic,
-        viewed_user_profile_cover=viewed_user_profile_cover
+        profile_pic_url=profile_pic_url
     )
 
 @app.route('/post/<int:image_id>')

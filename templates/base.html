@@ -780,17 +780,24 @@
                 <div class="padding-match">
                     <div class="match-wrapper">
                         <img src="..\static\pfp.jpg" class="pfpsetup1">
+                        {% set actor_id = notif[4] %}
+                        {% set actor = actor_details[actor_id] %}
+
                         <div>
-                            <div class="username-profile"><span id="match-username" style="font-weight: 600;"></span></div>
+                            <div class="username-profile">{{ actor.full_name }}</div>
+
                             <div class="icon-title-wrapper">
                                 <span class="material-symbols-outlined person-symbol">person</span>
-                                <div class="title">{{ role }}</div>
+                                <div class="title">{{ actor.role }}</div>
                             </div>
+
                             <div class="icon-title-wrapper">
                                 <span class="material-symbols-outlined world-symbol">public</span>
-                                <div class="location-profile">{{ location }}</div>
+                                <div class="location-profile">{{ actor.city }}, {{ actor.state }}, {{ actor.country }}
+                                </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="info-sandp">
                         <div class="info-title-match">Skills</div>
