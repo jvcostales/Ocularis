@@ -673,29 +673,29 @@ def feed():
 
         notifications = cur.fetchall()
 
-    # Gather unique actor_ids
-    actor_ids = list(set([n[4] for n in notifications]))
+        # Gather unique actor_ids
+        actor_ids = list(set([n[4] for n in notifications]))
 
-    # Prepare dictionary to hold actor_id → user profile details
-    actor_details = {}
+        # Prepare dictionary to hold actor_id → user profile details
+        actor_details = {}
 
-    # Fetch full details for each actor_id
-    for actor_id in actor_ids:
-        cur.execute("""
-            SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo 
-            FROM users WHERE id = %s
-        """, (actor_id,))
-        user = cur.fetchone()
-        if user:
-            actor_details[actor_id] = {
-                "full_name": f"{user[0]} {user[1]}",
-                "role": user[2],
-                "city": user[3],
-                "state": user[4],
-                "country": user[5],
-                "profile_pic": user[6],
-                "cover_photo": user[7]
-            }
+        # Fetch full details for each actor_id
+        for actor_id in actor_ids:
+            cur.execute("""
+                SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo 
+                FROM users WHERE id = %s
+            """, (actor_id,))
+            user = cur.fetchone()
+            if user:
+                actor_details[actor_id] = {
+                    "full_name": f"{user[0]} {user[1]}",
+                    "role": user[2],
+                    "city": user[3],
+                    "state": user[4],
+                    "country": user[5],
+                    "profile_pic": user[6],
+                    "cover_photo": user[7]
+                }
 
         # Fetch friend requests
         cur.execute("""
