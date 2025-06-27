@@ -932,9 +932,9 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             window.handleRequest = function (requestId, action) {
-                const el = document.getElementById(`request-${requestId}`);
+                const elements = document.querySelectorAll(`#request-${requestId}`);
                 console.log(`Attempting to ${action} request with ID: ${requestId}`);
-                console.log('Target element:', el);
+                console.log('Target elements:', elements);
 
                 fetch(`/${action}_request/${requestId}`, {
                     method: 'POST',
@@ -942,20 +942,14 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                    .then(response => {
-                        console.log('Received response:', response);
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         console.log('Parsed JSON:', data);
-
                         if (data.success) {
-                            if (el) {
-                                el.remove();
-                                console.log(`Successfully removed element request-${requestId}`);
-                            } else {
-                                console.warn(`Element with ID request-${requestId} not found.`);
-                            }
+                            elements.forEach(el => {
+                                el.remove(); // Remove all matching elements
+                                console.log(`Removed element request-${requestId}`);
+                            });
                         } else {
                             console.error("Error:", data.message || "Unknown error");
                             alert("Error: " + data.message);
@@ -966,6 +960,7 @@
                         alert("Something went wrong.");
                     });
             };
+
 
 
 
