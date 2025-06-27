@@ -1794,10 +1794,11 @@ def unfriend(other_user_id):
 
 
 
-@app.route('/cancel_request/<int:user_id>', methods=['POST'])
+@app.route('/cancel_request/int:user_id', methods=['POST'])
 @login_required
 def cancel_request(user_id):
     sender_id = current_user.id
+
 
     if sender_id == user_id:
         message = "You cannot cancel a request to yourself."
@@ -1825,7 +1826,6 @@ def cancel_request(user_id):
         message = "Friend request cancelled."
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify(success=True, message=message)
-
         flash(message)
     except Exception as e:
         conn.rollback()
@@ -1839,15 +1839,15 @@ def cancel_request(user_id):
 
     return redirect(url_for('profile', user_id=user_id))
 
-@app.route('/accept_request/<int:request_id>', methods=['POST'])
+@app.route('/accept_request/int:request_id', methods=['POST'])
 @login_required
 def accept_request(request_id):
     if not current_user.verified:
         message = "Verify your account before accepting requests."
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({'success': False, 'message': message}), 403
-        flash(message)
-        return redirect(request.referrer or url_for('feed'))
+            return jsonify(success=False, message=message), 403
+            flash(message)
+            return redirect(request.referrer or url_for('feed'))
 
     receiver_id = current_user.id
     conn = psycopg2.connect(
@@ -1869,7 +1869,7 @@ def accept_request(request_id):
         if not row:
             message = "Request not found or already handled."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-                return jsonify({'success': False, 'message': message}), 404
+                return jsonify(success=False, message=message), 404
             flash(message)
             return redirect(request.referrer or url_for('feed'))
 
@@ -1880,7 +1880,7 @@ def accept_request(request_id):
         if cur.fetchone():
             message = "Already friends."
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-                return jsonify({'success': False, 'message': message}), 400
+                return jsonify(success=False, message=message), 400
             flash(message)
             return redirect(request.referrer or url_for('feed'))
 
@@ -1888,24 +1888,22 @@ def accept_request(request_id):
         cur.execute("INSERT INTO friends (user1_id, user2_id) VALUES (%s, %s);", (user1_id, user2_id))
         conn.commit()
 
+        message = "Friend request accepted."
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({'success': True, 'message': "Friend request accepted."})
-
-
-        flash("Friend request accepted.")
+            return jsonify(success=True, message=message)
+        flash(message)
     except Exception as e:
         conn.rollback()
         error_msg = f"Error: {e}"
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({'success': False, 'message': error_msg}), 500
+            return jsonify(success=False, message=error_msg), 500
         flash(error_msg)
     finally:
         cur.close()
         conn.close()
 
-        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({'success': True, 'message': "Friend request accepted."})
     return redirect(request.referrer or url_for('feed'))
+
 
 
 @app.route('/reject_request/<int:request_id>', methods=['POST'])
