@@ -750,7 +750,7 @@
         </div>
     </div> -->
 
-    
+
 
 
 
@@ -935,6 +935,8 @@
 
             window.handleRequest = function (requestId, action) {
             const el = document.getElementById(`request-${requestId}`);
+            console.log(`Attempting to ${action} request with ID: ${requestId}`);
+            console.log('Target element:', el);
 
             fetch(`/${action}_request/${requestId}`, {
                 method: 'POST',
@@ -942,13 +944,22 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Received response:', response);
+                return response.json();
+            })
             .then(data => {
+                console.log('Parsed JSON:', data);
+
                 if (data.success) {
                     if (el) {
-                        el.remove(); // 🔥 This removes the entire request bar from the DOM
+                        el.remove();
+                        console.log(`Successfully removed element request-${requestId}`);
+                    } else {
+                        console.warn(`Element with ID request-${requestId} not found.`);
                     }
                 } else {
+                    console.error("Error:", data.message || "Unknown error");
                     alert("Error: " + data.message);
                 }
             })
@@ -959,80 +970,81 @@
         };
 
 
-            const backdropMobile = document.getElementById('backdrop-mobile');
-            const backdropTablet = document.getElementById('backdrop-tablet');
-            let lastOpenedGroup = null;
 
-            function getActiveBackdrop() {
-                return window.innerWidth <= 768 ? backdropMobile : backdropTablet;
-            }
+        const backdropMobile = document.getElementById('backdrop-mobile');
+        const backdropTablet = document.getElementById('backdrop-tablet');
+        let lastOpenedGroup = null;
 
-            function getInactiveBackdrop() {
-                return window.innerWidth <= 768 ? backdropTablet : backdropMobile;
-            }
+        function getActiveBackdrop() {
+            return window.innerWidth <= 768 ? backdropMobile : backdropTablet;
+        }
 
-            function closeAllDropdowns() {
-                document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
-                    dropdown.classList.remove('dropdown-visible');
-                });
-                backdropMobile.style.display = 'none';
-                backdropTablet.style.display = 'none';
-                lastOpenedGroup = null;
-            }
+        function getInactiveBackdrop() {
+            return window.innerWidth <= 768 ? backdropTablet : backdropMobile;
+        }
 
-            function openDropdown(dropdown) {
-                closeAllDropdowns();
-                dropdown.classList.add('dropdown-visible');
-                getActiveBackdrop().style.display = 'block';
-                lastOpenedGroup = dropdown.dataset.group || null;
-            }
-
-            document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
-                const button = wrapper.querySelector('.notifs-button');
-                const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
-
-                if (button && dropdown) {
-                    button.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const isVisible = dropdown.classList.contains('dropdown-visible');
-                        if (!isVisible) {
-                            openDropdown(dropdown);
-                        } else {
-                            closeAllDropdowns();
-                        }
-                    });
-                }
+        function closeAllDropdowns() {
+            document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('dropdown-visible');
             });
+            backdropMobile.style.display = 'none';
+            backdropTablet.style.display = 'none';
+            lastOpenedGroup = null;
+        }
 
-            document.addEventListener('click', (e) => {
-                const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
-                    .some(wrapper => wrapper.contains(e.target));
-                if (!clickedInside) {
-                    closeAllDropdowns();
-                }
-            });
+        function openDropdown(dropdown) {
+            closeAllDropdowns();
+            dropdown.classList.add('dropdown-visible');
+            getActiveBackdrop().style.display = 'block';
+            lastOpenedGroup = dropdown.dataset.group || null;
+        }
 
-            backdropMobile.addEventListener('click', closeAllDropdowns);
-            backdropTablet.addEventListener('click', closeAllDropdowns);
+        document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
+            const button = wrapper.querySelector('.notifs-button');
+            const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
 
-            // ✅ Resize logic — try reopening matching dropdown even if it's currently hidden
-            window.addEventListener('resize', () => {
-                if (lastOpenedGroup) {
-                    const dropdowns = document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`);
-
-                    for (const dropdown of dropdowns) {
-                        // Check if it's in the currently visible layout
-                        const wrapper = dropdown.closest('.notifs-wrapper');
-                        if (wrapper && wrapper.offsetParent !== null) {
-                            openDropdown(dropdown);
-                            return;
-                        }
+            if (button && dropdown) {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = dropdown.classList.contains('dropdown-visible');
+                    if (!isVisible) {
+                        openDropdown(dropdown);
+                    } else {
+                        closeAllDropdowns();
                     }
+                });
+            }
+        });
 
-                    // Fallback: close if none match
-                    closeAllDropdowns();
+        document.addEventListener('click', (e) => {
+            const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
+                .some(wrapper => wrapper.contains(e.target));
+            if (!clickedInside) {
+                closeAllDropdowns();
+            }
+        });
+
+        backdropMobile.addEventListener('click', closeAllDropdowns);
+        backdropTablet.addEventListener('click', closeAllDropdowns);
+
+        // ✅ Resize logic — try reopening matching dropdown even if it's currently hidden
+        window.addEventListener('resize', () => {
+            if (lastOpenedGroup) {
+                const dropdowns = document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`);
+
+                for (const dropdown of dropdowns) {
+                    // Check if it's in the currently visible layout
+                    const wrapper = dropdown.closest('.notifs-wrapper');
+                    if (wrapper && wrapper.offsetParent !== null) {
+                        openDropdown(dropdown);
+                        return;
+                    }
                 }
-            });
+
+                // Fallback: close if none match
+                closeAllDropdowns();
+            }
+        });
 
 
 
@@ -1040,311 +1052,311 @@
 
 
 
-            document.querySelectorAll('.like-form').forEach(form => {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault();
+        document.querySelectorAll('.like-form').forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-                    const imageId = this.dataset.imageId;
-                    const icon = this.querySelector('.lcs-symbol');
-                    const label = this.querySelector('.partner-label');
-                    const countDiv = document.getElementById(`like-count-${imageId}`);
-                    const numberSpan = countDiv.querySelector('.like-number');
-                    const textSpan = countDiv.querySelector('.like-text');
-                    const buttonDiv = document.getElementById(`like-button-${imageId}`);
+                const imageId = this.dataset.imageId;
+                const icon = this.querySelector('.lcs-symbol');
+                const label = this.querySelector('.partner-label');
+                const countDiv = document.getElementById(`like-count-${imageId}`);
+                const numberSpan = countDiv.querySelector('.like-number');
+                const textSpan = countDiv.querySelector('.like-text');
+                const buttonDiv = document.getElementById(`like-button-${imageId}`);
 
-                    fetch(`/like/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
+                fetch(`/like/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update icon and label
+                        if (data.status === 'liked') {
+                            icon.textContent = 'thumb_up_alt';
+                            label.textContent = 'Unlike';
+                        } else {
+                            icon.textContent = 'thumb_up';
+                            label.textContent = 'Like';
+                        }
+
+                        // Update like count
+                        numberSpan.textContent = data.like_count;
+                        textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                        // Optional: style change
+                        buttonDiv.classList.toggle('liked', data.status === 'liked');
+
+                        // ✅ Fetch updated likers list
+                        fetchLikers(imageId);
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Update icon and label
-                            if (data.status === 'liked') {
-                                icon.textContent = 'thumb_up_alt';
-                                label.textContent = 'Unlike';
-                            } else {
-                                icon.textContent = 'thumb_up';
-                                label.textContent = 'Like';
-                            }
+                    .catch(error => {
+                        console.error('AJAX like error:', error);
+                    });
+            });
+        });
 
-                            // Update like count
+        document.addEventListener('submit', function (event) {
+            const form = event.target;
+
+            if (form.matches('.like-form[data-comment-id]')) {
+                event.preventDefault();
+
+                const commentId = form.dataset.commentId;
+                const icon = form.querySelector('.lcs-symbol');
+                const label = form.querySelector('.partner-label');
+                const countDiv = document.getElementById(`like-count-comment-${commentId}`);
+                const numberSpan = countDiv?.querySelector('.like-number');
+                const textSpan = countDiv?.querySelector('.like-text');
+                const buttonDiv = document.getElementById(`like-button-${commentId}`);
+
+                fetch(`/comment/like/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data) throw new Error('No data returned');
+
+                        // Update icon and label
+                        if (data.status === 'liked') {
+                            icon.textContent = 'thumb_up_alt';
+                            label.textContent = 'Unlike';
+                        } else {
+                            icon.textContent = 'thumb_up';
+                            label.textContent = 'Like';
+                        }
+
+                        // Update like count, if count elements exist
+                        if (numberSpan && textSpan) {
                             numberSpan.textContent = data.like_count;
                             textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-
-                            // Optional: style change
-                            buttonDiv.classList.toggle('liked', data.status === 'liked');
-
-                            // ✅ Fetch updated likers list
-                            fetchLikers(imageId);
-                        })
-                        .catch(error => {
-                            console.error('AJAX like error:', error);
-                        });
-                });
-            });
-
-            document.addEventListener('submit', function (event) {
-                const form = event.target;
-
-                if (form.matches('.like-form[data-comment-id]')) {
-                    event.preventDefault();
-
-                    const commentId = form.dataset.commentId;
-                    const icon = form.querySelector('.lcs-symbol');
-                    const label = form.querySelector('.partner-label');
-                    const countDiv = document.getElementById(`like-count-comment-${commentId}`);
-                    const numberSpan = countDiv?.querySelector('.like-number');
-                    const textSpan = countDiv?.querySelector('.like-text');
-                    const buttonDiv = document.getElementById(`like-button-${commentId}`);
-
-                    fetch(`/comment/like/${commentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (!data) throw new Error('No data returned');
-
-                            // Update icon and label
-                            if (data.status === 'liked') {
-                                icon.textContent = 'thumb_up_alt';
-                                label.textContent = 'Unlike';
-                            } else {
-                                icon.textContent = 'thumb_up';
-                                label.textContent = 'Like';
-                            }
-
-                            // Update like count, if count elements exist
-                            if (numberSpan && textSpan) {
-                                numberSpan.textContent = data.like_count;
-                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-                            }
-
-                            // Toggle 'liked' class
-                            if (buttonDiv) {
-                                buttonDiv.classList.toggle('liked', data.status === 'liked');
-                            }
-
-                            // Update liker list
-                            if (typeof fetchCommentLikers === 'function') {
-                                fetchCommentLikers(commentId);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('AJAX comment like error:', error);
-                        });
-                }
-            });
-
-            const modal = document.getElementById('profileModal');
-            if (modal && modal.classList.contains('show')) {
-                showStep(currentStep);
-            }
-
-            const countrySelect = document.getElementById('country');
-            const stateSelect = document.getElementById('state');
-            const citySelect = document.getElementById('city');
-
-            const selectedStateCode = "{{ user.state|default('') }}";
-            const selectedCityName = "{{ user.city|default('') }}";
-
-            if (countrySelect && stateSelect && citySelect) {
-                let allStates = [];
-                let allCities = [];
-
-                // Fetch all states
-                fetch('/api/get-states')
-                    .then(res => res.json())
-                    .then(data => {
-                        allStates = data;
-
-                        const selectedCountryIso = countrySelect.value;
-                        if (selectedCountryIso) {
-                            const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
-                            stateSelect.innerHTML = '<option value="">Select your region or province</option>';
-
-                            filteredStates.forEach(state => {
-                                const option = document.createElement('option');
-                                option.value = state.state_code;
-                                option.textContent = state.name;
-                                if (state.state_code === selectedStateCode) {
-                                    option.selected = true;
-                                }
-                                stateSelect.appendChild(option);
-                            }
-
-                            );
-
-                            // If state was already selected, trigger the city fetch too
-                            if (selectedStateCode) {
-                                fetchCities(selectedCountryIso, selectedStateCode);
-                            }
                         }
-                    });
 
-                // Fetch all cities (needed for change listener fallback)
-                fetch('/api/get-cities')
+                        // Toggle 'liked' class
+                        if (buttonDiv) {
+                            buttonDiv.classList.toggle('liked', data.status === 'liked');
+                        }
+
+                        // Update liker list
+                        if (typeof fetchCommentLikers === 'function') {
+                            fetchCommentLikers(commentId);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('AJAX comment like error:', error);
+                    });
+            }
+        });
+
+        const modal = document.getElementById('profileModal');
+        if (modal && modal.classList.contains('show')) {
+            showStep(currentStep);
+        }
+
+        const countrySelect = document.getElementById('country');
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+
+        const selectedStateCode = "{{ user.state|default('') }}";
+        const selectedCityName = "{{ user.city|default('') }}";
+
+        if (countrySelect && stateSelect && citySelect) {
+            let allStates = [];
+            let allCities = [];
+
+            // Fetch all states
+            fetch('/api/get-states')
+                .then(res => res.json())
+                .then(data => {
+                    allStates = data;
+
+                    const selectedCountryIso = countrySelect.value;
+                    if (selectedCountryIso) {
+                        const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
+                        stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+
+                        filteredStates.forEach(state => {
+                            const option = document.createElement('option');
+                            option.value = state.state_code;
+                            option.textContent = state.name;
+                            if (state.state_code === selectedStateCode) {
+                                option.selected = true;
+                            }
+                            stateSelect.appendChild(option);
+                        }
+
+                        );
+
+                        // If state was already selected, trigger the city fetch too
+                        if (selectedStateCode) {
+                            fetchCities(selectedCountryIso, selectedStateCode);
+                        }
+                    }
+                });
+
+            // Fetch all cities (needed for change listener fallback)
+            fetch('/api/get-cities')
+                .then(res => res.json())
+                .then(data => {
+                    allCities = data;
+                    console.log('Fetched Cities:', allCities);
+                });
+
+            countrySelect.addEventListener('change', () => {
+                const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+                citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                if (!selectedIso) return;
+
+                const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                filteredStates.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.state_code;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                });
+            });
+
+            stateSelect.addEventListener('change', () => {
+                const selectedStateCode = stateSelect.value;
+                const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                if (!selectedStateCode || !selectedCountryIso) return;
+
+                fetchCities(selectedCountryIso, selectedStateCode);
+            });
+
+            function fetchCities(countryIso, stateCode) {
+                fetch(`/api/get-cities?country=${countryIso}&state=${stateCode}`)
+                    .then(res => res.json())
+                    .then(filteredCities => {
+                        filteredCities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.name;
+                            option.textContent = city.name;
+                            if (city.name === selectedCityName) {
+                                option.selected = true;
+                            }
+                            citySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
+            }
+        }
+
+        let scrollPosition = 0;
+
+        function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
+            const overlay = document.querySelector(overlaySelector);
+            const openBtn = document.getElementById(openBtnId);
+            const closeBtn = document.getElementById(closeBtnId);
+
+            if (!overlay || !openBtn || !closeBtn) return;
+
+            openBtn.addEventListener('click', () => {
+                if (!isNested) {
+                    scrollPosition = window.scrollY;
+                    document.body.style.top = `-${scrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                }
+                overlay.classList.add('active');
+            });
+
+            function closeOverlay() {
+                overlay.classList.remove('active');
+                if (!isNested) {
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollPosition);
+                }
+            }
+
+            closeBtn.addEventListener('click', closeOverlay);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeOverlay();
+                }
+            });
+        }
+
+        // Setup overlays
+        setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+
+        document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+        });
+
+        document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
+        });
+
+        document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+        });
+
+        document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+            const index = overlay.id.split('-')[1];
+            setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+        });
+
+        // Setup like overlay data fetch
+        document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
+            const index = likeBtn.id.split('-')[1];
+            const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
+            const imageId = scrollableDiv?.dataset?.imageId;
+
+            likeBtn.addEventListener('click', () => {
+                if (!imageId || !scrollableDiv) return;
+
+                scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+
+                fetch(`/likes/${imageId}`)
                     .then(res => res.json())
                     .then(data => {
-                        allCities = data;
-                        console.log('Fetched Cities:', allCities);
-                    });
-
-                countrySelect.addEventListener('change', () => {
-                    const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-                    stateSelect.innerHTML = '<option value="">Select your region or province</option>';
-                    citySelect.innerHTML = '<option value="">Select your city</option>';
-
-                    if (!selectedIso) return;
-
-                    const filteredStates = allStates.filter(state => state.country_code === selectedIso);
-                    filteredStates.forEach(state => {
-                        const option = document.createElement('option');
-                        option.value = state.state_code;
-                        option.textContent = state.name;
-                        stateSelect.appendChild(option);
-                    });
-                });
-
-                stateSelect.addEventListener('change', () => {
-                    const selectedStateCode = stateSelect.value;
-                    const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-
-                    citySelect.innerHTML = '<option value="">Select your city</option>';
-
-                    if (!selectedStateCode || !selectedCountryIso) return;
-
-                    fetchCities(selectedCountryIso, selectedStateCode);
-                });
-
-                function fetchCities(countryIso, stateCode) {
-                    fetch(`/api/get-cities?country=${countryIso}&state=${stateCode}`)
-                        .then(res => res.json())
-                        .then(filteredCities => {
-                            filteredCities.forEach(city => {
-                                const option = document.createElement('option');
-                                option.value = city.name;
-                                option.textContent = city.name;
-                                if (city.name === selectedCityName) {
-                                    option.selected = true;
-                                }
-                                citySelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching cities:', error);
-                        });
-                }
-            }
-
-            let scrollPosition = 0;
-
-            function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
-                const overlay = document.querySelector(overlaySelector);
-                const openBtn = document.getElementById(openBtnId);
-                const closeBtn = document.getElementById(closeBtnId);
-
-                if (!overlay || !openBtn || !closeBtn) return;
-
-                openBtn.addEventListener('click', () => {
-                    if (!isNested) {
-                        scrollPosition = window.scrollY;
-                        document.body.style.top = `-${scrollPosition}px`;
-                        document.body.classList.add('no-scrolling');
-                    }
-                    overlay.classList.add('active');
-                });
-
-                function closeOverlay() {
-                    overlay.classList.remove('active');
-                    if (!isNested) {
-                        document.body.classList.remove('no-scrolling');
-                        document.body.style.top = '';
-                        window.scrollTo(0, scrollPosition);
-                    }
-                }
-
-                closeBtn.addEventListener('click', closeOverlay);
-
-                overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) {
-                        closeOverlay();
-                    }
-                });
-            }
-
-            // Setup overlays
-            setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
-
-            document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
-            });
-
-            document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
-            });
-
-            document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
-            });
-
-            document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
-                const index = overlay.id.split('-')[1];
-                setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
-            });
-
-            // Setup like overlay data fetch
-            document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
-                const index = likeBtn.id.split('-')[1];
-                const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
-                const imageId = scrollableDiv?.dataset?.imageId;
-
-                likeBtn.addEventListener('click', () => {
-                    if (!imageId || !scrollableDiv) return;
-
-                    scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
-
-                    fetch(`/likes/${imageId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.likers.length === 0) {
-                                scrollableDiv.innerHTML = `<div class="notifs-empty">
+                        if (data.likers.length === 0) {
+                            scrollableDiv.innerHTML = `<div class="notifs-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
                     </div>`;
-                                return;
-                            }
+                            return;
+                        }
 
-                            const html = data.likers.map(liker => {
-                                const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                });
+                        const html = data.likers.map(liker => {
+                            const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            });
 
-                                let buttonHtml = '';
-                                switch (liker.relationship) {
-                                    case 'self':
-                                        buttonHtml = '';
-                                        break;
-                                    case 'friends':
-                                        buttonHtml = `
+                            let buttonHtml = '';
+                            switch (liker.relationship) {
+                                case 'self':
+                                    buttonHtml = '';
+                                    break;
+                                case 'friends':
+                                    buttonHtml = `
                                 <button type="button" class="follow-button-profile no-margin"
                                         onclick="handleFriendship(${liker.id}, 'unfriend', this)">
                                     Unfriend
                                 </button>`;
-                                        break;
-                                    case 'incoming_pending':
-                                        buttonHtml = `
+                                    break;
+                                case 'incoming_pending':
+                                    buttonHtml = `
                                 <div class="response-wrapper">
                                                                         <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
@@ -1354,31 +1366,31 @@
                                         <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
                                     </form>
                                 </div>`;
-                                        break;
-                                    case 'outgoing_pending':
-                                        buttonHtml = `
+                                    break;
+                                case 'outgoing_pending':
+                                    buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                 </form>`;
-                                        break;
-                                    case 'outgoing_rejected':
-                                    case 'not_friends':
-                                        if (liker.verified) {
-                                            buttonHtml = `
+                                    break;
+                                case 'outgoing_rejected':
+                                case 'not_friends':
+                                    if (liker.verified) {
+                                        buttonHtml = `
                                     <button type="button" class="follow-button-profile no-margin"
                                             onclick="handleFriendship(${liker.id}, 'send_request', this)">
                                         Befriend
                                     </button>`;
-                                        } else {
-                                            buttonHtml = `
+                                    } else {
+                                        buttonHtml = `
                                     <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
-                                        }
-                                        break;
-                                    default:
-                                        buttonHtml = '';
-                                }
+                                    }
+                                    break;
+                                default:
+                                    buttonHtml = '';
+                            }
 
-                                return `
+                            return `
                                     <div class="profile-follow-wrapper">
                                         <div class="profile-post-likes">
                                             <a href="/profile/${liker.id}" class="pfp-link">
@@ -1394,54 +1406,54 @@
                                         ${buttonHtml}
                                     </div>
                                 `;
-                            }).join('');
+                        }).join('');
 
-                            scrollableDiv.innerHTML = html;
-                        })
-                        .catch(err => {
-                            scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                            console.error(err);
-                        });
-                });
-            });
-
-
-
-
-
-
-
-
-
-
-
-
-            document.querySelectorAll('.comment-form').forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    const imageId = this.dataset.imageId;
-                    const input = this.querySelector('.comment-input');
-                    const commentText = input.value.trim();
-
-                    if (!commentText) return;
-
-                    fetch(`/comment/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ comment: commentText })
+                        scrollableDiv.innerHTML = html;
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
-                                const comment = data.comment;
+                    .catch(err => {
+                        scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                        console.error(err);
+                    });
+            });
+        });
 
-                                const newComment = document.createElement('div');
-                                newComment.className = 'profile-comment-wrapper';
-                                newComment.innerHTML = `
+
+
+
+
+
+
+
+
+
+
+
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const imageId = this.dataset.imageId;
+                const input = this.querySelector('.comment-input');
+                const commentText = input.value.trim();
+
+                if (!commentText) return;
+
+                fetch(`/comment/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ comment: commentText })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
+                            const comment = data.comment;
+
+                            const newComment = document.createElement('div');
+                            newComment.className = 'profile-comment-wrapper';
+                            newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
@@ -1490,61 +1502,61 @@
 <div class="line-comments"></div>
 `;
 
-                                commentList.prepend(newComment);
-                                input.value = '';
-                            } else {
-                                console.error('Failed to post comment:', data);
-                            }
-                        })
-                        .catch(err => console.error('Error:', err));
-                });
+                            commentList.prepend(newComment);
+                            input.value = '';
+                        } else {
+                            console.error('Failed to post comment:', data);
+                        }
+                    })
+                    .catch(err => console.error('Error:', err));
             });
+        });
 
 
 
 
-            // Setup comment like overlay data fetch
-            document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
-                const index = likeBtn.id.split('-')[1];
-                const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
-                const commentId = scrollableDiv?.dataset?.commentId;
+        // Setup comment like overlay data fetch
+        document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
+            const index = likeBtn.id.split('-')[1];
+            const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
+            const commentId = scrollableDiv?.dataset?.commentId;
 
-                likeBtn.addEventListener('click', () => {
-                    if (!commentId || !scrollableDiv) return;
+            likeBtn.addEventListener('click', () => {
+                if (!commentId || !scrollableDiv) return;
 
-                    scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+                scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
 
-                    fetch(`/comment/likes/${commentId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!data.likers || data.likers.length === 0) {
-                                scrollableDiv.innerHTML = `<div class="notifs-empty">
+                fetch(`/comment/likes/${commentId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.likers || data.likers.length === 0) {
+                            scrollableDiv.innerHTML = `<div class="notifs-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
                     </div>`;
-                                return;
-                            }
+                            return;
+                        }
 
-                            const html = data.likers.map(liker => {
-                                const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                });
+                        const html = data.likers.map(liker => {
+                            const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            });
 
-                                let buttonHtml = '';
-                                switch (liker.relationship) {
-                                    case 'self':
-                                        buttonHtml = '';
-                                        break;
-                                    case 'friends':
-                                        buttonHtml = `
+                            let buttonHtml = '';
+                            switch (liker.relationship) {
+                                case 'self':
+                                    buttonHtml = '';
+                                    break;
+                                case 'friends':
+                                    buttonHtml = `
                                 <form action="/unfriend/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
                                 </form>`;
-                                        break;
-                                    case 'incoming_pending':
-                                        buttonHtml = `
+                                    break;
+                                case 'incoming_pending':
+                                    buttonHtml = `
                                 <div class="response-wrapper">
                                     <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
@@ -1554,30 +1566,30 @@
                                         <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
                                     </form>
                                 </div>`;
-                                        break;
-                                    case 'outgoing_pending':
-                                        buttonHtml = `
+                                    break;
+                                case 'outgoing_pending':
+                                    buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                 </form>`;
-                                        break;
-                                    case 'outgoing_rejected':
-                                    case 'not_friends':
-                                        if (liker.verified) {
-                                            buttonHtml = `
+                                    break;
+                                case 'outgoing_rejected':
+                                case 'not_friends':
+                                    if (liker.verified) {
+                                        buttonHtml = `
                                     <form action="/send_request/${liker.id}" method="post">
                                         <button type="submit" class="follow-button-profile no-margin">Befriend</button>
                                     </form>`;
-                                        } else {
-                                            buttonHtml = `
+                                    } else {
+                                        buttonHtml = `
                                     <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
-                                        }
-                                        break;
-                                    default:
-                                        buttonHtml = '';
-                                }
+                                    }
+                                    break;
+                                default:
+                                    buttonHtml = '';
+                            }
 
-                                return `
+                            return `
                                     <div class="profile-follow-wrapper">
                                         <div class="profile-post-likes">
                                             <a href="/profile/${liker.id}" class="pfp-link">
@@ -1593,429 +1605,429 @@
                                         ${buttonHtml}
                                     </div>
                                 `;
-                            }).join('');
+                        }).join('');
 
-                            scrollableDiv.innerHTML = html;
-                        })
-                        .catch(err => {
-                            scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                            console.error("Comment like overlay error:", err);
-                        });
-                });
-            });
-
-
-
-
-
-            document.querySelectorAll('.save-button').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();  // <-- Prevent the default anchor behavior (jump to top)
-
-                    const imageId = this.dataset.imageId;
-                    const isSaved = this.classList.contains('saved');
-                    const frame = this.closest('.frame1');
-
-                    fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
+                        scrollableDiv.innerHTML = html;
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'saved') {
-                                button.classList.add('saved');
-                                button.textContent = 'Unsave';
-                            } else if (data.status === 'unsaved') {
-                                button.classList.remove('saved');
-                                button.textContent = 'Save';
-                            }
-
-                            if (frame) {
-                                frame.style.display = 'none';
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-            const moreBtns = document.querySelectorAll('.more-symbol');
-            const allFrames1 = document.querySelectorAll('.frame1');
-
-            const pfp = document.getElementById('pfp');
-            const frame2 = document.getElementById('frame2');
-            const pfp3 = document.getElementById('pfp3');
-            const frame3 = document.getElementById('frame3');
-            const pfp4 = document.getElementById('pfp4');
-            const frame4 = document.getElementById('frame4');
-
-            allFrames1.forEach(frame => frame.style.display = 'none');
-            if (frame2) frame2.style.display = 'none';
-            if (frame3) frame3.style.display = 'none';
-            if (frame4) frame4.style.display = 'none';
-
-            let isFrame234Open = false;
-
-            moreBtns.forEach((btn, index) => {
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                    const isOpen = currentFrame.style.display === 'block';
-
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-
-                    currentFrame.style.display = isOpen ? 'none' : 'block';
-
-                    if (frame2) frame2.style.display = 'none';
-                    if (frame3) frame3.style.display = 'none';
-                    if (frame4) frame4.style.display = 'none';
-                    isFrame234Open = false;
-                });
-            });
-
-            if (pfp) {
-                pfp.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame2.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            if (pfp3) {
-                pfp3.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame3.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            if (pfp4) {
-                pfp4.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const isOpen = frame4.style.display === 'block';
-                    if (isOpen) {
-                        frame2.style.display = 'none';
-                        frame3.style.display = 'none';
-                        frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    } else {
-                        frame2.style.display = 'block';
-                        frame3.style.display = 'block';
-                        frame4.style.display = 'block';
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-                        isFrame234Open = true;
-                    }
-                });
-            }
-
-            document.addEventListener('click', function (event) {
-                moreBtns.forEach((btn, index) => {
-                    const frame = document.getElementById(`frame1-${index + 1}`);
-                    if (!frame.contains(event.target) && event.target !== btn) {
-                        frame.style.display = 'none';
-                    }
-                });
-
-                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
-                    frame2.style.display = 'none';
-                }
-                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
-                    frame3.style.display = 'none';
-                }
-                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
-                    frame4.style.display = 'none';
-                }
-
-                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
-                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
-                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
-
-                if (!frame2Visible && !frame3Visible && !frame4Visible) {
-                    isFrame234Open = false;
-                }
-            });
-
-            window.addEventListener('resize', function () {
-                if (isFrame234Open) {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                }
-            });
-
-            function checkScrollbar() {
-                const imageInput = document.getElementById('image');
-                const div = document.getElementById('scrollableDiv');
-                const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
-                const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
-                const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-
-                if (imageInput && div) {
-                    div.classList.remove('no-scroll', 'has-scroll');
-                    if (imageInput.files.length > 0) {
-                        div.classList.add('has-scroll');
-                    } else {
-                        div.classList.add('no-scroll');
-                    }
-                }
-
-                const checkScrollState = (divList) => {
-                    divList.forEach(el => {
-                        el.classList.remove('no-scroll', 'has-scroll');
-                        if (el.scrollHeight > el.clientHeight) {
-                            el.classList.add('has-scroll');
-                        } else {
-                            el.classList.add('no-scroll');
-                        }
+                    .catch(err => {
+                        scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                        console.error("Comment like overlay error:", err);
                     });
-                };
-
-                checkScrollState(likeDivs);
-                checkScrollState(commentDivs);
-                checkScrollState(commentLikeDivs);
-            }
-
-            function adjustRightPaddingOnScrollCheck() {
-                const ids = ["notifs", "requests"];
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                        el.style.paddingRight = hasScroll ? "6px" : "24px";
-                    }
-                });
-            }
-
-            function adjustRightPaddingOnScrollCheckAll() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                        el.style.paddingRight = hasScroll ? "6px" : "24px";
-                    }
-                });
-            }
-
-            // Run on page load and resize
-            window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
-            window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
-
-
-            const imageInput = document.getElementById('image');
-            if (imageInput) {
-                imageInput.addEventListener('change', checkScrollbar);
-            }
-            checkScrollbar();
-
-            document.addEventListener("click", function (event) {
-                const button = event.target.closest(".like-button");
-
-                if (button) {
-                    button.classList.toggle("liked");
-
-                    const label = button.querySelector(".partner-label");
-                    if (label) {
-                        label.textContent = button.classList.contains("liked") ? "Unlike" : "Like";
-                    }
-                }
             });
+        });
 
-            function isChrome() {
-                return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-            }
 
-            function setFullHeight() {
-                const adjustment = isChrome() ? 1 : 0;
-                const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
 
-                const rightSidebar = document.querySelector('.right-sidebar');
-                const leftSidebar = document.querySelector('.left-sidebar');
 
-                if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
-                if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
-            }
 
-            window.addEventListener('resize', setFullHeight);
-            setFullHeight();
+        document.querySelectorAll('.save-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();  // <-- Prevent the default anchor behavior (jump to top)
 
-            const imageInputPreview = document.getElementById('image');
-            const imageWrapper = document.getElementById('imageWrapper');
-            const imagePreview = document.getElementById('uploadedImagePreview');
-            const closeButton = document.getElementById('closeButton');
-            const scrollableDiv = document.querySelector('.scrollable-div');
-            const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
+                const imageId = this.dataset.imageId;
+                const isSaved = this.classList.contains('saved');
+                const frame = this.closest('.frame1');
 
-            if (imageInputPreview) {
-                imageInputPreview.addEventListener('change', function () {
-                    const file = this.files[0];
-
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imagePreview.src = e.target.result;
-                            imageWrapper.style.display = 'block';
-
-                            if (collaboratorTagSection) {
-                                collaboratorTagSection.style.display = 'block';
-                            }
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        imagePreview.src = '';
-                        imageWrapper.style.display = 'none';
-
-                        if (collaboratorTagSection) {
-                            collaboratorTagSection.style.display = 'none';
-                        }
-                    }
-                });
-            }
-
-            if (closeButton) {
-                closeButton.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    imagePreview.src = '';
-                    imageWrapper.style.display = 'none';
-                    imageInputPreview.value = '';
-
-                    if (collaboratorTagSection) {
-                        collaboratorTagSection.style.display = 'none';
-                    }
-
-                    if (scrollableDiv) {
-                        scrollableDiv.classList.remove('has-scroll');
-                        scrollableDiv.classList.add('no-scroll');
-                    }
-                });
-            }
-
-            const circledClose = document.querySelector('.circled-icon-1-overlay-version');
-            if (circledClose) {
-                circledClose.addEventListener('click', function () {
-                    document.getElementById('uploadedImagePreview').src = '';
-                    document.getElementById('image').value = '';
-                    document.getElementById('imageWrapper').style.display = 'none';
-
-                    if (collaboratorTagSection) {
-                        collaboratorTagSection.style.display = 'none';
-                    }
-
-                    if (scrollableDiv) {
-                        scrollableDiv.classList.remove('has-scroll');
-                        scrollableDiv.classList.add('no-scroll');
-                    }
-                });
-            }
-
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) {
-                console.log('Form found');
-
-                profileForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    console.log('Form submission prevented');
-
-                    const formData = new FormData(this);
-
-                    // Append all form data into a single array
-                    const dataArray = [];
-                    for (const [key, value] of formData.entries()) {
-                        dataArray.push([key, value]);
-                    }
-                    console.log('Form data as array:', dataArray);
-
-                    try {
-                        console.log('Sending data to the server...');
-                        const response = await fetch('/api/setup-profile', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        console.log('Response received:', response);
-                        const result = await response.json();
-                        console.log('Parsed result:', result);
-
-                        if (result.success) {
-                            console.log('Profile saved successfully');
-                            document.getElementById('profileModal').style.display = 'none';
-                            window.location.href = result.redirect_url;
-                        } else {
-                            console.log('Something went wrong while saving the profile');
-                            alert('Something went wrong while saving your profile.');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                console.log('Form not found');
-            }
-
-            document.getElementById('notify-btn').addEventListener('click', function () {
-                const recipientId = this.getAttribute('data-recipient-id');
-
-                fetch('/notify/collab_check', {
+                fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
                     method: 'POST',
                     headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ recipient_id: recipientId })
+                    credentials: 'include'
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.error) {
-                            alert('Error: ' + data.error);
-                        } else {
-                            alert(data.message);
-                            // Immediately redirect after alert is dismissed
-                            window.location.href = data.redirect_url;
+                        if (data.status === 'saved') {
+                            button.classList.add('saved');
+                            button.textContent = 'Unsave';
+                        } else if (data.status === 'unsaved') {
+                            button.classList.remove('saved');
+                            button.textContent = 'Save';
+                        }
+
+                        if (frame) {
+                            frame.style.display = 'none';
                         }
                     })
-                    .catch(err => alert('Request failed: ' + err));
+                    .catch(error => console.error('Error:', error));
             });
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const moreBtns = document.querySelectorAll('.more-symbol');
+        const allFrames1 = document.querySelectorAll('.frame1');
+
+        const pfp = document.getElementById('pfp');
+        const frame2 = document.getElementById('frame2');
+        const pfp3 = document.getElementById('pfp3');
+        const frame3 = document.getElementById('frame3');
+        const pfp4 = document.getElementById('pfp4');
+        const frame4 = document.getElementById('frame4');
+
+        allFrames1.forEach(frame => frame.style.display = 'none');
+        if (frame2) frame2.style.display = 'none';
+        if (frame3) frame3.style.display = 'none';
+        if (frame4) frame4.style.display = 'none';
+
+        let isFrame234Open = false;
+
+        moreBtns.forEach((btn, index) => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                const isOpen = currentFrame.style.display === 'block';
+
+                allFrames1.forEach(frame => frame.style.display = 'none');
+
+                currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                if (frame2) frame2.style.display = 'none';
+                if (frame3) frame3.style.display = 'none';
+                if (frame4) frame4.style.display = 'none';
+                isFrame234Open = false;
+            });
+        });
+
+        if (pfp) {
+            pfp.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame2.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        if (pfp3) {
+            pfp3.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame3.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        if (pfp4) {
+            pfp4.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = frame4.style.display === 'block';
+                if (isOpen) {
+                    frame2.style.display = 'none';
+                    frame3.style.display = 'none';
+                    frame4.style.display = 'none';
+                    isFrame234Open = false;
+                } else {
+                    frame2.style.display = 'block';
+                    frame3.style.display = 'block';
+                    frame4.style.display = 'block';
+                    allFrames1.forEach(frame => frame.style.display = 'none');
+                    isFrame234Open = true;
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            moreBtns.forEach((btn, index) => {
+                const frame = document.getElementById(`frame1-${index + 1}`);
+                if (!frame.contains(event.target) && event.target !== btn) {
+                    frame.style.display = 'none';
+                }
+            });
+
+            if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                frame2.style.display = 'none';
+            }
+            if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                frame3.style.display = 'none';
+            }
+            if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                frame4.style.display = 'none';
+            }
+
+            const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+            const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+            const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+            if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                isFrame234Open = false;
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (isFrame234Open) {
+                frame2.style.display = 'block';
+                frame3.style.display = 'block';
+                frame4.style.display = 'block';
+            }
+        });
+
+        function checkScrollbar() {
+            const imageInput = document.getElementById('image');
+            const div = document.getElementById('scrollableDiv');
+            const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+            const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+            const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+            if (imageInput && div) {
+                div.classList.remove('no-scroll', 'has-scroll');
+                if (imageInput.files.length > 0) {
+                    div.classList.add('has-scroll');
+                } else {
+                    div.classList.add('no-scroll');
+                }
+            }
+
+            const checkScrollState = (divList) => {
+                divList.forEach(el => {
+                    el.classList.remove('no-scroll', 'has-scroll');
+                    if (el.scrollHeight > el.clientHeight) {
+                        el.classList.add('has-scroll');
+                    } else {
+                        el.classList.add('no-scroll');
+                    }
+                });
+            };
+
+            checkScrollState(likeDivs);
+            checkScrollState(commentDivs);
+            checkScrollState(commentLikeDivs);
+        }
+
+        function adjustRightPaddingOnScrollCheck() {
+            const ids = ["notifs", "requests"];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    el.style.paddingRight = hasScroll ? "6px" : "24px";
+                }
+            });
+        }
+
+        function adjustRightPaddingOnScrollCheckAll() {
+            const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    el.style.paddingRight = hasScroll ? "6px" : "24px";
+                }
+            });
+        }
+
+        // Run on page load and resize
+        window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
+        window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
+
+
+        const imageInput = document.getElementById('image');
+        if (imageInput) {
+            imageInput.addEventListener('change', checkScrollbar);
+        }
+        checkScrollbar();
+
+        document.addEventListener("click", function (event) {
+            const button = event.target.closest(".like-button");
+
+            if (button) {
+                button.classList.toggle("liked");
+
+                const label = button.querySelector(".partner-label");
+                if (label) {
+                    label.textContent = button.classList.contains("liked") ? "Unlike" : "Like";
+                }
+            }
+        });
+
+        function isChrome() {
+            return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        }
+
+        function setFullHeight() {
+            const adjustment = isChrome() ? 1 : 0;
+            const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
+
+            const rightSidebar = document.querySelector('.right-sidebar');
+            const leftSidebar = document.querySelector('.left-sidebar');
+
+            if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
+            if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
+        }
+
+        window.addEventListener('resize', setFullHeight);
+        setFullHeight();
+
+        const imageInputPreview = document.getElementById('image');
+        const imageWrapper = document.getElementById('imageWrapper');
+        const imagePreview = document.getElementById('uploadedImagePreview');
+        const closeButton = document.getElementById('closeButton');
+        const scrollableDiv = document.querySelector('.scrollable-div');
+        const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
+
+        if (imageInputPreview) {
+            imageInputPreview.addEventListener('change', function () {
+                const file = this.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imageWrapper.style.display = 'block';
+
+                        if (collaboratorTagSection) {
+                            collaboratorTagSection.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '';
+                    imageWrapper.style.display = 'none';
+
+                    if (collaboratorTagSection) {
+                        collaboratorTagSection.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        if (closeButton) {
+            closeButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                imagePreview.src = '';
+                imageWrapper.style.display = 'none';
+                imageInputPreview.value = '';
+
+                if (collaboratorTagSection) {
+                    collaboratorTagSection.style.display = 'none';
+                }
+
+                if (scrollableDiv) {
+                    scrollableDiv.classList.remove('has-scroll');
+                    scrollableDiv.classList.add('no-scroll');
+                }
+            });
+        }
+
+        const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+        if (circledClose) {
+            circledClose.addEventListener('click', function () {
+                document.getElementById('uploadedImagePreview').src = '';
+                document.getElementById('image').value = '';
+                document.getElementById('imageWrapper').style.display = 'none';
+
+                if (collaboratorTagSection) {
+                    collaboratorTagSection.style.display = 'none';
+                }
+
+                if (scrollableDiv) {
+                    scrollableDiv.classList.remove('has-scroll');
+                    scrollableDiv.classList.add('no-scroll');
+                }
+            });
+        }
+
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            console.log('Form found');
+
+            profileForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                console.log('Form submission prevented');
+
+                const formData = new FormData(this);
+
+                // Append all form data into a single array
+                const dataArray = [];
+                for (const [key, value] of formData.entries()) {
+                    dataArray.push([key, value]);
+                }
+                console.log('Form data as array:', dataArray);
+
+                try {
+                    console.log('Sending data to the server...');
+                    const response = await fetch('/api/setup-profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    console.log('Response received:', response);
+                    const result = await response.json();
+                    console.log('Parsed result:', result);
+
+                    if (result.success) {
+                        console.log('Profile saved successfully');
+                        document.getElementById('profileModal').style.display = 'none';
+                        window.location.href = result.redirect_url;
+                    } else {
+                        console.log('Something went wrong while saving the profile');
+                        alert('Something went wrong while saving your profile.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        } else {
+            console.log('Form not found');
+        }
+
+        document.getElementById('notify-btn').addEventListener('click', function () {
+            const recipientId = this.getAttribute('data-recipient-id');
+
+            fetch('/notify/collab_check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ recipient_id: recipientId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert(data.message);
+                        // Immediately redirect after alert is dismissed
+                        window.location.href = data.redirect_url;
+                    }
+                })
+                .catch(err => alert('Request failed: ' + err));
+        });
 
 
         });
