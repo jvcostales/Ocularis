@@ -933,6 +933,31 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            window.handleRequest = function (requestId, action) {
+            const el = document.getElementById(`request-${requestId}`);
+
+            fetch(`/${action}_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (el) {
+                        el.remove(); // 🔥 This removes the entire request bar from the DOM
+                    }
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("AJAX error:", error);
+                alert("Something went wrong.");
+            });
+        };
+
 
             const backdropMobile = document.getElementById('backdrop-mobile');
             const backdropTablet = document.getElementById('backdrop-tablet');
@@ -1620,30 +1645,7 @@
 
 
 
-            window.handleRequest = function (requestId, action) {
-            const el = document.getElementById(`request-${requestId}`);
-
-            fetch(`/${action}_request/${requestId}`, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (el) {
-                        el.remove(); // 🔥 This removes the entire request bar from the DOM
-                    }
-                } else {
-                    alert("Error: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error("AJAX error:", error);
-                alert("Something went wrong.");
-            });
-        };
+            
 
 
 
