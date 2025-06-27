@@ -39,6 +39,16 @@ conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.
 cur = conn.cursor()
 
 cur.execute("""
+CREATE TABLE IF NOT EXISTS blocks (
+    blocker_id INT NOT NULL,
+    blocked_id INT NOT NULL,
+    PRIMARY KEY (blocker_id, blocked_id),
+    FOREIGN KEY (blocker_id) REFERENCES users(id),
+    FOREIGN KEY (blocked_id) REFERENCES users(id)
+);
+""")
+
+cur.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -2810,6 +2820,50 @@ def delete_account_route():
         app.logger.error(f"Error deleting account: {e}")
         flash('An error occurred while deleting your account.', 'danger')
         return redirect(url_for('settings'))
+    
+@app.route('/block/<int:user_id>', methods=['POST'])
+@login_required
+def block_user(user_id):
+    blocker_id = current_user.id
+
+    if blocker_id == user_id:
+        flash("You cannot block yourself.")
+        return redirect(url_for('profile', user_id=user_id))
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # Optionally delete friendship if it exists
+        user1, user2 = sorted((blocker_id, user_id))
+        cur.execute(
+            "DELETE FROM friends WHERE user1_id = %s AND user2_id = %s;",
+            (user1, user2)
+        )
+
+        # Insert into blocks table
+        cur.execute(
+            "INSERT INTO blocks (blocker_id, blocked_id) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
+            (blocker_id, user_id)
+        )
+
+        conn.commit()
+        flash("User has been blocked.")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Error blocking user: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for('profile', user_id=user_id))
+
 
 
 if __name__ == '__main__':
