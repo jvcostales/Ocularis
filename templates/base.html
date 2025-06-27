@@ -138,6 +138,7 @@
                                     <div class="request-date">
                                         {{ created_at.strftime('%b') }} {{ created_at.day }}
                                     </div>
+                                    <!--AL-->
                                     <div class="request-icons">
                                         <button type="button" class="circled-icon-1"
                                             onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
@@ -1064,77 +1065,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            function showMatchStep(step) {
-                document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
-                document.getElementById(`match-step-${step}`).style.display = 'block';
-            }
-
-            function declineMatch() {
-                alert('You have declined the match.');
-                closeModal();
-            }
-
-            function closeModal() {
-                document.getElementById('matchModal').style.display = 'none';
-            }
-
-            // Expose to global scope so inline HTML can access them
-            window.showMatchStep = showMatchStep;
-            window.declineMatch = declineMatch;
-            window.closeModal = closeModal;
-
-
-            document.querySelectorAll('.delete-match').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const otherUserId = this.dataset.id;
-
-                    fetch('/decline_match', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ other_user_id: otherUserId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                // Remove the entire match entry from the DOM
-                                this.closest('.profile-more-wrapper-pairup').remove();
-                            } else {
-                                alert('Error: ' + (data.error || 'Could not delete match.'));
-                            }
-                        });
-                });
-            });
-
-            document.querySelectorAll('.open-modal').forEach(elem => {
-                elem.addEventListener('click', function () {
-                    const userId = this.getAttribute('data-user-id');
-                    const displayName = this.getAttribute('data-display-name');
-
-                    document.getElementById('match-username').textContent = displayName;
-                    document.getElementById('decline-match').setAttribute('data-user-id', userId);
-                    document.getElementById('matchModal').style.display = 'flex';
-                });
-            });
-
-            document.getElementById('decline-match').addEventListener('click', function () {
-                const otherUserId = this.getAttribute('data-user-id');
-
-                fetch('/decline_match', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ other_user_id: otherUserId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message || data.error);
-                        document.getElementById('matchModal').style.display = 'none';
-                        // Optionally remove or gray out the notification
-                    });
-            });
 
             const backdropMobile = document.getElementById('backdrop-mobile');
             const backdropTablet = document.getElementById('backdrop-tablet');
@@ -1523,6 +1453,7 @@
                                     case 'incoming_pending':
                                         buttonHtml = `
                                 <div class="response-wrapper">
+                                                                        <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
                                         <button type="submit" class="follow-button-profile no-margin">Confirm</button>
                                     </form>
@@ -1722,6 +1653,7 @@
                                     case 'incoming_pending':
                                         buttonHtml = `
                                 <div class="response-wrapper">
+                                    <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
                                         <button type="submit" class="follow-button-profile no-margin">Confirm</button>
                                     </form>
