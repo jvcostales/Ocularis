@@ -1,0 +1,240 @@
+{% for image in images %}
+<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last
+    %}style="margin-bottom: 16px;" {% endif %}>
+    <div class="profile-more-wrapper">
+        <div class="profile-post">
+            <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}"
+                class="pfp">
+            <div class="profile-name-date">
+                <div class="username">
+                    <a href="{{ url_for('profile', user_id=image[4]) }}">
+                        {{ image[5] }} {{ image[6] }}
+                    </a>
+                    {% if image[8] %}
+                    and
+                    {% if image[9] and image[10] %}
+                    <a href="{{ url_for('profile', user_id=image[8]) }}">
+                        {{ image[9] }} {{ image[10] }}
+                    </a>
+                    {% else %}
+                    <span>Deleted User</span>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                <div class="date">{{ image[7].strftime('%b') }} {{ image[7].day }}</div>
+            </div>
+        </div>
+        <div class="more-frame-wrapper">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
+            <div class="frame1" id="frame1-{{ loop.index }}">
+                <a href="#" class="save-button {% if image[0] in saved_image_ids %}saved{% endif %}"
+                    data-image-id="{{ image[0] }}">
+                    {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
+                </a>
+                <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
+                <div class="report">Report</div>
+                {% if current_user.id == image[4] or current_user.id == image[8] %}
+                <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
+        {{ image[2] }}
+    </div>
+    <div class="image-container" onclick="openImageModal('{{ image[1] }}')"><img src="{{ image[1] }}"
+            class="image-post"></div>
+    <!-- Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
+        <button type="button" class="circled-icon-1-overview-version" onclick="closeImageModal(event)">
+            <span class="material-symbols-outlined close-symbol-overview-version close-btn">close</span>
+        </button>
+        <img id="modalImage" class="modal-image" src="">
+    </div>
+    <div class="interactions">
+        <div class="lcs">
+            <form class="like-form" data-image-id="{{ image[0] }}">
+                <button type="submit" style="all: unset;">
+                    <div class="partner like-button" id="like-button-{{ image[0] }}">
+                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                        <div class="partner-label">Like</div>
+                    </div>
+                </button>
+            </form>
+            <div class="partner" id="openOverlayComments-{{ loop.index }}">
+                <span class="material-symbols-outlined lcs-symbol">comment</span>
+                <div class="partner-label">Comment</div>
+            </div>
+            <div class="partner" id="openOverlayShare-{{ loop.index }}">
+                <span class="material-symbols-outlined lcs-symbol">share</span>
+                <div class="partner-label">Share</div>
+            </div>
+        </div>
+        <div id="openOverlayLikes-{{ loop.index }}" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="metrics like-count" id="like-count-{{ image[0] }}" data-image-id="{{ image[0] }}">
+                <span class="like-number">{{ image[3] }}</span>
+                <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="overlayLikes" id="overlayLikes-{{ loop.index }}">
+    <div class="overlay-content-likes">
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayLikes-{{ loop.index }}">close</span>
+        </button>
+        <div class="overlay-title">Likes</div>
+        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}" data-image-id="{{ image[0] }}">
+            <p class="loading-msg" style="display: none;">Loading likes...</p>
+        </div>
+    </div>
+</div>
+<div class="overlayComments" id="overlayComments-{{ loop.index }}">
+    <div class="overlay-content-comments">
+        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayComments-{{ loop.index }}">close</span></button>
+        <div class="overlay-title">Comment</div>
+        <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+            <div id="commentList-{{ image[0] }}"></div>
+            {% set ns = namespace(has_comments=false) %}
+            {% for comment in comments %}
+            {% if comment[1] == image[0] %}
+            {% set ns.has_comments = true %}
+            <div class="profile-comment-wrapper">
+                <div class="profile-more-wrapper">
+                    <div class="profile-post-comments">
+                        <img src="{{ url_for('profile_pics', filename=comment[7]) if comment[7] else url_for('static', filename='pfp.jpg') }}"
+                            class="pfp">
+                        <div class="profile-name-date">
+                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
+                                    comment[2] }}</a></div>
+                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="more-frame-wrapper">
+                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+                    </div>
+                </div>
+                <div class="comment-like-wrapper">
+                    <div class="comment">{{ comment[3] }}</div>
+                    <div class="like-metrics-wrapper">
+                        <form class="like-form" data-comment-id="{{ comment[0] }}">
+                            <button type="submit" style="all: unset;">
+                                <div class="partner like-button" id="like-button-{{ comment[0] }}">
+                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                                    <div class="partner-label">Like</div>
+                                </div>
+                            </button>
+                        </form>
+                        <div id="openOverlayCommentLikes-{{ loop.index }}" role="button" tabindex="0"
+                            style="cursor: pointer;">
+                            <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
+                                data-comment-id="{{ comment[0] }}">
+                                <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
+                                <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1 else
+                                    'Likes' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="overlayLikes" id="overlayCommentLikes-{{ loop.index }}">
+                <div class="overlay-content-likes">
+                    <button class="close-icon">
+                        <span class="material-symbols-outlined overlay-close-symbol"
+                            id="closeOverlayCommentLikes-{{ loop.index }}">close</span>
+                    </button>
+                    <div class="overlay-title">Likes</div>
+                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}"
+                        data-comment-id="{{ comment[0] }}">
+                        <p class="loading-msg" style="display: none;">Loading likes...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="line-comments"></div>
+            {% endif %}
+            {% endfor %}
+            {% if not ns.has_comments %}
+            <div class="comments-empty">
+                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                <div class="oops">Oops!</div>
+                <div class="nothing">Nothing to show here at the moment.</div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="comment-bar">
+            <img src="{{ profile_pic_url }}" class="pfp">
+            <form class="comment-text comment-form" data-image-id="{{ image[0] }}">
+                <input class="tagline-comment comment-input" type="text" name="comment" placeholder="Enter your comment"
+                    required>
+                <button class="send-button" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="overlayShare" id="overlayShare-{{ loop.index }}">
+    <div class="overlay-content-share">
+        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayShare-{{ loop.index }}">close</span></button>
+        <div class="overlay-title">Share</div>
+        <div class="share-wrapper">
+            <div class="share-via">Share via</div>
+            <div class="icon-grid">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('view_post', image_id=image[0], _external=True) }}"
+                    target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png" class="fb"></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                        class="ig"></a>
+                <a href="https://twitter.com/intent/tweet?url={{ url_for('view_post', image_id=image[0], _external=True) }}&text={{ 'Check out my post on Ocularis!' | urlencode }}"
+                    target="_blank" rel="noopener noreferrer"><img src="..\static\x.png" class="x"></a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=&su=Check out my post on Ocularis!&body=Check out my post on Ocularis: {{ url_for('view_post', image_id=image[0], _external=True) | urlencode }}"
+                    target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_for('view_post', image_id=image[0], _external=True) }}"
+                    target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png" class="linkedin"></a>
+                <a href="https://t.me/share/url?url={{ url_for('view_post', image_id=image[0], _external=True) }}&text=Check out my post on Ocularis!"
+                    target="_blank"><img src="..\static\telegram.png" class="telegram"></a>
+            </div>
+            <div class="or-copy-link">or copy link</div>
+            <div class="link-wrapper">
+                <div class="link">https://ocularis.app/post/123</div>
+                <button class="link-button"><span
+                        class="material-symbols-outlined link-symbol">content_copy</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dropArea = document.getElementById("drop-area");
+    const fileInput = document.getElementById("image");
+
+    // Highlight on drag over
+    ["dragenter", "dragover"].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropArea.classList.add("dragover");
+        }, false);
+    });
+
+    // Remove highlight on drag leave/drop
+    ["dragleave", "drop"].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropArea.classList.remove("dragover");
+        }, false);
+    });
+
+    // Handle drop
+    dropArea.addEventListener("drop", e => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('image/')) {
+            fileInput.files = files;
+
+            // Trigger change event to reuse your existing preview logic
+            const changeEvent = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(changeEvent);
+        }
+    });
+</script>
+{% endfor %}
