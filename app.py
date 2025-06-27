@@ -980,7 +980,8 @@ def view_post(image_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
 
 @app.route('/hide_post/<int:image_id>', methods=['POST'])
@@ -1740,7 +1741,8 @@ def profile(user_id):
         saved_image_ids=saved_image_ids,
         profile_pic_url=profile_pic_url,
         viewed_user_profile_pic=viewed_user_profile_pic,
-        viewed_user_profile_cover=viewed_user_profile_cover
+        viewed_user_profile_cover=viewed_user_profile_cover,
+        actor_details=actor_details
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
@@ -2192,7 +2194,8 @@ def pairup():
         profile_pic_url=profile_pic_url,
         match_locked=match_locked,
         browse_locked=browse_locked,
-        time_remaining=time_remaining
+        time_remaining=time_remaining,
+        actor_details=actor_details
     )
 
 @app.route('/match', methods=['POST'])
@@ -2363,7 +2366,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -2609,7 +2612,8 @@ def browse_users():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
         
 UPLOAD_FOLDER = '/var/data'
