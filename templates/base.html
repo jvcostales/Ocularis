@@ -151,7 +151,7 @@
                                             %}disabled{% endif %}>
                                             <span class="material-symbols-outlined check-symbol">check</span>
                                         </button>
-                                    </div>
+                                    </div>`
                                 </div>
                             </div>
                             {% endfor %}
@@ -1621,27 +1621,30 @@
 
 
             window.handleRequest = function (requestId, action) {
-                fetch(`/${action}_request/${requestId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+            const el = document.getElementById(`request-${requestId}`);
+
+            fetch(`/${action}_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (el) {
+                        el.remove(); // 🔥 This removes the entire request bar from the DOM
                     }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        const el = document.getElementById(`request-${requestId}`);
-                        if (data.success && el) {
-                            el.remove();
-                            alert(data.message);
-                        } else {
-                            alert("Error: " + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("AJAX error:", error);
-                        alert("Something went wrong.");
-                    });
-            }
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("AJAX error:", error);
+                alert("Something went wrong.");
+            });
+        };
+
 
 
 
