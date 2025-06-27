@@ -39,15 +39,6 @@ conn = psycopg2.connect(host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.
 cur = conn.cursor()
 
 cur.execute("""
-CREATE TABLE IF NOT EXISTS blocked_users (
-blocker_id INT NOT NULL,
-blocked_id INT NOT NULL,
-created_at TIMESTAMP DEFAULT NOW(),
-PRIMARY KEY (blocker_id, blocked_id)
-);
-""")
-
-cur.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -1442,19 +1433,6 @@ def profile(user_id):
     )
     cur = conn.cursor()
     
-    cur.execute("""
-        SELECT 1 FROM blocked_users
-        WHERE (blocker_id = %s AND blocked_id = %s)
-            OR (blocker_id = %s AND blocked_id = %s)
-    """, (current_user.id, user_id, user_id, current_user.id))
-
-    if cur.fetchone():
-        flash("You cannot access this profile.")
-        cur.close()
-        conn.close()
-        return redirect(url_for('feed'))
-
-    
     # Fetch user details
     cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
@@ -1464,7 +1442,6 @@ def profile(user_id):
     country = user[5]
     viewed_user_profile_pic = user[6]
     viewed_user_profile_cover = user[7]
-
 
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
@@ -2833,59 +2810,6 @@ def delete_account_route():
         app.logger.error(f"Error deleting account: {e}")
         flash('An error occurred while deleting your account.', 'danger')
         return redirect(url_for('settings'))
-    
-@app.route('/block_user/<int:user_id>', methods=['POST'])
-@login_required
-def block_user(user_id):
-    blocker_id = current_user.id
-
-    if blocker_id == user_id:
-        flash("You cannot block yourself.")
-        return redirect(url_for('profile', user_id=user_id))
-    
-    conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-            dbname="ocularis_db", 
-            user="ocularis_db_user", 
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-            port=5432
-        )
-    cur = conn.cursor()
-
-    try:
-        # Remove friendship (if exists)
-        cur.execute("""
-            DELETE FROM friends
-            WHERE (user1_id = %s AND user2_id = %s)
-               OR (user1_id = %s AND user2_id = %s)
-        """, (blocker_id, user_id, user_id, blocker_id))
-
-        # Remove any friend requests (either direction)
-        cur.execute("""
-            DELETE FROM friend_requests
-            WHERE (sender_id = %s AND receiver_id = %s)
-               OR (sender_id = %s AND receiver_id = %s)
-        """, (blocker_id, user_id, user_id, blocker_id))
-
-        # Add to blocked list
-        cur.execute("""
-            INSERT INTO blocked_users (blocker_id, blocked_id)
-            VALUES (%s, %s)
-            ON CONFLICT DO NOTHING
-        """, (blocker_id, user_id))
-
-        conn.commit()
-        flash("User has been blocked.")
-    except Exception as e:
-        conn.rollback()
-        flash(f"Error blocking user: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-    return redirect(url_for('profile', user_id=user_id))
-
-
 
 
 if __name__ == '__main__':

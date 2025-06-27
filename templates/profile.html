@@ -29,7 +29,7 @@
                     <span class="material-symbols-outlined world-symbol">public</span>
                     <div class="location-profile">{{ location }}</div>
                 </div>
-                <div class="stats"> {{ friend_count }} friend{{ 's' if friend_count != 1 else '' }} {% if not is_own_profile %} <form action="{{ url_for('block_user', user_id=user_id) }}" method="post" style="display:inline;"> <button type="submit" class="follow-button-profile-secondary" style="margin-left: 10px;">Block</button> </form> {% endif %} </div>
+                <div class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else '' }}</div>
             </div>
         </div>
 
