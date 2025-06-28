@@ -817,7 +817,7 @@ def feed_more():
     cur.close()
     conn.close()
 
-    return render_template('partials/_image_posts.html', images=images, saved_image_ids=[], comments=[], comment_likes_data={}, profile_pic_url=url_for('static', filename='pfp.jpg'))
+    return render_template('partials/_image_posts.html', images=images, saved_image_ids=[], comments=[], comment_likes_data={}, profile_pic_url=url_for('static', filename='pfp.jpg'), loop_offset=offset)
 
 @app.route('/post/<int:image_id>')
 def view_post(image_id):
