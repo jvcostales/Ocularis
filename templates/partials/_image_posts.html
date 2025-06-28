@@ -1,5 +1,5 @@
 {% for image in images %}
-{% set global_index = loop_index0 + loop_offset %}
+{% set global_index = loop.index0 + loop_offset %}
 <div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last
     %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
