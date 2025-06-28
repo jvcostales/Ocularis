@@ -101,6 +101,21 @@ window.addEventListener('scroll', () => {
     });
   }
 });
+
+document.getElementById('feed-container').addEventListener('click', function (e) {
+  if (e.target.classList.contains('more-symbol')) {
+    const index = e.target.id.split('-')[1];
+    const frame = document.getElementById(`frame1-${index}`);
+    if (frame) {
+      // Close all others
+      document.querySelectorAll('.frame1').forEach(f => {
+        if (f !== frame) f.classList.remove('show');
+      });
+      frame.classList.toggle('show');
+    }
+  }
+});
+
 </script>
 
 {% endblock %}
