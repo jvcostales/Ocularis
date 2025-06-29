@@ -74,6 +74,89 @@
 </div>
 
 
+<div id="feed-container">
+    {% include 'partials/_image_posts.html' %}
+</div>
 
+<div id="loader" style="text-align: center; margin: 1rem; display: none;">
+    <span>Loading more posts...</span>
+</div>
+
+
+<script>
+    let offset = 10;  // Start after the first 10
+    let limit = 10;
+    let loading = false;
+
+    window.addEventListener('scroll', () => {
+        if (loading) return;
+
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+            loading = true;
+            document.getElementById("loader").style.display = "block";
+
+            fetch(`/feed/more?offset=${offset}&limit=${limit}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    if (html.trim()) {
+                        document.getElementById("feed-container").insertAdjacentHTML("beforeend", html);
+                        offset += limit;
+                        loading = false;
+                        document.getElementById("loader").style.display = "none";
+                    } else {
+                        document.getElementById("loader").textContent = "No more posts.";
+                    }
+                });
+        }
+    });
+
+    document.getElementById('feed-container').addEventListener('click', function (e) {
+        if (e.target.classList.contains('more-symbol')) {
+            const index = e.target.id.split('-')[1];
+            const frame = document.getElementById(`frame1-${index}`);
+            if (frame) {
+                // Close all others
+                document.querySelectorAll('.frame1').forEach(f => {
+                    if (f !== frame) f.classList.remove('show');
+                });
+                frame.classList.toggle('show');
+            }
+        }
+    });
+
+
+    const dropArea = document.getElementById("drop-area");
+    const fileInput = document.getElementById("image");
+
+    // Highlight on drag over
+    ["dragenter", "dragover"].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropArea.classList.add("dragover");
+        }, false);
+    });
+
+    // Remove highlight on drag leave/drop
+    ["dragleave", "drop"].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropArea.classList.remove("dragover");
+        }, false);
+    });
+
+    // Handle drop
+    dropArea.addEventListener("drop", e => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('image/')) {
+            fileInput.files = files;
+
+            // Trigger change event to reuse your existing preview logic
+            const changeEvent = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(changeEvent);
+        }
+    });
+</script>
 
 {% endblock %}
