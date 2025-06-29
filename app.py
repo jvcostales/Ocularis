@@ -509,10 +509,6 @@ def reset_password(token):
 @app.route('/feed', methods=['GET', 'POST'])
 @login_required
 def feed():
-    
-    offset = 0
-    limit = 10
-
 
     user_id = current_user.id
     
@@ -632,9 +628,8 @@ def feed():
             ) AS likes ON images.image_id = likes.image_id
             LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
             WHERE hp.user_id IS NULL
-            ORDER BY images.created_at DESC
-            LIMIT %s OFFSET %s
-        """, (user_id, limit, offset))
+            ORDER BY images.created_at DESC;
+        """, (user_id,))
         images = cur.fetchall()
 
         # Fetch comments with commenter profile picture
@@ -774,51 +769,8 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url,
-        loop_offset=0
+        profile_pic_url=profile_pic_url
     )
-    
-@app.route('/feed/more')
-@login_required
-def feed_more():
-    offset = int(request.args.get('offset', 0))
-    limit = int(request.args.get('limit', 10))
-
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-        port=5432
-    )
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT images.image_id, images.image_url, images.caption,
-               COALESCE(like_count, 0), images.id,
-               author.first_name, author.last_name,
-               images.created_at,
-               collaborator.id, collaborator.first_name, collaborator.last_name,
-               author.profile_pic, collaborator.profile_pic
-        FROM images
-        JOIN users AS author ON images.id = author.id
-        LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
-        LEFT JOIN (
-            SELECT image_id, COUNT(*) AS like_count 
-            FROM likes 
-            GROUP BY image_id
-        ) AS likes ON images.image_id = likes.image_id
-        LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
-        WHERE hp.user_id IS NULL
-        ORDER BY images.created_at DESC
-        LIMIT %s OFFSET %s;
-    """, (current_user.id, limit, offset))
-
-    images = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return render_template('partials/_image_posts.html', images=images, saved_image_ids=[], comments=[], comment_likes_data={}, profile_pic_url=url_for('static', filename='pfp.jpg'), loop_offset=offset)
 
 @app.route('/post/<int:image_id>')
 def view_post(image_id):
