@@ -1,84 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- Post Upload Overlay Section -->
 <div class="post">
-    <div class="post-title">Post</div>
-    <div class="tagline-wrapper">
-        <div class="tagline-wrapper-2">
-            <img src="{{ profile_pic_url }}" class="pfp">
-            <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
-        </div>
-        <button class="image-button" id="openOverlay"><span
-                class="material-symbols-outlined image">image</span></button>
+  <div class="post-title">Post</div>
+  <div class="tagline-wrapper">
+    <div class="tagline-wrapper-2">
+      <img src="{{ profile_pic_url }}" class="pfp">
+      <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
     </div>
+    <button class="image-button" id="openOverlay">
+      <span class="material-symbols-outlined image">image</span>
+    </button>
+  </div>
 </div>
-<div class="overlay" id="overlay"> <!--stay on current view during overlay??-->
-    <div class="overlay-content">
-        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlay">close</span></button>
-        <div class="overlay-title">Post</div>
-        <div class="scrollable-div no-scroll" id="scrollableDiv">
-            <div class="profile-post">
-                <img src="{{ profile_pic_url }}" class="pfp">
-                <div class="profile-name-date">
-                    <div class="username">Lorem ipsum dolor</div>
-                    <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
-                </div>
-            </div>
-            <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data">
-                <input class="overlay-tagline" type="text" id="caption" name="caption"
-                    placeholder="Do you mind sharing your work?">
-                <div class="upload" id="drop-area">
-                    <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
-                    <div class="drop">Drop your images here or browse</div>
-                    <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
-                    <button class="browse-file" type="button" onclick="document.getElementById('image').click();">
-                        Browse File
-                    </button>
-                    <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
-                </div>
-                <div class="image-button-wrapper" id="imageWrapper" style="display: none;">
-                    <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview">
-                    </div>
-                    <button class="circled-icon-1-overlay-version"><span
-                            class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
-                </div>
-                <div id="collaboratorTagSection" style="display: none;">
-                    <label for="collaborator">Select a collaborator (optional):</label>
-                    <select name="collaborator" id="collaborator">
-                        <option value="">-- None --</option>
-                        {% for user in matched_users %}
-                        <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
-                        {% endfor %}
-                    </select>
-                    <label for="tags">Tags:</label>
-                    <select name="tags" id="tags" multiple size="6">
-                        {% for tag in tags %}
-                        <option value="{{ tag }}">{{ tag }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-content">
+    <button class="close-icon">
+      <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlay">close</span>
+    </button>
+    <div class="overlay-title">Post</div>
+    <div class="scrollable-div no-scroll" id="scrollableDiv">
+      <div class="profile-post">
+        <img src="{{ profile_pic_url }}" class="pfp">
+        <div class="profile-name-date">
+          <div class="username">Lorem ipsum dolor</div>
+          <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
+        </div>
+      </div>
+      <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data">
+        <input class="overlay-tagline" type="text" id="caption" name="caption" placeholder="Do you mind sharing your work?">
+
+        <div class="upload" id="drop-area">
+          <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
+          <div class="drop">Drop your images here or browse</div>
+          <div class="supports">Supports PNG, JPG, JPEG, and GIF</div>
+          <button class="browse-file" type="button" onclick="document.getElementById('image').click();">Browse File</button>
+          <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
+        </div>
+
+        <div class="image-button-wrapper" id="imageWrapper" style="display: none;">
+          <div class="image-container-overlay"><img class="image-post" id="uploadedImagePreview"></div>
+          <button class="circled-icon-1-overlay-version">
+            <span class="material-symbols-outlined close-symbol-overlay-version">close</span>
+          </button>
+        </div>
+
+        <div id="collaboratorTagSection" style="display: none;">
+          <label for="collaborator">Select a collaborator (optional):</label>
+          <select name="collaborator" id="collaborator">
+            <option value="">-- None --</option>
+            {% for user in matched_users %}
+            <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="tags">Tags:</label>
+          <select name="tags" id="tags" multiple size="6">
+            {% for tag in tags %}
+            <option value="{{ tag }}">{{ tag }}</option>
+            {% endfor %}
+          </select>
         </div>
         <input type="submit" value="Post" class="post-button">
-        </form>
+      </form>
     </div>
+  </div>
 </div>
-<!--bakit naka-center ung post 1 kapag un lang ung content-->
-<!--fix class names-->
+
+<!-- Feed Section -->
 <div id="feed-container">
-    {% include 'partials/_image_posts.html' %}
+  {% include 'partials/_image_posts.html' %}
 </div>
 
+<!-- Loader -->
 <div id="loader" style="text-align: center; margin: 1rem; display: none;">
-    <span>Loading more posts...</span>
+  <span>Loading more posts...</span>
 </div>
 
+<!-- JS (only once, safely included) -->
 <script>
   const dropArea = document.getElementById("drop-area");
   const fileInput = document.getElementById("image");
 
   if (dropArea && fileInput) {
-    // Highlight on drag over
     ["dragenter", "dragover"].forEach(eventName => {
       dropArea.addEventListener(eventName, e => {
         e.preventDefault();
@@ -86,7 +92,6 @@
       }, false);
     });
 
-    // Remove highlight on drag leave/drop
     ["dragleave", "drop"].forEach(eventName => {
       dropArea.addEventListener(eventName, e => {
         e.preventDefault();
@@ -94,20 +99,17 @@
       }, false);
     });
 
-    // Handle drop
     dropArea.addEventListener("drop", e => {
       const files = e.dataTransfer.files;
       if (files.length > 0 && files[0].type.startsWith('image/')) {
         fileInput.files = files;
-
-        // Trigger change event to reuse your existing preview logic
         const changeEvent = new Event('change', { bubbles: true });
         fileInput.dispatchEvent(changeEvent);
       }
     });
   }
 
-  let offset = 10; // Already loaded 10 initially
+  let offset = 10;
   let limit = 10;
   let loading = false;
 
@@ -121,17 +123,17 @@
       fetch(`/feed/more?offset=${offset}&limit=${limit}`, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
       })
-      .then(res => res.text())
-      .then(html => {
-        if (html.trim()) {
-          document.getElementById("feed-container").insertAdjacentHTML("beforeend", html);
-          offset += limit;
-          loading = false;
-          document.getElementById("loader").style.display = "none";
-        } else {
-          document.getElementById("loader").textContent = "No more posts.";
-        }
-      });
+        .then(res => res.text())
+        .then(html => {
+          if (html.trim()) {
+            document.getElementById("feed-container").insertAdjacentHTML("beforeend", html);
+            offset += limit;
+            loading = false;
+            document.getElementById("loader").style.display = "none";
+          } else {
+            document.getElementById("loader").textContent = "No more posts.";
+          }
+        });
     }
   });
 </script>
