@@ -931,33 +931,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            function setupMoreButtonListeners() {
-                const moreBtns = document.querySelectorAll('.more-symbol');
-                const allFrames1 = document.querySelectorAll('.frame1');
-
-                allFrames1.forEach(frame => frame.style.display = 'none');
-
-                moreBtns.forEach((btn, index) => {
-                    btn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                        const isOpen = currentFrame.style.display === 'block';
-
-                        allFrames1.forEach(frame => frame.style.display = 'none');
-
-                        currentFrame.style.display = isOpen ? 'none' : 'block';
-
-                        if (frame2) frame2.style.display = 'none';
-                        if (frame3) frame3.style.display = 'none';
-                        if (frame4) frame4.style.display = 'none';
-                        isFrame234Open = false;
-                    });
-                });
-            }
-
-            // Initial run
-            setupMoreButtonListeners();
-
             window.handleRequest = function (requestId, action) {
                 const elements = document.querySelectorAll(`#request-${requestId}`);
                 console.log(`Attempting to ${action} request with ID: ${requestId}`);
