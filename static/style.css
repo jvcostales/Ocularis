@@ -4,6 +4,10 @@ body {
     background-color: #f6f6f6;
 }
 
+.frame1 {
+    display: none;
+}
+
 .no-scroll-body {
     overflow-y: scroll;
     /* Keep scrollbar visible */
