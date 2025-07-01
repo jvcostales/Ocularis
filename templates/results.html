@@ -4,49 +4,55 @@
 <h2>Search Results for "{{ query }}"</h2>
 
 {% if users %}
-<div class="search-results-title">Users</div>
-<div class="user-search-results">
-    {% for user in users %}
-    <div class="profile-follow-wrapper">
-        <div class="profile-post-likes">
-            <a href="{{ url_for('profile', user_id=user.id) }}" class="pfp-link">
-                <img src="{{ user.profile_pic }}" class="pfp">
-            </a>
-            <div class="profile-name-date">
-                <a href="{{ url_for('profile', user_id=user.id) }}" class="username-link">
-                    <div class="username">{{ user.name }}</div>
-                </a>
+    <h3 class="overlay-heading">Users</h3>
+    <div class="scrollable-likers-list">
+        {% for user in users %}
+            <div class="profile-follow-wrapper">
+                <div class="profile-post-likes">
+                    <a href="{{ url_for('profile', user_id=user.id) }}" class="pfp-link">
+                        <img src="{{ url_for('profile_pics', filename=user.profile_pic) if user.profile_pic and user.profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}" class="pfp">
+                    </a>
+                    <div class="profile-name-date">
+                        <a href="{{ url_for('profile', user_id=user.id) }}" class="username-link">
+                            <div class="username">{{ user.first_name }} {{ user.last_name }}</div>
+                        </a>
+                        {% if user.timestamp %}
+                            <div class="date">{{ user.timestamp.strftime('%b %d') }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.relationship == 'self' %}
+                    <!-- No button -->
+                {% elif user.relationship == 'friends' %}
+                    <form action="{{ url_for('unfriend', user_id=user.id) }}" method="post">
+                        <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
+                    </form>
+                {% elif user.relationship == 'incoming_pending' %}
+                    <div class="response-wrapper">
+                        <form action="{{ url_for('accept_request', request_id=user.request_id) }}" method="post">
+                            <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+                        </form>
+                        <form action="{{ url_for('reject_request', request_id=user.request_id) }}" method="post">
+                            <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
+                        </form>
+                    </div>
+                {% elif user.relationship == 'outgoing_pending' %}
+                    <form action="{{ url_for('cancel_request', user_id=user.id) }}" method="post">
+                        <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
+                    </form>
+                {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
+                    {% if user.verified %}
+                        <form action="{{ url_for('send_request', user_id=user.id) }}" method="post">
+                            <button type="submit" class="follow-button-profile no-margin">Befriend</button>
+                        </form>
+                    {% else %}
+                        <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
+                    {% endif %}
+                {% endif %}
             </div>
-        </div>
-        {% if user.relationship == 'friends' %}
-        <form action="{{ url_for('unfriend', user_id=user.id) }}" method="post">
-            <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
-        </form>
-        {% elif user.relationship == 'incoming_pending' %}
-        <div class="response-wrapper">
-            <form action="{{ url_for('accept_request', request_id=user.request_id) }}" method="post">
-                <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-            </form>
-            <form action="{{ url_for('reject_request', request_id=user.request_id) }}" method="post">
-                <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-            </form>
-        </div>
-        {% elif user.relationship == 'outgoing_pending' %}
-        <form action="{{ url_for('cancel_request', user_id=user.id) }}" method="post">
-            <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
-        </form>
-        {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
-            {% if user.verified %}
-            <form action="{{ url_for('send_request', receiver_id=user.id) }}" method="post">
-                <button type="submit" class="follow-button-profile no-margin">Befriend</button>
-            </form>
-            {% else %}
-            <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
-            {% endif %}
-        {% endif %}
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 {% endif %}
 
 {% for image in images %}
