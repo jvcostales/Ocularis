@@ -206,6 +206,14 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
     }
 
+    .result {
+        background: #fff;
+        border-radius: 10px;
+        padding: 24px;
+        padding-bottom: 0;
+        box-sizing: border-box;
+    }
+
     .pfp {
         width: 56px;
         height: 56px;
@@ -2577,6 +2585,14 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
+    .result {
+        background: #fff;
+        border-radius: 10px;
+        padding: 24px;
+        padding-bottom: 0;
+        box-sizing: border-box;
+    }
+
     .pfp {
         width: 56px;
         height: 56px;
@@ -4836,6 +4852,14 @@ input[type="url"]::placeholder {
         padding: 24px;
         box-sizing: border-box;
         margin-bottom: 16px;
+    }
+
+    .result {
+        background: #fff;
+        border-radius: 10px;
+        padding: 24px;
+        padding-bottom: 0;
+        box-sizing: border-box;
     }
 
     .pfp {
