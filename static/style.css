@@ -206,7 +206,7 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
     }
 
-    .result {
+    .results {
         background: #fff;
         border-radius: 10px;
         padding: 24px;
@@ -2585,7 +2585,7 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
-    .result {
+    .results {
         background: #fff;
         border-radius: 10px;
         padding: 24px;
@@ -4854,7 +4854,7 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
-    .result {
+    .results {
         background: #fff;
         border-radius: 10px;
         padding: 24px;
