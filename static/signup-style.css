@@ -104,6 +104,7 @@
             align-items: center;
             margin-bottom: 24px;
             font-size: 1rem;
+            color: #C4C4C4;
         }
 
         .checkbox-group input[type="checkbox"] {

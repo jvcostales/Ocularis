@@ -64,11 +64,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 24px;
         }
 
         .forgot-password {
             color: #1C46F5;
             font-size: 1rem;
+            text-decoration: none;
         }
 
         p.subtitle {
@@ -113,8 +115,8 @@
         .checkbox-group {
             display: flex;
             align-items: center;
-            margin-bottom: 24px;
             font-size: 1rem;
+            color: #C4C4C4;
         }
 
         .checkbox-group input[type="checkbox"] {
