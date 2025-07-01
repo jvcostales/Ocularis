@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort, current_app
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort, current_app, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -7,7 +7,6 @@ import os
 import smtplib
 import secrets
 from email.mime.text import MIMEText
-from search import search_bp
 from recommender import get_similar_users
 from datetime import datetime, timedelta, timezone
 import pandas as pd
@@ -17,9 +16,10 @@ import uuid
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
-app.register_blueprint(search_bp)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+search_bp = Blueprint('search', __name__)
 
 with open('data/countries.json') as f:
     countries = json.load(f)
@@ -2811,6 +2811,131 @@ def delete_account_route():
         flash('An error occurred while deleting your account.', 'danger')
         return redirect(url_for('settings'))
 
+@search_bp.route('/search')
+def search_results():
+    query = request.args.get('query', '').strip()
+    like_query = f"%{query}%"
+    user_id = current_user.id
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
+    cur = conn.cursor()
+
+    try:
+        # 🔍 Search images by caption, tag, author/collaborator names
+        cur.execute("""
+            SELECT 
+                images.image_id,
+                images.image_url,
+                images.caption,
+                COALESCE(like_count, 0),
+                images.id,
+                author.first_name,
+                author.last_name,
+                images.created_at,
+                collaborator.id,
+                collaborator.first_name,
+                collaborator.last_name,
+                author.profile_pic,
+                collaborator.profile_pic
+            FROM images
+            JOIN users AS author ON images.id = author.id
+            LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
+            LEFT JOIN (
+                SELECT image_id, COUNT(*) AS like_count 
+                FROM likes 
+                GROUP BY image_id
+            ) AS likes ON images.image_id = likes.image_id
+            LEFT JOIN image_tags ON images.image_id = image_tags.image_id
+            LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
+            WHERE hp.user_id IS NULL
+              AND (
+                    images.caption ILIKE %s OR
+                    image_tags.tag ILIKE %s OR
+                    (author.first_name || ' ' || author.last_name) ILIKE %s OR
+                    (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
+                  )
+            ORDER BY images.created_at DESC
+        """, (user_id, like_query, like_query, like_query, like_query))
+        images = cur.fetchall()
+
+        # 🗨️ Fetch comments only for found images
+        image_ids = tuple([img[0] for img in images])
+        comments = []
+        if image_ids:
+            cur.execute("""
+                SELECT 
+                    comments.comment_id,
+                    comments.image_id,
+                    users.first_name || ' ' || users.last_name AS display_name,
+                    comments.comment_text,
+                    comments.created_at,
+                    COALESCE(cl.like_count, 0),
+                    comments.user_id,
+                    users.profile_pic
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+                LEFT JOIN (
+                    SELECT comment_id, COUNT(*) AS like_count
+                    FROM comment_likes
+                    GROUP BY comment_id
+                ) AS cl ON comments.comment_id = cl.comment_id
+                WHERE comments.image_id IN %s
+                ORDER BY comments.created_at ASC
+            """, (image_ids,))
+            comments = cur.fetchall()
+
+        # 👍 Likes for each image
+        likes_data = {}
+        for image in images:
+            image_id = image[0]
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name, l.created_at
+                FROM likes l
+                JOIN users u ON l.user_id = u.id
+                WHERE l.image_id = %s
+                ORDER BY l.created_at DESC
+            """, (image_id,))
+            likes_data[image_id] = cur.fetchall()
+
+        # ❤️ Likes for each comment
+        comment_likes_data = {}
+        for comment in comments:
+            comment_id = comment[0]
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name, cl.created_at
+                FROM comment_likes cl
+                JOIN users u ON cl.user_id = u.id
+                WHERE cl.comment_id = %s
+                ORDER BY cl.created_at DESC
+            """, (comment_id,))
+            comment_likes_data[comment_id] = cur.fetchall()
+
+        # 👤 Current user profile picture
+        cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
+        result = cur.fetchone()
+        profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
+
+        # 💾 Saved image IDs
+        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
+        saved_image_ids = [row[0] for row in cur.fetchall()]
+
+        return render_template("results.html", 
+                               query=query,
+                               images=images, 
+                               comments=comments,
+                               likes_data=likes_data,
+                               comment_likes_data=comment_likes_data,
+                               profile_pic_url=profile_pic_url,
+                               saved_image_ids=saved_image_ids)
+    finally:
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
