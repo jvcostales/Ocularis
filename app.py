@@ -20,6 +20,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 search_bp = Blueprint('search', __name__)
+app.register_blueprint(search_bp)
 
 with open('data/countries.json') as f:
     countries = json.load(f)
