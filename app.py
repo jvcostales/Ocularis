@@ -2923,6 +2923,8 @@ def search_results():
         # 💾 Saved image IDs
         cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
         saved_image_ids = [row[0] for row in cur.fetchall()]
+        
+        user = current_user
 
         return render_template("results.html", 
                                query=query,
@@ -2931,7 +2933,8 @@ def search_results():
                                likes_data=likes_data,
                                comment_likes_data=comment_likes_data,
                                profile_pic_url=profile_pic_url,
-                               saved_image_ids=saved_image_ids)
+                               saved_image_ids=saved_image_ids,
+                               user=user)
     finally:
         cur.close()
         conn.close()
