@@ -172,3 +172,9 @@
             text-decoration: underline;
             color: #1C46F5;
         }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .image-container {
+                display: none;
+            }
+        }
