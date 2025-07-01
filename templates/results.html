@@ -37,7 +37,7 @@
         </form>
         {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
             {% if user.verified %}
-            <form action="{{ url_for('send_request', user_id=user.id) }}" method="post">
+            <form action="{{ url_for('send_request', receiver_id=user.id) }}" method="post">
                 <button type="submit" class="follow-button-profile no-margin">Befriend</button>
             </form>
             {% else %}
