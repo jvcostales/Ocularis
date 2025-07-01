@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort, current_app, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, flash, jsonify, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import psycopg2
@@ -18,9 +18,6 @@ app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-search_bp = Blueprint('search', __name__)
-app.register_blueprint(search_bp)
 
 with open('data/countries.json') as f:
     countries = json.load(f)
@@ -2812,7 +2809,8 @@ def delete_account_route():
         flash('An error occurred while deleting your account.', 'danger')
         return redirect(url_for('settings'))
 
-@search_bp.route('/search')
+@app.route('/search')
+@login_required
 def search_results():
     query = request.args.get('query', '').strip()
     like_query = f"%{query}%"
