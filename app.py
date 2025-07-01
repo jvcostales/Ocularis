@@ -2826,7 +2826,7 @@ def search_results():
     cur = conn.cursor()
 
     try:
-        # 🔍 Search images
+        # 🔍 Search images by caption, tag, author/collaborator names
         cur.execute("""
             SELECT 
                 images.image_id,
@@ -2863,7 +2863,7 @@ def search_results():
         """, (user_id, like_query, like_query, like_query, like_query))
         images = cur.fetchall()
 
-        # 🗨️ Comments
+        # 🗨️ Fetch comments only for found images
         image_ids = tuple([img[0] for img in images])
         comments = []
         if image_ids:
@@ -2889,7 +2889,7 @@ def search_results():
             """, (image_ids,))
             comments = cur.fetchall()
 
-        # 👍 Image Likes
+        # 👍 Likes for each image
         likes_data = {}
         for image in images:
             image_id = image[0]
@@ -2902,7 +2902,7 @@ def search_results():
             """, (image_id,))
             likes_data[image_id] = cur.fetchall()
 
-        # ❤️ Comment Likes
+        # ❤️ Likes for each comment
         comment_likes_data = {}
         for comment in comments:
             comment_id = comment[0]
@@ -2915,65 +2915,16 @@ def search_results():
             """, (comment_id,))
             comment_likes_data[comment_id] = cur.fetchall()
 
-        # 💾 Saved images
-        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
-        saved_image_ids = [row[0] for row in cur.fetchall()]
-
-        # 👤 Current user PFP
+        # 👤 Current user profile picture
         cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
         result = cur.fetchone()
         profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-        # 🧑‍🤝‍🧑 User search
-        cur.execute("""
-            SELECT id, first_name, last_name, profile_pic, verified
-            FROM users
-            WHERE (LOWER(first_name) LIKE LOWER(%s)
-                OR LOWER(last_name) LIKE LOWER(%s)
-                OR LOWER(first_name || ' ' || last_name) LIKE LOWER(%s))
-        """, (like_query, like_query, like_query))
-        users_raw = cur.fetchall()
-
-        users = []
-        for u in users_raw:
-            uid, fname, lname, pfp, verified = u
-
-            if uid == current_user.id:
-                relationship = 'self'
-                request_id = None
-            else:
-                cur.execute("""
-                    SELECT sender_id, receiver_id, status, request_id
-                    FROM friend_requests
-                    WHERE (sender_id = %s AND receiver_id = %s)
-                       OR (sender_id = %s AND receiver_id = %s)
-                    LIMIT 1
-                """, (user_id, uid, uid, user_id))
-                row = cur.fetchone()
-
-                relationship = 'not_friends'
-                request_id = None
-                if row:
-                    sender, receiver, status, req_id = row
-                    request_id = req_id
-                    if status == 'accepted':
-                        relationship = 'friends'
-                    elif status == 'pending':
-                        if receiver == user_id:
-                            relationship = 'incoming_pending'
-                        else:
-                            relationship = 'outgoing_pending'
-                    elif status == 'rejected':
-                        relationship = 'outgoing_rejected'
-
-            users.append({
-                'id': uid,
-                'name': f"{fname} {lname}",
-                'profile_pic': url_for('profile_pics', filename=pfp) if pfp and pfp != 'pfp.jpg' else url_for('static', filename='pfp.jpg'),
-                'verified': verified,
-                'relationship': relationship,
-                'request_id': request_id
-            })
+        # 💾 Saved image IDs
+        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
+        saved_image_ids = [row[0] for row in cur.fetchall()]
+        
+        user = current_user
 
         return render_template("results.html", 
                                query=query,
@@ -2981,11 +2932,9 @@ def search_results():
                                comments=comments,
                                likes_data=likes_data,
                                comment_likes_data=comment_likes_data,
-                               saved_image_ids=saved_image_ids,
                                profile_pic_url=profile_pic_url,
-                               users=users,
-                               user=current_user)
-
+                               saved_image_ids=saved_image_ids,
+                               user=user)
     finally:
         cur.close()
         conn.close()
