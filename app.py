@@ -2826,7 +2826,7 @@ def search_results():
     cur = conn.cursor()
 
     try:
-        # 🔍 Search images by caption, tag, author/collaborator names
+        # 🔍 Search images
         cur.execute("""
             SELECT 
                 images.image_id,
@@ -2863,7 +2863,7 @@ def search_results():
         """, (user_id, like_query, like_query, like_query, like_query))
         images = cur.fetchall()
 
-        # 🗨️ Fetch comments only for found images
+        # 🗨️ Comments
         image_ids = tuple([img[0] for img in images])
         comments = []
         if image_ids:
@@ -2889,7 +2889,7 @@ def search_results():
             """, (image_ids,))
             comments = cur.fetchall()
 
-        # 👍 Likes for each image
+        # 👍 Image Likes
         likes_data = {}
         for image in images:
             image_id = image[0]
@@ -2902,7 +2902,7 @@ def search_results():
             """, (image_id,))
             likes_data[image_id] = cur.fetchall()
 
-        # ❤️ Likes for each comment
+        # ❤️ Comment Likes
         comment_likes_data = {}
         for comment in comments:
             comment_id = comment[0]
@@ -2915,16 +2915,65 @@ def search_results():
             """, (comment_id,))
             comment_likes_data[comment_id] = cur.fetchall()
 
-        # 👤 Current user profile picture
+        # 💾 Saved images
+        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
+        saved_image_ids = [row[0] for row in cur.fetchall()]
+
+        # 👤 Current user PFP
         cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
         result = cur.fetchone()
         profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-        # 💾 Saved image IDs
-        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (user_id,))
-        saved_image_ids = [row[0] for row in cur.fetchall()]
-        
-        user = current_user
+        # 🧑‍🤝‍🧑 User search
+        cur.execute("""
+            SELECT id, first_name, last_name, profile_pic, verified
+            FROM users
+            WHERE (LOWER(first_name) LIKE LOWER(%s)
+                OR LOWER(last_name) LIKE LOWER(%s)
+                OR LOWER(first_name || ' ' || last_name) LIKE LOWER(%s))
+        """, (like_query, like_query, like_query))
+        users_raw = cur.fetchall()
+
+        users = []
+        for u in users_raw:
+            uid, fname, lname, pfp, verified = u
+
+            if uid == current_user.id:
+                relationship = 'self'
+                request_id = None
+            else:
+                cur.execute("""
+                    SELECT sender_id, receiver_id, status, request_id
+                    FROM friend_requests
+                    WHERE (sender_id = %s AND receiver_id = %s)
+                       OR (sender_id = %s AND receiver_id = %s)
+                    LIMIT 1
+                """, (user_id, uid, uid, user_id))
+                row = cur.fetchone()
+
+                relationship = 'not_friends'
+                request_id = None
+                if row:
+                    sender, receiver, status, req_id = row
+                    request_id = req_id
+                    if status == 'accepted':
+                        relationship = 'friends'
+                    elif status == 'pending':
+                        if receiver == user_id:
+                            relationship = 'incoming_pending'
+                        else:
+                            relationship = 'outgoing_pending'
+                    elif status == 'rejected':
+                        relationship = 'outgoing_rejected'
+
+            users.append({
+                'id': uid,
+                'name': f"{fname} {lname}",
+                'profile_pic': url_for('profile_pics', filename=pfp) if pfp and pfp != 'pfp.jpg' else url_for('static', filename='pfp.jpg'),
+                'verified': verified,
+                'relationship': relationship,
+                'request_id': request_id
+            })
 
         return render_template("results.html", 
                                query=query,
@@ -2932,12 +2981,15 @@ def search_results():
                                comments=comments,
                                likes_data=likes_data,
                                comment_likes_data=comment_likes_data,
-                               profile_pic_url=profile_pic_url,
                                saved_image_ids=saved_image_ids,
-                               user=user)
+                               profile_pic_url=profile_pic_url,
+                               users=users,
+                               user=current_user)
+
     finally:
         cur.close()
         conn.close()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
