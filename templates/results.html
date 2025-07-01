@@ -4,28 +4,12 @@
 <h2>Search Results for "{{ query }}"</h2>
 
 {% if users %}
-<div class="search-results-title">Users</div>
-<div class="user-search-results">
+<h3>Users</h3>
+<ul>
     {% for user in users %}
-    <div class="profile-follow-wrapper user-result" data-user-id="{{ user.id }}"
-        data-request-id="{{ user.request_id or '' }}" data-relationship="{{ user.relationship }}"
-        data-verified="{{ user.verified }}">
-        <div class="profile-post-likes">
-            <a href="{{ url_for('profile', user_id=user.id) }}" class="pfp-link">
-                <img src="{{ user.profile_pic }}" class="pfp">
-            </a>
-            <div class="profile-name-date">
-                <a href="{{ url_for('profile', user_id=user.id) }}" class="username-link">
-                    <div class="username">{{ user.name }}</div>
-                </a>
-            </div>
-        </div>
-        <div class="user-action-button-container">
-            <!-- Placeholder to inject buttons dynamically -->
-        </div>
-    </div>
+    <li><a href="{{ url_for('profile', user_id=user[0]) }}">{{ user[1] }} {{ user[2] }}</a></li>
     {% endfor %}
-</div>
+</ul>
 {% endif %}
 
 {% for image in images %}
@@ -241,7 +225,7 @@
 
 
 
-<!--
+    <!--
 
 {% if images %}
 {% for image in images %}
@@ -301,85 +285,5 @@ Comment Section
 <p>No posts found.</p>
 {% endif %}
 -->
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll('.user-result').forEach(userDiv => {
-            const userId = userDiv.dataset.userId;
-            const requestId = userDiv.dataset.requestId;
-            const relationship = userDiv.dataset.relationship;
-            const verified = userDiv.dataset.verified === 'True';
-            const buttonContainer = userDiv.querySelector('.user-action-button-container');
-
-            let html = '';
-
-            switch (relationship) {
-                case 'self':
-                    html = ''; // No button for self
-                    break;
-                case 'friends':
-                    html = `<button class="btn-unfriend" data-user-id="${userId}">Unfriend</button>`;
-                    break;
-                case 'incoming_pending':
-                    html = `
-                    <button class="btn-accept" data-request-id="${requestId}">Confirm</button>
-                    <button class="btn-reject" data-request-id="${requestId}">Decline</button>
-                `;
-                    break;
-                case 'outgoing_pending':
-                    html = `<button class="btn-cancel" data-user-id="${userId}">Cancel Request</button>`;
-                    break;
-                case 'outgoing_rejected':
-                case 'not_friends':
-                    if (verified) {
-                        html = `<button class="btn-send" data-user-id="${userId}">Befriend</button>`;
-                    } else {
-                        html = `<button disabled>Befriend</button>`;
-                    }
-                    break;
-                default:
-                    html = '';
-            }
-
-            buttonContainer.innerHTML = html;
-        });
-
-        // AJAX handlers
-        document.addEventListener('click', function (e) {
-            const target = e.target;
-
-            if (target.matches('.btn-send')) {
-                const userId = target.dataset.userId;
-                fetch(`/send_request/${userId}`, { method: 'POST' })
-                    .then(res => res.ok && target.textContent = 'Request Sent');
-            }
-
-            if (target.matches('.btn-unfriend')) {
-                const userId = target.dataset.userId;
-                fetch(`/unfriend/${userId}`, { method: 'POST' })
-                    .then(res => res.ok && target.textContent = 'Unfriended');
-            }
-
-            if (target.matches('.btn-cancel')) {
-                const userId = target.dataset.userId;
-                fetch(`/cancel_request/${userId}`, { method: 'POST' })
-                    .then(res => res.ok && target.textContent = 'Request Cancelled');
-            }
-
-            if (target.matches('.btn-accept')) {
-                const requestId = target.dataset.requestId;
-                fetch(`/accept_request/${requestId}`, { method: 'POST' })
-                    .then(res => res.ok && target.closest('.user-action-button-container').innerHTML = 'Now Friends');
-            }
-
-            if (target.matches('.btn-reject')) {
-                const requestId = target.dataset.requestId;
-                fetch(`/reject_request/${requestId}`, { method: 'POST' })
-                    .then(res => res.ok && target.closest('.user-action-button-container').innerHTML = 'Declined');
-            }
-        });
-    });
-</script>
-
 
 {% endblock %}
