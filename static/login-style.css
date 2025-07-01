@@ -60,6 +60,17 @@
             font-weight: 600;
         }
 
+        .checkbox-forgot-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .forgot-password {
+            color: #1C46F5;
+            font-size: 1rem;
+        }
+
         p.subtitle {
             margin: 12px 0 24px;
             color: #C4C4C4;
@@ -173,16 +184,7 @@
             color: #1C46F5;
         }
 
-        .checkbox-forgot-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
 
-        .forgot-password {
-            color: #1C46F5;
-            font-size: 1rem;
-        }
 
         @media (min-width: 768px) and (max-width: 1024px) {
             .image-container {
