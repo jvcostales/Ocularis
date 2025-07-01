@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<!--
+<h2>Search Results for "{{ query }}"</h2>-->
 
-<h2>Search Results for "{{ query }}"</h2>
-
+<div class="post">
 {% if users %}
-<div class="search-results-title">Users</div>
+<div class="post-title">Users</div>
 <div class="user-search-results">
     {% for user in users %}
     <div class="profile-follow-wrapper">
@@ -48,6 +49,7 @@
     {% endfor %}
 </div>
 {% endif %}
+</div>
 
 {% for image in images %}
 <div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last
