@@ -58,7 +58,7 @@
         </div>
         {% elif outgoing_request %}
         {% if outgoing_request[0] == 'pending' %}
-        <form action="{{ url_for('cancel_request', receiver_id=user_id) }}" method="post">
+        <form action="{{ url_for('cancel_request', user_id=user_id) }}" method="post">
             <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
         </form>
         {% elif outgoing_request[0] == 'rejected' %}
