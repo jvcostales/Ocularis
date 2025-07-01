@@ -67,7 +67,7 @@
             margin-bottom: 24px;
         }
 
-        .forgot-password {
+        .forgot-password a {
             color: #1C46F5;
             font-size: 1rem;
             text-decoration: none;
