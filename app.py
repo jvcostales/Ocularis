@@ -13,11 +13,13 @@ import pandas as pd
 import json
 from psycopg2.extras import RealDictCursor
 import uuid
+from urllib.parse import urlparse, urljoin
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 with open('data/countries.json') as f:
     countries = json.load(f)
@@ -359,6 +361,12 @@ def verify_email(token):
         if 'conn' in locals():
             conn.close()
 
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return (test_url.scheme in ('http', 'https') and
+            ref_url.netloc == test_url.netloc)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -382,7 +390,14 @@ def login():
             user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
             login_user(user_obj)
 
-            return redirect(url_for('feed'))
+            # ⬅️ Get the `next` parameter from the URL (e.g., /login?next=/search)
+            next_page = request.args.get('next')
+
+            # ✅ Safely redirect to next page or default to 'feed'
+            if next_page and is_safe_url(next_page):
+                return redirect(next_page)
+            else:
+                return redirect(url_for('feed'))
         else:
             return 'Invalid email or password'
 
