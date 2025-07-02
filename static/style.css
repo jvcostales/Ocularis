@@ -1049,9 +1049,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        box-sizing: border-box;
         padding-bottom: 16px;
     }
-
 
     .profile-follow-wrapper:last-child {
         padding-bottom: 24px;
@@ -3146,9 +3146,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        box-sizing: border-box;
         padding-bottom: 16px;
     }
-
 
     .profile-follow-wrapper:last-child {
         padding-bottom: 24px;
@@ -5421,9 +5421,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        box-sizing: border-box;
         padding-bottom: 16px;
     }
-
 
     .profile-follow-wrapper:last-child {
         padding-bottom: 24px;
