@@ -15,9 +15,8 @@
                 </a>
                 <div class="profile-name-date">
                     <a href="{{ url_for('profile', user_id=user.id) }}" class="username-link">
-                        <div class="username">{{ user.name }}</div>
+                        <div class="username" style="padding-bottom: 0;">{{ user.name }}</div>
                     </a>
-                    <div class="date">{{ user.date }}</div> <!-- Optional -->
                 </div>
             </div>
             <div class="follow-action">
