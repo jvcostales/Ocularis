@@ -26,7 +26,7 @@
                     <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
                 </form>
                 {% elif user.relationship == 'incoming_pending' %}
-                <div class="response-wrapper">
+                <div class="response-wrapper" style="margin: 0;">
                     <form action="{{ url_for('accept_request', request_id=user.request_id) }}" method="post">
                         <button type="submit" class="follow-button-profile no-margin">Confirm</button>
                     </form>
