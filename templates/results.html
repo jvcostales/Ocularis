@@ -59,7 +59,7 @@
     %}style="margin-bottom: 16px;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}"
+            <img src="{{ profile_pic_url }}"
                 class="pfp">
             <div class="profile-name-date">
                 <div class="username">
