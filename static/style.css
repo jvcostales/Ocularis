@@ -318,7 +318,7 @@ input[type="url"]::placeholder {
         align-items: center;
         gap: 16px;
         padding-bottom: 24px;
-        line-height: 0;
+
     }
 
     .username {
@@ -1112,7 +1112,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
 
     }
 
@@ -1185,7 +1185,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
 
     }
 
@@ -2013,7 +2013,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
 
     }
 
@@ -2704,7 +2704,7 @@ input[type="url"]::placeholder {
         align-items: center;
         gap: 16px;
         padding-bottom: 24px;
-        line-height: 0;
+
 
     }
 
@@ -3209,7 +3209,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
     }
 
     .overlayComments {
@@ -3281,7 +3281,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
 
     }
 
@@ -4112,7 +4112,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
     }
 
     /* Backdrop overlay */
@@ -4979,7 +4979,7 @@ input[type="url"]::placeholder {
         align-items: center;
         gap: 16px;
         padding-bottom: 24px;
-        line-height: 0;
+
     }
 
     .username {
@@ -5484,7 +5484,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
 
     }
 
@@ -5558,7 +5558,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
     }
 
     .comment-like-wrapper {
@@ -6393,7 +6393,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 16px;
-        line-height: 0;
+
     }
 
     /* Backdrop overlay */
