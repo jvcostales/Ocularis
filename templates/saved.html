@@ -93,11 +93,11 @@
             <div class="profile-comment-wrapper">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
-                        <img src="{{
+                        <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
     url_for('profile_pics', filename=comment[7])
     if comment[7] and comment[7] != 'pfp.jpg'
     else url_for('static', filename='pfp.jpg')
-}}" class="pfp">
+}}" class="pfp"></a>
                         <div class="profile-name-date">
                             <div class="username">
                                 <a href="{{ url_for('profile', user_id=comment[6]) }}">{{ comment[2] }}</a>
