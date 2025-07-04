@@ -1471,12 +1471,12 @@
                 </div>
             </button>
         </form>
-<div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
-    <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-        <span class="like-number">${comment.like_count}</span>
-        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
-    </div>
-</div>
+        <div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+                <span class="like-number">${comment.like_count}</span>
+                <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1495,6 +1495,30 @@
 `;
 
                                 commentList.prepend(newComment);
+                                newComment.addEventListener('click', function (e) {
+                                    const likeCountEl = e.target.closest('.like-count[data-comment-id]');
+                                    if (likeCountEl) {
+                                        const commentId = likeCountEl.dataset.commentId;
+
+                                        const overlay = document.getElementById('overlayCommentLikes-0');
+                                        if (overlay) overlay.style.display = 'block';
+
+                                        const scrollDiv = document.getElementById('scrollableDivCommentLikes-0');
+                                        if (scrollDiv) {
+                                            scrollDiv.dataset.commentId = commentId;
+                                            scrollDiv.innerHTML = '<p class="loading-msg">Loading likes...</p>';
+                                        }
+
+                                        if (typeof fetchCommentLikers === 'function') {
+                                            fetchCommentLikers(commentId);
+                                        }
+                                    }
+
+                                    if (e.target.closest('#closeOverlayCommentLikes-0')) {
+                                        const overlay = document.getElementById('overlayCommentLikes-0');
+                                        if (overlay) overlay.style.display = 'none';
+                                    }
+                                });
                                 input.value = '';
                             } else {
                                 console.error('Failed to post comment:', data);
