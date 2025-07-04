@@ -835,7 +835,7 @@ def view_post(image_id):
             SELECT comments.comment_id, comments.image_id, 
                    users.first_name || ' ' || users.last_name AS display_name, 
                    comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id
+                   COALESCE(like_count, 0) AS like_count, comments.user_id, users.profile_pic
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
@@ -1512,7 +1512,7 @@ def profile(user_id):
         SELECT comments.comment_id, comments.image_id, users.first_name, 
                comments.comment_text, comments.created_at, 
                (SELECT COUNT(*) FROM comment_likes WHERE comment_likes.comment_id = comments.comment_id) AS like_count,
-               comments.user_id
+               comments.user_id, users.profile_pic
         FROM comments
         JOIN users ON comments.user_id = users.id
         WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s OR collaborator_id = %s)
@@ -2675,7 +2675,7 @@ def saved():
             SELECT comments.comment_id, comments.image_id, 
                    users.first_name || ' ' || users.last_name AS display_name, 
                    comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id
+                   COALESCE(like_count, 0) AS like_count, comments.user_id, users.profile_pic
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
