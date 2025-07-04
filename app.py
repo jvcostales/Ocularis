@@ -1335,7 +1335,7 @@ def get_comment_likes(comment_id):
 
         # Get comment likers
         cur.execute("""
-            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at, u.verified
+            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, cl.created_at, u.verified, u.profile_pic
             FROM comment_likes cl
             JOIN users u ON cl.user_id = u.id
             WHERE cl.comment_id = %s
