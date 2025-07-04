@@ -221,6 +221,7 @@ input[type="url"]::placeholder {
         object-fit: cover;
         object-position: center;
         cursor: pointer;
+        aspect-ratio: 1 / 1;
     }
 
     .pfp:hover {
@@ -1475,6 +1476,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         object-fit: cover;
         object-position: center;
+        aspect-ratio: 1 / 1;
     }
 
     .heading {
@@ -2608,6 +2610,7 @@ input[type="url"]::placeholder {
         object-fit: cover;
         object-position: center;
         cursor: pointer;
+        aspect-ratio: 1 / 1;
     }
 
     .pfp:hover {
@@ -3576,6 +3579,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         object-fit: cover;
         object-position: center;
+        aspect-ratio: 1 / 1;
     }
 
     .heading {
@@ -4883,6 +4887,7 @@ input[type="url"]::placeholder {
         object-fit: cover;
         object-position: center;
         cursor: pointer;
+        aspect-ratio: 1 / 1;
     }
 
     .pfp:hover {
@@ -5852,6 +5857,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         object-fit: cover;
         object-position: center;
+        aspect-ratio: 1 / 1;
     }
 
     .heading {
