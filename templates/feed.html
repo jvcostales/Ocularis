@@ -19,7 +19,7 @@
         <div class="overlay-title">Post</div>
         <div class="scrollable-div no-scroll" id="scrollableDiv">
             <div class="profile-post">
-                <img <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}" class="pfp">
+                <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}" class="pfp">
                 <div class="profile-name-date">
                     <div class="username">Lorem ipsum dolor</div>
                     <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
