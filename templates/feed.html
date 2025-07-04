@@ -66,8 +66,7 @@
 <!--bakit naka-center ung post 1 kapag un lang ung content-->
 <!--fix class names-->
 {% for image in images %}
-<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last
-    %}style="margin-bottom: 16px;" {% endif %}>
+<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] else url_for('static', filename='pfp.jpg') }}"
@@ -271,6 +270,7 @@
         </div>
     </div>
 </div>
+<div style="margin-bottom: 16px;"></div>
 
 <script>
     const dropArea = document.getElementById("drop-area");
