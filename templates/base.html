@@ -754,9 +754,8 @@
             {% set actor = actor_details[actor_id] %}
             <!-- Step 1 -->
             <div class="modal-step" id="match-step-1">
-                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
-                    class="btn-cancel"><span
-                        class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                    <span class="material-symbols-outlined overlay-close-symbol">close</span></button>
                 <div class="overlay-title">Match</div>
                 <div class="padding-match">
 
@@ -775,8 +774,7 @@
 
             <!-- Step 2 -->
             <div class="modal-step" id="match-step-2" style="display: none;">
-                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
-                    class="btn-cancel">
+                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
                     <span class="material-symbols-outlined overlay-close-symbol">close</span>
                 </button>
                 <div class="overlay-title">Match</div>
@@ -845,8 +843,7 @@
 
             <!-- Step 3 -->
             <div class="modal-step" id="match-step-3" style="display: none;">
-                <button class="close-icon" onclick="document.getElementById('matchModal').style.display='none'"
-                    class="btn-cancel">
+                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
                     <span class="material-symbols-outlined overlay-close-symbol">close</span>
                 </button>
                 <div class="overlay-title">Match</div>
@@ -1106,8 +1103,16 @@
                             const userId = this.getAttribute('data-user-id');
                             const displayName = this.getAttribute('data-display-name');
 
+                            // Update modal content
                             document.getElementById('match-username').textContent = displayName;
                             document.getElementById('decline-match').setAttribute('data-user-id', userId);
+
+                            // Freeze background scroll
+                            matchScrollPosition = window.scrollY;
+                            document.body.style.top = `-${matchScrollPosition}px`;
+                            document.body.classList.add('no-scrolling');
+
+                            // Show modal
                             document.getElementById('matchModal').style.display = 'flex';
                         });
                     });
@@ -1481,6 +1486,22 @@
                                 closeOverlay();
                             }
                         });
+                    }
+
+                    let matchScrollPosition = 0;
+
+                    function openMatchModal() {
+                        matchScrollPosition = window.scrollY;
+                        document.body.style.top = `-${matchScrollPosition}px`;
+                        document.body.classList.add('no-scrolling');
+                        document.getElementById('matchModal').style.display = 'flex';
+                    }
+
+                    function closeMatchModal() {
+                        document.getElementById('matchModal').style.display = 'none';
+                        document.body.classList.remove('no-scrolling');
+                        document.body.style.top = '';
+                        window.scrollTo(0, matchScrollPosition);
                     }
 
                     // Setup overlays
