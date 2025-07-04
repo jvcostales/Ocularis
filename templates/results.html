@@ -54,8 +54,7 @@
 </div>
 
 {% for image in images %}
-<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}" {% if loop.last
-    %}style="margin-bottom: 16px;" {% endif %}>
+<div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="{{ profile_pic_url }}"
@@ -260,6 +259,7 @@
         </div>
     </div>
 </div>
+<div style="margin-bottom: 16px;"></div>
 {% endfor %}
 
 
