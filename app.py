@@ -1040,9 +1040,10 @@ def get_image_likes(image_id):
     current_user_id = current_user.id
 
     try:
-        # Get likers
+        # Get likers and include profile_pic
         cur.execute("""
-            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, l.created_at, u.verified
+            SELECT u.id, u.first_name || ' ' || u.last_name AS display_name, 
+                   l.created_at, u.verified, u.profile_pic
             FROM likes l
             JOIN users u ON l.user_id = u.id
             WHERE l.image_id = %s
@@ -1051,7 +1052,7 @@ def get_image_likes(image_id):
         likes = cur.fetchall()
 
         likers = []
-        for liker_id, display_name, created_at, verified in likes:
+        for liker_id, display_name, created_at, verified, profile_pic in likes:
             if liker_id == current_user_id:
                 relationship = 'self'
                 request_id = None
@@ -1068,7 +1069,7 @@ def get_image_likes(image_id):
                     relationship = 'friends'
                     request_id = None
                 else:
-                    # Outgoing request (you sent)
+                    # Outgoing request
                     cur.execute("""
                         SELECT status FROM friend_requests
                         WHERE sender_id = %s AND receiver_id = %s;
@@ -1085,7 +1086,7 @@ def get_image_likes(image_id):
                             relationship = 'not_friends'
                         request_id = None
                     else:
-                        # Incoming request (they sent)
+                        # Incoming request
                         cur.execute("""
                             SELECT request_id FROM friend_requests
                             WHERE sender_id = %s AND receiver_id = %s AND status = 'pending';
@@ -1105,7 +1106,8 @@ def get_image_likes(image_id):
                 'timestamp': created_at.isoformat(),
                 'relationship': relationship,
                 'request_id': request_id,
-                'verified': verified
+                'verified': verified,
+                'profile_pic': profile_pic
             })
 
     finally:
