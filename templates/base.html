@@ -753,105 +753,6 @@
 
     <script>
 
-
-        function setupCommentLikeOverlayButton(likeBtn) {
-            const scrollableDiv = likeBtn.closest('.comment-like-wrapper')?.nextElementSibling?.querySelector('.scrollable-div-likes');
-            const commentId = scrollableDiv?.dataset?.commentId;
-
-            if (!scrollableDiv || !commentId) return;
-
-            likeBtn.addEventListener('click', () => {
-                scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
-
-                fetch(`/comment/likes/${commentId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.likers || data.likers.length === 0) {
-                            scrollableDiv.innerHTML = `<div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
-                    </div>`;
-                            return;
-                        }
-
-                        const html = data.likers.map(liker => {
-                            const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric'
-                            });
-
-                            let buttonHtml = '';
-                            switch (liker.relationship) {
-                                case 'self':
-                                    buttonHtml = '';
-                                    break;
-                                case 'friends':
-                                    buttonHtml = `
-                                <form action="/unfriend/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
-                                </form>`;
-                                    break;
-                                case 'incoming_pending':
-                                    buttonHtml = `
-                                <div class="response-wrapper" style="margin: 0;">
-                                    <form action="/accept_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-                                    </form>
-                                    <form action="/reject_request/${liker.request_id}" method="post">
-                                        <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-                                    </form>
-                                </div>`;
-                                    break;
-                                case 'outgoing_pending':
-                                    buttonHtml = `
-                                <form action="/cancel_request/${liker.id}" method="post">
-                                    <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
-                                </form>`;
-                                    break;
-                                case 'outgoing_rejected':
-                                case 'not_friends':
-                                    if (liker.verified) {
-                                        buttonHtml = `
-                                    <form action="/send_request/${liker.id}" method="post">
-                                        <button type="submit" class="follow-button-profile no-margin">Befriend</button>
-                                    </form>`;
-                                    } else {
-                                        buttonHtml = `
-                                    <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
-                                    }
-                                    break;
-                                default:
-                                    buttonHtml = '';
-                            }
-
-                            return `
-                        <div class="profile-follow-wrapper">
-                            <div class="profile-post-likes">
-                                <a href="/profile/${liker.id}" class="pfp-link">
-                                    <img src="${liker.profile_pic && liker.profile_pic !== 'pfp.jpg' ? `/profile_pics/${liker.profile_pic}` : '/static/pfp.jpg'}" class="pfp">
-                                </a>
-                                <div class="profile-name-date">
-                                    <a href="/profile/${liker.id}" class="username-link">
-                                        <div class="username">${liker.name}</div>
-                                    </a>
-                                    <div class="date">${dateStr}</div>
-                                </div>
-                            </div>
-                            ${buttonHtml}
-                        </div>`;
-                        }).join('');
-
-                        scrollableDiv.innerHTML = html;
-                    })
-                    .catch(err => {
-                        console.error("Comment like overlay error:", err);
-                        scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                    });
-            });
-        }
-
-
         const sections = Array.from(document.querySelectorAll('.nav-section'));
         let currentIndex = 0;
 
@@ -1391,15 +1292,9 @@
             });
 
             document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-                const suffix = overlay.id.replace('overlayCommentLikes-', '');
-                setupOverlay(
-                    `#overlayCommentLikes-${suffix}`,
-                    `openOverlayCommentLikes-${suffix}`,
-                    `closeOverlayCommentLikes-${suffix}`,
-                    true
-                );
+                const index = overlay.id.split('-')[1];
+                setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
             });
-
 
             document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
                 const index = overlay.id.split('-')[1];
@@ -1554,14 +1449,16 @@
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
-            <img src="${comment.profile_pic ? `/profile_pics/${comment.profile_pic}` : '/static/pfp.jpg'}" class="pfp">
+            <img src="/static/pfp.jpg" class="pfp">
         </a>
         <div class="profile-name-date">
             <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
             <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
         </div>
     </div>
-    <div class="more-frame-wrapper"></div>
+    <div class="more-frame-wrapper">
+        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+    </div>
 </div>
 <div class="comment-like-wrapper">
     <div class="comment">${comment.text}</div>
@@ -1574,22 +1471,22 @@
                 </div>
             </button>
         </form>
-        <div id="openOverlayCommentLikes-${comment.comment_id}" role="button" tabindex="0" style="cursor: pointer;">
-            <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-                <span class="like-number">${comment.like_count}</span>
-                <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
-            </div>
-        </div>
+<div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
+    <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+        <span class="like-number">${comment.like_count}</span>
+        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
+    </div>
+</div>
     </div>
 </div>
 
-<div class="overlayLikes" id="overlayCommentLikes-${comment.comment_id}">
+<div class="overlayLikes" id="overlayCommentLikes-0">
     <div class="overlay-content-likes">
         <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-${comment.comment_id}">close</span>
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-0">close</span>
         </button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-0" data-comment-id="${comment.comment_id}">
             <p class="loading-msg" style="display: none;">Loading likes...</p>
         </div>
     </div>
@@ -1597,46 +1494,7 @@
 <div class="line-comments"></div>
 `;
 
-
                                 commentList.prepend(newComment);
-                                console.log("📌 Adding event listener to new comment:", newComment);
-
-                                const likeBtn = newComment.querySelector(`[id^="openOverlayCommentLikes-"]`);
-                                if (likeBtn) {
-                                    console.log("🔗 Setting up overlay click handler for:", likeBtn.id);
-                                    setupCommentLikeOverlayButton(likeBtn); // ← this is Step 4
-                                }
-
-                                newComment.addEventListener('click', function (e) {
-                                    const likeCountEl = e.target.closest(`.like-count[data-comment-id]`);
-                                    if (likeCountEl) {
-                                        const commentId = likeCountEl.dataset.commentId;
-
-                                        const overlay = document.getElementById(`overlayCommentLikes-${commentId}`);
-                                        if (overlay) overlay.style.display = 'block';
-
-                                        const scrollDiv = document.getElementById(`scrollableDivCommentLikes-${commentId}`);
-                                        if (scrollDiv) {
-                                            scrollDiv.dataset.commentId = commentId;
-                                            scrollDiv.innerHTML = '<p class="loading-msg">Loading likes...</p>';
-                                        }
-
-                                        if (typeof fetchCommentLikers === 'function') {
-                                            fetchCommentLikers(commentId);
-                                        }
-                                    }
-
-                                    if (e.target.closest(`.overlay-close-symbol`)) {
-                                        const span = e.target.closest('.overlay-close-symbol');
-                                        const idMatch = span?.id?.match(/closeOverlayCommentLikes-(\d+)/);
-                                        if (idMatch) {
-                                            const commentId = idMatch[1];
-                                            const overlay = document.getElementById(`overlayCommentLikes-${commentId}`);
-                                            if (overlay) overlay.style.display = 'none';
-                                        }
-                                    }
-                                });
-
                                 input.value = '';
                             } else {
                                 console.error('Failed to post comment:', data);
@@ -1646,9 +1504,13 @@
                 });
             });
 
+
+
+
             // Setup comment like overlay data fetch
             document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
-                const scrollableDiv = likeBtn.closest('.comment-like-wrapper')?.nextElementSibling?.querySelector('.scrollable-div-likes');
+                const index = likeBtn.id.split('-')[1];
+                const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
                 const commentId = scrollableDiv?.dataset?.commentId;
 
                 likeBtn.addEventListener('click', () => {
