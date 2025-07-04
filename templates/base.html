@@ -1495,30 +1495,53 @@
 `;
 
                                 commentList.prepend(newComment);
+                                console.log("📌 Adding event listener to new comment:", newComment);
+
                                 newComment.addEventListener('click', function (e) {
+                                    console.log('🔍 Click detected inside newComment');
+
                                     const likeCountEl = e.target.closest('.like-count[data-comment-id]');
                                     if (likeCountEl) {
                                         const commentId = likeCountEl.dataset.commentId;
+                                        console.log('👍 Like count clicked for comment ID:', commentId);
 
                                         const overlay = document.getElementById('overlayCommentLikes-0');
-                                        if (overlay) overlay.style.display = 'block';
+                                        if (overlay) {
+                                            overlay.style.display = 'block';
+                                            console.log('📂 Overlay opened');
+                                        } else {
+                                            console.warn('⚠️ overlayCommentLikes-0 not found in DOM');
+                                        }
 
                                         const scrollDiv = document.getElementById('scrollableDivCommentLikes-0');
                                         if (scrollDiv) {
                                             scrollDiv.dataset.commentId = commentId;
                                             scrollDiv.innerHTML = '<p class="loading-msg">Loading likes...</p>';
+                                            console.log('📜 Scrollable div updated with comment ID:', commentId);
+                                        } else {
+                                            console.warn('⚠️ scrollableDivCommentLikes-0 not found');
                                         }
 
                                         if (typeof fetchCommentLikers === 'function') {
+                                            console.log('📡 Calling fetchCommentLikers with:', commentId);
                                             fetchCommentLikers(commentId);
+                                        } else {
+                                            console.warn('❌ fetchCommentLikers is not defined');
                                         }
                                     }
 
                                     if (e.target.closest('#closeOverlayCommentLikes-0')) {
+                                        console.log('❌ Close overlay button clicked');
                                         const overlay = document.getElementById('overlayCommentLikes-0');
-                                        if (overlay) overlay.style.display = 'none';
+                                        if (overlay) {
+                                            overlay.style.display = 'none';
+                                            console.log('🚪 Overlay closed');
+                                        } else {
+                                            console.warn('⚠️ overlayCommentLikes-0 not found when trying to close');
+                                        }
                                     }
                                 });
+
                                 input.value = '';
                             } else {
                                 console.error('Failed to post comment:', data);
