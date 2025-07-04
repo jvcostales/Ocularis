@@ -710,7 +710,16 @@ def feed():
             likes = cur.fetchall()
             likes_data[image_id] = likes
 
-        # Fetch likes for each comment
+        # ✅ Always define profile_pic_url before it's used anywhere
+        cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+        result = cur.fetchone()
+
+        if result and result[0] and result[0] != 'pfp.jpg':
+            profile_pic_url = url_for('profile_pics', filename=result[0])
+        else:
+            profile_pic_url = url_for('static', filename='pfp.jpg')
+
+        # ✅ Then handle likes for each comment
         comment_likes_data = {}
         for comment in comments:
             comment_id = comment[0]
@@ -723,15 +732,6 @@ def feed():
             """, (comment_id,))
             comment_likes = cur.fetchall()
             comment_likes_data[comment_id] = comment_likes
-
-            # New query to get current user's profile_pic
-            cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
-            result = cur.fetchone()
-
-            if result and result[0] and result[0] != 'pfp.jpg':
-                profile_pic_url = url_for('profile_pics', filename=result[0])
-            else:
-                profile_pic_url = url_for('static', filename='pfp.jpg')
 
         #setup_profile
         cur.execute("SELECT is_profile_complete FROM users WHERE id = %s", (current_user.id,))
