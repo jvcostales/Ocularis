@@ -69,7 +69,7 @@
 <div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+            <img src="{{ profile_pic_url }}"
                 class="pfp">
             <div class="profile-name-date">
                 <div class="username">
