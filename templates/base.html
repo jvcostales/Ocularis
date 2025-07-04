@@ -1495,6 +1495,12 @@
 `;
 
                                 commentList.prepend(newComment);
+
+                                const spacer = document.createElement('div');
+                                spacer.style.height = '16px';
+                                spacer.classList.add('comment-spacer-temp'); // Optional class for styling or cleanup
+                                commentList.prepend(spacer);
+
                                 input.value = '';
                             } else {
                                 console.error('Failed to post comment:', data);
