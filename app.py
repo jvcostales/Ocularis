@@ -818,7 +818,8 @@ def feed():
         verified=current_user.verified,
         today=today,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
 
 @app.route('/post/<int:image_id>')
@@ -925,6 +926,42 @@ def view_post(image_id):
             ORDER BY notifications.created_at DESC
         """, (current_user.id,))
         notifications = cur.fetchall()
+        
+                # Gather unique actor_ids
+        actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+        actor_details = {}
+
+            # Fetch full details for each actor_id
+        for actor_id in actor_ids:
+            cur.execute("""
+                SELECT first_name, last_name, role, city, state, country, 
+                    profile_pic, cover_photo, skills, preferences, experience_level,
+                    facebook, instagram, x, linkedin, telegram, email
+                FROM users WHERE id = %s
+            """, (actor_id,))
+            user = cur.fetchone()
+
+            if user:
+                actor_details[actor_id] = {
+                    "full_name": f"{user[0]} {user[1]}",
+                    "role": user[2],
+                    "city": user[3],
+                    "state": user[4],
+                    "country": user[5],
+                    "profile_pic": user[6],
+                    "cover_photo": user[7],
+                    "skills": user[8],               # PostgreSQL array
+                    "preferences": user[9],          # PostgreSQL array
+                    "experience_level": user[10],    # int (1–4)
+                    "facebook": user[11],
+                    "instagram": user[12],
+                    "x": user[13],
+                    "linkedin": user[14],
+                    "telegram": user[15],
+                    "email": user[16]
+                }
 
         # Fetch friend requests
         cur.execute("""
@@ -967,7 +1004,8 @@ def view_post(image_id):
         requests=requests,
         verified=current_user.verified,
         saved_image_ids=saved_image_ids,
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
 
 @app.route('/hide_post/<int:image_id>', methods=['POST'])
@@ -1623,6 +1661,42 @@ def profile(user_id):
         ORDER BY notifications.created_at DESC
     """, (current_user.id,))
     notifications = cur.fetchall()
+    
+    # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # Fetch friend requests
     cur.execute("""
@@ -1694,7 +1768,8 @@ def profile(user_id):
         saved_image_ids=saved_image_ids,
         profile_pic_url=profile_pic_url,
         viewed_user_profile_pic=viewed_user_profile_pic,
-        viewed_user_profile_cover=viewed_user_profile_cover
+        viewed_user_profile_cover=viewed_user_profile_cover,
+        actor_details=actor_details
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])
@@ -2062,6 +2137,42 @@ def pairup():
         ORDER BY notifications.created_at DESC
     """, (current_user.id,))
     notifications = cur.fetchall()
+    
+            # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # Fetch friend requests
     cur.execute("""
@@ -2110,7 +2221,8 @@ def pairup():
         profile_pic_url=profile_pic_url,
         match_locked=match_locked,
         browse_locked=browse_locked,
-        time_remaining=time_remaining
+        time_remaining=time_remaining,
+        actor_details=actor_details
     )
 
 @app.route('/match', methods=['POST'])
@@ -2169,6 +2281,42 @@ def match():
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
+    
+            # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # Fetch friend requests
     cur.execute("""
@@ -2245,7 +2393,7 @@ def match():
         user["role"] = details.get("role", "")
         users_list.append(user)
 
-    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -2425,6 +2573,42 @@ def browse_users():
         ORDER BY notifications.created_at DESC
     """, (current_user.id,))
     notifications = cur.fetchall()
+    
+            # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # Fetch friend requests
     cur.execute("""
@@ -2455,7 +2639,8 @@ def browse_users():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
         
 UPLOAD_FOLDER = '/var/data'
@@ -2758,7 +2943,42 @@ def saved():
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
+    
+            # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
 
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # 6. Friend requests
     cur.execute("""
@@ -2793,7 +3013,8 @@ def saved():
         requests=requests,
         verified=current_user.verified,
         comments_by_image=all_comments,  # just pass the original directly
-        profile_pic_url=profile_pic_url
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
     )
 
 @app.route('/save/<int:image_id>', methods=['POST'])
