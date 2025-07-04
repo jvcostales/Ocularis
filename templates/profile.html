@@ -86,8 +86,8 @@
 <div class="post1" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                class="pfp">
+            <a href="{{ url_for('profile', user_id=image[4]) }}"><img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                class="pfp"></a>
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">
