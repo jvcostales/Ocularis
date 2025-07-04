@@ -1471,20 +1471,22 @@
                 </div>
             </button>
         </form>
-<div id="openOverlayCommentLikes-${comment.comment_id}" role="button" tabindex="0" style="cursor: pointer;">
+<div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
     <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
         <span class="like-number">${comment.like_count}</span>
         <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
     </div>
 </div>
+    </div>
+</div>
 
-<div class="overlayLikes" id="overlayCommentLikes-${comment.comment_id}">
+<div class="overlayLikes" id="overlayCommentLikes-0">
     <div class="overlay-content-likes">
         <button class="close-icon">
-            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-${comment.comment_id}">close</span>
+            <span class="material-symbols-outlined overlay-close-symbol" id="closeOverlayCommentLikes-0">close</span>
         </button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-0" data-comment-id="${comment.comment_id}">
             <p class="loading-msg" style="display: none;">Loading likes...</p>
         </div>
     </div>
@@ -2063,26 +2065,6 @@
                     alert('Error performing action.');
                 });
         };
-document.addEventListener('click', function (e) {
-    const likeCountEl = e.target.closest('.like-count[data-comment-id]');
-    if (likeCountEl) {
-        const commentId = likeCountEl.dataset.commentId;
-        const overlay = document.getElementById(`overlayCommentLikes-${commentId}`);
-        if (overlay) {
-            overlay.style.display = 'block';
-        }
-    }
-
-    // Optional: handle overlay close
-    const closeBtn = e.target.closest('.overlay-close-symbol');
-    if (closeBtn && closeBtn.id.startsWith('closeOverlayCommentLikes-')) {
-        const commentId = closeBtn.id.split('-')[1];
-        const overlay = document.getElementById(`overlayCommentLikes-${commentId}`);
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
-    }
-});
 
 
     </script>
