@@ -1496,10 +1496,13 @@
 
                                 commentList.prepend(newComment);
 
+                                // Create a 16px spacer div
                                 const spacer = document.createElement('div');
                                 spacer.style.height = '16px';
-                                spacer.classList.add('comment-spacer-temp'); // Optional class for styling or cleanup
-                                commentList.prepend(spacer);
+                                spacer.classList.add('comment-spacer-temp');
+
+                                // Insert spacer directly after newComment
+                                newComment.insertAdjacentElement('afterend', spacer);
 
                                 input.value = '';
                             } else {
