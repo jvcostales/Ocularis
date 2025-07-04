@@ -868,8 +868,7 @@
                             <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
                             <div class="partner-label-back">Back</div>
                         </div>
-                        <button onclick="document.getElementById('matchModal').style.display='none'"
-                            class="next-button">Done</button>
+                        <button onclick="closeMatchModal()" class="next-button">Done</button>
                     </div>
                 </div>
             </div>
@@ -1497,12 +1496,14 @@
                         document.getElementById('matchModal').style.display = 'flex';
                     }
 
-                    function closeMatchModal() {
-                        document.getElementById('matchModal').style.display = 'none';
+                    window.closeMatchModal = function () {
+                        const modal = document.getElementById('matchModal');
+                        if (modal) modal.style.display = 'none';
+
                         document.body.classList.remove('no-scrolling');
                         document.body.style.top = '';
                         window.scrollTo(0, matchScrollPosition);
-                    }
+                    };
 
                     // Setup overlays
                     setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
