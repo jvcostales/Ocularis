@@ -1344,7 +1344,7 @@ def get_comment_likes(comment_id):
         likes = cur.fetchall()
 
         likers = []
-        for liker_id, display_name, created_at, verified in likes:
+        for liker_id, display_name, created_at, verified, profile_pic in likes:
             if liker_id == current_user_id:
                 relationship = 'self'
                 request_id = None
@@ -1398,7 +1398,8 @@ def get_comment_likes(comment_id):
                 'timestamp': created_at.isoformat(),
                 'relationship': relationship,
                 'request_id': request_id,
-                'verified': verified
+                'verified': verified,
+                'profile_pic': profile_pic
             })
 
     except Exception as e:
