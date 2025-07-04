@@ -811,15 +811,18 @@ def view_post(image_id):
         # Fetch a single image by image_id
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
-                   COALESCE(like_count, 0), images.id, users.first_name, users.last_name, images.created_at
+                COALESCE(like_count, 0), images.id, author.first_name, author.last_name, images.created_at,
+                collaborator.id, collaborator.first_name, collaborator.last_name,
+                author.profile_pic, collaborator.profile_pic
             FROM images 
-            JOIN users ON images.id = users.id
+            JOIN users AS author ON images.id = author.id
             LEFT JOIN (
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
                 GROUP BY image_id
             ) AS likes 
             ON images.image_id = likes.image_id
+            LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
             WHERE images.image_id = %s
         """, (image_id,))
         image = cur.fetchone()
@@ -2638,7 +2641,9 @@ def saved():
             images.created_at,                          -- image[7] (for date formatting)
             collaborator.id AS collaborator_id,         -- image[8]
             collaborator.first_name,                    -- image[9]
-            collaborator.last_name                      -- image[10]
+            collaborator.last_name,                      -- image[10]
+            author.profile_pic,
+            collaborator.profile_pic
         FROM saved_posts
         JOIN images ON saved_posts.image_id = images.image_id
         JOIN users AS author ON images.id = author.id

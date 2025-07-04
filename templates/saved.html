@@ -2,10 +2,10 @@
 {% block content %}
 
 {% for image in saved_posts %}
-<div class="post1" id="image-{{ image[0] }}" {% if loop.first %}style="margin-top: 0;" {% endif %}>
+<div class="post1" id="image-{{ image[0] }}" {% if loop.first %}style="margin-top: 0;" {% endif %}> <!--wrong margin-->
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <img src="..\static\pfp.jpg" class="pfp">
+            <img src="{{ url_for('profile_pics', filename=image[11]) if image[11] and image[11] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}" class="pfp">
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">
