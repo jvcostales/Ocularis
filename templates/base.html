@@ -1386,7 +1386,7 @@
                                     <div class="profile-follow-wrapper">
                                         <div class="profile-post-likes">
                                             <a href="/profile/${liker.id}" class="pfp-link">
-                                                <img src="${liker.profile_pic ? `/profile_pics/${liker.profile_pic}` : '/static/pfp.jpg'}" class="pfp">
+                                                <img src="${liker.profile_pic && liker.profile_pic !== 'pfp.jpg' ? `/profile_pics/${liker.profile_pic}` : '/static/pfp.jpg'}" class="pfp">
                                             </a>
                                             <div class="profile-name-date">
                                                 <a href="/profile/${liker.id}" class="username-link">
