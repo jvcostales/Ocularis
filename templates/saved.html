@@ -2,7 +2,7 @@
 {% block content %}
 
 {% for image in saved_posts %}
-<div class="post1" id="image-{{ image[0] }}">
+<div class="post1" id="image-{{ image[0] }}" {% if loop.first %}style="margin-top: 0;" {% endif %}>
     <div class="profile-more-wrapper">
         <div class="profile-post">
             <img src="..\static\pfp.jpg" class="pfp">
