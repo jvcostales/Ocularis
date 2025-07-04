@@ -1449,7 +1449,9 @@
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
-            <img src="/static/pfp.jpg" class="pfp">
+            <img src="${comment.profile_pic && comment.profile_pic !== 'pfp.jpg' 
+    ? `/profile_pics/${comment.profile_pic}` 
+    : '/static/pfp.jpg'}" class="pfp">
         </a>
         <div class="profile-name-date">
             <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
