@@ -799,6 +799,13 @@ def view_post(image_id):
         port=5432
     )
     cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT first_name, last_name, role, city, state, country, profile_pic 
+        FROM users 
+        WHERE id = %s
+    """, (current_user.id,))
+    user = cur.fetchone()
 
     try:
         # Fetch a single image by image_id
@@ -912,6 +919,7 @@ def view_post(image_id):
 
     return render_template(
         'post.html',
+        user=user,
         image=image,
         comments=comments,
         likes_data=likes_data,
