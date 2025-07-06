@@ -8,6 +8,20 @@
             height: 100vh;
         }
 
+        #signup-btn:disabled {
+            background-color: #DDDEDF;
+            color: #A8AAB5;
+            cursor: not-allowed;
+            pointer-events: none;
+            /* Prevent hover or click events */
+        }
+
+        /* Optional: prevent hover effects from activating when disabled */
+        #signup-btn:disabled:hover {
+            background-color: #DDDEDF;
+            color: #A8AAB5;
+        }
+
         .main-container {
             display: flex;
             flex-direction: row;
