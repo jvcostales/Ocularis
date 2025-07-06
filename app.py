@@ -17,6 +17,7 @@ from urllib.parse import urlparse, urljoin
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -367,11 +368,18 @@ def is_safe_url(target):
     return (test_url.scheme in ('http', 'https') and
             ref_url.netloc == test_url.netloc)
 
+def is_safe_url(target):
+    # Helper to prevent open redirects
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        remember = 'remember' in request.form  # 🔁 Check if "Remember me" is checked
 
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -388,12 +396,9 @@ def login():
 
         if user and check_password_hash(user[4], password):  # password is at index 4
             user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
-            login_user(user_obj)
+            login_user(user_obj, remember=remember)  # ✅ Enable "remember me" session
 
-            # ⬅️ Get the `next` parameter from the URL (e.g., /login?next=/search)
             next_page = request.args.get('next')
-
-            # ✅ Safely redirect to next page or default to 'feed'
             if next_page and is_safe_url(next_page):
                 return redirect(next_page)
             else:
