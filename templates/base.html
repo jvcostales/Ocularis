@@ -1075,31 +1075,32 @@
 
                 document.addEventListener('DOMContentLoaded', function () {
 
-                    document.getElementById('reportForm').addEventListener('submit', function (e) {
-                        e.preventDefault();
+                    const reportForm = document.getElementById('reportForm');
+                    if (reportForm) {
+                        reportForm.addEventListener('submit', function (e) {
+                            e.preventDefault();
 
-                        const formData = new FormData(this);
+                            const formData = new FormData(reportForm);
 
-                        fetch('/report', {
-                            method: 'POST',
-                            body: formData,
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    const imageId = formData.get('image_id');
-                                    const post = document.querySelector(`#image-${imageId}`);
-                                    if (post) post.remove();
-                                    closeReportModal();
-                                } else {
-                                    alert(data.message || "Something went wrong.");
-                                }
+                            fetch('/report', {
+                                method: 'POST',
+                                body: formData
                             })
-                            .catch(err => {
-                                console.error('AJAX error:', err);
-                                alert("Server error.");
-                            });
-                    });
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        document.getElementById(`image-${formData.get('image_id')}`).remove();
+                                        closeReportModal();
+                                    } else {
+                                        alert('Error submitting report.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    alert('An error occurred.');
+                                });
+                        });
+                    }
 
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
