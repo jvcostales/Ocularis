@@ -3308,36 +3308,36 @@ def search_results():
 @login_required
 def report():
     image_id = request.form.get('image_id')
-    reasons = request.form.getlist('reason')  # Checkboxes will pass this as a list
+    reasons = request.form.getlist('reason')
 
     if not image_id or not reasons:
-        return "<script>alert('Please select at least one reason.'); window.history.back();</script>"
+        return jsonify({'status': 'error', 'message': 'Select at least one reason.'}), 400
 
     try:
-        conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-            port=5432
-        )
+        conn = psycopg2.connect(...)
         cur = conn.cursor()
 
+        # Insert into reports
         cur.execute("""
             INSERT INTO reports (image_id, user_id, reasons, timestamp)
             VALUES (%s, %s, %s, NOW())
         """, (image_id, current_user.id, ', '.join(reasons)))
 
+        # Insert into hidden_posts
+        cur.execute("""
+            INSERT INTO hidden_posts (user_id, image_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING
+        """, (current_user.id, image_id))
+
         conn.commit()
-        return "<script>alert('Report submitted successfully.'); window.location.href = document.referrer;</script>"
+        return jsonify({'status': 'success', 'message': 'Reported and hidden'})
     except Exception as e:
-        app.logger.error(f"Report error: {e}")
-        return "<script>alert('An error occurred while submitting the report.'); window.history.back();</script>"
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
-        if 'cur' in locals():
-            cur.close()
-        if 'conn' in locals():
-            conn.close()
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

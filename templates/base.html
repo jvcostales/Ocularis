@@ -1074,6 +1074,34 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
+
+                    const reportForm = document.getElementById('reportForm');
+                    reportForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const formData = new FormData(reportForm);
+                        const imageId = formData.get('image_id');
+
+                        fetch('/report', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    closeReportModal();
+                                    alert('Report submitted and post hidden.');
+                                    const postElement = document.getElementById('image-' + imageId);
+                                    if (postElement) postElement.style.display = 'none';
+                                } else {
+                                    alert(data.message || 'An error occurred.');
+                                }
+                            })
+                            .catch(() => {
+                                alert('Failed to report. Please try again.');
+                            });
+                    });
+
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
                         document.getElementById(`match-step-${step}`).style.display = 'block';
