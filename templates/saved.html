@@ -30,9 +30,11 @@
             <a href="#" class="save-button saved" data-image-id="{{ image[0] }}">
                 Unsave
             </a>
-            <div class="report" {% if current_user.id==image[4] or current_user.id==image[8]
-                %}style="padding-bottom: 8px;" {% endif %}>
-                Report</div>
+            {% if current_user.id != image[4] and current_user.id != image[8] %}
+            <div class="report" onclick="openReportModal({{ image[0] }})">
+                Report
+            </div>
+            {% endif %}
             {% if current_user.id == image[4] or current_user.id == image[8] %}
             <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
             {% endif %}
