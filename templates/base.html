@@ -878,21 +878,25 @@
 
             <script>
 
-                window.openReportModal = function (imageId) {
-                    const modal = document.getElementById('reportModal');
-                    document.getElementById('reportImageId').value = imageId;
-                    document.body.style.top = `-${window.scrollY}px`;
-                    document.body.classList.add('no-scrolling');
-                    modal.style.display = 'flex';
-                };
+                let reportScrollPosition = 0;
 
-                window.closeReportModal = function () {
+                function openReportModal(imageId) {
+                    reportScrollPosition = window.scrollY;
+                    document.body.style.top = `-${reportScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+
+                    document.getElementById('reportImageId').value = imageId;
+                    document.getElementById('reportModal').style.display = 'flex';
+                }
+
+                function closeReportModal() {
                     const modal = document.getElementById('reportModal');
                     if (modal) modal.style.display = 'none';
+
                     document.body.classList.remove('no-scrolling');
                     document.body.style.top = '';
-                    window.scrollTo(0, parseInt(document.body.style.top || '0') * -1);
-                };
+                    window.scrollTo(0, reportScrollPosition);
+                }
 
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
                 let currentIndex = 0;

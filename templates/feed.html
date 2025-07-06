@@ -108,6 +108,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeReportModal()">×</span>
+            <h3>Report Image</h3>
+            <form id="reportForm">
+                <input type="hidden" name="image_id" id="reportImageId">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="reason" value="Inappropriate content"> Inappropriate
+                        content</label><br>
+                    <label><input type="checkbox" name="reason" value="Spam or misleading"> Spam or
+                        misleading</label><br>
+                    <label><input type="checkbox" name="reason" value="Hate speech or abuse"> Hate speech or
+                        abuse</label><br>
+                    <label><input type="checkbox" name="reason" value="Copyright infringement"> Copyright
+                        infringement</label><br>
+                    <label><input type="checkbox" name="reason" value="Other"> Other</label>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
     <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
         {{ image[2] }}
     </div>
