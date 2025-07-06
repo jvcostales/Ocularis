@@ -276,11 +276,13 @@ def signup():
         email = request.form.get('email')
         raw_password = request.form.get('password')
 
-        # Basic validation
         if not first_name or not last_name or not email or not raw_password:
-            return "All fields are required."
+            flash("All fields are required.")
+            return redirect(url_for('signup'))
+
         if len(raw_password) < 6:
-            return "Password must be at least 6 characters long."
+            flash("Password must be at least 6 characters long.")
+            return redirect(url_for('signup'))
 
         password = generate_password_hash(raw_password)
         token = secrets.token_urlsafe(32)
@@ -297,12 +299,11 @@ def signup():
             )
             cur = conn.cursor()
 
-            # Check if email already exists
             cur.execute("SELECT 1 FROM users WHERE email = %s", (email,))
             if cur.fetchone():
-                return "Email already exists."
+                flash("Email already exists.")
+                return redirect(url_for('signup'))
 
-            # Insert user with default profile pic and cover photo
             cur.execute("""
                 INSERT INTO users (first_name, last_name, email, password, verification_token, verified, profile_pic, cover_photo)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -312,13 +313,13 @@ def signup():
             user_id = cur.fetchone()[0]
             conn.commit()
 
-            # Send verification email
             send_verification_email(email, token)
-
-            return "Check your email to verify your account."
+            flash("Check your email to verify your account.")
+            return redirect(url_for('login'))  # Redirect to login after successful signup
         except Exception as e:
             app.logger.error(f"Signup error: {e}")
-            return "An error occurred. Please try again."
+            flash("An error occurred. Please try again.")
+            return redirect(url_for('signup'))
         finally:
             if 'cur' in locals():
                 cur.close()
