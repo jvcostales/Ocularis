@@ -210,11 +210,13 @@ CREATE TABLE IF NOT EXISTS hidden_posts (
 
 cur.execute("""
 CREATE TABLE IF NOT EXISTS reports (
-    id SERIAL PRIMARY KEY,
-    image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    reasons TEXT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    report_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    image_id INT NOT NULL,
+    reason TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
 );
 """)
 
