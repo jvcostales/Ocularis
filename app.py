@@ -376,6 +376,9 @@ def is_safe_url(target):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('feed'))  # or any page you want
+    
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
