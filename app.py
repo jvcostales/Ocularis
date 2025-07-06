@@ -208,6 +208,16 @@ CREATE TABLE IF NOT EXISTS hidden_posts (
 );
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS reports (
+    id SERIAL PRIMARY KEY,
+    image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    reasons TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -3291,7 +3301,41 @@ def search_results():
     finally:
         cur.close()
         conn.close()
+        
+@app.route('/report', methods=['POST'])
+@login_required
+def report():
+    image_id = request.form.get('image_id')
+    reasons = request.form.getlist('reason')  # Checkboxes will pass this as a list
 
+    if not image_id or not reasons:
+        return "<script>alert('Please select at least one reason.'); window.history.back();</script>"
+
+    try:
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+            dbname="ocularis_db",
+            user="ocularis_db_user",
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            port=5432
+        )
+        cur = conn.cursor()
+
+        cur.execute("""
+            INSERT INTO reports (image_id, user_id, reasons, timestamp)
+            VALUES (%s, %s, %s, NOW())
+        """, (image_id, current_user.id, ', '.join(reasons)))
+
+        conn.commit()
+        return "<script>alert('Report submitted successfully.'); window.location.href = document.referrer;</script>"
+    except Exception as e:
+        app.logger.error(f"Report error: {e}")
+        return "<script>alert('An error occurred while submitting the report.'); window.history.back();</script>"
+    finally:
+        if 'cur' in locals():
+            cur.close()
+        if 'conn' in locals():
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

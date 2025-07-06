@@ -69,8 +69,9 @@
 <div class="post1" data-image-id="{{ image[0] }}" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <a href="{{ url_for('profile', user_id=image[4]) }}"><img src="{{ url_for('profile_pics', filename=image[11]) if image[11] and image[11] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                class="pfp"></a>
+            <a href="{{ url_for('profile', user_id=image[4]) }}"><img
+                    src="{{ url_for('profile_pics', filename=image[11]) if image[11] and image[11] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                    class="pfp"></a>
             <div class="profile-name-date">
                 <div class="username">
                     <a href="{{ url_for('profile', user_id=image[4]) }}">
@@ -98,7 +99,9 @@
                     {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
                 </a>
                 <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
-                <div class="report">Report</div>
+                <div class="report" onclick="openReportModal({{ image[0] }})" {% if current_user.id==image[4] or
+                    current_user.id==image[8] %}style="padding-bottom: 8px;" {% endif %}>
+                    Report</div>
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
                 <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
                 {% endif %}
