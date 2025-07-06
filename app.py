@@ -3329,7 +3329,7 @@ def report():
 
         # Ensure correct table/columns
         cur.execute("""
-            INSERT INTO reports (image_id, user_id, reasons, timestamp)
+            INSERT INTO reports (image_id, user_id, reason, timestamp)
             VALUES (%s, %s, %s, NOW())
         """, (image_id, current_user.id, ', '.join(reasons)))
 
