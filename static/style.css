@@ -953,7 +953,7 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .hide, .report {
+    .hide {
         padding: 8px 0;
     }
 
@@ -3050,7 +3050,7 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .hide, .report {
+    .hide {
         padding: 8px 0;
     }
 
@@ -5327,7 +5327,7 @@ input[type="url"]::placeholder {
         font-weight: 500;
     }
 
-    .hide, .report {
+    .hide {
         padding: 8px 0;
     }
 
