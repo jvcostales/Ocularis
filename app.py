@@ -3314,18 +3314,20 @@ def report():
         return jsonify({'status': 'error', 'message': 'Select at least one reason.'}), 400
 
     try:
-        conn = psycopg2.connect(...)
+        print("Image ID:", image_id)
+        print("User ID:", current_user.id)
+        print("Reasons:", reasons)
+
+        conn = psycopg2.connect(...)  # use your actual credentials
         cur = conn.cursor()
 
-        print(f"Reporting image_id={image_id}, user_id={current_user.id}, reasons={reasons}")
-
-        # Insert into reports
+        # Ensure correct table/columns
         cur.execute("""
             INSERT INTO reports (image_id, user_id, reasons, timestamp)
             VALUES (%s, %s, %s, NOW())
         """, (image_id, current_user.id, ', '.join(reasons)))
 
-        # Insert into hidden_posts
+        # Also hide the post after reporting
         cur.execute("""
             INSERT INTO hidden_posts (user_id, image_id)
             VALUES (%s, %s)
@@ -3333,11 +3335,10 @@ def report():
         """, (current_user.id, image_id))
 
         conn.commit()
-        return jsonify({'status': 'success', 'message': 'Reported and hidden'})
-    
+        return jsonify({'status': 'success', 'message': 'Report submitted and post hidden.'})
+
     except Exception as e:
-        print(f"Report error: {e}")  # Add this
-        conn.rollback()
+        print("Error during report:", e)
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
         if 'cur' in locals(): cur.close()

@@ -898,6 +898,34 @@
                     window.scrollTo(0, reportScrollPosition);
                 }
 
+
+                document.getElementById('reportForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+
+                    fetch('/report', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const imageId = formData.get('image_id');
+                                const post = document.querySelector(`#image-${imageId}`);
+                                if (post) post.remove();
+                                closeReportModal();
+                            } else {
+                                alert(data.message || "Something went wrong.");
+                            }
+                        })
+                        .catch(err => {
+                            console.error('AJAX error:', err);
+                            alert("Server error.");
+                        });
+                });
+
+
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
                 let currentIndex = 0;
 
@@ -1074,33 +1102,6 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-
-                    const reportForm = document.getElementById('reportForm');
-                    reportForm.addEventListener('submit', function (e) {
-                        e.preventDefault();
-
-                        const formData = new FormData(reportForm);
-                        const imageId = formData.get('image_id');
-
-                        fetch('/report', {
-                            method: 'POST',
-                            body: formData
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    closeReportModal();
-                                    alert('Report submitted and post hidden.');
-                                    const postElement = document.getElementById('image-' + imageId);
-                                    if (postElement) postElement.style.display = 'none';
-                                } else {
-                                    alert(data.message || 'An error occurred.');
-                                }
-                            })
-                            .catch(() => {
-                                alert('Failed to report. Please try again.');
-                            });
-                    });
 
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
