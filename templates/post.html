@@ -4,69 +4,74 @@
 <div class="post1" id="image-{{ image[0] }}" style="margin-bottom: 16px; margin-top: 0;">
     <div class="profile-more-wrapper">
         <div class="profile-post">
-            <a href="{{ url_for('profile', user_id=image[4]) }}"><img src="{{ url_for('profile_pics', filename=image[11]) if image[11] and image[11] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}" class="pfp">
-            <div class="profile-name-date"></a>
-                <div class="username">
-                    <a href="{{ url_for('profile', user_id=image[4]) }}">
-                        {{ image[5] }} {{ image[6] }}
-                    </a>
-                    {% if image[8] %}
-                    and
-                    <a href="{{ url_for('profile', user_id=image[8]) }}">
-                        {{ image[9] }} {{ image[10] }}
-                    </a>
-                    {% endif %}
-                </div>
-                <div class="date">Jan 1</div> <!-- Optional: replace with dynamic date -->
-            </div>
-        </div>
-        <div class="more-frame-wrapper">
-            <span class="material-symbols-outlined more-symbol" id="moreBtn-1">more_horiz</span>
-            <div class="frame1" id="frame1-1">
-                <a href="#" class="save-button {% if image[0] in saved_image_ids %}saved{% endif %}"
-                    data-image-id="{{ image[0] }}">
-                    {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
+            <a href="{{ url_for('profile', user_id=image[4]) }}"><img
+                    src="{{ url_for('profile_pics', filename=image[11]) if image[11] and image[11] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                    class="pfp">
+                <div class="profile-name-date">
+            </a>
+            <div class="username">
+                <a href="{{ url_for('profile', user_id=image[4]) }}">
+                    {{ image[5] }} {{ image[6] }}
                 </a>
-                <div class="hide">Hide</div>
-                <div class="report">Report</div>
-                {% if current_user.id == image[4] or current_user.id == image[8] %}
-                <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+                {% if image[8] %}
+                and
+                <a href="{{ url_for('profile', user_id=image[8]) }}">
+                    {{ image[9] }} {{ image[10] }}
+                </a>
                 {% endif %}
             </div>
+            <div class="date">{{ image[7].strftime('%b') }} {{ image[7].day }}</div>
         </div>
     </div>
-    <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
-        {{ image[2] }}
-    </div>
-    <div class="image-container">
-        <img src="{{ image[1] }}" class="image-post">
-    </div>
-    <div class="interactions">
-        <div class="lcs">
-            <form class="like-form" data-image-id="{{ image[0] }}">
-                <button type="submit" style="all: unset;">
-                    <div class="partner like-button" id="like-button-{{ image[0] }}">
-                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                        <div class="partner-label">Like</div>
-                    </div>
-                </button>
-            </form>
-            <div class="partner" id="openOverlayComments-1">
-                <span class="material-symbols-outlined lcs-symbol">comment</span>
-                <div class="partner-label">Comment</div>
-            </div>
-            <div class="partner" id="openOverlayShare-1">
-                <span class="material-symbols-outlined lcs-symbol">share</span>
-                <div class="partner-label">Share</div>
-            </div>
-        </div>
-        <div id="openOverlayLikes-1" role="button" tabindex="0" style="cursor: pointer;">
-            <div class="metrics like-count" id="like-count-{{ image[0] }}" data-image-id="{{ image[0] }}">
-                <span class="like-number">{{ image[3] }}</span>
-                <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
-            </div>
+    <div class="more-frame-wrapper">
+        <span class="material-symbols-outlined more-symbol" id="moreBtn-1">more_horiz</span>
+        <div class="frame1" id="frame1-1">
+            <a href="#" class="save-button {% if image[0] in saved_image_ids %}saved{% endif %}"
+                data-image-id="{{ image[0] }}">
+                {% if image[0] in saved_image_ids %}Unsave{% else %}Save{% endif %}
+            </a>
+            <div class="hide">Hide</div>
+            <div class="report" {% if current_user.id==image[4] or current_user.id==image[8]
+                %}style="padding-bottom: 8px;" {% endif %}>
+                Report</div>
+            {% if current_user.id == image[4] or current_user.id == image[8] %}
+            <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+            {% endif %}
         </div>
     </div>
+</div>
+<div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
+    {{ image[2] }}
+</div>
+<div class="image-container">
+    <img src="{{ image[1] }}" class="image-post">
+</div>
+<div class="interactions">
+    <div class="lcs">
+        <form class="like-form" data-image-id="{{ image[0] }}">
+            <button type="submit" style="all: unset;">
+                <div class="partner like-button" id="like-button-{{ image[0] }}">
+                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
+                    <div class="partner-label">Like</div>
+                </div>
+            </button>
+        </form>
+        <div class="partner" id="openOverlayComments-1">
+            <span class="material-symbols-outlined lcs-symbol">comment</span>
+            <div class="partner-label">Comment</div>
+        </div>
+        <div class="partner" id="openOverlayShare-1">
+            <span class="material-symbols-outlined lcs-symbol">share</span>
+            <div class="partner-label">Share</div>
+        </div>
+    </div>
+    <div id="openOverlayLikes-1" role="button" tabindex="0" style="cursor: pointer;">
+        <div class="metrics like-count" id="like-count-{{ image[0] }}" data-image-id="{{ image[0] }}">
+            <span class="like-number">{{ image[3] }}</span>
+            <span class="like-text">{{ 'Like' if image[3] == 1 else 'Likes' }}</span>
+        </div>
+    </div>
+</div>
 </div>
 <div class="overlayLikes" id="overlayLikes-1">
     <div class="overlay-content-likes">
