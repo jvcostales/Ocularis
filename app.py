@@ -3318,7 +3318,13 @@ def report():
         print("User ID:", current_user.id)
         print("Reasons:", reasons)
 
-        conn = psycopg2.connect(...)  # use your actual credentials
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+            dbname="ocularis_db", 
+            user="ocularis_db_user", 
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+            port=5432
+        )
         cur = conn.cursor()
 
         # Ensure correct table/columns
