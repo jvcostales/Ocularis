@@ -878,6 +878,22 @@
 
             <script>
 
+                window.openReportModal = function (imageId) {
+                    const modal = document.getElementById('reportModal');
+                    document.getElementById('reportImageId').value = imageId;
+                    document.body.style.top = `-${window.scrollY}px`;
+                    document.body.classList.add('no-scrolling');
+                    modal.style.display = 'flex';
+                };
+
+                window.closeReportModal = function () {
+                    const modal = document.getElementById('reportModal');
+                    if (modal) modal.style.display = 'none';
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, parseInt(document.body.style.top || '0') * -1);
+                };
+
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
                 let currentIndex = 0;
 
@@ -1052,24 +1068,6 @@
                         document.body.classList.remove("no-scroll-view");
                     }
                 }
-
-                let matchScrollPosition = 0;
-
-                function openMatchModal() {
-                    matchScrollPosition = window.scrollY;
-                    document.body.style.top = `-${matchScrollPosition}px`;
-                    document.body.classList.add('no-scrolling');
-                    document.getElementById('matchModal').style.display = 'flex';
-                }
-
-                window.closeMatchModal = function () {
-                    const modal = document.getElementById('matchModal');
-                    if (modal) modal.style.display = 'none';
-
-                    document.body.classList.remove('no-scrolling');
-                    document.body.style.top = '';
-                    window.scrollTo(0, matchScrollPosition);
-                };
 
                 document.addEventListener('DOMContentLoaded', function () {
                     function showMatchStep(step) {
