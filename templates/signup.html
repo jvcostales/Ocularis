@@ -75,11 +75,11 @@
 
 
                     <label class="checkbox-group">
-                        <input type="checkbox" />
+                        <input type="checkbox" id="accept-policy" />
                         I accept the&nbsp;<div class="underline"><a href="#">privacy policy</a></div>
                     </label>
 
-                    <button class="signup-btn" type="submit">Sign Up</button>
+                    <button class="signup-btn" type="submit" id="signup-btn" disabled>Sign Up</button>
 
                     <div class="login-link">
                         Already have an account? <a href="{{ url_for('login') }}">Login.</a>
@@ -89,6 +89,18 @@
         </div>
         <div class="image-container"></div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkbox = document.getElementById('accept-policy');
+            const signupBtn = document.getElementById('signup-btn');
+
+            checkbox.addEventListener('change', () => {
+                signupBtn.disabled = !checkbox.checked;
+            });
+        });
+    </script>
+
 </body>
 
 </html>
