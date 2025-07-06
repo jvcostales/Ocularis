@@ -1054,16 +1054,6 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-
-                    const passwordInput = document.getElementById('password');
-                    const toggleEye = document.getElementById('toggle-password');
-
-                    toggleEye.addEventListener('click', function () {
-                        const isPassword = passwordInput.type === 'password';
-                        passwordInput.type = isPassword ? 'text' : 'password';
-                        toggleEye.textContent = isPassword ? 'visibility_off' : 'visibility';
-                    });
-
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
                         document.getElementById(`match-step-${step}`).style.display = 'block';
