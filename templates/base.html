@@ -1055,15 +1055,17 @@
 
                 document.addEventListener('DOMContentLoaded', function () {
 
-                    document.querySelectorAll('.toggle-eye').forEach(toggle => {
-                        toggle.addEventListener('click', () => {
-                            const input = toggle.parentElement.querySelector('input');
-                            const isPassword = input.type === 'password';
-                            input.type = isPassword ? 'text' : 'password';
-                            toggle.textContent = isPassword ? 'visibility_off' : 'visibility';
+                    const toggleEye = document.querySelector('.toggle-eye');
+                    const passwordInput = document.querySelector('input[name="password"]');
+
+                    if (toggleEye && passwordInput) {
+                        toggleEye.addEventListener('click', () => {
+                            const isPassword = passwordInput.type === 'password';
+                            passwordInput.type = isPassword ? 'text' : 'password';
+                            toggleEye.textContent = isPassword ? 'visibility_off' : 'visibility';
                         });
-                    });
-                    
+                    }
+
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
                         document.getElementById(`match-step-${step}`).style.display = 'block';
