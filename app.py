@@ -378,37 +378,42 @@ def is_safe_url(target):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('feed'))  # or any page you want
-    
+        return redirect(url_for('feed'))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        remember = 'remember' in request.form  # 🔁 Check if "Remember me" is checked
+        remember = 'remember' in request.form
 
-        conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
-            port=5432
-        )
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
+        try:
+            conn = psycopg2.connect(
+                host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+                dbname="ocularis_db",
+                user="ocularis_db_user",
+                password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+                port=5432
+            )
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            user = cur.fetchone()
+            cur.close()
+            conn.close()
 
-        if user and check_password_hash(user[4], password):  # password is at index 4
-            user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
-            login_user(user_obj, remember=remember)  # ✅ Enable "remember me" session
+            if user and check_password_hash(user[4], password):
+                user_obj = User(id=user[0], first_name=user[1], last_name=user[2], email=user[3], password=user[4])
+                login_user(user_obj, remember=remember)
 
-            next_page = request.args.get('next')
-            if next_page and is_safe_url(next_page):
-                return redirect(next_page)
-            else:
+                next_page = request.args.get('next')
+                if next_page and is_safe_url(next_page):
+                    return redirect(next_page)
                 return redirect(url_for('feed'))
-        else:
-            return 'Invalid email or password'
+            else:
+                flash("Invalid email or password.")
+                return redirect(url_for('login'))
+
+        except Exception as e:
+            flash("An error occurred. Please try again.")
+            return redirect(url_for('login'))
 
     return render_template('login.html')
 
