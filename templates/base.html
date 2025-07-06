@@ -1053,6 +1053,24 @@
                     }
                 }
 
+                let matchScrollPosition = 0;
+
+                function openMatchModal() {
+                    matchScrollPosition = window.scrollY;
+                    document.body.style.top = `-${matchScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                    document.getElementById('matchModal').style.display = 'flex';
+                }
+
+                window.closeMatchModal = function () {
+                    const modal = document.getElementById('matchModal');
+                    if (modal) modal.style.display = 'none';
+
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, matchScrollPosition);
+                };
+
                 document.addEventListener('DOMContentLoaded', function () {
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
@@ -1486,24 +1504,6 @@
                             }
                         });
                     }
-
-                    let matchScrollPosition = 0;
-
-                    function openMatchModal() {
-                        matchScrollPosition = window.scrollY;
-                        document.body.style.top = `-${matchScrollPosition}px`;
-                        document.body.classList.add('no-scrolling');
-                        document.getElementById('matchModal').style.display = 'flex';
-                    }
-
-                    window.closeMatchModal = function () {
-                        const modal = document.getElementById('matchModal');
-                        if (modal) modal.style.display = 'none';
-
-                        document.body.classList.remove('no-scrolling');
-                        document.body.style.top = '';
-                        window.scrollTo(0, matchScrollPosition);
-                    };
 
                     // Setup overlays
                     setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
