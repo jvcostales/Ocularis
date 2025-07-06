@@ -36,7 +36,7 @@
             </div>
             {% endif %}
             {% if current_user.id == image[4] or current_user.id == image[8] %}
-            <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+            <div class="delete" style="padding-top: 8px;" onclick="deleteImage({{ image[0] }})">Delete</div>
             {% endif %}
         </div>
     </div>

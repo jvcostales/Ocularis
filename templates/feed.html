@@ -111,42 +111,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="reportModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <!-- Step 1 -->
-            <div class="modal-step" id="report-step-1">
-                <button class="close-icon" onclick="closeReportModal()" class="btn-cancel">
-                    <span class="material-symbols-outlined overlay-close-symbol">close</span>
-                </button>
-                <div class="overlay-title">Report Image</div>
-                <div class="padding-match">
-                    <form id="reportForm">
-                        <input type="hidden" name="image_id" id="reportImageId">
-                        <div class="info-sandp">
-                            <div class="info-title-match">Reason</div>
-                            <div class="info-content-match checkbox-group">
-                                <label><input type="checkbox" name="reason" value="Inappropriate content"> Inappropriate
-                                    content</label>
-                                <label><input type="checkbox" name="reason" value="Spam or misleading"> Spam or
-                                    misleading</label>
-                                <label><input type="checkbox" name="reason" value="Hate speech or abuse"> Hate speech or
-                                    abuse</label>
-                                <label><input type="checkbox" name="reason" value="Copyright infringement"> Copyright
-                                    infringement</label>
-                                <label><input type="checkbox" name="reason" value="Other"> Other</label>
-                            </div>
-                        </div>
-                        <div class="match-button-wrapper" style="margin-top: 20px;">
-                            <button type="submit" class="next-button">Submit</button>
-                            <button type="button" class="browse-button" onclick="closeReportModal()">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="caption {% if not image[2].strip() %}no-caption{% endif %}">
         {{ image[2] }}
     </div>
