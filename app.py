@@ -3317,6 +3317,8 @@ def report():
         conn = psycopg2.connect(...)
         cur = conn.cursor()
 
+        print(f"Reporting image_id={image_id}, user_id={current_user.id}, reasons={reasons}")
+
         # Insert into reports
         cur.execute("""
             INSERT INTO reports (image_id, user_id, reasons, timestamp)
@@ -3332,12 +3334,14 @@ def report():
 
         conn.commit()
         return jsonify({'status': 'success', 'message': 'Reported and hidden'})
+    
     except Exception as e:
+        print(f"Report error: {e}")  # Add this
         conn.rollback()
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
-        cur.close()
-        conn.close()
+        if 'cur' in locals(): cur.close()
+        if 'conn' in locals(): conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
