@@ -100,8 +100,8 @@
                 </a>
                 <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
                 {% if current_user.id != image[4] and current_user.id != image[8] %}
-                <div class="report" onclick="openReportModal({{ image[0] }})" {% if current_user.id==image[4] or
-                    current_user.id==image[8] %}style="padding-bottom: 8px;" {% endif %}>
+                <div class="report" onclick="openReportModal({{ image[0] }})" {% if current_user.id==image[4] or current_user.id==image[8]
+                    %}style="padding-bottom: 8px;" {% endif %}>
                     Report</div>
                 {% endif %}
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
@@ -313,30 +313,4 @@
     });
 </script>
 {% endfor %}
-
-
-<div id="reportModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <button class="close-icon" onclick="closeReportModal()">×</button>
-        <div class="overlay-title">Report Image</div>
-        <form id="reportForm">
-            <input type="hidden" name="image_id" id="reportImageId">
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="reason" value="Inappropriate content"> Inappropriate
-                    content</label>
-                <label><input type="checkbox" name="reason" value="Spam or misleading"> Spam or misleading</label>
-                <label><input type="checkbox" name="reason" value="Hate speech or abuse"> Hate speech or
-                    abuse</label>
-                <label><input type="checkbox" name="reason" value="Copyright infringement"> Copyright
-                    infringement</label>
-                <label><input type="checkbox" name="reason" value="Other"> Other</label>
-            </div>
-            <div style="margin-top: 16px;">
-                <button type="submit">Submit</button>
-                <button type="button" onclick="closeReportModal()">Cancel</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 {% endblock %}
