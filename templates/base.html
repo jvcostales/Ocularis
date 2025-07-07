@@ -878,6 +878,42 @@
 
             <script>
 
+                let reportImageId = null;
+
+                function openReportModal(imageId) {
+                    reportImageId = imageId;
+                    document.getElementById('reportImageId').value = imageId;
+                    document.getElementById('reportModal').style.display = 'flex';
+                    document.body.classList.add('no-scrolling');
+                }
+
+                function closeReportModal() {
+                    document.getElementById('reportModal').style.display = 'none';
+                    document.body.classList.remove('no-scrolling');
+                }
+
+                document.getElementById('reportForm').addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+
+                    const response = await fetch('/report', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        closeReportModal();
+                        const post = document.getElementById('image-' + reportImageId);
+                        if (post) post.style.display = 'none';
+                        alert(result.message);
+                    } else {
+                        alert(result.message || 'Failed to report.');
+                    }
+                });
+
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
                 let currentIndex = 0;
 

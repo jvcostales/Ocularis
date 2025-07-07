@@ -208,6 +208,18 @@ CREATE TABLE IF NOT EXISTS hidden_posts (
 );
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS reports (
+    id SERIAL PRIMARY KEY,
+    image_id INT NOT NULL,
+    user_id INT NOT NULL,
+    reasons TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+""")
+
 conn.commit()
 
 cur.close()
@@ -3292,6 +3304,39 @@ def search_results():
         cur.close()
         conn.close()
 
+@app.route('/report', methods=['POST'])
+@login_required
+def report():
+    image_id = request.form.get('image_id')
+    reasons = request.form.getlist('reason')
+
+    if not image_id or not reasons:
+        return jsonify({'status': 'error', 'message': 'Missing data'}), 400
+
+    try:
+        conn = psycopg2.connect(...)  # your DB config
+        cur = conn.cursor()
+
+        # Insert report
+        cur.execute("""
+            INSERT INTO reports (image_id, user_id, reasons)
+            VALUES (%s, %s, %s)
+        """, (image_id, current_user.id, ', '.join(reasons)))
+
+        # Hide post for this user
+        cur.execute("""
+            INSERT INTO hidden_posts (user_id, image_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING
+        """, (current_user.id, image_id))
+
+        conn.commit()
+        return jsonify({'status': 'success', 'message': 'Report submitted and post hidden'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

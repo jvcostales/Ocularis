@@ -100,7 +100,7 @@
                 </a>
                 <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
                 {% if current_user.id != image[4] and current_user.id != image[8] %}
-                <div class="report" {% if current_user.id==image[4] or current_user.id==image[8]
+                <div class="report" onclick="openReportModal({{ image[0] }})" {% if current_user.id==image[4] or current_user.id==image[8]
                     %}style="padding-bottom: 8px;" {% endif %}>
                     Report</div>
                 {% endif %}
