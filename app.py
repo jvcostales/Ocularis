@@ -3323,13 +3323,11 @@ def report():
         )
         cur = conn.cursor()
 
-        # Insert report
         cur.execute("""
-            INSERT INTO reports (image_id, user_id, reasons)
-            VALUES (%s, %s, %s)
+            INSERT INTO reports (image_id, user_id, reasons, timestamp)
+            VALUES (%s, %s, %s, NOW())
         """, (image_id, current_user.id, ', '.join(reasons)))
 
-        # Hide post for this user
         cur.execute("""
             INSERT INTO hidden_posts (user_id, image_id)
             VALUES (%s, %s)
@@ -3339,6 +3337,7 @@ def report():
         conn.commit()
         return jsonify({'status': 'success', 'message': 'Report submitted and post hidden'})
     except Exception as e:
+        app.logger.error(f"Report error: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
         cur.close()

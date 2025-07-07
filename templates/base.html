@@ -753,20 +753,9 @@
             <div class="overlay-title">Report Image</div>
             <form id="reportForm">
                 <input type="hidden" name="image_id" id="reportImageId">
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="reason" value="Inappropriate content"> Inappropriate
-                        content</label>
-                    <label><input type="checkbox" name="reason" value="Spam or misleading"> Spam or misleading</label>
-                    <label><input type="checkbox" name="reason" value="Hate speech or abuse"> Hate speech or
-                        abuse</label>
-                    <label><input type="checkbox" name="reason" value="Copyright infringement"> Copyright
-                        infringement</label>
-                    <label><input type="checkbox" name="reason" value="Other"> Other</label>
-                </div>
-                <div style="margin-top: 16px;">
-                    <button type="submit">Submit</button>
-                    <button type="button" onclick="closeReportModal()">Cancel</button>
-                </div>
+                <label><input type="checkbox" name="reason" value="Spam"> Spam</label>
+                <label><input type="checkbox" name="reason" value="Hate"> Hate</label>
+                <button type="submit">Submit</button>
             </form>
         </div>
     </div>
@@ -917,26 +906,32 @@
                     document.body.style.overflow = "";  // reset it
                 }
 
-                document.getElementById('reportForm').addEventListener('submit', async function (e) {
+                document.getElementById('reportForm').addEventListener('submit', function (e) {
                     e.preventDefault();
 
-                    const formData = new FormData(this);
+                    const form = this;
+                    const formData = new FormData(form);
 
-                    const response = await fetch('/report', {
+                    fetch('/report', {
                         method: 'POST',
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (result.status === 'success') {
-                        closeReportModal();
-                        const post = document.getElementById('image-' + reportImageId);
-                        if (post) post.style.display = 'none';
-                        alert(result.message);
-                    } else {
-                        alert(result.message || 'Failed to report.');
-                    }
+                        body: formData,
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Failed to report post");
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                            // Optionally hide post from feed
+                            const imageId = formData.get('image_id');
+                            const postElement = document.getElementById(`image-${imageId}`);
+                            if (postElement) postElement.style.display = 'none';
+                            closeReportModal();
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            alert("An error occurred while submitting your report.");
+                        });
                 });
 
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
