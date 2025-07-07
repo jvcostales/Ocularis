@@ -882,9 +882,9 @@
                         <button class="close-icon" onclick="closeReportModal()" class="btn-cancel">
                             <span class="material-symbols-outlined overlay-close-symbol">close</span>
                         </button>
-                        <div class="overlay-title">Report Image</div>
+                        <div class="overlay-title">Report</div>
                         <div class="padding-match">
-                            <form id="reportForm">
+                            <form class="report-form">
                                 <input type="hidden" name="image_id" id="reportImageId">
                                 <div class="info-sandp">
                                     <div class="info-title-match">Reason</div>
@@ -904,9 +904,9 @@
                                     </div>
                                 </div>
                                 <div class="match-button-wrapper" style="margin-top: 20px;">
-                                    <button type="submit" class="next-button">Submit</button>
                                     <button type="button" class="browse-button"
                                         onclick="closeReportModal()">Cancel</button>
+                                    <button type="submit" class="next-button">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -1116,12 +1116,11 @@
 
                 document.addEventListener('DOMContentLoaded', function () {
 
-                    const reportForm = document.getElementById('reportForm');
-                    if (reportForm) {
-                        reportForm.addEventListener('submit', function (e) {
+                    document.querySelectorAll('.report-form').forEach(form => {
+                        form.addEventListener('submit', function (e) {
                             e.preventDefault();
 
-                            const formData = new FormData(reportForm);
+                            const formData = new FormData(form);
 
                             fetch('/report', {
                                 method: 'POST',
@@ -1141,7 +1140,7 @@
                                     alert('An error occurred.');
                                 });
                         });
-                    }
+                    });
 
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
