@@ -749,13 +749,43 @@
 
     <div id="reportModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <button class="close-icon" onclick="closeReportModal()">×</button>
-            <div class="overlay-title">Report Image</div>
+            <button class="close-icon" onclick="closeReportModal()"><span
+                    class="material-symbols-outlined overlay-close-symbol">close</span></button>
+            <div class="overlay-title">Report</div>
+            <div class="heading">Something not right with this post?</div>
+            <div class="subheading">We’ll take a closer look and handle it according to our guidelines.</div>
             <form id="reportForm">
+                <!-- Hidden field to store image ID -->
                 <input type="hidden" name="image_id" id="reportImageId">
-                <label><input type="checkbox" name="reason" value="Spam"> Spam</label>
-                <label><input type="checkbox" name="reason" value="Abuse"> Abuse</label>
-                <button type="submit">Submit</button>
+                <!-- Reasons with checkboxes -->
+                <div class="report-reasons">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="reason" value="Spam">
+                        <span class="report-label">Spam or misleading content</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="reason" value="Inappropriate">
+                        <span class="report-label">Inappropriate or offensive material</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="reason" value="Hate Speech">
+                        <span class="report-label">Hate speech or abusive language</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="reason" value="Copyright">
+                        <span class="report-label">Copyright infringement</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="reason" value="Other">
+                        <span class="report-label">Other</span>
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="match-button-wrapper">
+                    <button type="button" class="btn-decline" onclick="closeReportModal()">Cancel</button>
+                    <button type="submit" class="post-button">Submit</button>
+                </div>
             </form>
         </div>
     </div>
