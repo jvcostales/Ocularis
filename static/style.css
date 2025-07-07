@@ -1792,7 +1792,7 @@ input[type="url"]::placeholder {
     .response-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
         margin-top: 24px;
         margin-right: 24px;
     }
@@ -3893,7 +3893,7 @@ input[type="url"]::placeholder {
     .response-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
         margin-top: 24px;
         margin-right: 24px;
     }
@@ -6176,7 +6176,7 @@ input[type="url"]::placeholder {
     .response-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
         margin-top: 24px;
         margin-right: 24px;
     }
