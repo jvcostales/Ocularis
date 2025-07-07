@@ -905,10 +905,10 @@
                 let reportImageId = null;
 
                 function openReportModal(imageId, event) {
-                    if (event) event.preventDefault();  // handles cases from forms or keypresses
+                    if (event) event.preventDefault();
                     const modal = document.getElementById("reportModal");
                     modal.style.display = "flex";
-                    document.body.style.overflow = "hidden";
+                    document.body.classList.add('no-scrolling');
                 }
 
                 function closeReportModal() {
