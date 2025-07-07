@@ -918,27 +918,6 @@
 
 
             <script>
-
-                let reportScrollPosition = 0;
-
-                function openReportModal(imageId) {
-                    reportScrollPosition = window.scrollY;
-                    document.body.style.top = `-${reportScrollPosition}px`;
-                    document.body.classList.add('no-scrolling');
-
-                    document.getElementById('reportImageId').value = imageId;
-                    document.getElementById('reportModal').style.display = 'flex';
-                }
-
-                function closeReportModal() {
-                    const modal = document.getElementById('reportModal');
-                    if (modal) modal.style.display = 'none';
-
-                    document.body.classList.remove('no-scrolling');
-                    document.body.style.top = '';
-                    window.scrollTo(0, reportScrollPosition);
-                }
-
                 const sections = Array.from(document.querySelectorAll('.nav-section'));
                 let currentIndex = 0;
 
@@ -1115,6 +1094,21 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
+
+                    function openReportModal(imageId) {
+                        reportScrollPosition = window.scrollY;
+                        document.body.style.top = `-${reportScrollPosition}px`;
+                        document.body.classList.add('no-scrolling');
+
+                        const modal = document.getElementById('reportModal');
+                        if (!modal) {
+                            console.error('Modal not found in DOM');
+                            return;
+                        }
+
+                        document.getElementById('reportImageId').value = imageId;
+                        modal.style.display = 'flex';
+                    }
 
                     document.querySelectorAll('.report-form').forEach(form => {
                         form.addEventListener('submit', function (e) {
