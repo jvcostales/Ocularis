@@ -208,18 +208,6 @@ CREATE TABLE IF NOT EXISTS hidden_posts (
 );
 """)
 
-cur.execute("""
-CREATE TABLE IF NOT EXISTS reports (
-    report_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    image_id INT NOT NULL,
-    reason TEXT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (image_id) REFERENCES images(image_id) ON DELETE CASCADE
-);
-""")
-
 conn.commit()
 
 cur.close()
@@ -3303,52 +3291,7 @@ def search_results():
     finally:
         cur.close()
         conn.close()
-        
-@app.route('/report', methods=['POST'])
-@login_required
-def report():
-    image_id = request.form.get('image_id')
-    reasons = request.form.getlist('reason')
 
-    if not image_id or not reasons:
-        return jsonify({'status': 'error', 'message': 'Select at least one reason.'}), 400
-
-    try:
-        print("Image ID:", image_id)
-        print("User ID:", current_user.id)
-        print("Reasons:", reasons)
-
-        conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-            dbname="ocularis_db", 
-            user="ocularis_db_user", 
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-            port=5432
-        )
-        cur = conn.cursor()
-
-        # Ensure correct table/columns
-        cur.execute("""
-            INSERT INTO reports (image_id, user_id, reason, timestamp)
-            VALUES (%s, %s, %s, NOW())
-        """, (image_id, current_user.id, ', '.join(reasons)))
-
-        # Also hide the post after reporting
-        cur.execute("""
-            INSERT INTO hidden_posts (user_id, image_id)
-            VALUES (%s, %s)
-            ON CONFLICT DO NOTHING
-        """, (current_user.id, image_id))
-
-        conn.commit()
-        return jsonify({'status': 'success', 'message': 'Report submitted and post hidden.'})
-
-    except Exception as e:
-        print("Error during report:", e)
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-    finally:
-        if 'cur' in locals(): cur.close()
-        if 'conn' in locals(): conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
