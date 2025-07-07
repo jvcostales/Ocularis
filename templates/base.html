@@ -754,7 +754,7 @@
             <form id="reportForm">
                 <input type="hidden" name="image_id" id="reportImageId">
                 <label><input type="checkbox" name="reason" value="Spam"> Spam</label>
-                <label><input type="checkbox" name="reason" value="Hate"> Hate</label>
+                <label><input type="checkbox" name="reason" value="Abuse"> Abuse</label>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -914,22 +914,25 @@
 
                     fetch('/report', {
                         method: 'POST',
-                        body: formData,
+                        body: formData
                     })
                         .then(response => {
-                            if (!response.ok) throw new Error("Failed to report post");
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    console.error("Server responded with error:", response.status, text);
+                                    throw new Error(`Status ${response.status}: ${text}`);
+                                });
+                            }
                             return response.json();
                         })
                         .then(data => {
-                            console.log(data);
-                            // Optionally hide post from feed
                             const imageId = formData.get('image_id');
                             const postElement = document.getElementById(`image-${imageId}`);
                             if (postElement) postElement.style.display = 'none';
                             closeReportModal();
                         })
                         .catch(error => {
-                            console.error(error);
+                            console.error("Final catch:", error);
                             alert("An error occurred while submitting your report.");
                         });
                 });
