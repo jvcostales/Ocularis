@@ -1093,22 +1093,48 @@
                     }
                 }
 
-                document.addEventListener('DOMContentLoaded', function () {
+                function openReportModal(imageId) {
+                    reportScrollPosition = window.scrollY;
+                    document.body.style.top = `-${reportScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
 
-                    function openReportModal(imageId) {
-                        reportScrollPosition = window.scrollY;
-                        document.body.style.top = `-${reportScrollPosition}px`;
-                        document.body.classList.add('no-scrolling');
-
-                        const modal = document.getElementById('reportModal');
-                        if (!modal) {
-                            console.error('Modal not found in DOM');
-                            return;
-                        }
-
-                        document.getElementById('reportImageId').value = imageId;
-                        modal.style.display = 'flex';
+                    const modal = document.getElementById('reportModal');
+                    if (!modal) {
+                        console.error('Modal not found in DOM');
+                        return;
                     }
+
+                    document.getElementById('reportImageId').value = imageId;
+                    modal.style.display = 'flex';
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.report-form').forEach(form => {
+                        form.addEventListener('submit', function (e) {
+                            e.preventDefault();
+                            const formData = new FormData(form);
+                            fetch('/report', {
+                                method: 'POST',
+                                body: formData
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        document.getElementById(`image-${formData.get('image_id')}`).remove();
+                                        closeReportModal();
+                                    } else {
+                                        alert('Error submitting report.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    alert('An error occurred.');
+                                });
+                        });
+                    });
+                });
+
+                document.addEventListener('DOMContentLoaded', function () {
 
                     document.querySelectorAll('.report-form').forEach(form => {
                         form.addEventListener('submit', function (e) {
