@@ -908,12 +908,13 @@
                     if (event) event.preventDefault();
                     const modal = document.getElementById("reportModal");
                     modal.style.display = "flex";
-                    document.body.classList.add('no-scrolling');
+                    document.body.style.overflow = "hidden";  // lock scrolling
                 }
 
                 function closeReportModal() {
-                    document.getElementById('reportModal').style.display = 'none';
-                    document.body.classList.remove('no-scrolling');
+                    const modal = document.getElementById('reportModal');
+                    modal.style.display = 'none';
+                    document.body.style.overflow = "";  // reset it
                 }
 
                 document.getElementById('reportForm').addEventListener('submit', async function (e) {
