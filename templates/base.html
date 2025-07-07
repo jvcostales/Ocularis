@@ -895,9 +895,13 @@
 
                 function openReportModal(imageId, event) {
                     if (event) event.preventDefault();
+
                     const modal = document.getElementById("reportModal");
                     modal.style.display = "flex";
                     document.body.style.overflow = "hidden";  // lock scrolling
+
+                    // ✅ Assign imageId to hidden input
+                    document.getElementById('reportImageId').value = imageId;
                 }
 
                 function closeReportModal() {
