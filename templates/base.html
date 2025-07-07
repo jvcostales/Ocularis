@@ -904,11 +904,11 @@
 
                 let reportImageId = null;
 
-                function openReportModal(imageId) {
-                    reportImageId = imageId;
-                    document.getElementById('reportImageId').value = imageId;
-                    document.getElementById('reportModal').style.display = 'flex';
-                    document.body.classList.add('no-scrolling');
+                function openReportModal(imageId, event) {
+                    if (event) event.preventDefault();  // handles cases from forms or keypresses
+                    const modal = document.getElementById("reportModal");
+                    modal.style.display = "flex";
+                    document.body.style.overflow = "hidden";
                 }
 
                 function closeReportModal() {
