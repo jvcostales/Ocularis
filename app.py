@@ -2798,6 +2798,74 @@ def settings():
             FROM users WHERE id = %s
         """, (user_id,))
         user = cur.fetchone()
+        
+            # 5. Notifications
+    cur.execute("""
+        SELECT users.first_name || ' ' || users.last_name AS display_name,
+               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic, notifications.notification_id
+
+        FROM notifications
+        JOIN users ON notifications.actor_id = users.id
+        WHERE notifications.recipient_id = %s
+        ORDER BY notifications.created_at DESC
+    """, (user_id,))
+    notifications = cur.fetchall()
+    
+            # Gather unique actor_ids
+    actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
+    actor_details = {}
+
+            # Fetch full details for each actor_id
+    for actor_id in actor_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (actor_id,))
+        user = cur.fetchone()
+
+        if user:
+            actor_details[actor_id] = {
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": user[3],
+                "state": user[4],
+                "country": user[5],
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],               # PostgreSQL array
+                "preferences": user[9],          # PostgreSQL array
+                "experience_level": user[10],    # int (1–4)
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
+
+    # 6. Friend requests
+    cur.execute("""
+        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+        FROM friend_requests fr
+        JOIN users u ON fr.sender_id = u.id
+        WHERE fr.receiver_id = %s AND fr.status = 'pending'
+        ORDER BY fr.created_at DESC
+    """, (user_id,))
+    requests = cur.fetchall()
+
+    # New query to get current user's profile_pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    result = cur.fetchone()
+
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+        
         cur.close()
         conn.close()
 
@@ -2841,7 +2909,11 @@ def settings():
                 experience_levels=experience_levels,
                 verified=current_user.verified,
                 profile_pic_url=profile_pic_url,
-                cover_photo_url=cover_photo_url
+                cover_photo_url=cover_photo_url,
+                notifications=notifications,
+                requests=requests,
+                profile_pic_url=profile_pic_url,
+                actor_details=actor_details
             )
         else:
             flash("User not found.", "danger")
