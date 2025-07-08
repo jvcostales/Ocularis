@@ -14,638 +14,650 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body class="{% if show_profile_modal %}no-scroll-body{% endif %}">
-    <div class="container">
-        <div class="left-sidebar-container">
-            <div class="left-sidebar">
-                <div class="namelogo">
-                    <a href="{{ url_for('feed') }}"><img src="..\static\Logo.png" class="logo"></a>
-                    <div class="name"><a href="{{ url_for('feed') }}">Ocularis</a></div>
-                </div>
-                <ul class="sidebar-menu">
-                    <li><a href="{{ url_for('feed') }}">
-                            <div class="icon-text-wrapper {% if current_page == 'feed' %}current{% endif %}">
-                                <span class="material-symbols-outlined sidebar-symbol">newspaper</span>
-                                <div>Feed</div>
-                            </div>
-                        </a></li>
-                    <li><a href="{{ url_for('pairup') }}">
-                            <div
-                                class="icon-text-wrapper {% if current_page in ['pairup', 'match'] %}current{% endif %}">
-                                <span class="material-symbols-outlined sidebar-symbol">group</span>
-                                <div>Match</div>
-                            </div>
-                        </a></li>
-                    <li>
-                        <a href="{{ url_for('profile', user_id=current_user.id) }}">
-                            <div class="icon-text-wrapper 
+<body class="loading {% if show_profile_modal %}no-scroll-body{% endif %}">
+    <div id="loader">
+        <img src="{{ url_for('static', filename='Logo.png') }}" alt="Ocularis Logo" class="loader-logo">
+    </div>
+    <div class="app-content">
+        <div class="container">
+            <div class="left-sidebar-container">
+                <div class="left-sidebar">
+                    <div class="namelogo">
+                        <a href="{{ url_for('feed') }}"><img src="..\static\Logo.png" class="logo"></a>
+                        <div class="name"><a href="{{ url_for('feed') }}">Ocularis</a></div>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="{{ url_for('feed') }}">
+                                <div class="icon-text-wrapper {% if current_page == 'feed' %}current{% endif %}">
+                                    <span class="material-symbols-outlined sidebar-symbol">newspaper</span>
+                                    <div>Feed</div>
+                                </div>
+                            </a></li>
+                        <li><a href="{{ url_for('pairup') }}">
+                                <div
+                                    class="icon-text-wrapper {% if current_page in ['pairup', 'match'] %}current{% endif %}">
+                                    <span class="material-symbols-outlined sidebar-symbol">group</span>
+                                    <div>Match</div>
+                                </div>
+                            </a></li>
+                        <li>
+                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                <div class="icon-text-wrapper 
             {% if current_page == 'profile' and is_own_profile %}current{% endif %}">
-                                <span class="material-symbols-outlined sidebar-symbol">person</span>
-                                <div>Profile</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li><a href="{{ url_for('logout') }}">
-                            <div class="icon-text-wrapper">
-                                <span class="material-symbols-outlined sidebar-symbol">logout</span>
-                                <div>Logout</div>
-                            </div>
-                        </a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="header">
-            <form class="search-wrapper hide-mobile" action="{{ url_for('search_results') }}" method="GET">
-                <input class="search" type="text" name="query" placeholder="Search" required>
-                <button class="search-button" type="submit"><span
-                        class="material-symbols-outlined search-symbol">search</span></button>
-            </form>
-            <div class="hide-pfp">
-
-                <div class="notifs-wrapper desktop-wrapper">
-                    <button class="notifs-button">
-                        <span class="material-symbols-outlined notifs-symbol">notifications</span>
-                    </button>
-
-                    <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-desktop">
-                        <div class="notifs" id="notifs-tablet">
-                            <div class="notifs-title">Notifs</div>
-
-                            {% if notifications %}
-                            {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
-                            notifications %}
-                            <div class="notif-bar">
-                                <a href="{{ url_for('profile', user_id=actor_id) }}">
-                                    <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                                        class="pfp img-notif-request">
-                                </a>
-                                <div class="notif-details">
-                                    <div class="notif-text">
-                                        <span style="font-weight: 600;">
-                                            <a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name }}</a>
-                                        </span>
-                                        {% if action == 'like' %}
-                                        liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                style="font-weight: 600;">post</span></a>.
-                                        {% elif action == 'comment' %}
-                                        commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                style="font-weight: 600;">post</span></a>.
-                                        {% elif action == 'collab_check' %}
-                                        found you as a
-                                        <span class="open-modal" data-user-id="{{ actor_id }}"
-                                            data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
-                                            style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                            match</span>.
-                                        {% endif %}
-                                    </div>
-                                    <div class="notif-date">
-                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
-                                    </div>
+                                    <span class="material-symbols-outlined sidebar-symbol">person</span>
+                                    <div>Profile</div>
                                 </div>
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div class="notifs-empty">
-                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                                <div class="oops">Oops!</div>
-                                <div class="nothing">Nothing to show here at the moment.</div>
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="line-alerts"></div>
-
-                        <div class="requests" id="requests-tablet">
-                            <div class="requests-title">Requests</div>
-
-                            {% if requests %}
-                            {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                            <div class="request-bar" id="request-{{ request_id }}">
-                                <a href="{{ url_for('profile', user_id=sender_id) }}">
-                                    <img src="../static/pfp.jpg" class="pfp img-notif-request">
-                                </a>
-
-                                <div class="request-details">
-                                    <div class="request-text">
-                                        <span style="font-weight: 600;">
-                                            <a href="{{ url_for('profile', user_id=sender_id) }}">
-                                                {{ first_name }} {{ last_name }}
-                                            </a>
-                                        </span> sent you a friend request.
-                                    </div>
-                                    <div class="request-date">
-                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
-                                    </div>
-                                    <!--AL-->
-                                    <div class="request-icons">
-                                        <button type="button" class="circled-icon-1"
-                                            onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
-                                            %}disabled{% endif %}>
-                                            <span class="material-symbols-outlined close-symbol">close</span>
-                                        </button>
-
-                                        <button type="button" class="circled-icon-2"
-                                            onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
-                                            %}disabled{% endif %}>
-                                            <span class="material-symbols-outlined check-symbol">check</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div class="notifs-empty">
-                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                                <div class="oops">Oops!</div>
-                                <div class="nothing">Nothing to show here at the moment.</div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="backdrop" id="backdrop-tablet"></div>
-
-
-
-
-
-                <div class="pfp-frame-wrapper">
-                    <img src="{{ profile_pic_url }}" class="pfp right" id="pfp3">
-                    <div class="frame3" id="frame3">
-                        <div class="frame-username">
-                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
-                                {{ current_user.first_name }} {{ current_user.last_name }}
                             </a>
-                        </div>
-                        <div class="line"></div>
-                        <a href="{{ url_for('saved') }}">
-                            <div class="saved">Saved</div>
-                        </a>
-                        <a href="{{ url_for('settings') }}">
-                            <div class="settings">Settings</div>
-                        </a>
-                    </div>
+                        </li>
+                        <li><a href="{{ url_for('logout') }}">
+                                <div class="icon-text-wrapper">
+                                    <span class="material-symbols-outlined sidebar-symbol">logout</span>
+                                    <div>Logout</div>
+                                </div>
+                            </a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
-        <div class="mobile-only">
-            <img src="..\static\Logo.png" class="logo">
-            <div class="button-pfp-wrapper">
-                <button class="search-button"><span
-                        class="material-symbols-outlined search-symbol">search</span></button>
-                <!-- Notification wrapper -->
-                <div class="notifs-wrapper mobile-wrapper">
-                    <button class="notifs-button">
-                        <span class="material-symbols-outlined notifs-symbol">notifications</span>
-                    </button>
+            <div class="header">
+                <form class="search-wrapper hide-mobile" action="{{ url_for('search_results') }}" method="GET">
+                    <input class="search" type="text" name="query" placeholder="Search" required>
+                    <button class="search-button" type="submit"><span
+                            class="material-symbols-outlined search-symbol">search</span></button>
+                </form>
+                <div class="hide-pfp">
 
-                    <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
-                    <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-mobile">
-                        <div class="notifs" id="notifs-tablet">
-                            <div class="notifs-title">Notifs</div>
+                    <div class="notifs-wrapper desktop-wrapper">
+                        <button class="notifs-button">
+                            <span class="material-symbols-outlined notifs-symbol">notifications</span>
+                        </button>
 
-                            {% if notifications %}
-                            {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
-                            notifications %}
-                            <div class="notif-bar">
-                                <a href="{{ url_for('profile', user_id=actor_id) }}">
-                                    <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                                        class="pfp img-notif-request">
-                                </a>
-                                <div class="notif-details">
-                                    <div class="notif-text">
-                                        <span style="font-weight: 600;">
-                                            <a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name }}</a>
-                                        </span>
-                                        {% if action == 'like' %}
-                                        liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                style="font-weight: 600;">post</span></a>.
-                                        {% elif action == 'comment' %}
-                                        commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                style="font-weight: 600;">post</span></a>.
-                                        {% elif action == 'collab_check' %}
-                                        found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                            data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
-                                            style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                            match</span>.
-                                        {% endif %}
-                                    </div>
-                                    <div class="notif-date">
-                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div class="notifs-empty">
-                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                                <div class="oops">Oops!</div>
-                                <div class="nothing">Nothing to show here at the moment.</div>
-                            </div>
-                            {% endif %}
-                        </div>
+                        <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
+                        <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-desktop">
+                            <div class="notifs" id="notifs-tablet">
+                                <div class="notifs-title">Notifs</div>
 
-                        <div class="line-alerts"></div>
-
-                        <div class="requests" id="requests-tablet">
-                            <div class="requests-title">Requests</div>
-
-                            {% if requests %}
-                            {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                            <div class="request-bar" id="request-{{ request_id }}">
-                                <a href="{{ url_for('profile', user_id=sender_id) }}">
-                                    <img src="../static/pfp.jpg" class="pfp img-notif-request">
-                                </a>
-
-                                <div class="request-details">
-                                    <div class="request-text">
-                                        <span style="font-weight: 600;">
-                                            <a href="{{ url_for('profile', user_id=sender_id) }}">
-                                                {{ first_name }} {{ last_name }}
-                                            </a>
-                                        </span> sent you a friend request.
-                                    </div>
-                                    <div class="request-date">
-                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
-                                    </div>
-                                    <div class="request-icons">
-                                        <button type="button" class="circled-icon-1"
-                                            onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
-                                            %}disabled{% endif %}>
-                                            <span class="material-symbols-outlined close-symbol">close</span>
-                                        </button>
-
-                                        <button type="button" class="circled-icon-2"
-                                            onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
-                                            %}disableda{% endif %}>
-                                            <span class="material-symbols-outlined check-symbol">check</span>
-                                        </button>
+                                {% if notifications %}
+                                {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
+                                notifications %}
+                                <div class="notif-bar">
+                                    <a href="{{ url_for('profile', user_id=actor_id) }}">
+                                        <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                            class="pfp img-notif-request">
+                                    </a>
+                                    <div class="notif-details">
+                                        <div class="notif-text">
+                                            <span style="font-weight: 600;">
+                                                <a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name
+                                                    }}</a>
+                                            </span>
+                                            {% if action == 'like' %}
+                                            liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                    style="font-weight: 600;">post</span></a>.
+                                            {% elif action == 'comment' %}
+                                            commented on your <a
+                                                href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                    style="font-weight: 600;">post</span></a>.
+                                            {% elif action == 'collab_check' %}
+                                            found you as a
+                                            <span class="open-modal" data-user-id="{{ actor_id }}"
+                                                data-display-name="{{ display_name }}"
+                                                data-notif-id="{{ notification_id }}"
+                                                style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                                match</span>.
+                                            {% endif %}
+                                        </div>
+                                        <div class="notif-date">
+                                            {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div class="notifs-empty">
-                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                                <div class="oops">Oops!</div>
-                                <div class="nothing">Nothing to show here at the moment.</div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="backdrop" id="backdrop-mobile"></div>
-
-                <div class="pfp-frame-wrapper">
-                    <img src="{{ profile_pic_url }}" class="pfp right" id="pfp4">
-                    <div class="frame4" id="frame4">
-                        <div class="frame-username">
-                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
-                                {{ current_user.first_name }} {{ current_user.last_name }}
-                            </a>
-                        </div>
-                        <div class="line"></div>
-                        <a href="{{ url_for('saved') }}">
-                            <div class="saved">Saved</div>
-                        </a>
-                        <a href="{{ url_for('settings') }}">
-                            <div class="settings">Settings</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
-        <div class="right-sidebar-container">
-            <div class="right-sidebar">
-                <div class="pfp-frame-wrapper">
-                    <img src="{{ profile_pic_url }}" class="pfp right" id="pfp" />
-                    <div class="frame2" id="frame2">
-                        <div class="frame-username">
-                            <a href="{{ url_for('profile', user_id=current_user.id) }}">
-                                {{ current_user.first_name }} {{ current_user.last_name }}
-                            </a>
-                        </div>
-                        <div class="line"></div>
-                        <a href="{{ url_for('saved') }}">
-                            <div class="saved">Saved</div>
-                        </a>
-                        <a href="{{ url_for('settings') }}">
-                            <div class="settings">Settings</div>
-                        </a>
-                    </div>
-                </div>
-                <div class="notifs" id="notifs">
-                    <div class="notifs-title">
-                        Notifs
-                    </div>
-                    {% if notifications %}
-                    {% for display_name, action, image_id, created_at, actor_id, profile_pic, notification_id in
-                    notifications %}
-                    <div class="notif-bar" id="notif-{{ notification_id }}">
-                        <a href="{{ url_for('profile', user_id=actor_id) }}"><img
-                                src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                                class="pfp img-notif-request"></a>
-                        <div class="notif-details">
-                            <div class="notif-text">
-                                <span style="font-weight: 600;"><a href="{{ url_for('profile', user_id=actor_id) }}">{{
-                                        display_name }}</a></span>
-                                {% if action == 'like' %}
-                                liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                        style="font-weight: 600;">post</span></a>.
-                                {% elif action == 'comment' %}
-                                commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                        style="font-weight: 600;">post</span></a>.
-                                {% elif action == 'collab_check' %}
-                                found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                    data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
-                                    style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                    match</span>.
+                                {% endfor %}
+                                {% else %}
+                                <div class="notifs-empty">
+                                    <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                    <div class="oops">Oops!</div>
+                                    <div class="nothing">Nothing to show here at the moment.</div>
+                                </div>
                                 {% endif %}
                             </div>
-                            <div class="notif-date">
-                                {{ created_at.strftime('%b') }} {{ created_at.day }}
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="requests" id="requests">
-                    <div class="requests-title">
-                        Requests
-                    </div>
-                    {% if requests %}
-                    {% for request_id, sender_id, first_name, last_name, created_at in requests %}
-                    <div class="request-bar" id="request-{{ request_id }}">
-                        <a href="{{ url_for('profile', user_id=sender_id) }}"><img src="../static/pfp.jpg"
-                                class="pfp img-notif-request"></a>
 
-                        <div class="request-details">
-                            <div class="request-text">
-                                <span style="font-weight: 600;">
+                            <div class="line-alerts"></div>
+
+                            <div class="requests" id="requests-tablet">
+                                <div class="requests-title">Requests</div>
+
+                                {% if requests %}
+                                {% for request_id, sender_id, first_name, last_name, created_at in requests %}
+                                <div class="request-bar" id="request-{{ request_id }}">
                                     <a href="{{ url_for('profile', user_id=sender_id) }}">
-                                        {{ first_name }} {{ last_name }}
+                                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
                                     </a>
-                                </span> sent you a friend request.
-                            </div>
-                            <div class="request-date">
-                                {{ created_at.strftime('%b') }} {{ created_at.day }}
-                            </div>
-                            <div class="request-icons">
-                                <button type="button" class="circled-icon-1"
-                                    onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified %}disabled{%
-                                    endif %}>
-                                    <span class="material-symbols-outlined close-symbol">close</span>
-                                </button>
 
-                                <button type="button" class="circled-icon-2"
-                                    onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified %}disableda{%
-                                    endif %}>
-                                    <span class="material-symbols-outlined check-symbol">check</span>
-                                </button>
+                                    <div class="request-details">
+                                        <div class="request-text">
+                                            <span style="font-weight: 600;">
+                                                <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                                    {{ first_name }} {{ last_name }}
+                                                </a>
+                                            </span> sent you a friend request.
+                                        </div>
+                                        <div class="request-date">
+                                            {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                        </div>
+                                        <!--AL-->
+                                        <div class="request-icons">
+                                            <button type="button" class="circled-icon-1"
+                                                onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
+                                                %}disabled{% endif %}>
+                                                <span class="material-symbols-outlined close-symbol">close</span>
+                                            </button>
+
+                                            <button type="button" class="circled-icon-2"
+                                                onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
+                                                %}disabled{% endif %}>
+                                                <span class="material-symbols-outlined check-symbol">check</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="notifs-empty">
+                                    <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                    <div class="oops">Oops!</div>
+                                    <div class="nothing">Nothing to show here at the moment.</div>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="notifs-empty">
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
+                    <div class="backdrop" id="backdrop-tablet"></div>
+
+
+
+
+
+                    <div class="pfp-frame-wrapper">
+                        <img src="{{ profile_pic_url }}" class="pfp right" id="pfp3">
+                        <div class="frame3" id="frame3">
+                            <div class="frame-username">
+                                <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                    {{ current_user.first_name }} {{ current_user.last_name }}
+                                </a>
+                            </div>
+                            <div class="line"></div>
+                            <a href="{{ url_for('saved') }}">
+                                <div class="saved">Saved</div>
+                            </a>
+                            <a href="{{ url_for('settings') }}">
+                                <div class="settings">Settings</div>
+                            </a>
+                        </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
-        </div>
+            <div class="mobile-only">
+                <img src="..\static\Logo.png" class="logo">
+                <div class="button-pfp-wrapper">
+                    <button class="search-button"><span
+                            class="material-symbols-outlined search-symbol">search</span></button>
+                    <!-- Notification wrapper -->
+                    <div class="notifs-wrapper mobile-wrapper">
+                        <button class="notifs-button">
+                            <span class="material-symbols-outlined notifs-symbol">notifications</span>
+                        </button>
 
-        {% if show_profile_modal %}
-        <div id="profileModal" class="modal show">
-            <form method="POST" id="profileForm" action="/api/setup-profile">
+                        <!-- Dropdown (initially hidden, shown via JS by adding 'dropdown-visible') -->
+                        <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-mobile">
+                            <div class="notifs" id="notifs-tablet">
+                                <div class="notifs-title">Notifs</div>
 
-                <div class="overlaySetup" id="step-1">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup1">
-                            <img src="..\static\pfp.jpg" class="pfpsetup1">
-                            <div class="heading">Hello, {{ current_user.first_name }} {{ current_user.last_name }}!
-                            </div>
-                            <div class="subheading">Ready to setup your account?</div>
-                            <button class="next-button" type="button" onclick="nextStep()">Next</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overlaySetup" id="step-2" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup2">
-                            <div class="heading">What is your role?</div>
-                            <div class="subheading">Your role helps us personalize your experience.</div>
-                            <input class="setup2-field" type="text" placeholder="ex. Graphic Designer" id="role"
-                                name="role" maxlength="100" required>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
+                                {% if notifications %}
+                                {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
+                                notifications %}
+                                <div class="notif-bar">
+                                    <a href="{{ url_for('profile', user_id=actor_id) }}">
+                                        <img src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                            class="pfp img-notif-request">
+                                    </a>
+                                    <div class="notif-details">
+                                        <div class="notif-text">
+                                            <span style="font-weight: 600;">
+                                                <a href="{{ url_for('profile', user_id=actor_id) }}">{{ display_name
+                                                    }}</a>
+                                            </span>
+                                            {% if action == 'like' %}
+                                            liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                    style="font-weight: 600;">post</span></a>.
+                                            {% elif action == 'comment' %}
+                                            commented on your <a
+                                                href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                    style="font-weight: 600;">post</span></a>.
+                                            {% elif action == 'collab_check' %}
+                                            found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
+                                                data-display-name="{{ display_name }}"
+                                                data-notif-id="{{ notification_id }}"
+                                                style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                                match</span>.
+                                            {% endif %}
+                                        </div>
+                                        <div class="notif-date">
+                                            {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overlaySetup" id="step-3" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup3">
-                            <div class="heading">Where are you located?</div>
-                            <div class="subheading">Show us where your ideas come to life.</div>
-                            <div class="left-align">
-                                <div class="label">Country</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="country" name="country" required>
-                                        <option value="">Select your country</option>
-                                        {% for country in countries %}
-                                        <option value="{{ country.iso2 }}" data-iso="{{ country.iso2 }}" {% if
-                                            user.country|trim|lower==country.iso2|trim|lower %}selected{% endif %}>
-                                            {{ country.name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
-                                </div>
-                                <div class="label">Region or Province</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="state" name="state" required>
-                                        <option value="">Select your region or province</option>
-                                        {% for state in states if state.country_code == user.country %}
-                                        <option value="{{ state.state_code }}" {% if state.state_code==user.state
-                                            %}selected{% endif %}>
-                                            {{ state.name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
-                                </div>
-                                <div class="label">City</div>
-                                <div class="label-wrapper">
-                                    <select class="location" id="city" name="city" required>
-                                        <option value="">Select your city</option>
-                                    </select>
-                                    <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
-                                </div>
-                            </div>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
-                                </div>
-                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overlaySetup" id="step-4" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup4">
-                            <div class="heading">What are your skills?</div>
-                            <div class="subheading">Tell us what you’re good at—select all that apply.</div>
-                            <div class="checkbox-grid">
-                                {% for category in categories %}
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="skills" value="{{ category }}">
-                                    {{ category }}
-                                </label>
                                 {% endfor %}
-                                <!--<a href="#" class="view-more">View all fields...</a>-->
-                            </div>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
+                                {% else %}
+                                <div class="notifs-empty">
+                                    <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                    <div class="oops">Oops!</div>
+                                    <div class="nothing">Nothing to show here at the moment.</div>
                                 </div>
-                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                                {% endif %}
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="overlaySetup" id="step-5" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup5">
-                            <div class="heading">What are your preferences?</div>
-                            <div class="subheading">Tell us your design vibe—select all that apply.</div>
-                            <div class="checkbox-grid">
-                                {% for category in categories %}
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="preferences" value="{{ category }}">
-                                    {{ category }}
-                                </label>
+                            <div class="line-alerts"></div>
+
+                            <div class="requests" id="requests-tablet">
+                                <div class="requests-title">Requests</div>
+
+                                {% if requests %}
+                                {% for request_id, sender_id, first_name, last_name, created_at in requests %}
+                                <div class="request-bar" id="request-{{ request_id }}">
+                                    <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                        <img src="../static/pfp.jpg" class="pfp img-notif-request">
+                                    </a>
+
+                                    <div class="request-details">
+                                        <div class="request-text">
+                                            <span style="font-weight: 600;">
+                                                <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                                    {{ first_name }} {{ last_name }}
+                                                </a>
+                                            </span> sent you a friend request.
+                                        </div>
+                                        <div class="request-date">
+                                            {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                        </div>
+                                        <div class="request-icons">
+                                            <button type="button" class="circled-icon-1"
+                                                onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
+                                                %}disabled{% endif %}>
+                                                <span class="material-symbols-outlined close-symbol">close</span>
+                                            </button>
+
+                                            <button type="button" class="circled-icon-2"
+                                                onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
+                                                %}disableda{% endif %}>
+                                                <span class="material-symbols-outlined check-symbol">check</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                                 {% endfor %}
-                                <!--<a href="#" class="view-more">View all fields...</a>-->
-                            </div>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
+                                {% else %}
+                                <div class="notifs-empty">
+                                    <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                    <div class="oops">Oops!</div>
+                                    <div class="nothing">Nothing to show here at the moment.</div>
                                 </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="backdrop" id="backdrop-mobile"></div>
+
+                    <div class="pfp-frame-wrapper">
+                        <img src="{{ profile_pic_url }}" class="pfp right" id="pfp4">
+                        <div class="frame4" id="frame4">
+                            <div class="frame-username">
+                                <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                    {{ current_user.first_name }} {{ current_user.last_name }}
+                                </a>
+                            </div>
+                            <div class="line"></div>
+                            <a href="{{ url_for('saved') }}">
+                                <div class="saved">Saved</div>
+                            </a>
+                            <a href="{{ url_for('settings') }}">
+                                <div class="settings">Settings</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <main>
+                {% block content %}{% endblock %}
+            </main>
+            <div class="right-sidebar-container">
+                <div class="right-sidebar">
+                    <div class="pfp-frame-wrapper">
+                        <img src="{{ profile_pic_url }}" class="pfp right" id="pfp" />
+                        <div class="frame2" id="frame2">
+                            <div class="frame-username">
+                                <a href="{{ url_for('profile', user_id=current_user.id) }}">
+                                    {{ current_user.first_name }} {{ current_user.last_name }}
+                                </a>
+                            </div>
+                            <div class="line"></div>
+                            <a href="{{ url_for('saved') }}">
+                                <div class="saved">Saved</div>
+                            </a>
+                            <a href="{{ url_for('settings') }}">
+                                <div class="settings">Settings</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="notifs" id="notifs">
+                        <div class="notifs-title">
+                            Notifs
+                        </div>
+                        {% if notifications %}
+                        {% for display_name, action, image_id, created_at, actor_id, profile_pic, notification_id in
+                        notifications %}
+                        <div class="notif-bar" id="notif-{{ notification_id }}">
+                            <a href="{{ url_for('profile', user_id=actor_id) }}"><img
+                                    src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                    class="pfp img-notif-request"></a>
+                            <div class="notif-details">
+                                <div class="notif-text">
+                                    <span style="font-weight: 600;"><a
+                                            href="{{ url_for('profile', user_id=actor_id) }}">{{
+                                            display_name }}</a></span>
+                                    {% if action == 'like' %}
+                                    liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                            style="font-weight: 600;">post</span></a>.
+                                    {% elif action == 'comment' %}
+                                    commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                            style="font-weight: 600;">post</span></a>.
+                                    {% elif action == 'collab_check' %}
+                                    found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
+                                        data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
+                                        style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                        match</span>.
+                                    {% endif %}
+                                </div>
+                                <div class="notif-date">
+                                    {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="notifs-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="requests" id="requests">
+                        <div class="requests-title">
+                            Requests
+                        </div>
+                        {% if requests %}
+                        {% for request_id, sender_id, first_name, last_name, created_at in requests %}
+                        <div class="request-bar" id="request-{{ request_id }}">
+                            <a href="{{ url_for('profile', user_id=sender_id) }}"><img src="../static/pfp.jpg"
+                                    class="pfp img-notif-request"></a>
+
+                            <div class="request-details">
+                                <div class="request-text">
+                                    <span style="font-weight: 600;">
+                                        <a href="{{ url_for('profile', user_id=sender_id) }}">
+                                            {{ first_name }} {{ last_name }}
+                                        </a>
+                                    </span> sent you a friend request.
+                                </div>
+                                <div class="request-date">
+                                    {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                </div>
+                                <div class="request-icons">
+                                    <button type="button" class="circled-icon-1"
+                                        onclick="handleRequest({{ request_id }}, 'reject')" {% if not verified
+                                        %}disabled{% endif %}>
+                                        <span class="material-symbols-outlined close-symbol">close</span>
+                                    </button>
+
+                                    <button type="button" class="circled-icon-2"
+                                        onclick="handleRequest({{ request_id }}, 'accept')" {% if not verified
+                                        %}disableda{% endif %}>
+                                        <span class="material-symbols-outlined check-symbol">check</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="notifs-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if show_profile_modal %}
+            <div id="profileModal" class="modal show">
+                <form method="POST" id="profileForm" action="/api/setup-profile">
+
+                    <div class="overlaySetup" id="step-1">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup1">
+                                <img src="..\static\pfp.jpg" class="pfpsetup1">
+                                <div class="heading">Hello, {{ current_user.first_name }} {{ current_user.last_name }}!
+                                </div>
+                                <div class="subheading">Ready to setup your account?</div>
                                 <button class="next-button" type="button" onclick="nextStep()">Next</button>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="overlaySetup" id="step-6" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup6">
-                            <div class="heading">What is your experience level?</div>
-                            <div class="subheading">Select your level, whether you're just starting or a pro.</div>
-                            <div class="left-align">
-                                {% for value, label in experience_levels %}
-                                <label class="radio-item">
-                                    <input type="radio" name="experience_level" value="{{ value }}" required>{{ label }}
-                                </label>
-                                {% endfor %}
-                            </div>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
+                    <div class="overlaySetup" id="step-2" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup2">
+                                <div class="heading">What is your role?</div>
+                                <div class="subheading">Your role helps us personalize your experience.</div>
+                                <input class="setup2-field" type="text" placeholder="ex. Graphic Designer" id="role"
+                                    name="role" maxlength="100" required>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="button" onclick="nextStep()">Next</button>
                                 </div>
-                                <button class="next-button" type="button" onclick="nextStep()">Next</button>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="overlaySetup" id="step-7" style="display:none;">
-                    <div class="overlay-content-setup">
-                        <div class="overlay-title-setup">Setup</div>
-                        <div class="div-setup" id="divSetup7">
-                            <div class="heading">Link your external accounts.</div>
-                            <div class="subheading">Let your profiles speak for you.</div>
-                            <table class="social-table">
-                                <tr>
-                                    <td><label for="facebook">Facebook</label></td>
-                                    <td>
-                                        <input type="url" id="facebook" name="facebook"
-                                            placeholder="https://facebook.com/yourprofile">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><label for="instagram">Instagram</label></td>
-                                    <td>
-                                        <input type="url" id="instagram" name="instagram"
-                                            placeholder="https://instagram.com/yourprofile">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><label for="x">X</label></td>
-                                    <td>
-                                        <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><label for="linkedin">LinkedIn</label></td>
-                                    <td>
-                                        <input type="url" id="linkedin" name="linkedin"
-                                            placeholder="https://linkedin.com/in/yourprofile">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><label for="telegram">Telegram</label></td>
-                                    <td>
-                                        <input type="url" id="telegram" name="telegram"
-                                            placeholder="https://t.me/yourusername">
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="button-wrapper">
-                                <div class="partner-back" onclick="prevStep()">
-                                    <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                                    <div class="partner-label-back">Back</div>
+                    <div class="overlaySetup" id="step-3" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup3">
+                                <div class="heading">Where are you located?</div>
+                                <div class="subheading">Show us where your ideas come to life.</div>
+                                <div class="left-align">
+                                    <div class="label">Country</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="country" name="country" required>
+                                            <option value="">Select your country</option>
+                                            {% for country in countries %}
+                                            <option value="{{ country.iso2 }}" data-iso="{{ country.iso2 }}" {% if
+                                                user.country|trim|lower==country.iso2|trim|lower %}selected{% endif %}>
+                                                {{ country.name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                                    </div>
+                                    <div class="label">Region or Province</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="state" name="state" required>
+                                            <option value="">Select your region or province</option>
+                                            {% for state in states if state.country_code == user.country %}
+                                            <option value="{{ state.state_code }}" {% if state.state_code==user.state
+                                                %}selected{% endif %}>
+                                                {{ state.name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                                    </div>
+                                    <div class="label">City</div>
+                                    <div class="label-wrapper">
+                                        <select class="location" id="city" name="city" required>
+                                            <option value="">Select your city</option>
+                                        </select>
+                                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                                    </div>
                                 </div>
-                                <button class="next-button" type="submit">Save</button>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Step 1: Skills
+                    <div class="overlaySetup" id="step-4" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup4">
+                                <div class="heading">What are your skills?</div>
+                                <div class="subheading">Tell us what you’re good at—select all that apply.</div>
+                                <div class="checkbox-grid">
+                                    {% for category in categories %}
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="skills" value="{{ category }}">
+                                        {{ category }}
+                                    </label>
+                                    {% endfor %}
+                                    <!--<a href="#" class="view-more">View all fields...</a>-->
+                                </div>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overlaySetup" id="step-5" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup5">
+                                <div class="heading">What are your preferences?</div>
+                                <div class="subheading">Tell us your design vibe—select all that apply.</div>
+                                <div class="checkbox-grid">
+                                    {% for category in categories %}
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="preferences" value="{{ category }}">
+                                        {{ category }}
+                                    </label>
+                                    {% endfor %}
+                                    <!--<a href="#" class="view-more">View all fields...</a>-->
+                                </div>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overlaySetup" id="step-6" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup6">
+                                <div class="heading">What is your experience level?</div>
+                                <div class="subheading">Select your level, whether you're just starting or a pro.</div>
+                                <div class="left-align">
+                                    {% for value, label in experience_levels %}
+                                    <label class="radio-item">
+                                        <input type="radio" name="experience_level" value="{{ value }}" required>{{
+                                        label }}
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="button" onclick="nextStep()">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overlaySetup" id="step-7" style="display:none;">
+                        <div class="overlay-content-setup">
+                            <div class="overlay-title-setup">Setup</div>
+                            <div class="div-setup" id="divSetup7">
+                                <div class="heading">Link your external accounts.</div>
+                                <div class="subheading">Let your profiles speak for you.</div>
+                                <table class="social-table">
+                                    <tr>
+                                        <td><label for="facebook">Facebook</label></td>
+                                        <td>
+                                            <input type="url" id="facebook" name="facebook"
+                                                placeholder="https://facebook.com/yourprofile">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="instagram">Instagram</label></td>
+                                        <td>
+                                            <input type="url" id="instagram" name="instagram"
+                                                placeholder="https://instagram.com/yourprofile">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="x">X</label></td>
+                                        <td>
+                                            <input type="url" id="x" name="x" placeholder="https://x.com/yourprofile">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="linkedin">LinkedIn</label></td>
+                                        <td>
+                                            <input type="url" id="linkedin" name="linkedin"
+                                                placeholder="https://linkedin.com/in/yourprofile">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="telegram">Telegram</label></td>
+                                        <td>
+                                            <input type="url" id="telegram" name="telegram"
+                                                placeholder="https://t.me/yourusername">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="button-wrapper">
+                                    <div class="partner-back" onclick="prevStep()">
+                                        <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                        <div class="partner-label-back">Back</div>
+                                    </div>
+                                    <button class="next-button" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Skills
                 <div class="form-step" id="step-1">
                     <h2>Your Skills</h2>
                     {% for category in categories %}
@@ -657,7 +669,7 @@
                     <button type="button" onclick="nextStep()">Next</button>
                 </div>-->
 
-                <!-- Step 2: Preferences
+                    <!-- Step 2: Preferences
                 <div class="form-step" id="step-2" style="display:none;">
                     <h2>Your Preferences</h2>
                     {% for category in categories %}
@@ -670,7 +682,7 @@
                     <button type="button" onclick="nextStep()">Next</button>
                 </div> -->
 
-                <!-- Step 3: Experience
+                    <!-- Step 3: Experience
                 <div class="form-step" id="step-3" style="display:none;">
                     <h2>Experience Level</h2>
                     <label for="experience_level">Select your level:</label><br>
@@ -683,7 +695,7 @@
                     <button type="button" onclick="nextStep()">Next</button>
                 </div> -->
 
-                <!-- Step 4: Role
+                    <!-- Step 4: Role
                 <div class="form-step" id="step-4" style="display:none;">
                     <h2>Your Role</h2>
                     <input type="text" id="role" name="role" maxlength="100" required><br><br>
@@ -691,7 +703,7 @@
                     <button type="button" onclick="nextStep()">Next</button>
                 </div> -->
 
-                <!-- Step 5: Location
+                    <!-- Step 5: Location
                 <div class="form-step" id="step-5" style="display:none;">
                     <h2>Location</h2>
                     <label for="country">Country:</label><br>
@@ -716,7 +728,7 @@
                     <button type="button" onclick="nextStep()">Next</button>
                 </div> -->
 
-                <!-- Step 6: Social Links
+                    <!-- Step 6: Social Links
                 <div class="form-step" id="step-6" style="display:none;">
                     <h2>Social Media Links</h2>
                     <input type="url" id="facebook" name="facebook"
@@ -731,12 +743,12 @@
                     <button type="button" onclick="prevStep()">Previous</button>
                     <button type="submit">Save Profile</button>
                 </div> -->
-            </form>
+                </form>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
 
-    <!-- Match modal
+        <!-- Match modal
     <div id="matchModal" class="modal" style="display: none;">
         <div class="modal-content">
             <p>You were matched with <span id="match-username" style="font-weight: 600;"></span>.</p>
@@ -747,180 +759,187 @@
         </div>
     </div> -->
 
-    <div id="reportModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <button class="close-icon" onclick="closeReportModal()">
-                <span class="material-symbols-outlined overlay-close-symbol">close</span>
-            </button>
-            <div class="overlay-title">Report</div>
-            <div class="heading" style="text-align: center;">Something not right?</div>
-            <div class="subheading" style="text-align: center;">Let us know why you’re reporting this post.</div>
-            <form id="reportForm" style="padding: 0 48px;">
-                <!-- Hidden field to store image ID -->
-                <input type="hidden" name="image_id" id="reportImageId">
-                <!-- Reasons with checkboxes -->
-                <div class="report-reasons">
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="reason" value="Spam">
-                        <span class="report-label">Spam or misleading content</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="reason" value="Inappropriate">
-                        <span class="report-label">Inappropriate or offensive material</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="reason" value="Hate Speech">
-                        <span class="report-label">Hate speech or abusive language</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="reason" value="Copyright">
-                        <span class="report-label">Copyright infringement</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="reason" value="Other">
-                        <span class="report-label">Other</span>
-                    </label>
-                </div>
-
-                <!-- Buttons -->
-                <div class="match-button-wrapper" style="margin-bottom: 24px;">
-                    <button type="button" class="browse-button" onclick="closeReportModal()">Cancel</button>
-                    <button type="submit" class="match-button">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="matchModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            {% for notif in notifications %}
-            {% set actor_id = notif[4] %}
-            {% set actor = actor_details[actor_id] %}
-            <!-- Step 1 -->
-            <div class="modal-step" id="match-step-1">
-                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
-                    <span class="material-symbols-outlined overlay-close-symbol">close</span></button>
-                <div class="overlay-title">Match</div>
-                <div class="padding-match">
-
-                    <div class="div-setup">
-                        <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
-            if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
-            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
-                        <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you as a
-                            match.
-                        </div>
-                        <div class="subheading">You're now connected, unless you say otherwise.</div>
-                        <button class="next-button" onclick="showMatchStep(2)">Next</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="modal-step" id="match-step-2" style="display: none;">
-                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+        <div id="reportModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <button class="close-icon" onclick="closeReportModal()">
                     <span class="material-symbols-outlined overlay-close-symbol">close</span>
                 </button>
-                <div class="overlay-title">Match</div>
-                <div class="padding-match">
-                    <div class="match-wrapper">
-                        <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
+                <div class="overlay-title">Report</div>
+                <div class="heading" style="text-align: center;">Something not right?</div>
+                <div class="subheading" style="text-align: center;">Let us know why you’re reporting this post.</div>
+                <form id="reportForm" style="padding: 0 48px;">
+                    <!-- Hidden field to store image ID -->
+                    <input type="hidden" name="image_id" id="reportImageId">
+                    <!-- Reasons with checkboxes -->
+                    <div class="report-reasons">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="reason" value="Spam">
+                            <span class="report-label">Spam or misleading content</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="reason" value="Inappropriate">
+                            <span class="report-label">Inappropriate or offensive material</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="reason" value="Hate Speech">
+                            <span class="report-label">Hate speech or abusive language</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="reason" value="Copyright">
+                            <span class="report-label">Copyright infringement</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="reason" value="Other">
+                            <span class="report-label">Other</span>
+                        </label>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="match-button-wrapper" style="margin-bottom: 24px;">
+                        <button type="button" class="browse-button" onclick="closeReportModal()">Cancel</button>
+                        <button type="submit" class="match-button">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="matchModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                {% for notif in notifications %}
+                {% set actor_id = notif[4] %}
+                {% set actor = actor_details[actor_id] %}
+                <!-- Step 1 -->
+                <div class="modal-step" id="match-step-1">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                        <span class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+
+                        <div class="div-setup">
+                            <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
+            if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
+            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
+                            <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you
+                                as a
+                                match.
+                            </div>
+                            <div class="subheading">You're now connected, unless you say otherwise.</div>
+                            <button class="next-button" onclick="showMatchStep(2)">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="modal-step" id="match-step-2" style="display: none;">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                        <span class="material-symbols-outlined overlay-close-symbol">close</span>
+                    </button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+                        <div class="match-wrapper">
+                            <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
             if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
             else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
 
 
-                        <div class="match-card">
-                            <div class="username-profile">{{ actor.full_name }}</div>
-                            <div class="icon-title-wrapper">
-                                <span class="material-symbols-outlined person-symbol">person</span>
-                                <div class="title">{{ actor.role }}</div>
-                            </div>
-                            <div class="icon-title-wrapper">
-                                <span class="material-symbols-outlined world-symbol">public</span>
-                                <div class="location-profile">{{ actor.city }}, {{ actor.state }}, {{ actor.country }}
+                            <div class="match-card">
+                                <div class="username-profile">{{ actor.full_name }}</div>
+                                <div class="icon-title-wrapper">
+                                    <span class="material-symbols-outlined person-symbol">person</span>
+                                    <div class="title">{{ actor.role }}</div>
+                                </div>
+                                <div class="icon-title-wrapper">
+                                    <span class="material-symbols-outlined world-symbol">public</span>
+                                    <div class="location-profile">{{ actor.city }}, {{ actor.state }}, {{ actor.country
+                                        }}
+                                    </div>
                                 </div>
                             </div>
+
+                        </div>
+                        <!-- Skills -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Skills</div>
+                            <div class="info-content-match">
+                                {% for skill in actor.skills %}
+                                <div class="info-one-match">{{ skill }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
 
-                    </div>
-                    <!-- Skills -->
-                    <div class="info-sandp">
-                        <div class="info-title-match">Skills</div>
-                        <div class="info-content-match">
-                            {% for skill in actor.skills %}
-                            <div class="info-one-match">{{ skill }}</div>
-                            {% endfor %}
+                        <!-- Preferences -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Preferences</div>
+                            <div class="info-content-match">
+                                {% for pref in actor.preferences %}
+                                <div class="info-one-match">{{ pref }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Preferences -->
-                    <div class="info-sandp">
-                        <div class="info-title-match">Preferences</div>
-                        <div class="info-content-match">
-                            {% for pref in actor.preferences %}
-                            <div class="info-one-match">{{ pref }}</div>
-                            {% endfor %}
+                        <!-- Experience Level -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Experience Level</div>
+                            <div class="info-content-match">
+                                {% set levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+                                <div class="info-one-match">{{ levels[actor.experience_level] }}</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Experience Level -->
-                    <div class="info-sandp">
-                        <div class="info-title-match">Experience Level</div>
-                        <div class="info-content-match">
-                            {% set levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
-                            <div class="info-one-match">{{ levels[actor.experience_level] }}</div>
-                        </div>
-                    </div>
-
-                    <div class="button-wrapper">
-                        <div class="partner-back-match" onclick="showMatchStep(1)">
-                            <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                            <div class="partner-label-back">Back</div>
-                        </div>
-                        <div class="match-button-wrapper">
-                            <button id="decline-match" class="browse-button">Decline Match</button>
-                            <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                        <div class="button-wrapper">
+                            <div class="partner-back-match" onclick="showMatchStep(1)">
+                                <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                <div class="partner-label-back">Back</div>
+                            </div>
+                            <div class="match-button-wrapper">
+                                <button id="decline-match" class="browse-button">Decline Match</button>
+                                <button class="next-button" onclick="showMatchStep(3)">Next</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Step 3 -->
-            <div class="modal-step" id="match-step-3" style="display: none;">
-                <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
-                    <span class="material-symbols-outlined overlay-close-symbol">close</span>
-                </button>
-                <div class="overlay-title">Match</div>
-                <div class="padding-match">
-                    <div class="share-wrapper">
-                        <div class="share-via">Reach out via</div>
-                        <div class="icon-grid">
-                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
-                                    class="fb"></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
-                                    class="ig"></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
-                                    class="x"></a>
-                            <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
-                                    class="linkedin"></a>
-                            <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                <!-- Step 3 -->
+                <div class="modal-step" id="match-step-3" style="display: none;">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                        <span class="material-symbols-outlined overlay-close-symbol">close</span>
+                    </button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+                        <div class="share-wrapper">
+                            <div class="share-via">Reach out via</div>
+                            <div class="icon-grid">
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
+                                        class="fb"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                                        class="ig"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
+                                        class="x"></a>
+                                <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
+                                        class="linkedin"></a>
+                                <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="button-wrapper">
-                        <div class="partner-back" onclick="showMatchStep(2)">
-                            <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
-                            <div class="partner-label-back">Back</div>
+                        <div class="button-wrapper">
+                            <div class="partner-back" onclick="showMatchStep(2)">
+                                <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                                <div class="partner-label-back">Back</div>
+                            </div>
+                            <button onclick="closeMatchModal()" class="next-button">Done</button>
                         </div>
-                        <button onclick="closeMatchModal()" class="next-button">Done</button>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-
 
 
             <script>
+
+                window.addEventListener('load', function () {
+                    document.body.classList.remove('loading');       // show app
+                    document.getElementById('loader').style.display = 'none';  // hide loader
+                });
 
                 let reportImageId = null;
 
