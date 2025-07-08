@@ -1167,38 +1167,6 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-                    function checkScrollbar() {
-                        const imageInput = document.getElementById('image');
-                        const div = document.getElementById('scrollableDiv');
-                        const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
-                        const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
-                        const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-
-                        if (imageInput && div) {
-                            div.classList.remove('no-scroll', 'has-scroll');
-                            if (imageInput.files.length > 0) {
-                                div.classList.add('has-scroll');
-                            } else {
-                                div.classList.add('no-scroll');
-                            }
-                        }
-
-                        const checkScrollState = (divList) => {
-                            divList.forEach(el => {
-                                el.classList.remove('no-scroll', 'has-scroll');
-                                if (el.scrollHeight > el.clientHeight) {
-                                    el.classList.add('has-scroll');
-                                } else {
-                                    el.classList.add('no-scroll');
-                                }
-                            });
-                        };
-
-                        checkScrollState(likeDivs);
-                        checkScrollState(commentDivs);
-                        checkScrollState(commentLikeDivs);
-                    }
-
                     const savedTheme = localStorage.getItem("theme") || "light";
                     document.documentElement.setAttribute("data-theme", savedTheme);
 
@@ -1886,10 +1854,6 @@
                                         // Insert spacer directly after newComment
                                         newComment.insertAdjacentElement('afterend', spacer);
 
-                                        requestAnimationFrame(() => {
-                                            checkScrollbar();
-                                        });
-
                                         input.value = '';
                                     } else {
                                         console.error('Failed to post comment:', data);
@@ -2182,6 +2146,38 @@
                             frame4.style.display = 'block';
                         }
                     });
+
+                    function checkScrollbar() {
+                        const imageInput = document.getElementById('image');
+                        const div = document.getElementById('scrollableDiv');
+                        const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+                        const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+                        const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+                        if (imageInput && div) {
+                            div.classList.remove('no-scroll', 'has-scroll');
+                            if (imageInput.files.length > 0) {
+                                div.classList.add('has-scroll');
+                            } else {
+                                div.classList.add('no-scroll');
+                            }
+                        }
+
+                        const checkScrollState = (divList) => {
+                            divList.forEach(el => {
+                                el.classList.remove('no-scroll', 'has-scroll');
+                                if (el.scrollHeight > el.clientHeight) {
+                                    el.classList.add('has-scroll');
+                                } else {
+                                    el.classList.add('no-scroll');
+                                }
+                            });
+                        };
+
+                        checkScrollState(likeDivs);
+                        checkScrollState(commentDivs);
+                        checkScrollState(commentLikeDivs);
+                    }
 
                     function adjustRightPaddingOnScrollCheck() {
                         const ids = ["notifs", "requests"];
