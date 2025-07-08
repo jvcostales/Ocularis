@@ -1,7 +1,39 @@
+:root {
+    --bg-main: #f6f6f6;
+    --bg-secondary: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #c4c4c4;
+    --text-hover: #a6a6a6;
+    --highlight: #1C46F5;
+    --accent: #D3F36A;
+    --btn-disabled-bg: #DDDEDF;
+    --btn-disabled-text: #A8AAB5;
+    --highlight-hover: #4F72F7;
+    --highlight-active: #152FAE;
+    --accent-hover: #E2F89A;
+    --accent-active: #9BB35B;
+}
+
+[data-theme="dark"] {
+    --bg-main: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-main: #ffffff;
+    --text-muted: #e0e0e0;
+    --text-hover: #c4c4c4;
+    --highlight: #1C46F5;
+    --accent: #D3F36A;
+    --btn-disabled-bg: #DDDEDF;
+    --btn-disabled-text: #A8AAB5;
+    --highlight-hover: #4F72F7;
+    --highlight-active: #152FAE;
+    --accent-hover: #E2F89A;
+    --accent-active: #9BB35B;
+}
+
 body {
     font-family: 'Schibsted Grotesk', sans-serif;
     margin: 0;
-    background-color: #f6f6f6;
+    background-color: var(--bg-main);
 }
 
 /* Loader styles */
@@ -11,7 +43,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffffff; /* or #1a1a1a for dark */
+    background: var(--bg-secondary);
+    /* or var(--text-main) for dark */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,14 +63,22 @@ body.loading .app-content {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .report-reasons {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Ensures children are left-aligned */
+    align-items: flex-start;
+    /* Ensures children are left-aligned */
     gap: 12px;
     margin-bottom: 24px;
 }
@@ -71,25 +112,27 @@ td input[type="url"] {
 }
 
 input[type="url"]::placeholder {
-    color: #c4c4c4;
+    color: var(--text-muted);
 }
 
 .match-button:disabled,
 .browse-button:disabled {
-    background-color: #DDDEDF;
-    color: #A8AAB5;
+    background-color: var(--btn-disabled-bg);
+    color: var(--btn-disabled-text);
     cursor: not-allowed;
 }
 
 .like-button.liked .lcs-symbol {
-    color: #1C46F5;
+    color: var(--highlight);
 }
 
 .modal {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
@@ -111,8 +154,7 @@ input[type="url"]::placeholder {
         height: 100vh;
         position: sticky;
         top: 0;
-        background: #fff;
-        color: #2c2c2c;
+        background: var(--bg-secondary);
     }
 
     .left-sidebar {
@@ -158,19 +200,19 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
         cursor: pointer;
         margin-bottom: 8px;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .icon-text-wrapper:hover {
-        background: #f6f6f6;
+        background: var(--bg-main);
         border-radius: 10px;
-        color: #1C46F5;
+        color: var(--highlight);
     }
 
     .current {
-        background: #f6f6f6;
+        background: var(--bg-main);
         border-radius: 10px;
-        color: #1C46F5;
+        color: var(--highlight);
     }
 
     span.sidebar-symbol {
@@ -192,13 +234,13 @@ input[type="url"]::placeholder {
         top: 0;
         padding-top: 16px;
         padding-bottom: 24px;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
         z-index: 2;
     }
 
     .search-wrapper {
-        background: #fff;
-        color: #c4c4c4;
+        background: var(--bg-secondary);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -216,12 +258,12 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         border: none;
         outline: none;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 100%;
     }
 
     .search::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     span.search-symbol {
@@ -230,7 +272,7 @@ input[type="url"]::placeholder {
     }
 
     .search-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -245,18 +287,18 @@ input[type="url"]::placeholder {
     main {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .post {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
     }
 
     .results {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         padding-bottom: 0;
@@ -283,7 +325,7 @@ input[type="url"]::placeholder {
 
     .post-title {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -292,7 +334,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .tagline-wrapper-2 {
@@ -305,13 +347,13 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         border: none;
         outline: none;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 250px;
         /*note sure*/
     }
 
     .post-tagline::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
 
@@ -321,7 +363,7 @@ input[type="url"]::placeholder {
     }
 
     .image-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -335,11 +377,11 @@ input[type="url"]::placeholder {
     }
 
     .image-button:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .post1 {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
@@ -354,13 +396,13 @@ input[type="url"]::placeholder {
     span.more-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 32px;
-        color: #1a1a1a;
+        color: var(--text-main);
         user-select: none;
         cursor: pointer;
     }
 
     span.more-symbol:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .profile-post {
@@ -373,19 +415,19 @@ input[type="url"]::placeholder {
 
     .username {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 500;
         padding-bottom: 4px;
     }
 
     .date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .caption {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
@@ -407,21 +449,21 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         user-select: none;
     }
 
     .partner:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .comment-like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .partner-label {
@@ -453,14 +495,14 @@ input[type="url"]::placeholder {
     /*hover*/
 
     .metrics {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         cursor: pointer;
         white-space: nowrap;
     }
 
     .metrics:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .interactions {
@@ -472,7 +514,7 @@ input[type="url"]::placeholder {
     .right-sidebar-container {
         grid-column: 5 / 6;
         grid-row: 1 / 3;
-        color: #1a1a1a;
+        color: var(--text-main);
         position: sticky;
         top: 0;
         height: 100vh;
@@ -499,7 +541,7 @@ input[type="url"]::placeholder {
     }
 
     .notifs {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding-top: 24px;
         padding-bottom: 24px;
@@ -534,14 +576,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -555,14 +597,14 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
     }
 
     .requests {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding-top: 24px;
         padding-bottom: 24px;
@@ -588,7 +630,7 @@ input[type="url"]::placeholder {
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -597,7 +639,7 @@ input[type="url"]::placeholder {
     .notifs-title,
     .requests-title {
         font-size: 1.125rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -619,14 +661,14 @@ input[type="url"]::placeholder {
     }
 
     .notif-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .notif-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .request-bar {
@@ -641,14 +683,14 @@ input[type="url"]::placeholder {
     }
 
     .request-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .request-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 16px;
     }
 
@@ -668,8 +710,8 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         background-color: transparent;
-        border: 0.5px solid #c4c4c4;
-        color: #c4c4c4;
+        border: 0.5px solid var(--text-muted);
+        color: var(--text-muted);
     }
 
     .circled-icon-1:hover {
@@ -678,13 +720,13 @@ input[type="url"]::placeholder {
     }
 
     .circled-icon-1:active {
-        border: 0.5px solid #a6a6a6;
-        color: #a6a6a6;
+        border: 0.5px solid var(--text-hover);
+        color: var(--text-hover);
     }
 
     .circled-icon-1[disabled] {
-        border: 0.5px solid #DDDEDF;
-        color: #DDDEDF;
+        border: 0.5px solid var(--btn-disabled-bg);
+        color: var(--btn-disabled-bg);
         cursor: not-allowed;
         pointer-events: none;
     }
@@ -698,21 +740,21 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .circled-icon-2:hover {
-        background-color: #E2F89A;
+        background-color: var(--accent-hover);
     }
 
     .circled-icon-2:active {
-        background-color: #9BB35B;
+        background-color: var(--accent-active);
     }
 
     .circled-icon-2[disabled] {
         cursor: not-allowed;
         pointer-events: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
     }
 
     span.close-symbol {
@@ -723,7 +765,7 @@ input[type="url"]::placeholder {
     span.check-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #f6f6f6;
+        color: var(--bg-main);
     }
 
     /*margin-bottom padding-bottom*/
@@ -752,7 +794,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -766,7 +808,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         float: right;
@@ -783,7 +825,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     span.overlay-close-symbol {
@@ -793,7 +835,7 @@ input[type="url"]::placeholder {
 
     .overlay-title {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 24px;
@@ -803,7 +845,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -812,7 +854,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline::placeholder {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -843,7 +885,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -881,7 +923,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         position: absolute;
         z-index: 1;
         top: 16px;
@@ -897,7 +939,7 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         position: absolute;
         z-index: 1;
         top: 16px;
@@ -907,7 +949,7 @@ input[type="url"]::placeholder {
     span.overlay-upload-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 40px;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         background-color: transparent;
         background: none;
@@ -922,24 +964,24 @@ input[type="url"]::placeholder {
     span.close-symbol-overlay-version {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     span.close-symbol-overview-version {
         font-variation-settings: 'FILL' 1;
         font-size: 32px;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .drop {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 4px;
     }
 
     .supports {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
     }
 
@@ -952,12 +994,12 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .browse-file:hover {
-        border: 2px solid #c4c4c4;
-        color: #a6a6a6;
+        border: 2px solid var(--text-muted);
+        color: var(--text-hover);
     }
 
     .post-button {
@@ -966,10 +1008,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         display: block;
         margin: auto;
         margin-top: 24px;
@@ -978,11 +1020,11 @@ input[type="url"]::placeholder {
     }
 
     .post-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .post-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .more-frame-wrapper {
@@ -992,7 +1034,7 @@ input[type="url"]::placeholder {
     .frame1 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 1;
         width: 125px;
         padding: 16px;
@@ -1010,7 +1052,7 @@ input[type="url"]::placeholder {
     .hide,
     .report,
     .delete {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
     }
@@ -1019,7 +1061,7 @@ input[type="url"]::placeholder {
     .hide:hover,
     .report:hover,
     .delete:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .pfp-frame-wrapper {
@@ -1029,7 +1071,7 @@ input[type="url"]::placeholder {
     .frame2 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 3;
         width: 250px;
         padding: 16px;
@@ -1053,7 +1095,7 @@ input[type="url"]::placeholder {
     .frame-username,
     .saved,
     .settings {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
         white-space: nowrap;
@@ -1062,7 +1104,7 @@ input[type="url"]::placeholder {
     .frame-username:hover,
     .saved:hover,
     .settings:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .overlayLikes {
@@ -1088,7 +1130,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-likes {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -1131,7 +1173,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -1143,19 +1185,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .follow-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .profile-post-likes {
@@ -1189,7 +1231,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-comments {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -1225,7 +1267,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -1279,7 +1321,7 @@ input[type="url"]::placeholder {
     }
 
     .comment-text {
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
         padding: 16px;
         border-radius: 10px;
         width: 100%;
@@ -1291,16 +1333,16 @@ input[type="url"]::placeholder {
 
     .tagline-comment {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         outline: none;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .tagline-comment::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .send-button {
@@ -1309,19 +1351,19 @@ input[type="url"]::placeholder {
         align-self: flex-end;
         padding: 12px 24px;
         box-sizing: border-box;
-        background-color: #1C46F5;
-        color: #f6f6f6;
+        background-color: var(--highlight);
+        color: var(--bg-main);
         border: none;
         border-radius: 10px;
         cursor: pointer;
     }
 
     .send-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .send-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .comments-empty {
@@ -1352,14 +1394,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -1386,7 +1428,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-share {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -1405,7 +1447,7 @@ input[type="url"]::placeholder {
     .share-via {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-top: 16px;
         padding-bottom: 24px;
     }
@@ -1435,13 +1477,13 @@ input[type="url"]::placeholder {
     .or-copy-link {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
     .link-wrapper {
-        background: #f6f6f6;
-        color: #c4c4c4;
+        background: var(--bg-main);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1465,7 +1507,7 @@ input[type="url"]::placeholder {
     }
 
     .link-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -1494,7 +1536,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-setup {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -1504,7 +1546,7 @@ input[type="url"]::placeholder {
 
     .overlay-title-setup {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 36px;
@@ -1531,14 +1573,14 @@ input[type="url"]::placeholder {
     .heading {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 6px;
     }
 
     .subheading {
         font-size: 1rem;
         font-weight: 400;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 36px;
     }
 
@@ -1548,25 +1590,25 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .next-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .next-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .setup2-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -1577,7 +1619,7 @@ input[type="url"]::placeholder {
     }
 
     .setup2-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .left-align {
@@ -1588,7 +1630,7 @@ input[type="url"]::placeholder {
     }
 
     .label {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         font-weight: 500;
         margin-top: 16px;
@@ -1606,7 +1648,7 @@ input[type="url"]::placeholder {
     .location {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -1625,7 +1667,7 @@ input[type="url"]::placeholder {
         top: 50%;
         transform: translateY(-50%);
         pointer-events: none;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .button-wrapper {
@@ -1640,7 +1682,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -1648,7 +1690,7 @@ input[type="url"]::placeholder {
     }
 
     .partner-back:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .checkbox-grid {
@@ -1662,11 +1704,11 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .checkbox-item input[type="checkbox"] {
-        accent-color: #1C46F5;
+        accent-color: var(--highlight);
         margin-right: 8px;
         width: 20px;
         height: 20px;
@@ -1685,7 +1727,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
     }
 
@@ -1724,11 +1766,11 @@ input[type="url"]::placeholder {
     }
 
     .social-table td:first-child {
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .social-table td:last-child {
-        color: #c4c4c4;
+        color: var(--text-muted);
         word-break: break-word;
     }
 
@@ -1783,18 +1825,18 @@ input[type="url"]::placeholder {
     span.person-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .title {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     span.world-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .icon-title-wrapper {
@@ -1809,13 +1851,13 @@ input[type="url"]::placeholder {
     }
 
     .location-profile {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     .stats {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-top: 16px;
     }
 
@@ -1837,11 +1879,11 @@ input[type="url"]::placeholder {
         font-family: 'Schibsted Grotesk', sans-serif;
         padding: 12px 24px;
         box-sizing: border-box;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -1853,10 +1895,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         cursor: pointer;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -1868,10 +1910,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -1883,21 +1925,21 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
         border-radius: 10px;
         cursor: pointer;
-        color: #A8AAB5;
+        color: var(--btn-disabled-text);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
     }
 
     .follow-button-profile:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button-profile:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .info-button-wrapper {
@@ -1932,20 +1974,20 @@ input[type="url"]::placeholder {
         flex-direction: column;
         justify-content: center;
         border-radius: 0 10px 10px 0;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .name-card {
         margin: 0;
         font-size: 1.5rem;
         font-weight: 600;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-left: 24px;
         box-sizing: border-box;
     }
 
     .who {
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         margin-left: 24px;
         box-sizing: border-box;
@@ -1970,13 +2012,13 @@ input[type="url"]::placeholder {
     .match {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .pairup {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .card-pairup {
@@ -1989,14 +2031,14 @@ input[type="url"]::placeholder {
 
     .post-title-pairup {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 96px;
         font-weight: 500;
     }
 
     .pairup-tagline {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         font-weight: 400;
     }
@@ -2013,19 +2055,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .match-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .match-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .browse-button {
@@ -2035,22 +2077,22 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
         border: none;
         background-color: transparent;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
     }
 
     .browse-button:hover {
-        border: 1px solid #4F72F7;
-        color: #4F72F7;
+        border: 1px solid var(--highlight-hover);
+        color: var(--highlight-hover);
         background-color: rgba(28, 70, 245, 0.06);
     }
 
     .browse-button:active {
-        border: 1px solid #152FAE;
-        color: #152FAE;
+        border: 1px solid var(--highlight-active);
+        color: var(--highlight-active);
         background-color: rgba(21, 47, 174, 0.35);
     }
 
@@ -2071,12 +2113,12 @@ input[type="url"]::placeholder {
     .settings-div {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .post-title-settings {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -2098,13 +2140,13 @@ input[type="url"]::placeholder {
 
     .section-sub {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 500;
     }
 
     .selected-section {
-        background-color: #D3F36A;
-        color: #9BB35B !important;
+        background-color: var(--accent);
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
         display: inline-block;
@@ -2122,20 +2164,20 @@ input[type="url"]::placeholder {
     .section-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 16px;
     }
 
     .section-tagline {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .subname {
         font-size: 1rem;
         font-weight: 500;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 129px;
     }
 
@@ -2158,7 +2200,7 @@ input[type="url"]::placeholder {
     .settings-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -2168,7 +2210,7 @@ input[type="url"]::placeholder {
     }
 
     .settings-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .sub-sub-wrapper {
@@ -2186,25 +2228,25 @@ input[type="url"]::placeholder {
 
     .delete-photo {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .delete-photo:hover {
         font-size: 1rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         font-weight: 400;
     }
 
     .update-photo {
         font-size: 1rem;
-        color: #1C46F5;
+        color: var(--highlight);
         font-weight: 400;
     }
 
     .update-photo:hover {
         font-size: 1rem;
-        color: #4F72F7;
+        color: var(--highlight-hover);
         font-weight: 400;
     }
 
@@ -2223,19 +2265,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .save-changes-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .save-changes-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .button-container {
@@ -2246,7 +2288,7 @@ input[type="url"]::placeholder {
     .location-settings {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -2309,7 +2351,7 @@ input[type="url"]::placeholder {
 
     /* Modal content */
     .modal-content {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -2324,19 +2366,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .btn-decline:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .btn-decline:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .nav-section {
@@ -2355,12 +2397,12 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         border-radius: 10px;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .info-title {
         font-size: 1.25rem;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         font-weight: 500;
         text-align: center;
@@ -2375,10 +2417,10 @@ input[type="url"]::placeholder {
 
     .info-one {
         background-color: transparent;
-        color: #9BB35B !important;
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #9BB35B;
+        border: 1px solid var(--accent-active);
         display: inline-block;
         text-align: center;
     }
@@ -2392,7 +2434,7 @@ input[type="url"]::placeholder {
 
     .info-title-match {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
         font-weight: 500;
         text-align: left;
@@ -2407,10 +2449,10 @@ input[type="url"]::placeholder {
 
     .info-one-match {
         background-color: transparent;
-        color: #1a1a1a !important;
+        color: var(--text-main) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #1a1a1a;
+        border: 1px solid var(--text-main);
         display: inline-block;
         text-align: center;
         font-size: 0.875rem;
@@ -2434,7 +2476,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -2442,7 +2484,7 @@ input[type="url"]::placeholder {
     }
 
     .partner-back-match:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 }
 
@@ -2462,7 +2504,7 @@ input[type="url"]::placeholder {
         height: 100vh;
         position: sticky;
         top: 0;
-        background: #fff;
+        background: var(--bg-secondary);
         color: #2c2c2c;
     }
 
@@ -2509,19 +2551,19 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
         cursor: pointer;
         margin-bottom: 8px;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .icon-text-wrapper:hover {
-        background: #f6f6f6;
+        background: var(--bg-main);
         border-radius: 10px;
-        color: #1C46F5;
+        color: var(--highlight);
     }
 
     .current {
-        background: #f6f6f6;
+        background: var(--bg-main);
         border-radius: 10px;
-        color: #1C46F5;
+        color: var(--highlight);
     }
 
     span.sidebar-symbol {
@@ -2543,13 +2585,13 @@ input[type="url"]::placeholder {
         top: 0;
         padding-top: 16px;
         padding-bottom: 24px;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
         z-index: 2;
     }
 
     .search-wrapper {
-        background: #fff;
-        color: #c4c4c4;
+        background: var(--bg-secondary);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -2567,12 +2609,12 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         border: none;
         outline: none;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 100%;
     }
 
     .search::placeholder {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     span.search-symbol {
@@ -2581,7 +2623,7 @@ input[type="url"]::placeholder {
     }
 
     .search-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -2616,19 +2658,19 @@ input[type="url"]::placeholder {
     .notifs-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 32px !important;
-        color: #c4c4c4;
+        color: var(--text-muted);
         user-select: none;
         cursor: pointer;
     }
 
     .notifs-symbol:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     main {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .right-sidebar {
@@ -2636,7 +2678,7 @@ input[type="url"]::placeholder {
     }
 
     .post {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
@@ -2644,7 +2686,7 @@ input[type="url"]::placeholder {
     }
 
     .results {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         padding-bottom: 0;
@@ -2672,7 +2714,7 @@ input[type="url"]::placeholder {
 
     .post-title {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -2681,7 +2723,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .tagline-wrapper-2 {
@@ -2694,13 +2736,13 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         border: none;
         outline: none;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 250px;
         /*note sure*/
     }
 
     .post-tagline::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
 
@@ -2710,7 +2752,7 @@ input[type="url"]::placeholder {
     }
 
     .image-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -2723,11 +2765,11 @@ input[type="url"]::placeholder {
     }
 
     .image-button:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .post1 {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
@@ -2742,13 +2784,13 @@ input[type="url"]::placeholder {
     span.more-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 32px;
-        color: #1a1a1a;
+        color: var(--text-main);
         user-select: none;
         cursor: pointer;
     }
 
     span.more-symbol:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .profile-post {
@@ -2762,19 +2804,19 @@ input[type="url"]::placeholder {
 
     .username {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 500;
         padding-bottom: 4px;
     }
 
     .date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .caption {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
@@ -2796,21 +2838,21 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         user-select: none;
     }
 
     .partner:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .comment-like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .partner-label {
@@ -2831,14 +2873,14 @@ input[type="url"]::placeholder {
     /*hover*/
 
     .metrics {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         cursor: pointer;
         white-space: nowrap;
     }
 
     .metrics:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .interactions {
@@ -2870,7 +2912,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -2884,7 +2926,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         float: right;
@@ -2901,7 +2943,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     span.overlay-close-symbol {
@@ -2911,7 +2953,7 @@ input[type="url"]::placeholder {
 
     .overlay-title {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 24px;
@@ -2921,7 +2963,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -2930,7 +2972,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline::placeholder {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -2961,7 +3003,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -2999,7 +3041,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         position: absolute;
         z-index: 1;
         top: 16px;
@@ -3009,7 +3051,7 @@ input[type="url"]::placeholder {
     span.overlay-upload-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 40px;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         background-color: transparent;
         background: none;
@@ -3025,18 +3067,18 @@ input[type="url"]::placeholder {
     span.close-symbol-overlay-version {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .drop {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 4px;
     }
 
     .supports {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
     }
 
@@ -3049,12 +3091,12 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .browse-file:hover {
-        border: 2px solid #c4c4c4;
-        color: #a6a6a6;
+        border: 2px solid var(--text-muted);
+        color: var(--text-hover);
     }
 
     .post-button {
@@ -3063,10 +3105,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         display: block;
         margin: auto;
         margin-top: 24px;
@@ -3075,11 +3117,11 @@ input[type="url"]::placeholder {
     }
 
     .post-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .post-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .more-frame-wrapper {
@@ -3089,7 +3131,7 @@ input[type="url"]::placeholder {
     .frame1 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 1;
         width: 125px;
         padding: 16px;
@@ -3107,7 +3149,7 @@ input[type="url"]::placeholder {
     .hide,
     .report,
     .delete {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
     }
@@ -3116,7 +3158,7 @@ input[type="url"]::placeholder {
     .hide:hover,
     .report:hover,
     .delete:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .pfp-frame-wrapper {
@@ -3126,7 +3168,7 @@ input[type="url"]::placeholder {
     .frame3 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 3;
         width: 250px;
         padding: 16px;
@@ -3151,7 +3193,7 @@ input[type="url"]::placeholder {
     .frame-username,
     .saved,
     .settings {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
         white-space: nowrap;
@@ -3160,7 +3202,7 @@ input[type="url"]::placeholder {
     .frame-username:hover,
     .saved:hover,
     .settings:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .overlayLikes {
@@ -3186,7 +3228,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-likes {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -3230,7 +3272,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -3242,19 +3284,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .follow-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .profile-post-likes {
@@ -3287,7 +3329,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-comments {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -3323,7 +3365,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -3377,7 +3419,7 @@ input[type="url"]::placeholder {
     }
 
     .comment-text {
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
         padding: 16px;
         border-radius: 10px;
         width: 100%;
@@ -3389,16 +3431,16 @@ input[type="url"]::placeholder {
 
     .tagline-comment {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         outline: none;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .tagline-comment::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .send-button {
@@ -3407,19 +3449,19 @@ input[type="url"]::placeholder {
         align-self: flex-end;
         padding: 12px 24px;
         box-sizing: border-box;
-        background-color: #1C46F5;
-        color: #f6f6f6;
+        background-color: var(--highlight);
+        color: var(--bg-main);
         border: none;
         border-radius: 10px;
         cursor: pointer;
     }
 
     .send-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .send-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .comments-empty {
@@ -3450,14 +3492,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -3484,7 +3526,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-share {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -3503,7 +3545,7 @@ input[type="url"]::placeholder {
     .share-via {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-top: 16px;
         padding-bottom: 24px;
     }
@@ -3533,13 +3575,13 @@ input[type="url"]::placeholder {
     .or-copy-link {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
     .link-wrapper {
-        background: #f6f6f6;
-        color: #c4c4c4;
+        background: var(--bg-main);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -3563,7 +3605,7 @@ input[type="url"]::placeholder {
     }
 
     .link-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -3592,7 +3634,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-setup {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -3607,7 +3649,7 @@ input[type="url"]::placeholder {
 
     .overlay-title-setup {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 36px;
@@ -3634,14 +3676,14 @@ input[type="url"]::placeholder {
     .heading {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 6px;
     }
 
     .subheading {
         font-size: 1rem;
         font-weight: 400;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 36px;
     }
 
@@ -3651,25 +3693,25 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .next-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .next-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .setup2-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -3680,7 +3722,7 @@ input[type="url"]::placeholder {
     }
 
     .setup2-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .left-align {
@@ -3691,7 +3733,7 @@ input[type="url"]::placeholder {
     }
 
     .label {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         font-weight: 500;
         margin-top: 16px;
@@ -3709,7 +3751,7 @@ input[type="url"]::placeholder {
     .location {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -3742,7 +3784,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -3750,7 +3792,7 @@ input[type="url"]::placeholder {
     }
 
     .partner-back:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .checkbox-grid {
@@ -3764,7 +3806,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .checkbox-item input[type="checkbox"] {
@@ -3786,7 +3828,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
     }
 
@@ -3825,11 +3867,11 @@ input[type="url"]::placeholder {
     }
 
     .social-table td:first-child {
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .social-table td:last-child {
-        color: #c4c4c4;
+        color: var(--text-muted);
         word-break: break-word;
     }
 
@@ -3884,18 +3926,18 @@ input[type="url"]::placeholder {
     span.person-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .title {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     span.world-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .icon-title-wrapper {
@@ -3910,13 +3952,13 @@ input[type="url"]::placeholder {
     }
 
     .location-profile {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     .stats {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-top: 16px;
     }
 
@@ -3938,11 +3980,11 @@ input[type="url"]::placeholder {
         font-family: 'Schibsted Grotesk', sans-serif;
         padding: 12px 24px;
         box-sizing: border-box;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -3954,10 +3996,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         cursor: pointer;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -3969,10 +4011,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -3984,21 +4026,21 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
         border-radius: 10px;
         cursor: pointer;
-        color: #A8AAB5;
+        color: var(--btn-disabled-text);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
     }
 
     .follow-button-profile:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button-profile:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .info-button-wrapper {
@@ -4028,7 +4070,7 @@ input[type="url"]::placeholder {
 
     .info {
         width: 50%;
-        background-color: #D3F36A;
+        background-color: var(--accent);
         color: #333;
         display: flex;
         flex-direction: column;
@@ -4040,13 +4082,13 @@ input[type="url"]::placeholder {
         margin: 0;
         font-size: 1.5rem;
         font-weight: 600;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-left: 24px;
         box-sizing: border-box;
     }
 
     .who {
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         margin-left: 24px;
         box-sizing: border-box;
@@ -4071,13 +4113,13 @@ input[type="url"]::placeholder {
     .match {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .pairup {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .card-pairup {
@@ -4090,14 +4132,14 @@ input[type="url"]::placeholder {
 
     .post-title-pairup {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 96px;
         font-weight: 500;
     }
 
     .pairup-tagline {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         font-weight: 400;
     }
@@ -4114,19 +4156,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .match-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .match-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .browse-button {
@@ -4136,22 +4178,22 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
         border: none;
         background-color: transparent;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
     }
 
     .browse-button:hover {
-        border: 1px solid #4F72F7;
-        color: #4F72F7;
+        border: 1px solid var(--highlight-hover);
+        color: var(--highlight-hover);
         background-color: rgba(28, 70, 245, 0.06);
     }
 
     .browse-button:active {
-        border: 1px solid #152FAE;
-        color: #152FAE;
+        border: 1px solid var(--highlight-active);
+        color: var(--highlight-active);
         background-color: rgba(21, 47, 174, 0.35);
     }
 
@@ -4218,7 +4260,7 @@ input[type="url"]::placeholder {
     /* Shared styles for notifs and requests */
     .notifs,
     .requests {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px 6px 24px 24px;
         /* shorthand for spacing */
@@ -4255,14 +4297,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -4276,7 +4318,7 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -4292,7 +4334,7 @@ input[type="url"]::placeholder {
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -4301,7 +4343,7 @@ input[type="url"]::placeholder {
     .notifs-title,
     .requests-title {
         font-size: 1.125rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -4323,14 +4365,14 @@ input[type="url"]::placeholder {
     }
 
     .notif-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .notif-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .request-bar {
@@ -4345,14 +4387,14 @@ input[type="url"]::placeholder {
     }
 
     .request-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .request-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 16px;
     }
 
@@ -4372,8 +4414,8 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         background-color: transparent;
-        border: 0.5px solid #c4c4c4;
-        color: #c4c4c4;
+        border: 0.5px solid var(--text-muted);
+        color: var(--text-muted);
     }
 
     .circled-icon-1:hover {
@@ -4382,13 +4424,13 @@ input[type="url"]::placeholder {
     }
 
     .circled-icon-1:active {
-        border: 0.5px solid #a6a6a6;
-        color: #a6a6a6;
+        border: 0.5px solid var(--text-hover);
+        color: var(--text-hover);
     }
 
     .circled-icon-1[disabled] {
-        border: 0.5px solid #DDDEDF;
-        color: #DDDEDF;
+        border: 0.5px solid var(--btn-disabled-bg);
+        color: var(--btn-disabled-bg);
         cursor: not-allowed;
         pointer-events: none;
     }
@@ -4402,21 +4444,21 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .circled-icon-2:hover {
-        background-color: #E2F89A;
+        background-color: var(--accent-hover);
     }
 
     .circled-icon-2:active {
-        background-color: #9BB35B;
+        background-color: var(--accent-active);
     }
 
     .circled-icon-2[disabled] {
         cursor: not-allowed;
         pointer-events: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
     }
 
     span.close-symbol {
@@ -4427,18 +4469,18 @@ input[type="url"]::placeholder {
     span.check-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #f6f6f6;
+        color: var(--bg-main);
     }
 
     .settings-div {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .post-title-settings {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -4460,13 +4502,13 @@ input[type="url"]::placeholder {
 
     .section-sub {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 500;
     }
 
     .selected-section {
-        background-color: #D3F36A;
-        color: #9BB35B !important;
+        background-color: var(--accent);
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
         display: inline-block;
@@ -4484,20 +4526,20 @@ input[type="url"]::placeholder {
     .section-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 16px;
     }
 
     .section-tagline {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .subname {
         font-size: 1rem;
         font-weight: 500;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 129px;
     }
 
@@ -4520,7 +4562,7 @@ input[type="url"]::placeholder {
     .settings-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -4530,7 +4572,7 @@ input[type="url"]::placeholder {
     }
 
     .settings-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .sub-sub-wrapper {
@@ -4548,25 +4590,25 @@ input[type="url"]::placeholder {
 
     .delete-photo {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .delete-photo:hover {
         font-size: 1rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         font-weight: 400;
     }
 
     .update-photo {
         font-size: 1rem;
-        color: #1C46F5;
+        color: var(--highlight);
         font-weight: 400;
     }
 
     .update-photo:hover {
         font-size: 1rem;
-        color: #4F72F7;
+        color: var(--highlight-hover);
         font-weight: 400;
     }
 
@@ -4585,19 +4627,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .save-changes-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .save-changes-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .button-container {
@@ -4608,7 +4650,7 @@ input[type="url"]::placeholder {
     .location-settings {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -4664,7 +4706,7 @@ input[type="url"]::placeholder {
 
     /* Modal content */
     .modal-content {
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         padding: 24px 32px;
         border-radius: 10px;
         width: 90%;
@@ -4681,19 +4723,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .btn-decline:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .btn-decline:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .nav-section {
@@ -4712,12 +4754,12 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         border-radius: 10px;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .info-title {
         font-size: 1.25rem;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         font-weight: 500;
         text-align: center;
@@ -4732,10 +4774,10 @@ input[type="url"]::placeholder {
 
     .info-one {
         background-color: transparent;
-        color: #9BB35B !important;
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #9BB35B;
+        border: 1px solid var(--accent-active);
         display: inline-block;
         text-align: center;
     }
@@ -4749,7 +4791,7 @@ input[type="url"]::placeholder {
 
     .info-title-match {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
         font-weight: 500;
         text-align: left;
@@ -4764,10 +4806,10 @@ input[type="url"]::placeholder {
 
     .info-one-match {
         background-color: transparent;
-        color: #1a1a1a !important;
+        color: var(--text-main) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #1a1a1a;
+        border: 1px solid var(--text-main);
         display: inline-block;
         text-align: center;
         font-size: 0.875rem;
@@ -4791,7 +4833,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -4799,7 +4841,7 @@ input[type="url"]::placeholder {
     }
 
     .partner-back-match:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 }
 
@@ -4844,13 +4886,13 @@ input[type="url"]::placeholder {
     .notifs-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 32px !important;
-        color: #c4c4c4;
+        color: var(--text-muted);
         user-select: none;
         cursor: pointer;
     }
 
     .notifs-symbol:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .search-symbol {
@@ -4859,7 +4901,7 @@ input[type="url"]::placeholder {
     }
 
     .search-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -4873,7 +4915,7 @@ input[type="url"]::placeholder {
     }
 
     .search-button:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .notifs-symbol {
@@ -4882,7 +4924,7 @@ input[type="url"]::placeholder {
     }
 
     .notifs-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -4895,13 +4937,13 @@ input[type="url"]::placeholder {
     }
 
     .notifs-button:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     main {
         grid-column: 1 / 2;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .right-sidebar {
@@ -4913,7 +4955,7 @@ input[type="url"]::placeholder {
     }
 
     .post {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
@@ -4921,7 +4963,7 @@ input[type="url"]::placeholder {
     }
 
     .results {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         padding-bottom: 0;
@@ -4949,7 +4991,7 @@ input[type="url"]::placeholder {
 
     .post-title {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -4958,7 +5000,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .tagline-wrapper-2 {
@@ -4971,13 +5013,13 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         border: none;
         outline: none;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 250px;
         /*not sure*/
     }
 
     .post-tagline::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
 
@@ -4987,7 +5029,7 @@ input[type="url"]::placeholder {
     }
 
     .image-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -5000,11 +5042,11 @@ input[type="url"]::placeholder {
     }
 
     .image-button:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .post1 {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
         box-sizing: border-box;
@@ -5019,13 +5061,13 @@ input[type="url"]::placeholder {
     span.more-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 32px;
-        color: #1a1a1a;
+        color: var(--text-main);
         user-select: none;
         cursor: pointer;
     }
 
     span.more-symbol:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .profile-post {
@@ -5038,19 +5080,19 @@ input[type="url"]::placeholder {
 
     .username {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 500;
         padding-bottom: 4px;
     }
 
     .date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .caption {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
@@ -5072,21 +5114,21 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         user-select: none;
     }
 
     .partner:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .comment-like-button.liked {
-        color: #1C46F5 !important;
+        color: var(--highlight) !important;
     }
 
     .partner-label {
@@ -5107,14 +5149,14 @@ input[type="url"]::placeholder {
     /*hover*/
 
     .metrics {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         cursor: pointer;
         white-space: nowrap;
     }
 
     .metrics:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .interactions {
@@ -5146,7 +5188,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         height: min-content;
@@ -5161,7 +5203,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         float: right;
@@ -5178,7 +5220,7 @@ input[type="url"]::placeholder {
     }
 
     .close-icon:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     span.overlay-close-symbol {
@@ -5188,7 +5230,7 @@ input[type="url"]::placeholder {
 
     .overlay-title {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 24px;
@@ -5198,7 +5240,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -5207,7 +5249,7 @@ input[type="url"]::placeholder {
 
     .overlay-tagline::placeholder {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         border: none;
         outline: none;
@@ -5238,7 +5280,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -5276,7 +5318,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         position: absolute;
         z-index: 1;
         top: 16px;
@@ -5286,7 +5328,7 @@ input[type="url"]::placeholder {
     span.overlay-upload-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 40px;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         background-color: transparent;
         background: none;
@@ -5302,18 +5344,18 @@ input[type="url"]::placeholder {
     span.close-symbol-overlay-version {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .drop {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 4px;
     }
 
     .supports {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
     }
 
@@ -5326,12 +5368,12 @@ input[type="url"]::placeholder {
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .browse-file:hover {
-        border: 2px solid #c4c4c4;
-        color: #a6a6a6;
+        border: 2px solid var(--text-muted);
+        color: var(--text-hover);
     }
 
     .post-button {
@@ -5340,10 +5382,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         display: block;
         margin: auto;
         margin-top: 24px;
@@ -5352,11 +5394,11 @@ input[type="url"]::placeholder {
     }
 
     .post-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .post-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .more-frame-wrapper {
@@ -5366,7 +5408,7 @@ input[type="url"]::placeholder {
     .frame1 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 1;
         width: 125px;
         padding: 16px;
@@ -5384,7 +5426,7 @@ input[type="url"]::placeholder {
     .hide,
     .report,
     .delete {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
     }
@@ -5393,7 +5435,7 @@ input[type="url"]::placeholder {
     .hide:hover,
     .report:hover,
     .delete:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .pfp-frame-wrapper {
@@ -5403,7 +5445,7 @@ input[type="url"]::placeholder {
     .frame4 {
         position: absolute;
         right: 0;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         z-index: 3;
         width: 250px;
         padding: 16px;
@@ -5428,7 +5470,7 @@ input[type="url"]::placeholder {
     .frame-username,
     .saved,
     .settings {
-        color: #1a1a1a;
+        color: var(--text-main);
         cursor: pointer;
         width: min-content;
         white-space: nowrap;
@@ -5437,7 +5479,7 @@ input[type="url"]::placeholder {
     .frame-username:hover,
     .saved:hover,
     .settings:hover {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .overlayLikes {
@@ -5463,7 +5505,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-likes {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         height: min-content;
@@ -5507,7 +5549,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -5519,19 +5561,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .follow-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .profile-post-likes {
@@ -5565,7 +5607,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-comments {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         height: min-content;
@@ -5602,7 +5644,7 @@ input[type="url"]::placeholder {
     }
 
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -5655,7 +5697,7 @@ input[type="url"]::placeholder {
     }
 
     .comment-text {
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
         padding: 16px;
         border-radius: 10px;
         width: 100%;
@@ -5667,16 +5709,16 @@ input[type="url"]::placeholder {
 
     .tagline-comment {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         border: none;
         outline: none;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .tagline-comment::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
-        background-color: #f6f6f6;
+        background-color: var(--bg-main);
     }
 
     .send-button {
@@ -5685,19 +5727,19 @@ input[type="url"]::placeholder {
         align-self: flex-end;
         padding: 12px 24px;
         box-sizing: border-box;
-        background-color: #1C46F5;
-        color: #f6f6f6;
+        background-color: var(--highlight);
+        color: var(--bg-main);
         border: none;
         border-radius: 10px;
         cursor: pointer;
     }
 
     .send-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .send-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .comments-empty {
@@ -5728,14 +5770,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -5762,7 +5804,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-share {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -5781,7 +5823,7 @@ input[type="url"]::placeholder {
     .share-via {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-top: 16px;
         padding-bottom: 24px;
     }
@@ -5811,13 +5853,13 @@ input[type="url"]::placeholder {
     .or-copy-link {
         box-sizing: border-box;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 24px;
     }
 
     .link-wrapper {
-        background: #f6f6f6;
-        color: #c4c4c4;
+        background: var(--bg-main);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -5841,7 +5883,7 @@ input[type="url"]::placeholder {
     }
 
     .link-button {
-        color: #c4c4c4;
+        color: var(--text-muted);
         border: none;
         background-color: transparent;
         background: none;
@@ -5870,7 +5912,7 @@ input[type="url"]::placeholder {
     }
 
     .overlay-content-setup {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -5885,7 +5927,7 @@ input[type="url"]::placeholder {
 
     .overlay-title-setup {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-weight: 600;
         text-align: center;
         margin-bottom: 36px;
@@ -5912,14 +5954,14 @@ input[type="url"]::placeholder {
     .heading {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 6px;
     }
 
     .subheading {
         font-size: 1rem;
         font-weight: 400;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 36px;
     }
 
@@ -5929,25 +5971,25 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .next-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .next-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .setup2-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -5958,7 +6000,7 @@ input[type="url"]::placeholder {
     }
 
     .setup2-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .left-align {
@@ -5969,7 +6011,7 @@ input[type="url"]::placeholder {
     }
 
     .label {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         font-weight: 500;
         margin-top: 16px;
@@ -5985,9 +6027,9 @@ input[type="url"]::placeholder {
     }
 
     .location {
-        border: 1px solid #c4c4c4;
+        border: 1px solid var(--text-muted);
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 452px;
         height: 42px;
@@ -6020,7 +6062,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -6028,7 +6070,7 @@ input[type="url"]::placeholder {
     }
 
     .partner-back:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 
     .checkbox-grid {
@@ -6042,7 +6084,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .checkbox-item input[type="checkbox"] {
@@ -6064,7 +6106,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
     }
 
@@ -6103,17 +6145,17 @@ input[type="url"]::placeholder {
     }
 
     .social-table td:first-child {
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .social-table td:last-child {
-        color: #c4c4c4;
+        color: var(--text-muted);
         word-break: break-word;
     }
 
     .profile {
         grid-column: 3 / 4;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .profile-card {
@@ -6167,18 +6209,18 @@ input[type="url"]::placeholder {
     span.person-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .title {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     span.world-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 20px;
-        color: #C4C4C4;
+        color: var(--text-muted);
     }
 
     .icon-title-wrapper {
@@ -6193,13 +6235,13 @@ input[type="url"]::placeholder {
     }
 
     .location-profile {
-        color: #C4C4C4;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
     .stats {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-top: 16px;
     }
 
@@ -6221,11 +6263,11 @@ input[type="url"]::placeholder {
         font-family: 'Schibsted Grotesk', sans-serif;
         padding: 12px 24px;
         box-sizing: border-box;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         background-color: transparent;
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -6237,10 +6279,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         cursor: pointer;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -6252,10 +6294,10 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
@@ -6267,21 +6309,21 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
         border-radius: 10px;
         cursor: pointer;
-        color: #A8AAB5;
+        color: var(--btn-disabled-text);
         text-align: center;
         margin-top: 24px;
         margin-right: 24px;
     }
 
     .follow-button-profile:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .follow-button-profile:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .info-button-wrapper {
@@ -6311,7 +6353,7 @@ input[type="url"]::placeholder {
 
     .info {
         width: 50%;
-        background-color: #D3F36A;
+        background-color: var(--accent);
         color: #333;
         display: flex;
         flex-direction: column;
@@ -6323,13 +6365,13 @@ input[type="url"]::placeholder {
         margin: 0;
         font-size: 1.5rem;
         font-weight: 600;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-left: 24px;
         box-sizing: border-box;
     }
 
     .who {
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         margin-left: 24px;
         box-sizing: border-box;
@@ -6354,13 +6396,13 @@ input[type="url"]::placeholder {
     .match {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .pairup {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .card-pairup {
@@ -6373,14 +6415,14 @@ input[type="url"]::placeholder {
 
     .post-title-pairup {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 96px;
         font-weight: 500;
     }
 
     .pairup-tagline {
         font-size: 1.5rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 24px;
         font-weight: 400;
     }
@@ -6397,19 +6439,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .match-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .match-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .browse-button {
@@ -6419,22 +6461,22 @@ input[type="url"]::placeholder {
         box-sizing: border-box;
         border: none;
         background-color: transparent;
-        border: 1px solid #1C46F5;
+        border: 1px solid var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #1C46F5;
+        color: var(--highlight);
         text-align: center;
     }
 
     .browse-button:hover {
-        border: 1px solid #4F72F7;
-        color: #4F72F7;
+        border: 1px solid var(--highlight-hover);
+        color: var(--highlight-hover);
         background-color: rgba(28, 70, 245, 0.06);
     }
 
     .browse-button:active {
-        border: 1px solid #152FAE;
-        color: #152FAE;
+        border: 1px solid var(--highlight-active);
+        color: var(--highlight-active);
         background-color: rgba(21, 47, 174, 0.35);
     }
 
@@ -6502,7 +6544,7 @@ input[type="url"]::placeholder {
     /* Shared styles for notifs and requests */
     .notifs,
     .requests {
-        background: #fff;
+        background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px 6px 24px 24px;
         /* shorthand for spacing */
@@ -6539,14 +6581,14 @@ input[type="url"]::placeholder {
     .oops {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         text-align: center;
         margin-bottom: 8px;
     }
 
     .nothing {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         text-align: center;
     }
 
@@ -6560,7 +6602,7 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -6576,7 +6618,7 @@ input[type="url"]::placeholder {
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
-        background-color: #c4c4c4;
+        background-color: var(--text-muted);
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
@@ -6585,7 +6627,7 @@ input[type="url"]::placeholder {
     .notifs-title,
     .requests-title {
         font-size: 1.125rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -6607,14 +6649,14 @@ input[type="url"]::placeholder {
     }
 
     .notif-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .notif-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .request-bar {
@@ -6629,14 +6671,14 @@ input[type="url"]::placeholder {
     }
 
     .request-text {
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         padding-bottom: 4px;
     }
 
     .request-date {
         font-size: 0.75rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 16px;
     }
 
@@ -6656,8 +6698,8 @@ input[type="url"]::placeholder {
         justify-content: center;
         cursor: pointer;
         background-color: transparent;
-        border: 0.5px solid #c4c4c4;
-        color: #c4c4c4;
+        border: 0.5px solid var(--text-muted);
+        color: var(--text-muted);
     }
 
     .circled-icon-1:hover {
@@ -6666,13 +6708,13 @@ input[type="url"]::placeholder {
     }
 
     .circled-icon-1:active {
-        border: 0.5px solid #a6a6a6;
-        color: #a6a6a6;
+        border: 0.5px solid var(--text-hover);
+        color: var(--text-hover);
     }
 
     .circled-icon-1[disabled] {
-        border: 0.5px solid #DDDEDF;
-        color: #DDDEDF;
+        border: 0.5px solid var(--btn-disabled-bg);
+        color: var(--btn-disabled-bg);
         cursor: not-allowed;
         pointer-events: none;
     }
@@ -6686,21 +6728,21 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .circled-icon-2:hover {
-        background-color: #E2F89A;
+        background-color: var(--accent-hover);
     }
 
     .circled-icon-2:active {
-        background-color: #9BB35B;
+        background-color: var(--accent-active);
     }
 
     .circled-icon-2[disabled] {
         cursor: not-allowed;
         pointer-events: none;
-        background-color: #DDDEDF;
+        background-color: var(--btn-disabled-bg);
     }
 
     span.close-symbol {
@@ -6711,7 +6753,7 @@ input[type="url"]::placeholder {
     span.check-symbol {
         font-variation-settings: 'FILL' 1;
         font-size: 24px;
-        color: #f6f6f6;
+        color: var(--bg-main);
     }
 
     .image-modal {
@@ -6755,12 +6797,12 @@ input[type="url"]::placeholder {
     .settings-div {
         grid-column: 3 / 4;
         grid-row: 2;
-        color: #1a1a1a;
+        color: var(--text-main);
     }
 
     .post-title-settings {
         font-size: 1.125rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         margin-bottom: 24px;
         font-weight: 500;
     }
@@ -6782,13 +6824,13 @@ input[type="url"]::placeholder {
 
     .section-sub {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 500;
     }
 
     .selected-section {
-        background-color: #D3F36A;
-        color: #9BB35B !important;
+        background-color: var(--accent);
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
         display: inline-block;
@@ -6806,20 +6848,20 @@ input[type="url"]::placeholder {
     .section-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--text-main);
         padding-bottom: 16px;
     }
 
     .section-tagline {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .subname {
         font-size: 1rem;
         font-weight: 500;
-        color: #1a1a1a;
+        color: var(--text-main);
         width: 129px;
     }
 
@@ -6842,7 +6884,7 @@ input[type="url"]::placeholder {
     .settings-field {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #1a1a1a;
+        color: var(--text-main);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -6852,7 +6894,7 @@ input[type="url"]::placeholder {
     }
 
     .settings-field::placeholder {
-        color: #c4c4c4;
+        color: var(--text-muted);
     }
 
     .sub-sub-wrapper {
@@ -6870,25 +6912,25 @@ input[type="url"]::placeholder {
 
     .delete-photo {
         font-size: 1rem;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
     .delete-photo:hover {
         font-size: 1rem;
-        color: #a6a6a6;
+        color: var(--text-hover);
         font-weight: 400;
     }
 
     .update-photo {
         font-size: 1rem;
-        color: #1C46F5;
+        color: var(--highlight);
         font-weight: 400;
     }
 
     .update-photo:hover {
         font-size: 1rem;
-        color: #4F72F7;
+        color: var(--highlight-hover);
         font-weight: 400;
     }
 
@@ -6907,19 +6949,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .save-changes-button:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .save-changes-button:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .button-container {
@@ -6930,7 +6972,7 @@ input[type="url"]::placeholder {
     .location-settings {
         border: 1px solid #dcdcdc;
         border-radius: 5px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         font-size: 1rem;
         width: 313px;
         height: 36px;
@@ -6993,7 +7035,7 @@ input[type="url"]::placeholder {
 
     /* Modal content */
     .modal-content {
-        background: #fff;
+        background: var(--bg-secondary);
         box-sizing: border-box;
         border-radius: 10px;
         width: 548px;
@@ -7008,19 +7050,19 @@ input[type="url"]::placeholder {
         padding: 12px 24px;
         box-sizing: border-box;
         border: none;
-        background-color: #1C46F5;
+        background-color: var(--highlight);
         border-radius: 10px;
         cursor: pointer;
-        color: #f6f6f6;
+        color: var(--bg-main);
         text-align: center;
     }
 
     .btn-decline:hover {
-        background-color: #4F72F7;
+        background-color: var(--highlight-hover);
     }
 
     .btn-decline:active {
-        background-color: #152FAE;
+        background-color: var(--highlight-active);
     }
 
     .nav-section {
@@ -7039,12 +7081,12 @@ input[type="url"]::placeholder {
         align-items: center;
         justify-content: center;
         border-radius: 10px;
-        background-color: #D3F36A;
+        background-color: var(--accent);
     }
 
     .info-title {
         font-size: 1.25rem;
-        color: #9BB35B;
+        color: var(--accent-active);
         margin-bottom: 16px;
         font-weight: 500;
         text-align: center;
@@ -7059,10 +7101,10 @@ input[type="url"]::placeholder {
 
     .info-one {
         background-color: transparent;
-        color: #9BB35B !important;
+        color: var(--accent-active) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #9BB35B;
+        border: 1px solid var(--accent-active);
         display: inline-block;
         text-align: center;
     }
@@ -7076,7 +7118,7 @@ input[type="url"]::placeholder {
 
     .info-title-match {
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--text-main);
         margin-bottom: 12px;
         font-weight: 500;
         text-align: left;
@@ -7091,10 +7133,10 @@ input[type="url"]::placeholder {
 
     .info-one-match {
         background-color: transparent;
-        color: #1a1a1a !important;
+        color: var(--text-main) !important;
         padding: 7px 12px;
         border-radius: 999px;
-        border: 1px solid #1a1a1a;
+        border: 1px solid var(--text-main);
         display: inline-block;
         text-align: center;
         font-size: 0.875rem;
@@ -7118,7 +7160,7 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #c4c4c4;
+        color: var(--text-muted);
         cursor: pointer;
         user-select: none;
         position: absolute;
@@ -7126,6 +7168,6 @@ input[type="url"]::placeholder {
     }
 
     .partner-back-match:hover {
-        color: #a6a6a6;
+        color: var(--text-hover);
     }
 }

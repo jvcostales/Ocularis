@@ -1167,6 +1167,16 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
+                    const savedTheme = localStorage.getItem("theme") || "light";
+                    document.documentElement.setAttribute("data-theme", savedTheme);
+
+                    document.getElementById("themeToggle").addEventListener("click", () => {
+                        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+                        const newTheme = isDark ? "light" : "dark";
+                        document.documentElement.setAttribute("data-theme", newTheme);
+                        localStorage.setItem("theme", newTheme);
+                    });
+
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
                         document.getElementById(`match-step-${step}`).style.display = 'block';
