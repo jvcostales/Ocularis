@@ -359,6 +359,7 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
+        flex: 1;
     }
 
     .post-tagline::placeholder {
@@ -858,6 +859,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        flex: 1;
     }
 
     .overlay-tagline::placeholder {
@@ -2744,6 +2746,7 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
+        flex: 1;
     }
 
     .post-tagline::placeholder {
@@ -2972,6 +2975,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        flex: 1;
     }
 
     .overlay-tagline::placeholder {
@@ -4145,6 +4149,7 @@ input[type="url"]::placeholder {
         color: var(--text-main);
         margin-bottom: 24px;
         font-weight: 400;
+        flex: 1;
     }
 
     .pairup-buttons {
@@ -4998,6 +5003,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         font-weight: 500;
     }
+
     .tagline-wrapper {
         display: flex;
         align-items: center;
@@ -5016,6 +5022,7 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
+        flex: 1;
     }
 
     .post-tagline::placeholder {
@@ -5244,6 +5251,7 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
+        flex: 1;
     }
 
     .overlay-tagline::placeholder {
