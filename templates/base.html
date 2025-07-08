@@ -2166,6 +2166,7 @@
                         const checkScrollState = (divList) => {
                             divList.forEach(el => {
                                 el.classList.remove('no-scroll', 'has-scroll');
+                                console.log(`Checking ${el.id}: scrollHeight = ${el.scrollHeight}, clientHeight = ${el.clientHeight}`);
                                 if (el.scrollHeight > el.clientHeight) {
                                     el.classList.add('has-scroll');
                                 } else {
