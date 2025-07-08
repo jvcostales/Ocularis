@@ -2913,7 +2913,6 @@ def settings():
                 cover_photo_url=cover_photo_url,
                 notifications=notifications,
                 requests=requests,
-                profile_pic_url=profile_pic_url,
                 actor_details=actor_details
             )
         else:
