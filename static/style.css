@@ -85,13 +85,13 @@ body.loading .app-content {
 
 input,
 textarea {
-    background-color: var(--bg-secondary);
-    color: var(--text-main);
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-main) !important;
 }
 
 input::placeholder,
 textarea::placeholder {
-    color: var(--text-muted);
+    color: var(--text-muted) !important;
 }
 
 .no-scroll-body {
