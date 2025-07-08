@@ -2701,18 +2701,14 @@ def settings():
     )
     cur = conn.cursor()
 
-    # Get profile and cover photo filenames
+    # Fetch profile and cover photos
     cur.execute("SELECT profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
-
-    # Set profile pic URL
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
-
-    # Set cover photo URL
     cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[1] != 'default_cover.png' else url_for('static', filename='default_cover.png')
 
     if request.method == 'POST':
-        # Get form data
+        # Form values
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         role = request.form.get('role')
@@ -2728,30 +2724,27 @@ def settings():
         linkedin = request.form.get('linkedin')
         telegram = request.form.get('telegram')
 
-        # Handle profile picture upload
+        # Handle uploads
         profile_pic = request.files.get('profile_pic')
         if profile_pic and profile_pic.filename != '':
             if allowed_file(profile_pic.filename):
                 ext = profile_pic.filename.rsplit('.', 1)[1].lower()
-                profile_pic_filename = f"pfp_user_{user_id}.{ext}"
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename)
-                profile_pic.save(filepath)
-                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (profile_pic_filename, user_id))
+                filename = f"pfp_user_{user_id}.{ext}"
+                profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filename, user_id))
             else:
                 flash("Invalid profile picture file type.", "danger")
                 cur.close()
                 conn.close()
                 return redirect(url_for('settings'))
 
-        # Handle cover photo upload
         cover_photo = request.files.get('cover_photo')
         if cover_photo and cover_photo.filename != '':
             if allowed_file(cover_photo.filename):
                 ext = cover_photo.filename.rsplit('.', 1)[1].lower()
-                cover_photo_filename = f"cover_user_{user_id}.{ext}"
-                cover_filepath = os.path.join(app.config['COVER_PHOTO_FOLDER'], cover_photo_filename)
-                cover_photo.save(cover_filepath)
-                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (cover_photo_filename, user_id))
+                filename = f"cover_user_{user_id}.{ext}"
+                cover_photo.save(os.path.join(app.config['COVER_PHOTO_FOLDER'], filename))
+                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (filename, user_id))
             else:
                 flash("Invalid cover photo file type.", "danger")
                 cur.close()
@@ -2790,64 +2783,58 @@ def settings():
         flash("Settings updated successfully.", "success")
         return redirect(url_for('settings'))
 
-    else:
-        # GET: fetch user info
-        cur.execute("""
-            SELECT first_name, last_name, role, country, state, city, skills, preferences,
-                   experience_level, facebook, instagram, x, linkedin, telegram
-            FROM users WHERE id = %s
-        """, (user_id,))
-        user = cur.fetchone()
-        
-            # 5. Notifications
+    # GET: fetch user data
+    cur.execute("""
+        SELECT first_name, last_name, role, country, state, city, skills, preferences,
+               experience_level, facebook, instagram, x, linkedin, telegram
+        FROM users WHERE id = %s
+    """, (user_id,))
+    user_row = cur.fetchone()
+
+    # Notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
-               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic, notifications.notification_id
-
+               notifications.action_type, notifications.image_id, notifications.created_at, 
+               notifications.actor_id, users.profile_pic, notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
-    
-            # Gather unique actor_ids
-    actor_ids = list(set([n[4] for n in notifications]))
 
-            # Prepare dictionary to hold actor_id → user profile details
+    actor_ids = list(set([n[4] for n in notifications]))
     actor_details = {}
 
-            # Fetch full details for each actor_id
     for actor_id in actor_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
-                profile_pic, cover_photo, skills, preferences, experience_level,
-                facebook, instagram, x, linkedin, telegram, email
+                   profile_pic, cover_photo, skills, preferences, experience_level,
+                   facebook, instagram, x, linkedin, telegram, email
             FROM users WHERE id = %s
         """, (actor_id,))
-        user = cur.fetchone()
-
-        if user:
+        actor_row = cur.fetchone()
+        if actor_row:
             actor_details[actor_id] = {
-                "full_name": f"{user[0]} {user[1]}",
-                "role": user[2],
-                "city": user[3],
-                "state": user[4],
-                "country": user[5],
-                "profile_pic": user[6],
-                "cover_photo": user[7],
-                "skills": user[8],               # PostgreSQL array
-                "preferences": user[9],          # PostgreSQL array
-                "experience_level": user[10],    # int (1–4)
-                "facebook": user[11],
-                "instagram": user[12],
-                "x": user[13],
-                "linkedin": user[14],
-                "telegram": user[15],
-                "email": user[16]
+                "full_name": f"{actor_row[0]} {actor_row[1]}",
+                "role": actor_row[2],
+                "city": actor_row[3],
+                "state": actor_row[4],
+                "country": actor_row[5],
+                "profile_pic": actor_row[6],
+                "cover_photo": actor_row[7],
+                "skills": actor_row[8],
+                "preferences": actor_row[9],
+                "experience_level": actor_row[10],
+                "facebook": actor_row[11],
+                "instagram": actor_row[12],
+                "x": actor_row[13],
+                "linkedin": actor_row[14],
+                "telegram": actor_row[15],
+                "email": actor_row[16]
             }
 
-    # 6. Friend requests
+    # Friend Requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2857,57 +2844,42 @@ def settings():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
-    result = cur.fetchone()
-
-    if result and result[0] and result[0] != 'pfp.jpg':
-        profile_pic_url = url_for('profile_pics', filename=result[0])
-    else:
-        profile_pic_url = url_for('static', filename='pfp.jpg')
-        
     cur.close()
     conn.close()
 
-    if user:
+    if user_row:
         user_dict = {
-            'first_name': user[0],
-            'last_name': user[1],
-            'role': user[2],
-            'country': user[3],
-            'state': user[4],
-            'city': user[5],
-            'skills': ', '.join(user[6]) if user[6] else '',
-            'preferences': ', '.join(user[7]) if user[7] else '',
-            'experience_level': user[8],
-            'facebook': user[9],
-            'instagram': user[10],
-            'x': user[11],
-            'linkedin': user[12],
-            'telegram': user[13]
+            'first_name': user_row[0],
+            'last_name': user_row[1],
+            'role': user_row[2],
+            'country': user_row[3],
+            'state': user_row[4],
+            'city': user_row[5],
+            'skills': ', '.join(user_row[6]) if user_row[6] else '',
+            'preferences': ', '.join(user_row[7]) if user_row[7] else '',
+            'experience_level': user_row[8],
+            'facebook': user_row[9],
+            'instagram': user_row[10],
+            'x': user_row[11],
+            'linkedin': user_row[12],
+            'telegram': user_row[13]
         }
-
-        countries = app.config['COUNTRIES']
-
-        categories = [
-            "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
-            "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
-        ]
-
-        experience_levels = [
-            (1, "Beginner"),
-            (2, "Intermediate"),
-            (3, "Advanced"),
-            (4, "Expert")
-        ]
 
         return render_template(
             'settings.html',
             user=current_user,
             user_data=user_dict,
-            countries=countries,
-            categories=categories,
-            experience_levels=experience_levels,
+            countries=app.config['COUNTRIES'],
+            categories=[
+                "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+                "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
+            ],
+            experience_levels=[
+                (1, "Beginner"),
+                (2, "Intermediate"),
+                (3, "Advanced"),
+                (4, "Expert")
+            ],
             verified=current_user.verified,
             profile_pic_url=profile_pic_url,
             cover_photo_url=cover_photo_url,
