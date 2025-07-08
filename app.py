@@ -2867,8 +2867,8 @@ def settings():
 
         return render_template(
             'settings.html',
-            user=current_user,
-            user_data=user_dict,
+            user=user_dict,  # form fields use this
+            current_user=current_user,  # base.html and global nav uses this
             countries=app.config['COUNTRIES'],
             categories=[
                 "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
