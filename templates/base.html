@@ -1472,8 +1472,8 @@
                     const stateSelect = document.getElementById('state');
                     const citySelect = document.getElementById('city');
 
-                    const selectedStateCode = "{{ user.state|default('') }}";
-                    const selectedCityName = "{{ user.city|default('') }}";
+                    const selectedStateCode = "{{ user_data.state|default('') }}";
+                    const selectedCityName = "{{ user_data.city|default('') }}";
 
                     if (countrySelect && stateSelect && citySelect) {
                         let allStates = [];
