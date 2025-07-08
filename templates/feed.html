@@ -158,7 +158,7 @@
                 id="closeOverlayLikes-{{ loop.index }}">close</span>
         </button>
         <div class="overlay-title">Likes</div>
-        <div class="scrollable-div-likes" id="scrollableDivLikes-{{ loop.index }}" data-image-id="{{ image[0] }}">
+        <div class="scrollable-div-likes no-scroll" id="scrollableDivLikes-{{ loop.index }}" data-image-id="{{ image[0] }}">
             <p class="loading-msg" style="display: none;">Loading likes...</p>
         </div>
     </div>
@@ -168,7 +168,7 @@
         <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
                 id="closeOverlayComments-{{ loop.index }}">close</span></button>
         <div class="overlay-title">Comment</div>
-        <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
+        <div class="scrollable-div-comments no-scroll" id="scrollableDivComments-{{ loop.index }}">
             <div id="commentList-{{ image[0] }}"></div>
             {% set ns = namespace(has_comments=false) %}
             {% for comment in comments %}
@@ -223,7 +223,7 @@
                             id="closeOverlayCommentLikes-{{ loop.index }}">close</span>
                     </button>
                     <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-{{ loop.index }}"
+                    <div class="scrollable-div-likes no-scroll" id="scrollableDivCommentLikes-{{ loop.index }}"
                         data-comment-id="{{ comment[0] }}">
                         <p class="loading-msg" style="display: none;">Loading likes...</p>
                     </div>
