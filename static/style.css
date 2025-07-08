@@ -83,6 +83,17 @@ body.loading .app-content {
     margin-bottom: 24px;
 }
 
+input,
+textarea {
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-muted);
+}
+
 .no-scroll-body {
     overflow-y: scroll;
     /* Keep scrollbar visible */
