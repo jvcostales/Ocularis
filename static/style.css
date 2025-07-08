@@ -83,13 +83,21 @@ body.loading .app-content {
     margin-bottom: 24px;
 }
 
-input,
+input[type="text"],
+input[type="search"],
+input[type="url"],
+input[type="email"],
+input[type="password"],
 textarea {
     background-color: var(--bg-secondary) !important;
     color: var(--text-main) !important;
 }
 
-input::placeholder,
+input[type="text"]::placeholder,
+input[type="search"]::placeholder,
+input[type="url"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
 textarea::placeholder {
     color: var(--text-muted) !important;
 }
