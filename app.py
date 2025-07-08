@@ -2866,58 +2866,58 @@ def settings():
     else:
         profile_pic_url = url_for('static', filename='pfp.jpg')
         
-        cur.close()
-        conn.close()
+    cur.close()
+    conn.close()
 
-        if user:
-            user_dict = {
-                'first_name': user[0],
-                'last_name': user[1],
-                'role': user[2],
-                'country': user[3],
-                'state': user[4],
-                'city': user[5],
-                'skills': ', '.join(user[6]) if user[6] else '',
-                'preferences': ', '.join(user[7]) if user[7] else '',
-                'experience_level': user[8],
-                'facebook': user[9],
-                'instagram': user[10],
-                'x': user[11],
-                'linkedin': user[12],
-                'telegram': user[13]
-            }
+    if user:
+        user_dict = {
+            'first_name': user[0],
+            'last_name': user[1],
+            'role': user[2],
+            'country': user[3],
+            'state': user[4],
+            'city': user[5],
+            'skills': ', '.join(user[6]) if user[6] else '',
+            'preferences': ', '.join(user[7]) if user[7] else '',
+            'experience_level': user[8],
+            'facebook': user[9],
+            'instagram': user[10],
+            'x': user[11],
+            'linkedin': user[12],
+            'telegram': user[13]
+        }
 
-            countries = app.config['COUNTRIES']
+        countries = app.config['COUNTRIES']
 
-            categories = [
-                "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
-                "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
-            ]
+        categories = [
+            "Typography", "Branding", "Advertising", "Graphic Design", "Illustration",
+            "3D Design", "Animation", "Packaging", "Infographics", "UI/UX Design"
+        ]
 
-            experience_levels = [
-                (1, "Beginner"),
-                (2, "Intermediate"),
-                (3, "Advanced"),
-                (4, "Expert")
-            ]
+        experience_levels = [
+            (1, "Beginner"),
+            (2, "Intermediate"),
+            (3, "Advanced"),
+            (4, "Expert")
+        ]
 
-            return render_template(
-                'settings.html',
-                user=current_user,
-                user_data=user_dict,
-                countries=countries,
-                categories=categories,
-                experience_levels=experience_levels,
-                verified=current_user.verified,
-                profile_pic_url=profile_pic_url,
-                cover_photo_url=cover_photo_url,
-                notifications=notifications,
-                requests=requests,
-                actor_details=actor_details
-            )
-        else:
-            flash("User not found.", "danger")
-            return redirect(url_for('login'))
+        return render_template(
+            'settings.html',
+            user=current_user,
+            user_data=user_dict,
+            countries=countries,
+            categories=categories,
+            experience_levels=experience_levels,
+            verified=current_user.verified,
+            profile_pic_url=profile_pic_url,
+            cover_photo_url=cover_photo_url,
+            notifications=notifications,
+            requests=requests,
+            actor_details=actor_details
+        )
+    else:
+        flash("User not found.", "danger")
+        return redirect(url_for('login'))
 
 
 def save_post(user_id, image_id, conn):
