@@ -2903,7 +2903,8 @@ def settings():
 
             return render_template(
                 'settings.html',
-                user=user_dict,
+                user=current_user,
+                user_data=user_dict,
                 countries=countries,
                 categories=categories,
                 experience_levels=experience_levels,
