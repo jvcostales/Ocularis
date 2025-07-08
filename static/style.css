@@ -359,8 +359,6 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
-        width: 250px;
-        /*note sure*/
     }
 
     .post-tagline::placeholder {
@@ -860,7 +858,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -869,7 +866,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .scrollable-div {
@@ -2748,8 +2744,6 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
-        width: 250px;
-        /*note sure*/
     }
 
     .post-tagline::placeholder {
@@ -2978,7 +2972,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -2987,7 +2980,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .scrollable-div {
@@ -5024,8 +5016,6 @@ input[type="url"]::placeholder {
         border: none;
         outline: none;
         color: var(--text-main);
-        width: 250px;
-        /*not sure*/
     }
 
     .post-tagline::placeholder {
@@ -5254,7 +5244,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .overlay-tagline::placeholder {
@@ -5263,7 +5252,6 @@ input[type="url"]::placeholder {
         margin-bottom: 24px;
         border: none;
         outline: none;
-        width: 250px;
     }
 
     .scrollable-div {
