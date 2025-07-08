@@ -2165,19 +2165,30 @@
 
                         const checkScrollState = (divList) => {
                             divList.forEach(el => {
+                                const style = getComputedStyle(el);
+                                if (style.display === "none") {
+                                    console.log(`Skipping ${el.id} – hidden (display: none)`);
+                                    return;
+                                }
+
                                 el.classList.remove('no-scroll', 'has-scroll');
-                                console.log(`Checking ${el.id}: scrollHeight = ${el.scrollHeight}, clientHeight = ${el.clientHeight}`);
+
                                 if (el.scrollHeight > el.clientHeight) {
                                     el.classList.add('has-scroll');
                                 } else {
                                     el.classList.add('no-scroll');
                                 }
+
+                                console.log(`Checked ${el.id} – scrollHeight: ${el.scrollHeight}, clientHeight: ${el.clientHeight}`);
                             });
                         };
 
-                        checkScrollState(likeDivs);
-                        checkScrollState(commentDivs);
-                        checkScrollState(commentLikeDivs);
+                        // Run after layout is visible
+                        requestAnimationFrame(() => {
+                            checkScrollState(likeDivs);
+                            checkScrollState(commentDivs);
+                            checkScrollState(commentLikeDivs);
+                        });
                     }
 
                     function adjustRightPaddingOnScrollCheck() {

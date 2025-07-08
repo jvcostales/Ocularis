@@ -25,7 +25,8 @@
                     <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
                 </div>
             </div>
-            <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column;">
+            <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data"
+                style="display: flex; flex-direction: column;">
                 <input class="overlay-tagline" type="text" id="caption" name="caption"
                     placeholder="Do you mind sharing your work?">
                 <div class="upload" id="drop-area">
@@ -280,6 +281,7 @@
     </div>
 </div>
 <div style="margin-bottom: 16px;"></div>
+{% endfor %}
 
 <script>
     const dropArea = document.getElementById("drop-area");
@@ -313,5 +315,4 @@
         }
     });
 </script>
-{% endfor %}
 {% endblock %}
