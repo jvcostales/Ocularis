@@ -5,182 +5,221 @@
     <div class="settings-card">
         <div class="post-title-settings">Settings</div>
         <div class="sections">
-            <div class="section-sub selected-section">Profile</div>
-            <div class="section-sub">Alerts</div>
-            <div class="section-sub">Display</div>
-            <div class="section-sub">Privacy</div>
-            <div class="section-sub">Blocking</div>
+            <div class="section-sub selected-section" data-section="profile-section">Profile</div>
+            <div class="section-sub" data-section="alerts-section">Alerts</div>
+            <div class="section-sub" data-section="display-section">Display</div>
+            <div class="section-sub" data-section="privacy-section">Privacy</div>
         </div>
-        <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
-            <div class="section-title">Profile</div>
-            <div class="section-tagline">Update your photo and personal details here.</div>
-            <div class="line-comments-section"></div>
 
-            <!-- PHOTO -->
-            <div class="sub-wrapper">
-                <div class="subname">Photo</div>
-                <div class="section-space"></div>
-                <div class="sub-sub-wrapper">
-                    <img id="preview-photo" class="settings-photo" src="{{ profile_pic_url }}">
-                    <div class="edit-photo">
-                        <div class="delete-photo">Delete</div>
-                        <div>
-                            <label for="profile_pic" class="update-photo">Update</label>
-                            <input type="file" id="profile_pic" name="profile_pic" accept="image/*" style="display: none;">
+
+        <div class="settings-sections-container">
+            <div id="profile-section" class="settings-section active-section">
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
+                    <div class="section-title">Profile</div>
+                    <div class="section-tagline">Update your photo and personal details here.</div>
+                    <div class="line-comments-section"></div>
+
+                    <!-- PHOTO -->
+                    <div class="sub-wrapper">
+                        <div class="subname">Photo</div>
+                        <div class="section-space"></div>
+                        <div class="sub-sub-wrapper">
+                            <img id="preview-photo" class="settings-photo" src="{{ profile_pic_url }}">
+                            <div class="edit-photo">
+                                <div class="delete-photo">Delete</div>
+                                <div>
+                                    <label for="profile_pic" class="update-photo">Update</label>
+                                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
+                                        style="display: none;">
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- NAME -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Name</div>
+                        <div class="section-space"></div>
+                        <div class="name-field-wrapper">
+                            <input class="settings-field" type="text" placeholder="First Name" id="first-name"
+                                name="first_name" value="{{ user.first_name }}" maxlength="100" required>
+                            <input class="settings-field" type="text" placeholder="Last Name" id="last-name"
+                                name="last_name" value="{{ user.last_name }}" maxlength="100" required>
+                        </div>
+                    </div>
+
+                    <!-- ROLE -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Role</div>
+                        <div class="section-space"></div>
+                        <input class="settings-field" type="text" placeholder="ex. Graphic Designer" id="role"
+                            name="role" value="{{ user.role or '' }}" maxlength="100" required>
+                    </div>
+
+                    <!-- LOCATION -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Location</div>
+                        <div class="section-space"></div>
+                        <div class="sub-location-wrapper">
+                            <div class="label-wrapper" style="margin-bottom: 12px">
+                                <select class="location-settings" id="country" name="country" required>
+                                    <option value="">Select your country</option>
+                                    {% for c in countries %}
+                                    <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
+                                        user.country|trim|lower==c.iso2|trim|lower %}selected{% endif %}>
+                                        {{ c.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                            </div>
+                            <div class="label-wrapper" style="margin-bottom: 12px">
+                                <select class="location-settings" id="state" name="state" required>
+                                    <option value="">Select your region or province</option>
+                                    {% if user.state %}
+                                    <option selected value="{{ user.state }}">{{ user.state }}</option>
+                                    {% endif %}
+                                </select>
+                                <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                            </div>
+                            <div class="label-wrapper">
+                                <select class="location-settings" id="city" name="city" required>
+                                    <option value="">Select your city</option>
+                                    {% if user.city %}
+                                    <option selected value="{{ user.city }}">{{ user.city }}</option>
+                                    {% endif %}
+                                </select>
+                                <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SKILLS -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Skills</div>
+                        <div class="section-space"></div>
+                        <div class="checkbox-grid">
+                            {% for category in categories %}
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in
+                                    user.skills.split(', ') %}checked{% endif %}>
+                            {{ category }}
+                        </label>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
 
-            <!-- NAME -->
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Name</div>
-                <div class="section-space"></div>
-                <div class="name-field-wrapper">
-                    <input class="settings-field" type="text" placeholder="First Name" id="first-name" name="first_name"
-                        value="{{ user.first_name }}" maxlength="100" required>
-                    <input class="settings-field" type="text" placeholder="Last Name" id="last-name" name="last_name"
-                        value="{{ user.last_name }}" maxlength="100" required>
-                </div>
-            </div>
-
-            <!-- ROLE -->
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Role</div>
-                <div class="section-space"></div>
-                <input class="settings-field" type="text" placeholder="ex. Graphic Designer" id="role" name="role"
-                    value="{{ user.role or '' }}" maxlength="100" required>
-            </div>
-
-            <!-- LOCATION -->
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Location</div>
-                <div class="section-space"></div>
-                <div class="sub-location-wrapper">
-                    <div class="label-wrapper" style="margin-bottom: 12px">
-                        <select class="location-settings" id="country" name="country" required>
-                            <option value="">Select your country</option>
-                            {% for c in countries %}
-                            <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
-                                user.country|trim|lower==c.iso2|trim|lower %}selected{% endif %}>
-                                {{ c.name }}
-                            </option>
+                    <!-- PREFERENCES -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Preferences</div>
+                        <div class="section-space"></div>
+                        <div class="checkbox-grid">
+                            {% for category in categories %}
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferences[]" value="{{ category }}"
+                                    {% if category in user.preferences.split(', ') %}checked{% endif %}>
+                                {{ category }}
+                            </label>
                             {% endfor %}
-                        </select>
-                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+                        </div>
                     </div>
-                    <div class="label-wrapper" style="margin-bottom: 12px">
-                        <select class="location-settings" id="state" name="state" required>
-                            <option value="">Select your region or province</option>
-                            {% if user.state %}
-                            <option selected value="{{ user.state }}">{{ user.state }}</option>
-                            {% endif %}
-                        </select>
-                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+
+                    <!-- EXPERIENCE LEVEL -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Experience Level</div>
+                        <div class="section-space"></div>
+                        <div class="left-align">
+                            {% for value, label in experience_levels %}
+                            <label class="radio-item">
+                                <input type="radio" name="experience_level" value="{{ value }}"
+                                    {% if value == user.experience_level %}checked{% endif %}>
+                                {{ label }}
+                            </label>
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div class="label-wrapper">
-                        <select class="location-settings" id="city" name="city" required>
-                            <option value="">Select your city</option>
-                            {% if user.city %}
-                            <option selected value="{{ user.city }}">{{ user.city }}</option>
-                            {% endif %}
-                        </select>
-                        <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
+
+                    <!-- SOCIALS -->
+                    <div class="line-comments-section"></div>
+                    <div class="sub-wrapper">
+                        <div class="subname">Linked Accounts</div>
+                        <div class="section-space"></div>
+                        <table class="social-table">
+                            <tr>
+                                <td><label for="facebook">Facebook</label></td>
+                                <td><input type="url" id="facebook" name="facebook" value="{{ user.facebook or '' }}"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="instagram">Instagram</label></td>
+                                <td><input type="url" id="instagram" name="instagram" value="{{ user.instagram or '' }}"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="x">X</label></td>
+                                <td><input type="url" id="x" name="x" value="{{ user.x or '' }}"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="linkedin">LinkedIn</label></td>
+                                <td><input type="url" id="linkedin" name="linkedin" value="{{ user.linkedin or '' }}"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="telegram">Telegram</label></td>
+                                <td><input type="url" id="telegram" name="telegram" value="{{ user.telegram or '' }}"></td>
+                            </tr>
+                        </table>
                     </div>
-                </div>
+
+                    <!-- SUBMIT -->
+                    <div class="line-comments-section"></div>
+                    <div class="button-container">
+                        <button class="save-changes-button" type="submit">Save Changes</button>
+                    </div>
+        </form>
+
+<div>Delete Account</div>
+
+<form method="POST" action="{{ url_for(' delete_account_route') }}">
+                                <button type="submit" class="danger-btn">Delete Account</button>
+                </form>
             </div>
 
-            <!-- SKILLS -->
-            <div class="line-comments-section"></div>
-            <div class="sub-wrapper">
-                <div class="subname">Skills</div>
-                <div class="section-space"></div>
-                <div class="checkbox-grid">
-                    {% for category in categories %}
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in
-                            user.skills.split(', ') %}checked{% endif %}>
-                {{ category }}
-            </label>
-            {% endfor %}
+            <button id="themeToggle">Toggle Theme</button>
         </div>
-    </div>
 
-    <!-- PREFERENCES -->
-    <div class="line-comments-section"></div>
-    <div class="sub-wrapper">
-        <div class="subname">Preferences</div>
-        <div class="section-space"></div>
-        <div class="checkbox-grid">
-            {% for category in categories %}
-            <label class="checkbox-item">
-                <input type="checkbox" name="preferences[]" value="{{ category }}"
-                    {% if category in user.preferences.split(', ') %}checked{% endif %}>
-                {{ category }}
-            </label>
-            {% endfor %}
+
+        <!-- ALERTS SECTION -->
+        <div id="alerts-section" class="settings-section" style="display: none;">
+            <div class="section-title">Alerts</div>
+            <div class="section-tagline">Manage how and when you're notified.</div>
+            <p>Placeholder for alert preferences (e.g., email alerts, app notifications).</p>
         </div>
-    </div>
 
-    <!-- EXPERIENCE LEVEL -->
-    <div class="line-comments-section"></div>
-    <div class="sub-wrapper">
-        <div class="subname">Experience Level</div>
-        <div class="section-space"></div>
-        <div class="left-align">
-            {% for value, label in experience_levels %}
-            <label class="radio-item">
-                <input type="radio" name="experience_level" value="{{ value }}"
-                    {% if value == user.experience_level %}checked{% endif %}>
-                {{ label }}
-            </label>
-            {% endfor %}
+        <!-- DISPLAY SECTION -->
+        <div id="display-section" class="settings-section" style="display: none;">
+            <div class="section-title">Display</div>
+            <div class="section-tagline">Customize appearance and accessibility settings.</div>
+            <button id="themeToggle">Toggle Theme</button>
         </div>
+
+        <!-- PRIVACY SECTION -->
+        <div id="privacy-section" class="settings-section" style="display: none;">
+            <div class="section-title">Privacy</div>
+            <div class="section-tagline">Control who can see your profile and activity.</div>
+            <p>Placeholder for privacy controls (e.g., public/private posts, data visibility).</p>
+        </div>
+
+
     </div>
 
-    <!-- SOCIALS -->
-    <div class="line-comments-section"></div>
-    <div class="sub-wrapper">
-        <div class="subname">Linked Accounts</div>
-        <div class="section-space"></div>
-        <table class="social-table">
-            <tr>
-                <td><label for="facebook">Facebook</label></td>
-                <td><input type="url" id="facebook" name="facebook" value="{{ user.facebook or '' }}"></td>
-            </tr>
-            <tr>
-                <td><label for="instagram">Instagram</label></td>
-                <td><input type="url" id="instagram" name="instagram" value="{{ user.instagram or '' }}"></td>
-            </tr>
-            <tr>
-                <td><label for="x">X</label></td>
-                <td><input type="url" id="x" name="x" value="{{ user.x or '' }}"></td>
-            </tr>
-            <tr>
-                <td><label for="linkedin">LinkedIn</label></td>
-                <td><input type="url" id="linkedin" name="linkedin" value="{{ user.linkedin or '' }}"></td>
-            </tr>
-            <tr>
-                <td><label for="telegram">Telegram</label></td>
-                <td><input type="url" id="telegram" name="telegram" value="{{ user.telegram or '' }}"></td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- SUBMIT -->
-    <div class="line-comments-section"></div>
-    <div class="button-container">
-        <button class="save-changes-button" type="submit">Save Changes</button>
-    </div>
-</form>
-
-<script>
-    const selectedStateCode = "{{ user.state }}";
-</script>
-                        <!--
+    <script>
+        const selectedStateCode = "{{ user.state }}";
+    </script>
+    <!--
 
     <h1>Account Settings</h1>
 
@@ -194,64 +233,64 @@
     {% endif %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
-                        <label for="profile_pic">Profile Picture:</label><br />
-                        <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for(' settings') }}">
+                            <label for="profile_pic">Profile Picture:</label><br />
+                            <input id="profile_pic" type="file" name="profile_pic" accept="image/*" /><br /><br />
 
-                        <label for="cover_photo">Cover Photo:</label><br />
-                        <input id="cover_photo" type="file" name="cover_photo" accept="image/*" /><br /><br />
+                            <label for="cover_photo">Cover Photo:</label><br />
+                            <input id="cover_photo" type="file" name="cover_photo" accept="image/*" /><br /><br />
 
-                        <label>First Name:
-                            <input type="text" name="first_name" value="{{ user.first_name }}" required />
-                        </label><br />
+                            <label>First Name:
+                                <input type="text" name="first_name" value="{{ user.first_name }}" required />
+                            </label><br />
 
-                        <label>Last Name:
-                            <input type="text" name="last_name" value="{{ user.last_name }}" required />
-                        </label><br />
+                            <label>Last Name:
+                                <input type="text" name="last_name" value="{{ user.last_name }}" required />
+                            </label><br />
 
-                        <label>Role:
-                            <input type="text" name="role" value="{{ user.role or '' }}" />
-                        </label><br />
-
-
-                        <p>User country: {{ user.country }}</p>
-
-                        <label>Country:
-                            <select id="country" name="country" required>
-                                <option value="">Select Country</option>
-                                {% for c in countries %}
-                                <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
-                                    user.country|trim|lower==c.iso2|trim|lower %}selected{% endif %}>
-                                    {{ c.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </label><br />
-
-                        <label>State/Province:
-                            <select id="state" name="state" required>
-                                <option value="">Select State</option>
-                                {% if user.state %}
-                                <option selected value="{{ user.state }}">{{ user.state }}</option>
-                                {% endif %}
-                            </select>
-                        </label><br />
-
-                        <label>City:
-                            <select id="city" name="city" required>
-                                <option value="">Select City</option>
-                                {% if user.city %}
-                                <option selected value="{{ user.city }}">{{ user.city }}</option>
-                                {% endif %}
-                            </select>
-                        </label><br />
+                            <label>Role:
+                                <input type="text" name="role" value="{{ user.role or '' }}" />
+                            </label><br />
 
 
-                        <label>Skills:</label><br />
-                        {% for category in categories %}
-                        <label>
-                            <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in
-                                user.skills.split(', ') %}checked{% endif %}>
+                            <p>User country: {{ user.country }}</p>
+
+                            <label>Country:
+                                <select id="country" name="country" required>
+                                    <option value="">Select Country</option>
+                                    {% for c in countries %}
+                                    <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
+                                        user.country|trim|lower==c.iso2|trim|lower %}selected{% endif %}>
+                                        {{ c.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </label><br />
+
+                            <label>State/Province:
+                                <select id="state" name="state" required>
+                                    <option value="">Select State</option>
+                                    {% if user.state %}
+                                    <option selected value="{{ user.state }}">{{ user.state }}</option>
+                                    {% endif %}
+                                </select>
+                            </label><br />
+
+                            <label>City:
+                                <select id="city" name="city" required>
+                                    <option value="">Select City</option>
+                                    {% if user.city %}
+                                    <option selected value="{{ user.city }}">{{ user.city }}</option>
+                                    {% endif %}
+                                </select>
+                            </label><br />
+
+
+                            <label>Skills:</label><br />
+                            {% for category in categories %}
+                            <label>
+                                <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in
+                                    user.skills.split(', ') %}checked{% endif %}>
     {{ category }}
   </label><br />
     {% endfor %}
@@ -304,27 +343,62 @@
 -->
 
 
-<div>Delete Account</div>
 
-<form method="POST" action="{{ url_for('delete_account_route') }}">
-                            <button type="submit" class="danger-btn">Delete Account</button>
-        </form>
-    </div>
 
-<button id="themeToggle">Toggle Theme</button>
+    <script>
 
-<script>
-document.getElementById('profile_pic').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            document.getElementById('preview-photo').src = e.target.result;
+        // Toggle between sections
+        document.querySelectorAll('.section-sub').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deselect all
+                document.querySelectorAll('.section-sub').forEach(t => t.classList.remove('selected-section'));
+                document.querySelectorAll('.settings-section').forEach(section => section.style.display = 'none');
+
+                // Select clicked
+                tab.classList.add('selected-section');
+                const sectionId = tab.getAttribute('data-section');
+                document.getElementById(sectionId).style.display = 'block';
+            });
+        });
+
+        // Photo preview
+        document.getElementById('profile_pic')?.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview-photo').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('profile_pic').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview-photo').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+    <style>
+        .settings-section {
+            display: none;
         }
-        reader.readAsDataURL(file);
-    }
-});
-</script>
 
+        .settings-section.active-section,
+        .settings-section[style*="display: block"] {
+            display: block;
+        }
+
+        .selected-section {
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+        }
+    </style>
 
     {% endblock %}
