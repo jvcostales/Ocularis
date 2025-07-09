@@ -15,6 +15,7 @@
         </form>
         {% endif %}
     </div>
+
     <div class="info-button-wrapper">
         <div class="profile-info">
             <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
@@ -36,52 +37,50 @@
         {% if not is_own_profile %}
         <div id="friend-action-container">
             {% if is_friend %}
-            <button type="button" class="follow-button-profile"
-                onclick="window.handleFriendship('{{ user_id }}', 'unfriend', this)">
-                Unfriend
-            </button>
-
-            {% elif incoming_request %}
-            {% if incoming_request[1] == 'pending' %}
-            <div class="response-wrapper" id="request-{{ incoming_request[0] }}">
-                <button type="button" class="follow-button-profile no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)" data-userid="{{ user_id }}">
-                    Confirm
+                <button type="button" class="follow-button-profile"
+                    onclick="window.handleFriendship('{{ user_id }}', 'unfriend', this)">
+                    Unfriend
                 </button>
 
-                <button type="button" class="follow-button-profile-secondary no-margin"
-                    onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)" data-userid="{{ user_id }}">
-                    Decline
-                </button>
-            </div>
+            {% elif incoming_request and incoming_request[1] == 'pending' %}
+                <div class="response-wrapper" id="request-{{ incoming_request[0] }}">
+                    <button type="button" class="follow-button-profile no-margin"
+                        onclick="respondToRequest({{ incoming_request[0] }}, 'accept', this)" data-userid="{{ user_id }}">
+                        Confirm
+                    </button>
+                    <button type="button" class="follow-button-profile-secondary no-margin"
+                        onclick="respondToRequest({{ incoming_request[0] }}, 'reject', this)" data-userid="{{ user_id }}">
+                        Decline
+                    </button>
+                </div>
+
+            {% elif outgoing_request %}
+                {% if outgoing_request[0] == 'pending' %}
+                    <form action="{{ url_for('cancel_request', user_id=user_id) }}" method="post">
+                        <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
+                    </form>
+                {% elif outgoing_request[0] == 'rejected' %}
+                    <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+                        <button type="submit" class="follow-button-profile">Befriend</button>
+                    </form>
+                {% endif %}
+
+            {% elif not disable_add_friend %}
+                {% if current_user.verified %}
+                    <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
+                        <button type="submit" class="follow-button-profile">Befriend</button>
+                    </form>
+                {% else %}
+                    <form action="#" method="post">
+                        <button type="submit" class="follow-button-profile-disabled" disabled>Befriend</button>
+                    </form>
+                {% endif %}
             {% endif %}
         </div>
-        {% elif outgoing_request %}
-        {% if outgoing_request[0] == 'pending' %}
-        <form action="{{ url_for('cancel_request', user_id=user_id) }}" method="post">
-            <button type="submit" class="follow-button-profile-cancel">Cancel Request</button>
-        </form>
-        {% elif outgoing_request[0] == 'rejected' %}
-        <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
-            <button type="submit" class="follow-button-profile">Befriend</button>
-        </form>
         {% endif %}
-        {% elif not disable_add_friend %}
-        {% if current_user.verified %}
-        <form action="{{ url_for('send_request', receiver_id=user_id) }}" method="post">
-            <button type="submit" class="follow-button-profile">Befriend</button>
-        </form>
-        {% else %}
-        <form action="#" method="post">
-            <button type="submit" class="follow-button-profile-disabled" disabled>Befriend</button>
-        </form>
-        {% endif %}
-        {% endif %}
-        {% endif %}
-
-
     </div>
 </div>
+
 {% for image in images %}
 <div class="post1" id="image-{{ image[0] }}">
     <div class="profile-more-wrapper">
