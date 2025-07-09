@@ -2163,6 +2163,7 @@ input[type="url"]::placeholder {
         font-size: 1rem;
         color: var(--text-muted);
         font-weight: 500;
+        cursor: pointer;
     }
 
     .selected-section {
@@ -2172,7 +2173,6 @@ input[type="url"]::placeholder {
         border-radius: 999px;
         display: inline-block;
         text-align: center;
-        cursor: pointer;
     }
 
     .line-comments-section {
