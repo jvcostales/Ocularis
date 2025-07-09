@@ -1854,6 +1854,10 @@
                                         // Insert spacer directly after newComment
                                         newComment.insertAdjacentElement('afterend', spacer);
 
+                                        requestAnimationFrame(() => {
+                                            checkScrollState([commentList.closest('.scrollable-div-comments')]);
+                                        });
+
                                         input.value = '';
                                     } else {
                                         console.error('Failed to post comment:', data);
@@ -2162,6 +2166,11 @@
                                 div.classList.add('no-scroll');
                             }
                         }
+
+                        console.log("Measured:", {
+                            scrollHeight: commentList.scrollHeight,
+                            clientHeight: commentList.clientHeight
+                        });
 
                         const checkScrollState = (divList) => {
                             divList.forEach(el => {
