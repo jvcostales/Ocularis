@@ -2172,6 +2172,7 @@ input[type="url"]::placeholder {
         border-radius: 999px;
         display: inline-block;
         text-align: center;
+        cursor: pointer;
     }
 
     .line-comments-section {
