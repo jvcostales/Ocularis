@@ -1348,18 +1348,18 @@ input[type="url"]::placeholder {
         justify-content: space-between;
     }
 
-    .tagline-comment {
+    .comment-input.tagline-comment {
         font-size: 1rem;
-        color: var(--text-main);
+        color: var(--text-main) !important;
         border: none;
         outline: none;
-        background-color: var(--bg-main);
+        background-color: var(--bg-main) !important;
     }
 
-    .tagline-comment::placeholder {
-        color: var(--text-muted);
+    .comment-input.tagline-comment::placeholder {
+        color: var(--text-muted) !important;
         font-size: 1rem;
-        background-color: var(--bg-main);
+        background-color: var(--bg-main) !important;
     }
 
     .send-button {
