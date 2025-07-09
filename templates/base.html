@@ -936,13 +936,6 @@
 
             <script>
 
-                window.addEventListener("load", () => {
-                    // Slight delay to ensure scrollHeight is accurate
-                    setTimeout(() => {
-                        checkScrollbar();
-                    }, 10);
-                });
-
                 window.addEventListener('load', function () {
                     document.body.classList.remove('loading');       // show app
                     document.getElementById('loader').style.display = 'none';  // hide loader
@@ -2185,6 +2178,12 @@
                         checkScrollState(commentDivs);
                         checkScrollState(commentLikeDivs);
                     }
+
+                    window.addEventListener("load", () => {
+                        requestAnimationFrame(() => {
+                            checkScrollbar();
+                        });
+                    });
 
                     function adjustRightPaddingOnScrollCheck() {
                         const ids = ["notifs", "requests"];
