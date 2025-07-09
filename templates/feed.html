@@ -21,7 +21,7 @@
             <div class="profile-post">
                 <img src="{{ profile_pic_url }}" class="pfp">
                 <div class="profile-name-date">
-                    <div class="username">Lorem ipsum dolor</div>
+                    <div class="username">{{ current_user.first_name }} {{ current_user.last_name }}</div>
                     <div class="date">{{ today.strftime('%b') }} {{ today.day }}</div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                         {{ image[5] }} {{ image[6] }}
                     </a>
                     {% if image[8] %}
-                    <div class="collaborate">collaborated with</div>
+                    <span class="collaborate">collaborated with</span>
                     {% if image[9] and image[10] %}
                     <a href="{{ url_for('profile', user_id=image[8]) }}">
                         {{ image[9] }} {{ image[10] }}

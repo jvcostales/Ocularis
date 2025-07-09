@@ -66,7 +66,7 @@
                         {{ image[5] }} {{ image[6] }}
                     </a>
                     {% if image[8] %}
-                    and
+                    <span class="collaborate">collaborated with</span>
                     {% if image[9] and image[10] %}
                     <a href="{{ url_for('profile', user_id=image[8]) }}">
                         {{ image[9] }} {{ image[10] }}
@@ -88,9 +88,9 @@
                 </a>
                 <div class="hide" onclick="hidePost({{ image[0] }})">Hide</div>
                 {% if current_user.id != image[4] and current_user.id != image[8] %}
-                <div class="report" onclick="openReportModal({{ image[0] }})">
-                    Report
-                </div>
+                <div class="report" {% if current_user.id==image[4] or current_user.id==image[8]
+                    %}style="padding-bottom: 8px;" {% endif %}>
+                    Report</div>
                 {% endif %}
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
                 <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
