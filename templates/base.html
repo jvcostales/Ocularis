@@ -2174,9 +2174,11 @@
                             });
                         };
 
-                        checkScrollState(likeDivs);
-                        checkScrollState(commentDivs);
-                        checkScrollState(commentLikeDivs);
+                        setTimeout(() => {
+                            checkScrollState(likeDivs);
+                            checkScrollState(commentDivs);
+                            checkScrollState(commentLikeDivs);
+                        }, 10);
                     }
 
                     function adjustRightPaddingOnScrollCheck() {
