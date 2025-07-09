@@ -405,40 +405,6 @@
             }
         });
 
-function applyDarkMode(mode) {
-  document.body.classList.remove('dark-mode');
-  if (mode === 'on') {
-    document.body.classList.add('dark-mode');
-  } else if (mode === 'auto') {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.body.classList.add('dark-mode');
-    }
-  }
-}
-
-document.querySelectorAll('input[name="dark_mode"]').forEach(radio => {
-  radio.addEventListener('change', async () => {
-    const selected = radio.value;
-    applyDarkMode(selected);
-
-    try {
-      await fetch("{{ url_for('update_dark_mode') }}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token() }}'  // remove this if not using CSRF protection
-        },
-        body: JSON.stringify({ dark_mode: selected })
-      });
-    } catch (err) {
-      console.error('Failed to update dark mode:', err);
-    }
-  });
-});
-
-// Apply current mode on page load
-applyDarkMode("{{ user.dark_mode }}");
-
     </script>
 
     <style>
