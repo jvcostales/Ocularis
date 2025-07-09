@@ -1607,6 +1607,7 @@ def profile(user_id):
             collaborator.id,              -- 8 (collaborator's user ID)
             collaborator.first_name,      -- 9
             collaborator.last_name        -- 10
+            author.profile_pic            -- 11
         FROM images
         JOIN users AS author ON images.id = author.id
         LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
