@@ -202,28 +202,28 @@
         <!-- DISPLAY SECTION -->
         <div id="display-section" class="settings-section" style="display: none;">
             <div class="section-title">Display</div>
-            <div class="section-tagline">Customize appearance and accessibility settings.</div>
+            <div class="section-tagline">Choose your appearance mode.</div>
 
             <div class="sub-wrapper">
-                <div class="subname">Dark Mode</div>
-                <div class="section-space"></div>
-                <div class="left-align">
-                    <label class="radio-item">
-                        <input type="radio" name="dark_mode" value="auto" {% if user.dark_mode=='auto' %}checked{% endif
-                            %}>
-                        Automatic (based on system)
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="dark_mode" value="on" id="themeToggle" {% if user.dark_mode=='on'
-                            %}checked{% endif %}>
-                        On
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="dark_mode" value="off" {% if user.dark_mode=='off' %}checked{% endif
-                            %}>
-                        Off
-                    </label>
-                </div>
+            <div class="subname">Dark Mode</div>
+            <div class="section-space"></div>
+            <div class="left-align">
+                <label class="radio-item">
+                <input type="radio" name="theme_mode" value="auto"
+                    {% if local_theme == 'auto' %}checked{% endif %}>
+                Auto
+                </label>
+                <label class="radio-item">
+                <input type="radio" name="theme_mode" value="on" id="themeToggle"
+                    {% if local_theme == 'dark' %}checked{% endif %}>
+                On
+                </label>
+                <label class="radio-item">
+                <input type="radio" name="theme_mode" value="off"
+                    {% if local_theme == 'light' %}checked{% endif %}>
+                Off
+                </label>
+            </div>
             </div>
         </div>
 

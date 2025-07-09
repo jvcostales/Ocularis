@@ -1,4 +1,4 @@
-:root {
+:root[data-theme="light"] {
     --bg-main: #f6f6f6;
     --bg-secondary: #ffffff;
     --text-main: #1a1a1a;
@@ -14,7 +14,7 @@
     --accent-active: #9BB35B;
 }
 
-[data-theme="dark"] {
+:root[data-theme="dark"] {
     --bg-main: #121212;
     --bg-secondary: #1e1e1e;
     --text-main: #ffffff;
