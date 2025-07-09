@@ -21,7 +21,7 @@
             </div>
             <div class="follow-action">
                 {% if user.relationship == 'friends' %}
-                <form action="{{ url_for('unfriend', user_id=user.id) }}" method="post">
+                <form action="{{ url_for('unfriend', other_user_id=user.id) }}" method="post">
                     <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
                 </form>
                 {% elif user.relationship == 'incoming_pending' %}
