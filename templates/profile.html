@@ -20,7 +20,7 @@
             <img src="{{ url_for('profile_pics', filename=viewed_user_profile_pic) if viewed_user_profile_pic and viewed_user_profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
                 alt="Profile" class="avatar">
             <div class="details">
-                <div class="username-profile">{{ user[0] }} {{ user[1] }}</div>
+                <div class="username-profile">{{ user.first_name }} {{ user.last_name }}</div>
                 <div class="icon-title-wrapper">
                     <span class="material-symbols-outlined person-symbol">person</span>
                     <div class="title">{{ role }}</div>

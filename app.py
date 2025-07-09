@@ -1560,15 +1560,30 @@ def profile(user_id):
     )
     cur = conn.cursor()
     
-    # Fetch user details
-    cur.execute("SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo FROM users WHERE id = %s", (user_id,))
-    user = cur.fetchone()
-    role = user[2]
-    city = user[3]
-    state = user[4]
-    country = user[5]
-    viewed_user_profile_pic = user[6]
-    viewed_user_profile_cover = user[7]
+    cur.execute("""
+        SELECT first_name, last_name, role, city, state, country, profile_pic, cover_photo 
+        FROM users WHERE id = %s
+    """, (user_id,))
+    row = cur.fetchone()
+
+    # Convert to a named dict
+    profile_user = {
+        "first_name": row[0],
+        "last_name": row[1],
+        "role": row[2],
+        "city": row[3],
+        "state": row[4],
+        "country": row[5],
+        "profile_pic": row[6],
+        "cover_photo": row[7]
+    }
+
+    role = profile_user["role"]
+    city = profile_user["city"]
+    state = profile_user["state"]
+    country = profile_user["country"]
+    viewed_user_profile_pic = profile_user["profile_pic"]
+    viewed_user_profile_cover = profile_user["cover_photo"]
 
     # Count number of confirmed friends (mutual connections)
     cur.execute("""
@@ -1702,26 +1717,26 @@ def profile(user_id):
                 facebook, instagram, x, linkedin, telegram, email
             FROM users WHERE id = %s
         """, (actor_id,))
-        user = cur.fetchone()
+        actor_row = cur.fetchone()
 
-        if user:
+        if actor_row:
             actor_details[actor_id] = {
-                "full_name": f"{user[0]} {user[1]}",
-                "role": user[2],
-                "city": user[3],
-                "state": user[4],
-                "country": user[5],
-                "profile_pic": user[6],
-                "cover_photo": user[7],
-                "skills": user[8],               # PostgreSQL array
-                "preferences": user[9],          # PostgreSQL array
-                "experience_level": user[10],    # int (1–4)
-                "facebook": user[11],
-                "instagram": user[12],
-                "x": user[13],
-                "linkedin": user[14],
-                "telegram": user[15],
-                "email": user[16]
+                "full_name": f"{actor_row[0]} {actor_row[1]}",
+                "role": actor_row[2],
+                "city": actor_row[3],
+                "state": actor_row[4],
+                "country": actor_row[5],
+                "profile_pic": actor_row[6],
+                "cover_photo": actor_row[7],
+                "skills": actor_row[8],
+                "preferences": actor_row[9],
+                "experience_level": actor_row[10],
+                "facebook": actor_row[11],
+                "instagram": actor_row[12],
+                "x": actor_row[13],
+                "linkedin": actor_row[14],
+                "telegram": actor_row[15],
+                "email": actor_row[16]
             }
 
     # Fetch friend requests
@@ -1774,7 +1789,7 @@ def profile(user_id):
     return render_template(
         "profile.html",
         current_page='profile',
-        user=user,
+        user=profile_user,
         role=role,
         location=location,
         friend_count=friend_count,
