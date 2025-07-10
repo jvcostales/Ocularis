@@ -107,48 +107,18 @@ textarea::placeholder {
 /* General style for all checkboxes and radio buttons */
 input[type="checkbox"],
 input[type="radio"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
+    accent-color: var(--highlight);
+    margin-right: 8px;
     width: 20px;
     height: 20px;
-    margin-right: 8px;
     cursor: pointer;
     background-color: transparent;
-    border: 2px solid var(--highlight);
-    border-radius: 5px; /* 50% for radio */
-    position: relative;
-}
-
-/* Checkbox checkmark */
-input[type="checkbox"]:checked::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(45deg);
+    border-radius: 5px;
 }
 
 /* Radio-specific: circular shape */
 input[type="radio"] {
     border-radius: 50%;
-}
-
-input[type="radio"]:checked::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: white;
-    transform: translate(-50%, -50%);
 }
 
 .no-scroll-body {
