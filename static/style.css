@@ -107,49 +107,60 @@ textarea::placeholder {
 /* General styling for checkboxes */
 input[type="checkbox"],
 input[type="radio"] {
-    accent-color: var(--highlight);         /* highlight color (blue in your theme) */
-    background-color: var(--bg-secondary);  /* fix white background in dark mode */
-    border: 1px solid #dcdcdc;              /* consistent with other inputs */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     width: 20px;
     height: 20px;
     margin-right: 8px;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    border: 2px solid var(--highlight);
+    background-color: var(--bg-secondary);
     display: inline-block;
     vertical-align: middle;
-    border-radius: 4px;
     position: relative;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
-/* Checkmark / dot for checked */
-input[type="checkbox"]:checked::before,
-input[type="radio"]:checked::before {
+/* Checkbox: blue background + white check */
+input[type="checkbox"] {
+    border-radius: 6px;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--highlight);
+}
+
+input[type="checkbox"]:checked::before {
     content: "";
     position: absolute;
-    top: 3px;
+    top: 2px;
     left: 6px;
-    width: 6px;
-    height: 12px;
+    width: 5px;
+    height: 10px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
-/* Circle for radios */
+/* Radio: white dot on blue background */
 input[type="radio"] {
     border-radius: 50%;
 }
 
+input[type="radio"]:checked {
+    background-color: var(--highlight);
+}
+
 input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
     top: 6px;
     left: 6px;
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: white;
-    border: none;
 }
 
 .no-scroll-body {
