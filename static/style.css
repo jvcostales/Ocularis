@@ -104,22 +104,52 @@ textarea::placeholder {
     color: var(--text-muted) !important;
 }
 
-/* General style for all checkboxes and radio buttons */
+/* General styling for checkboxes */
 input[type="checkbox"],
 input[type="radio"] {
-    accent-color: var(--highlight);
-    margin-right: 8px;
+    accent-color: var(--highlight);         /* highlight color (blue in your theme) */
+    background-color: var(--bg-secondary);  /* fix white background in dark mode */
+    border: 1px solid #dcdcdc;              /* consistent with other inputs */
     width: 20px;
     height: 20px;
+    margin-right: 8px;
     cursor: pointer;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--text-muted);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    vertical-align: middle;
     border-radius: 4px;
+    position: relative;
 }
 
-/* Radio-specific: circular shape */
+/* Checkmark / dot for checked */
+input[type="checkbox"]:checked::before,
+input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Circle for radios */
 input[type="radio"] {
     border-radius: 50%;
+}
+
+input[type="radio"]:checked::before {
+    top: 6px;
+    left: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    border: none;
 }
 
 .no-scroll-body {
