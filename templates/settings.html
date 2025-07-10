@@ -205,18 +205,33 @@
             <div class="sub-wrapper">
                 <div class="subname">Dark Mode</div>
                 <div class="section-space"></div>
-                <div class="left-align">
-                    <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="auto" {% if local_theme == 'auto' %}checked{% endif %}>
-                        Auto
-                    </label>
+                <div class="left-align" style="margin-bottom: 0;">
                     <label class="radio-item">
                         <input type="radio" name="theme_mode" value="dark" id="themeToggle" {% if local_theme == 'dark' %}checked{% endif %}>
-                        Dark
+                        On
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="theme_mode" value="light" {% if local_theme == 'light' %}checked{% endif %}>
-                        Light
+                        Off
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="theme_mode" value="auto" {% if local_theme == 'auto' %}checked{% endif %}>
+                        Automatic
+                    </label>
+                </div>
+            </div>
+            <div class="line-comments-section"></div>
+            <div class="sub-wrapper">
+                <div class="subname">Compact Mode</div>
+                <div class="section-space"></div>
+                <div class="left-align" style="margin-bottom: 0;">
+                    <label class="radio-item">
+                        <input type="radio">
+                        On
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio">
+                        Off
                     </label>
                 </div>
             </div>
