@@ -104,6 +104,24 @@ textarea::placeholder {
     color: var(--text-muted) !important;
 }
 
+/* General style for all checkboxes and radio buttons */
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--highlight);
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+}
+
+/* Radio-specific: circular shape */
+input[type="radio"] {
+    border-radius: 50%;
+}
+
 .no-scroll-body {
     overflow-y: scroll;
     /* Keep scrollbar visible */
@@ -1730,14 +1748,6 @@ input[type="url"]::placeholder {
         color: var(--text-main);
     }
 
-    .checkbox-item input[type="checkbox"] {
-        accent-color: var(--highlight);
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-
     .view-more {
         font-size: 1rem;
         color: #bbb;
@@ -1756,13 +1766,6 @@ input[type="url"]::placeholder {
 
     .radio-item:last-child {
         margin-bottom: 0;
-    }
-
-    .radio-item input[type="radio"] {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
     }
 
     .social-table {
@@ -3844,13 +3847,6 @@ input[type="url"]::placeholder {
         color: var(--text-main);
     }
 
-    .checkbox-item input[type="checkbox"] {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-
     .view-more {
         font-size: 1rem;
         color: #bbb;
@@ -3869,13 +3865,6 @@ input[type="url"]::placeholder {
 
     .radio-item:last-child {
         margin-bottom: 36px;
-    }
-
-    .radio-item input[type="radio"] {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
     }
 
     .social-table {
@@ -6134,13 +6123,6 @@ input[type="url"]::placeholder {
         color: var(--text-main);
     }
 
-    .checkbox-item input[type="checkbox"] {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-
     .view-more {
         font-size: 1rem;
         color: #bbb;
@@ -6159,13 +6141,6 @@ input[type="url"]::placeholder {
 
     .radio-item:last-child {
         margin-bottom: 36px;
-    }
-
-    .radio-item input[type="radio"] {
-        margin-right: 8px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
     }
 
     .social-table {
