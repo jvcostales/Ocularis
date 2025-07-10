@@ -1167,36 +1167,36 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-                    // Apply saved theme on load
-                    const savedTheme = localStorage.getItem("theme") || "light";
-                    document.documentElement.setAttribute("data-theme", savedTheme);
+                    // Map storage values like "auto" to actual theme
+                    function resolveTheme(value) {
+                        if (value === "dark" || value === "light") return value;
+                        if (value === "auto") {
+                            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                        }
+                        return "light"; // fallback
+                    }
 
-                    // Pre-select the matching radio based on saved theme
+                    // Apply saved theme on load
+                    const savedThemeSetting = localStorage.getItem("theme") || "auto"; // use auto by default
+                    const resolvedTheme = resolveTheme(savedThemeSetting);
+                    document.documentElement.setAttribute("data-theme", resolvedTheme);
+
+                    // Pre-check the right radio button
                     const radios = document.querySelectorAll('input[name="theme_mode"]');
                     radios.forEach(radio => {
-                        if (
-                            (savedTheme === "dark" && radio.value === "on") ||
-                            (savedTheme === "light" && radio.value === "off") ||
-                            (savedTheme === "auto" && radio.value === "auto")
-                        ) {
+                        if (radio.value === savedThemeSetting) {
                             radio.checked = true;
                         }
                     });
 
-                    // Update theme on radio change
+                    // Handle change
                     radios.forEach(radio => {
                         radio.addEventListener("change", () => {
-                            let newTheme;
-                            if (radio.value === "on") {
-                                newTheme = "dark";
-                            } else if (radio.value === "off") {
-                                newTheme = "light";
-                            } else if (radio.value === "auto") {
-                                newTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-                            }
+                            const selected = radio.value;
+                            const newTheme = resolveTheme(selected);
 
                             document.documentElement.setAttribute("data-theme", newTheme);
-                            localStorage.setItem("theme", radio.value); // Save selected mode (on/off/auto)
+                            localStorage.setItem("theme", selected);
                         });
                     });
 
