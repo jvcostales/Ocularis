@@ -1167,18 +1167,26 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
+                    // Apply saved theme on load
                     const savedTheme = localStorage.getItem("theme") || "light";
                     document.documentElement.setAttribute("data-theme", savedTheme);
 
-                    const toggleButton = document.getElementById("themeToggle");
-                    if (toggleButton) {
-                        toggleButton.addEventListener("click", () => {
-                            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-                            const newTheme = isDark ? "light" : "dark";
+                    // Handle theme changes via radio buttons
+                    document.querySelectorAll('input[name="theme_mode"]').forEach(radio => {
+                        radio.addEventListener("change", () => {
+                            let newTheme;
+                            if (radio.value === "on") {
+                                newTheme = "dark";
+                            } else if (radio.value === "off") {
+                                newTheme = "light";
+                            } else if (radio.value === "auto") {
+                                newTheme = window.matchMedia("(prefers-color-schetme: dark)").matches ? "dark" : "light";
+                            }
+
                             document.documentElement.setAttribute("data-theme", newTheme);
                             localStorage.setItem("theme", newTheme);
                         });
-                    }
+                    });
 
                     function showMatchStep(step) {
                         document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');

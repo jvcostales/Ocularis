@@ -122,7 +122,7 @@
                             {% for category in categories %}
                             <label class="checkbox-item">
                                 <input type="checkbox" name="preferences[]" value="{{ category }}"
-                                    {% if category in user.preferences.split(', ') %}checked{% endif %}>
+                                    {% if category in user.preferences.split(' , ') %}checked{% endif %}>
                                 {{ category }}
                             </label>
                             {% endfor %}
@@ -187,8 +187,6 @@
                                 <button type="submit" class="danger-btn">Delete Account</button>
                 </form>
             </div>
-
-            <button id="themeToggle">Toggle Theme</button>
         </div>
 
 
@@ -205,25 +203,25 @@
             <div class="section-tagline">Choose your appearance mode.</div>
 
             <div class="sub-wrapper">
-            <div class="subname">Dark Mode</div>
-            <div class="section-space"></div>
-            <div class="left-align">
-                <label class="radio-item">
-                <input type="radio" name="theme_mode" value="auto"
-                    {% if local_theme == 'auto' %}checked{% endif %}>
-                Auto
-                </label>
-                <label class="radio-item">
-                <input type="radio" name="theme_mode" value="on" id="themeToggle"
-                    {% if local_theme == 'dark' %}checked{% endif %}>
-                On
-                </label>
-                <label class="radio-item">
-                <input type="radio" name="theme_mode" value="off"
-                    {% if local_theme == 'light' %}checked{% endif %}>
-                Off
-                </label>
-            </div>
+                <div class="subname">Dark Mode</div>
+                <div class="section-space"></div>
+                <div class="left-align">
+                    <label class="radio-item">
+                        <input type="radio" name="theme_mode" value="auto" {% if local_theme=='auto' %}checked{% endif
+                            %}>
+                        Auto
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="theme_mode" value="on" {% if local_theme=='dark'
+                            %}checked{% endif %}>
+                        On
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="theme_mode" value="off" {% if local_theme=='light' %}checked{% endif
+                            %}>
+                        Off
+                    </label>
+                </div>
             </div>
         </div>
 
