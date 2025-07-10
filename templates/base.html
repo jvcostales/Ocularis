@@ -1171,8 +1171,20 @@
                     const savedTheme = localStorage.getItem("theme") || "light";
                     document.documentElement.setAttribute("data-theme", savedTheme);
 
-                    // Handle theme changes via radio buttons
-                    document.querySelectorAll('input[name="theme_mode"]').forEach(radio => {
+                    // Pre-select the matching radio based on saved theme
+                    const radios = document.querySelectorAll('input[name="theme_mode"]');
+                    radios.forEach(radio => {
+                        if (
+                            (savedTheme === "dark" && radio.value === "on") ||
+                            (savedTheme === "light" && radio.value === "off") ||
+                            (savedTheme === "auto" && radio.value === "auto")
+                        ) {
+                            radio.checked = true;
+                        }
+                    });
+
+                    // Update theme on radio change
+                    radios.forEach(radio => {
                         radio.addEventListener("change", () => {
                             let newTheme;
                             if (radio.value === "on") {
@@ -1180,11 +1192,11 @@
                             } else if (radio.value === "off") {
                                 newTheme = "light";
                             } else if (radio.value === "auto") {
-                                newTheme = window.matchMedia("(prefers-color-schetme: dark)").matches ? "dark" : "light";
+                                newTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
                             }
 
                             document.documentElement.setAttribute("data-theme", newTheme);
-                            localStorage.setItem("theme", newTheme);
+                            localStorage.setItem("theme", radio.value); // Save selected mode (on/off/auto)
                         });
                     });
 
