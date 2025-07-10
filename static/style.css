@@ -29,7 +29,7 @@
     --highlight-active: #152FAE;
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
-    --border-default: var(--border-default);
+    --border-default: #dcdcdc;
 }
 
 body {
