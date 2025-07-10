@@ -114,17 +114,15 @@ input[type="radio"] {
     height: 20px;
     margin-right: 8px;
     cursor: pointer;
-    border: 2px solid var(--highlight);
-    background-color: var(--bg-secondary);
-    display: inline-block;
-    vertical-align: middle;
+    border: 1px solid var(--btn-disabled-bg);
+    background-color: transparent;
     position: relative;
-    transition: background-color 0.2s, border-color 0.2s;
+    vertical-align: middle;
 }
 
 /* Checkbox: blue background + white check */
 input[type="checkbox"] {
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 input[type="checkbox"]:checked {
@@ -134,13 +132,13 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:checked::before {
     content: "";
     position: absolute;
-    top: 2px;
-    left: 6px;
-    width: 5px;
-    height: 10px;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 12px;
     border: solid white;
     border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 /* Radio: white dot on blue background */
@@ -155,12 +153,13 @@ input[type="radio"]:checked {
 input[type="radio"]:checked::before {
     content: "";
     position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 8px;
-    height: 8px;
+    top: 50%;
+    left: 50%;
+    width: 10px;  /* increased from 8px */
+    height: 10px;
     border-radius: 50%;
     background: white;
+    transform: translate(-50%, -50%);
 }
 
 .no-scroll-body {
