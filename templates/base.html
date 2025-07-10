@@ -1167,21 +1167,20 @@
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-                    // Map storage values like "auto" to actual theme
                     function resolveTheme(value) {
                         if (value === "dark" || value === "light") return value;
                         if (value === "auto") {
                             return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
                         }
-                        return "light"; // fallback
+                        return "light";
                     }
 
-                    // Apply saved theme on load
-                    const savedThemeSetting = localStorage.getItem("theme") || "auto"; // use auto by default
+                    // 1. Read saved setting and apply it
+                    const savedThemeSetting = localStorage.getItem("theme") || "auto";
                     const resolvedTheme = resolveTheme(savedThemeSetting);
                     document.documentElement.setAttribute("data-theme", resolvedTheme);
 
-                    // Pre-check the right radio button
+                    // 2. Pre-check matching radio
                     const radios = document.querySelectorAll('input[name="theme_mode"]');
                     radios.forEach(radio => {
                         if (radio.value === savedThemeSetting) {
@@ -1189,14 +1188,13 @@
                         }
                     });
 
-                    // Handle change
+                    // 3. Handle change
                     radios.forEach(radio => {
                         radio.addEventListener("change", () => {
-                            const selected = radio.value;
-                            const newTheme = resolveTheme(selected);
-
+                            const selectedValue = radio.value;
+                            const newTheme = resolveTheme(selectedValue);
                             document.documentElement.setAttribute("data-theme", newTheme);
-                            localStorage.setItem("theme", selected);
+                            localStorage.setItem("theme", selectedValue);
                         });
                     });
 
