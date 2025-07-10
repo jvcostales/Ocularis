@@ -207,19 +207,16 @@
                 <div class="section-space"></div>
                 <div class="left-align">
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="auto" {% if local_theme=='auto' %}checked{% endif
-                            %}>
+                        <input type="radio" name="theme_mode" value="auto" {% if local_theme == 'auto' %}checked{% endif %}>
                         Auto
                     </label>
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="on" {% if local_theme=='dark'
-                            %}checked{% endif %}>
-                        On
+                        <input type="radio" name="theme_mode" value="dark" id="themeToggle" {% if local_theme == 'dark' %}checked{% endif %}>
+                        Dark
                     </label>
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="off" {% if local_theme=='light' %}checked{% endif
-                            %}>
-                        Off
+                        <input type="radio" name="theme_mode" value="light" {% if local_theme == 'light' %}checked{% endif %}>
+                        Light
                     </label>
                 </div>
             </div>
