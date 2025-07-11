@@ -194,12 +194,7 @@
         <div id="alerts-section" class="settings-section" style="display: none;">
             <div class="section-title">Alerts</div>
             <div class="section-tagline">Manage how and when you're notified.</div>
-            <form method="POST" action="{{ url_for('update_notification_settings') }}">
-                <label><input type="checkbox" name="notify_likes" {% if current_user.notify_likes %}checked{% endif %}> Likes</label><br>
-                <label><input type="checkbox" name="notify_comments" {% if current_user.notify_comments %}checked{% endif %}> Comments</label><br>
-                <label><input type="checkbox" name="notify_requests" {% if current_user.notify_requests %}checked{% endif %}> Requests</label><br>
-                <button type="submit">Save Settings</button>
-            </form>
+            <p>Placeholder for alert preferences (e.g., email alerts, app notifications).</p>
         </div>
 
         <!-- DISPLAY SECTION -->

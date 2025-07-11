@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS users (
     reset_token TEXT,
     skills TEXT[],            -- Array of skills (e.g., ['UI/UX Design', 'Branding'])
     preferences TEXT[],       -- Array of preferences (e.g., ['Illustration', '3D Design'])
-    experience_level INT,     -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
+    experience_level INT,      -- e.g., 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
     country TEXT,
     state TEXT,
     city TEXT,
@@ -61,11 +61,8 @@ CREATE TABLE IF NOT EXISTS users (
     x VARCHAR(100),
     linkedin VARCHAR(100),
     telegram VARCHAR(100),
-    profile_pic VARCHAR(255),  -- stores the path or URL to the profile picture
-    is_profile_complete BOOLEAN DEFAULT FALSE,
-    notify_likes BOOLEAN DEFAULT TRUE,
-    notify_comments BOOLEAN DEFAULT TRUE,
-    notify_requests BOOLEAN DEFAULT TRUE
+    profile_pic VARCHAR(255),  -- NEW: stores the path or URL to the profile picture
+    is_profile_complete BOOLEAN DEFAULT FALSE
 );
 """)
 
@@ -1108,16 +1105,12 @@ def like_image(image_id):
             cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
             owner = cur.fetchone()
 
+            # Create notification if the liker is not the owner
             if owner and owner[0] != current_user.id:
-                # Check if the image owner allows like notifications
-                cur.execute("SELECT notify_likes FROM users WHERE id = %s", (owner[0],))
-                notify_pref = cur.fetchone()
-
-                if notify_pref and notify_pref[0]:  # notify_likes is True
-                    cur.execute("""
-                        INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
-                        VALUES (%s, %s, %s, 'like')
-                    """, (owner[0], current_user.id, image_id))
+                cur.execute("""
+                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
+                    VALUES (%s, %s, %s, 'like')
+                """, (owner[0], current_user.id, image_id))
 
         # Count current likes BEFORE closing
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
@@ -1257,15 +1250,10 @@ def post_comment(image_id):
         owner = cur.fetchone()
 
         if owner and owner[0] != current_user.id:
-            # Check if the owner wants comment notifications
-            cur.execute("SELECT notify_comments FROM users WHERE id = %s", (owner[0],))
-            notify_pref = cur.fetchone()
-
-            if notify_pref and notify_pref[0]:  # notify_comments is True
-                cur.execute("""
-                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
-                    VALUES (%s, %s, %s, 'comment')
-                """, (owner[0], current_user.id, image_id))
+            cur.execute("""
+                INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
+                VALUES (%s, %s, %s, 'comment')
+            """, (owner[0], current_user.id, image_id))
 
         # Get current like count for the new comment
         cur.execute("SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s", (comment_id,))
@@ -1281,7 +1269,7 @@ def post_comment(image_id):
         'comment': {
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
-            'user_id': current_user.id,
+            'user_id': current_user.id,  # Add this
             'text': comment_text,
             'like_count': like_count,
             'timestamp': created_at.isoformat()
@@ -1911,16 +1899,6 @@ def send_request(receiver_id):
             RETURNING request_id;
         """, (sender_id, receiver_id))
         request_id = cur.fetchone()[0]
-
-        # ✅ Only insert notification if receiver allows request notifications
-        cur.execute("SELECT notify_requests FROM users WHERE id = %s", (receiver_id,))
-        notify_pref = cur.fetchone()
-        if notify_pref and notify_pref[0]:  # notify_requests is True
-            cur.execute("""
-                INSERT INTO notifications (recipient_id, actor_id, action_type)
-                VALUES (%s, %s, 'request');
-            """, (receiver_id, sender_id))
-
         conn.commit()
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -3424,27 +3402,6 @@ def report():
     finally:
         cur.close()
         conn.close()
-        
-@app.route('/update_notification_settings', methods=['POST'])
-@login_required
-def update_notification_settings():
-    notify_likes = 'notify_likes' in request.form
-    notify_comments = 'notify_comments' in request.form
-    notify_requests = 'notify_requests' in request.form
-
-    conn = psycopg2.connect(...)
-    cur = conn.cursor()
-    cur.execute("""
-        UPDATE users
-        SET notify_likes = %s, notify_comments = %s, notify_requests = %s
-        WHERE id = %s
-    """, (notify_likes, notify_comments, notify_requests, current_user.id))
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    flash("Notification preferences updated.")
-    return redirect(url_for('settings'))
 
 if __name__ == '__main__':
     app.run(debug=True)
