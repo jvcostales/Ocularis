@@ -58,7 +58,6 @@ body.loading .app-content {
     display: none;
 }
 
-/* Optional: Logo animation */
 .loader-logo {
     width: 120px;
     animation: fadeIn 1s ease-in-out;
