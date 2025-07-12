@@ -2046,7 +2046,7 @@ input[type="url"]::placeholder {
     .card-pairup {
         background-image: url('/static/pairup.jpg');
         background-size: cover;
-        background-position: center;
+        background-position: right center;
         background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;
