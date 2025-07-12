@@ -695,8 +695,17 @@ def feed():
         comments = cur.fetchall()
 
 
-        # Fetch notifications
+        # First, fetch user's notification preferences
         cur.execute("""
+            SELECT notify_likes, notify_comments, notify_requests
+            FROM users
+            WHERE id = %s
+        """, (current_user.id,))
+        prefs = cur.fetchone()
+        notify_likes, notify_comments, notify_requests = prefs
+
+        # Build base query
+        query = """
             SELECT 
                 users.first_name || ' ' || users.last_name AS display_name,
                 notifications.action_type,
@@ -708,9 +717,28 @@ def feed():
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
-            ORDER BY notifications.created_at DESC
-        """, (current_user.id,))
+        """
 
+        params = [current_user.id]
+
+        # Add filtering logic based on preferences
+        disabled_types = []
+        if not notify_likes:
+            disabled_types.append('like')
+            disabled_types.append('comment_like')
+        if not notify_comments:
+            disabled_types.append('comment')
+        if not notify_requests:
+            disabled_types.append('request')
+
+        if disabled_types:
+            query += " AND notifications.action_type NOT IN %s"
+            params.append(tuple(disabled_types))
+
+        query += " ORDER BY notifications.created_at DESC"
+
+        # Execute the final query
+        cur.execute(query, params)
         notifications = cur.fetchall()
         
         # Gather unique actor_ids
@@ -1102,16 +1130,24 @@ def like_image(image_id):
             # Like the image
             cur.execute("INSERT INTO likes (user_id, image_id) VALUES (%s, %s)", (current_user.id, image_id))
 
-            # Get the image owner
-            cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
-            owner = cur.fetchone()
+            # Get the image owner's ID and their like notification preference
+            cur.execute("""
+                SELECT users.id, users.notify_likes
+                FROM images
+                JOIN users ON images.id = users.id
+                WHERE images.image_id = %s
+            """, (image_id,))
+            owner_info = cur.fetchone()
 
-            # Create notification if the liker is not the owner
-            if owner and owner[0] != current_user.id:
-                cur.execute("""
-                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
-                    VALUES (%s, %s, %s, 'like')
-                """, (owner[0], current_user.id, image_id))
+            if owner_info:
+                owner_id, notify_likes = owner_info
+
+                # Only create notification if the liker is not the owner AND likes are enabled
+                if owner_id != current_user.id and notify_likes:
+                    cur.execute("""
+                        INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
+                        VALUES (%s, %s, %s, 'like')
+                    """, (owner_id, current_user.id, image_id))
 
         # Count current likes BEFORE closing
         cur.execute("SELECT COUNT(*) FROM likes WHERE image_id = %s", (image_id,))
@@ -1246,15 +1282,24 @@ def post_comment(image_id):
         )
         comment_id, created_at = cur.fetchone()
 
-        # Get the image owner
-        cur.execute("SELECT id FROM images WHERE image_id = %s", (image_id,))
-        owner = cur.fetchone()
+        # Get the image owner and their comment notification setting
+        cur.execute("""
+            SELECT users.id, users.notify_comments
+            FROM images
+            JOIN users ON images.id = users.id
+            WHERE images.image_id = %s
+        """, (image_id,))
+        owner_info = cur.fetchone()
 
-        if owner and owner[0] != current_user.id:
-            cur.execute("""
-                INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
-                VALUES (%s, %s, %s, 'comment')
-            """, (owner[0], current_user.id, image_id))
+        if owner_info:
+            owner_id, notify_comments = owner_info
+
+            # Create notification only if commenter is not the owner AND notify_comments is enabled
+            if owner_id != current_user.id and notify_comments:
+                cur.execute("""
+                    INSERT INTO notifications (recipient_id, actor_id, image_id, action_type)
+                    VALUES (%s, %s, %s, 'comment')
+                """, (owner_id, current_user.id, image_id))
 
         # Get current like count for the new comment
         cur.execute("SELECT COUNT(*) FROM comment_likes WHERE comment_id = %s", (comment_id,))
@@ -1270,7 +1315,7 @@ def post_comment(image_id):
         'comment': {
             'comment_id': comment_id,
             'name': f'{current_user.first_name} {current_user.last_name}',
-            'user_id': current_user.id,  # Add this
+            'user_id': current_user.id,
             'text': comment_text,
             'like_count': like_count,
             'timestamp': created_at.isoformat()
@@ -1394,7 +1439,26 @@ def like_comment(comment_id):
             )
             status = 'liked'
 
-        # Commit the insert/delete
+            # Get the comment owner and their notify_likes setting
+            cur.execute("""
+                SELECT users.id, users.notify_likes, comments.image_id
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+                WHERE comments.comment_id = %s
+            """, (comment_id,))
+            owner_info = cur.fetchone()
+
+            if owner_info:
+                owner_id, notify_likes, image_id = owner_info
+
+                # Only create notification if the liker isn't the comment owner and they want like notifs
+                if owner_id != current_user.id and notify_likes:
+                    cur.execute("""
+                        INSERT INTO notifications (recipient_id, actor_id, image_id, comment_id, action_type)
+                        VALUES (%s, %s, %s, %s, 'comment_like')
+                    """, (owner_id, current_user.id, image_id, comment_id))
+
+        # Commit the insert/delete and any notification
         conn.commit()
 
         # Get updated like count
@@ -3403,6 +3467,29 @@ def report():
     finally:
         cur.close()
         conn.close()
+        
+@app.route('/update-notifications', methods=['POST'])
+@login_required
+def update_notifications():
+    user_id = session['user_id']
+
+    notify_likes = 'notify_likes' in request.form
+    notify_comments = 'notify_comments' in request.form
+    notify_requests = 'notify_requests' in request.form
+
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE users
+        SET notify_likes = %s,
+            notify_comments = %s,
+            notify_requests = %s
+        WHERE id = %s
+    """, (notify_likes, notify_comments, notify_requests, user_id))
+    conn.commit()
+    cur.close()
+
+    flash("Notification preferences updated.")
+    return redirect(url_for('settings'))
 
 if __name__ == '__main__':
     app.run(debug=True)

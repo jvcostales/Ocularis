@@ -11,7 +11,6 @@
             <div class="section-sub" data-section="privacy-section">Privacy</div>
         </div>
 
-
         <div class="settings-sections-container">
             <div id="profile-section" class="settings-section active-section">
                 <form method="POST" enctype="multipart/form-data" action="{{ url_for('settings') }}">
@@ -194,7 +193,27 @@
         <div id="alerts-section" class="settings-section" style="display: none;">
             <div class="section-title">Alerts</div>
             <div class="section-tagline">Manage how and when you're notified.</div>
-            <p>Placeholder for alert preferences (e.g., email alerts, app notifications).</p>
+            <form method="POST" action="{{ url_for('update_notifications') }}">
+    <div class="toggle-group">
+        <label>
+            <input type="checkbox" name="notify_likes" {% if user.notify_likes %}checked{% endif %}>
+            Notify on Likes
+        </label>
+    </div>
+    <div class="toggle-group">
+        <label>
+            <input type="checkbox" name="notify_comments" {% if user.notify_comments %}checked{% endif %}>
+            Notify on Comments
+        </label>
+    </div>
+    <div class="toggle-group">
+        <label>
+            <input type="checkbox" name="notify_requests" {% if user.notify_requests %}checked{% endif %}>
+            Notify on Friend Requests
+        </label>
+    </div>
+    <button type="submit">Save Preferences</button>
+</form>
         </div>
 
         <!-- DISPLAY SECTION -->
