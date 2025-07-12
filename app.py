@@ -3471,7 +3471,7 @@ def report():
 @app.route('/update-notifications', methods=['POST'])
 @login_required
 def update_notifications():
-    user_id = session['user_id']
+    user_id = current_user.id
 
     notify_likes = 'notify_likes' in request.form
     notify_comments = 'notify_comments' in request.form
