@@ -2044,7 +2044,10 @@ input[type="url"]::placeholder {
     }
 
     .card-pairup {
-        background-color: var(--bg-secondary);
+        background-image: url('/static/pairup.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;
         padding: 24px;
