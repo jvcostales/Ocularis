@@ -3,10 +3,9 @@
 
 <div class="profile-card">
     <div class="cover-photo-wrapper">
-        <label for="coverUpload" style="cursor: pointer;">
+        <label for="coverUpload" {% if is_own_profile %}style="cursor: pointer;"{% endif %}>
             <img src="{{ url_for('cover_photos', filename=viewed_user_profile_cover) if viewed_user_profile_cover and viewed_user_profile_cover != 'default_cover.png' else url_for('static', filename='default_cover.png') }}"
-                alt="Banner" class="banner {% if current_user.id == viewed_user.id %}editable{% endif %}"
-                id="coverImage">
+                alt="Banner" class="banner {% if is_own_profile %}editable{% endif %}" id="coverImage">
         </label>
 
         {% if is_own_profile %}
