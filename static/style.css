@@ -1810,11 +1810,11 @@ input[type="url"]::placeholder {
         display: block;
     }
 
-    .banner:hover {
+    .banner.editable:hover {
         filter: brightness(75%);
     }
 
-    .banner:active {
+    .banner.editable:active {
         filter: brightness(60%);
     }
 
@@ -3912,11 +3912,11 @@ input[type="url"]::placeholder {
         display: block;
     }
 
-    .banner:hover {
+    .banner.editable:hover {
         filter: brightness(75%);
     }
 
-    .banner:active {
+    .banner.editable:active {
         filter: brightness(60%);
     }
 
@@ -4146,7 +4146,10 @@ input[type="url"]::placeholder {
     }
 
     .card-pairup {
-        background-color: var(--bg-secondary);
+        background-image: url('/static/pairup.jpg');
+        background-size: cover;
+        background-position: right top;
+        background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;
         padding: 24px;
@@ -6193,11 +6196,11 @@ input[type="url"]::placeholder {
         display: block;
     }
 
-    .banner:hover {
+    .banner.editable:hover {
         filter: brightness(75%);
     }
 
-    .banner:active {
+    .banner.editable:active {
         filter: brightness(60%);
     }
 
@@ -6427,7 +6430,10 @@ input[type="url"]::placeholder {
     }
 
     .card-pairup {
-        background-color: var(--bg-secondary);
+        background-image: url('/static/pairup.jpg');
+        background-size: cover;
+        background-position: right top;
+        background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;
         padding: 24px;
