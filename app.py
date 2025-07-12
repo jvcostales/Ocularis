@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS users (
     x VARCHAR(100),
     linkedin VARCHAR(100),
     telegram VARCHAR(100),
-    profile_pic VARCHAR(255),  -- NEW: stores the path or URL to the profile picture
+    profile_pic VARCHAR(255),
+    cover_photo VARCHAR(255),
     is_profile_complete BOOLEAN DEFAULT FALSE
 );
 """)
