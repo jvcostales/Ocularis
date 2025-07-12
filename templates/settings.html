@@ -199,22 +199,24 @@
                 <div class="section-space"></div>
                 <div class="left-align" style="margin-bottom: 0;">
                     <form method="POST" action="{{ url_for('update_notifications') }}">
-                        <label>
+                        <label class="checkbox-item" style="margin-bottom: 12px;">
                             <input type="checkbox" name="notify_likes" {% if notify_likes %}checked{% endif %}>
                             Notify on Likes
                         </label><br>
 
-                        <label>
+                        <label class="checkbox-item style="margin-bottom: 12px;">
                             <input type="checkbox" name="notify_comments" {% if notify_comments %}checked{% endif %}>
                             Notify on Comments
                         </label><br>
 
-                        <label>
+                        <label class="checkbox-item">
                             <input type="checkbox" name="notify_requests" {% if notify_requests %}checked{% endif %}>
                             Notify on Friend Requests
                         </label><br>
-
-                        <button class="save-changes-button" type="submit">Save Preferences</button>
+                        <div class="line-comments-section"></div>
+                        <div class="button-container">
+                            <button class="save-changes-button" type="submit">Save Preferences</button>
+                        </div>
                     </form>
                 </div>
             </div>            
