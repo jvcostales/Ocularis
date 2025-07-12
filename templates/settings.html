@@ -194,24 +194,21 @@
             <div class="section-title">Alerts</div>
             <div class="section-tagline">Manage how and when you're notified.</div>
             <form method="POST" action="{{ url_for('update_notifications') }}">
-    <div class="toggle-group">
-        <label>
-            <input type="checkbox" name="notify_likes" {% if user.notify_likes %}checked{% endif %}>
-            Notify on Likes
-        </label>
-    </div>
-    <div class="toggle-group">
-        <label>
-            <input type="checkbox" name="notify_comments" {% if user.notify_comments %}checked{% endif %}>
-            Notify on Comments
-        </label>
-    </div>
-    <div class="toggle-group">
-        <label>
-            <input type="checkbox" name="notify_requests" {% if user.notify_requests %}checked{% endif %}>
-            Notify on Friend Requests
-        </label>
-    </div>
+    <label>
+        <input type="checkbox" name="notify_likes" {% if notify_likes %}checked{% endif %}>
+        Notify on Likes
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="notify_comments" {% if notify_comments %}checked{% endif %}>
+        Notify on Comments
+    </label><br>
+
+    <label>
+        <input type="checkbox" name="notify_requests" {% if notify_requests %}checked{% endif %}>
+        Notify on Friend Requests
+    </label><br>
+
     <button type="submit">Save Preferences</button>
 </form>
         </div>

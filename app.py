@@ -2924,6 +2924,13 @@ def settings():
         ORDER BY fr.created_at DESC
     """, (user_id,))
     requests = cur.fetchall()
+    
+    cur.execute("""
+        SELECT notify_likes, notify_comments, notify_requests
+        FROM users
+        WHERE id = %s
+    """, (current_user.id,))
+    prefs = cur.fetchone()
 
     cur.close()
     conn.close()
@@ -2966,7 +2973,10 @@ def settings():
             cover_photo_url=cover_photo_url,
             notifications=notifications,
             requests=requests,
-            actor_details=actor_details
+            actor_details=actor_details,
+            notify_likes=prefs[0],
+            notify_comments=prefs[1],
+            notify_requests=prefs[2]
         )
     else:
         flash("User not found.", "danger")
