@@ -3471,22 +3471,40 @@ def report():
 @app.route('/update-notifications', methods=['POST'])
 @login_required
 def update_notifications():
-    user_id = current_user.id
-
     notify_likes = 'notify_likes' in request.form
     notify_comments = 'notify_comments' in request.form
     notify_requests = 'notify_requests' in request.form
 
-    cur = conn.cursor()
-    cur.execute("""
-        UPDATE users
-        SET notify_likes = %s,
-            notify_comments = %s,
-            notify_requests = %s
-        WHERE id = %s
-    """, (notify_likes, notify_comments, notify_requests, user_id))
-    conn.commit()
-    cur.close()
+    # Open the connection
+    conn = None
+    try:
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+            dbname="ocularis_db",
+            user="ocularis_db_user",
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            port=5432
+        )
+        cur = conn.cursor()
+
+        cur.execute("""
+            UPDATE users
+            SET notify_likes = %s,
+                notify_comments = %s,
+                notify_requests = %s
+            WHERE id = %s
+        """, (notify_likes, notify_comments, notify_requests, current_user.id))
+
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        print("Error updating notification preferences:", e)
+        if conn:
+            conn.rollback()
+        flash("Failed to update notification preferences.", "error")
+    finally:
+        if conn:
+            conn.close()
 
     flash("Notification preferences updated.")
     return redirect(url_for('settings'))
