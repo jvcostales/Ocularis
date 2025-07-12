@@ -192,35 +192,32 @@
         <!-- ALERTS SECTION -->
         <div id="alerts-section" class="settings-section" style="display: none;">
             <div class="section-title">Alerts</div>
-            <div class="section-tagline">Manage your alerts.</div>
-                        <div class="line-comments-section"></div>
+            <div class="section-tagline">Manage when you get notified.</div>
+            <div class="line-comments-section"></div>
             <div class="sub-wrapper">
                 <div class="subname">Alerts</div>
                 <div class="section-space"></div>
-                <div class="left-align" style="margin-bottom: 0;">
-                    <form method="POST" action="{{ url_for('update_notifications') }}">
+                <form method="POST" action="{{ url_for('update_notifications') }}">
+                    <div class="left-align" style="margin-bottom: 0;">
                         <label class="checkbox-item" style="margin-bottom: 12px;">
                             <input type="checkbox" name="notify_likes" {% if notify_likes %}checked{% endif %}>
-                            Notify on Likes
-                        </label><br>
-
-                        <label class="checkbox-item style="margin-bottom: 12px;">
+                            Likes
+                        </label>
+                        <label class="checkbox-item style=" margin-bottom: 12px;">
                             <input type="checkbox" name="notify_comments" {% if notify_comments %}checked{% endif %}>
-                            Notify on Comments
-                        </label><br>
-
+                            Comments
+                        </label>
                         <label class="checkbox-item">
                             <input type="checkbox" name="notify_requests" {% if notify_requests %}checked{% endif %}>
-                            Notify on Friend Requests
-                        </label><br>
-                        <div class="line-comments-section"></div>
-                        <div class="button-container">
-                            <button class="save-changes-button" type="submit">Save Preferences</button>
-                        </div>
-                    </form>
-                </div>
-            </div>            
-
+                            Friend Requests
+                        </label>
+                    </div>
+                    <div class="line-comments-section"></div>
+                    <div class="button-container">
+                        <button class="save-changes-button" type="submit">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- DISPLAY SECTION -->
@@ -233,15 +230,18 @@
                 <div class="section-space"></div>
                 <div class="left-align" style="margin-bottom: 0;">
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="dark" id="themeToggle" {% if local_theme == 'dark' %}checked{% endif %}>
+                        <input type="radio" name="theme_mode" value="dark" id="themeToggle" {% if local_theme=='dark'
+                            %}checked{% endif %}>
                         On
                     </label>
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="light" {% if local_theme == 'light' %}checked{% endif %}>
+                        <input type="radio" name="theme_mode" value="light" {% if local_theme=='light' %}checked{% endif
+                            %}>
                         Off
                     </label>
                     <label class="radio-item">
-                        <input type="radio" name="theme_mode" value="auto" {% if local_theme == 'auto' %}checked{% endif %}>
+                        <input type="radio" name="theme_mode" value="auto" {% if local_theme=='auto' %}checked{% endif
+                            %}>
                         Automatic
                     </label>
                 </div>
