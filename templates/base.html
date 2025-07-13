@@ -351,47 +351,49 @@
                         </div>
                     </div>
                     <div class="notifs" id="notifs">
-                        <div class="notifs-title">
-                            Notifs
-                        </div>
-                        {% if notifications %}
-                        {% for display_name, action, image_id, created_at, actor_id, profile_pic, notification_id in
-                        notifications %}
-                        <div class="notif-bar" id="notif-{{ notification_id }}">
-                            <a href="{{ url_for('profile', user_id=actor_id) }}"><img
-                                    src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                                    class="pfp img-notif-request"></a>
-                            <div class="notif-details">
-                                <div class="notif-text">
-                                    <span style="font-weight: 600;"><a
-                                            href="{{ url_for('profile', user_id=actor_id) }}">{{
-                                            display_name }}</a></span>
-                                    {% if action == 'like' %}
-                                    liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                            style="font-weight: 600;">post</span></a>.
-                                    {% elif action == 'comment' %}
-                                    commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                            style="font-weight: 600;">post</span></a>.
-                                    {% elif action == 'collab_check' %}
-                                    found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                        data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
-                                        style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
-                                        match</span>.
-                                    {% endif %}
-                                </div>
-                                <div class="notif-date">
-                                    {{ created_at.strftime('%b') }} {{ created_at.day }}
+                        <div class="notifs-inner">
+                            <div class="notifs-title">
+                                Notifs
+                            </div>
+                            {% if notifications %}
+                            {% for display_name, action, image_id, created_at, actor_id, profile_pic, notification_id in
+                            notifications %}
+                            <div class="notif-bar" id="notif-{{ notification_id }}">
+                                <a href="{{ url_for('profile', user_id=actor_id) }}"><img
+                                        src="{{ url_for('profile_pics', filename=profile_pic) if profile_pic and profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                        class="pfp img-notif-request"></a>
+                                <div class="notif-details">
+                                    <div class="notif-text">
+                                        <span style="font-weight: 600;"><a
+                                                href="{{ url_for('profile', user_id=actor_id) }}">{{
+                                                display_name }}</a></span>
+                                        {% if action == 'like' %}
+                                        liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                style="font-weight: 600;">post</span></a>.
+                                        {% elif action == 'comment' %}
+                                        commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
+                                                style="font-weight: 600;">post</span></a>.
+                                        {% elif action == 'collab_check' %}
+                                        found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
+                                            data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
+                                            style="font-weight: 600; color: #007bff; cursor: pointer; text-decoration: underline;">
+                                            match</span>.
+                                        {% endif %}
+                                    </div>
+                                    <div class="notif-date">
+                                        {{ created_at.strftime('%b') }} {{ created_at.day }}
+                                    </div>
                                 </div>
                             </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="notifs-empty">
+                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                <div class="oops">Oops!</div>
+                                <div class="nothing">Nothing to show here at the moment.</div>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                        {% else %}
-                        <div class="notifs-empty">
-                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                            <div class="oops">Oops!</div>
-                            <div class="nothing">Nothing to show here at the moment.</div>
-                        </div>
-                        {% endif %}
                     </div>
                     <div class="requests" id="requests">
                         <div class="requests-title">
