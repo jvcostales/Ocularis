@@ -593,7 +593,6 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
-        scrollbar-gutter: stable overlay;
     }
 
     .notifs-empty {
@@ -636,9 +635,9 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
-        background-color: #008000;
+        background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid #ff0000;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -706,7 +705,7 @@ input[type="url"]::placeholder {
         position: absolute;
         top: -12px;
         left: -12px;
-        right: -12px;
+        right: -6px;
         bottom: -12px;
         background-color: var(--bg-main);
         border-radius: 8px;
