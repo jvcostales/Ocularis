@@ -75,7 +75,7 @@
                         <div class="notifs-requests-dropdown" data-group="notifications" id="dropdown-desktop">
                             <div class="notifs" id="notifs-tablet">
                                 <div class="notifs-title">Notifs</div>
-
+                                <div class="notifs-inner">
                                 {% if notifications %}
                                 {% for display_name, action, image_id, created_at, actor_id, profile_pic, id in
                                 notifications %}
@@ -119,6 +119,7 @@
                                     <div class="nothing">Nothing to show here at the moment.</div>
                                 </div>
                                 {% endif %}
+                                </div>
                             </div>
 
                             <div class="line-alerts"></div>

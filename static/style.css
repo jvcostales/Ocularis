@@ -694,6 +694,11 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
+    .notif-bar:hover {
+        background-color: var(--bg-main);
+        cursor: pointer;
+    }
+
     .notif-bar:last-child {
         margin-bottom: 0;
     }
@@ -707,6 +712,12 @@ input[type="url"]::placeholder {
     .notif-date {
         font-size: 0.75rem;
         color: var(--text-muted);
+    }
+
+    .notifs-inner {
+        padding-left: 12px;
+        padding-right: 12px;
+        box-sizing: border-box;
     }
 
     .request-bar {
