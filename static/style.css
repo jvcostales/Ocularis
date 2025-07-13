@@ -641,6 +641,10 @@ input[type="url"]::placeholder {
         background-clip: padding-box;
     }
 
+    .notifs:hover::-webkit-scrollbar-track {
+        background-color: #0000FF;
+    }
+
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
