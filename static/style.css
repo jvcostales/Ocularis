@@ -641,7 +641,7 @@ input[type="url"]::placeholder {
         background-clip: padding-box;
     }
 
-    .notifs::-webkit-scrollbar-track {
+    .notifs:hover::-webkit-scrollbar-track {
         background-color: transparent;
     }
 
@@ -4375,7 +4375,7 @@ input[type="url"]::placeholder {
         background-clip: padding-box;
     }
 
-    .notifs::-webkit-scrollbar-track {
+    .notifs:hover::-webkit-scrollbar-track {
         background-color: transparent;
     }
 
@@ -6683,7 +6683,7 @@ input[type="url"]::placeholder {
         background-clip: padding-box;
     }
 
-    .notifs::-webkit-scrollbar-track {
+    .notifs:hover::-webkit-scrollbar-track {
         background-color: transparent;
     }
 
