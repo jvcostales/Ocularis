@@ -593,6 +593,7 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
+        scrollbar-gutter: stable overlay;
     }
 
     .notifs-empty {
@@ -639,10 +640,6 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         border: 6px solid #ff0000;
         background-clip: padding-box;
-    }
-
-    .notifs:hover::-webkit-scrollbar-track {
-        background-color: transparent;
     }
 
     .requests {
