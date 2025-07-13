@@ -735,6 +735,23 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
+    .request-bar::before {
+        content: '';
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        right: -12px;
+        bottom: -12px;
+        background-color: var(--bg-main);
+        border-radius: 8px;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    .request-bar:hover::before {
+        opacity: 1;
+    }
+
     .request-bar:last-child {
         margin-bottom: 0;
     }
@@ -4448,6 +4465,23 @@ input[type="url"]::placeholder {
         margin-bottom: 16px;
     }
 
+    .request-bar::before {
+        content: '';
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        right: -12px;
+        bottom: -12px;
+        background-color: var(--bg-main);
+        border-radius: 8px;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    .request-bar:hover::before {
+        opacity: 1;
+    }
+
     .request-bar:last-child {
         margin-bottom: 0;
     }
@@ -6750,6 +6784,23 @@ input[type="url"]::placeholder {
         align-items: flex-start;
         gap: 16px;
         margin-bottom: 16px;
+    }
+
+    .request-bar::before {
+        content: '';
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        right: -12px;
+        bottom: -12px;
+        background-color: var(--bg-main);
+        border-radius: 8px;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    .request-bar:hover::before {
+        opacity: 1;
     }
 
     .request-bar:last-child {
