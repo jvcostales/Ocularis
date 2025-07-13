@@ -642,7 +642,7 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-track {
-        background-color: var(--bg-secondary);
+        background-color: transparent;
     }
 
     .requests {
