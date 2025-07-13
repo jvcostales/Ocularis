@@ -584,7 +584,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 6px;
+        padding-right: 12px;
         /*due to scrollbar*/
         box-sizing: border-box;
         margin-bottom: 16px;
@@ -626,18 +626,18 @@ input[type="url"]::placeholder {
     }
 
     .notifs::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .notifs:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 4px solid transparent;
         background-clip: padding-box;
     }
 
@@ -705,7 +705,7 @@ input[type="url"]::placeholder {
         position: absolute;
         top: -12px;
         left: -12px;
-        right: -6px;
+        right: -12px;
         bottom: -12px;
         background-color: var(--bg-main);
         border-radius: 8px;
@@ -4308,7 +4308,7 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 6px 24px 24px;
+        padding: 24px 12px 24px 24px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -4355,18 +4355,18 @@ input[type="url"]::placeholder {
     }
 
     .notifs::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .notifs:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 4px solid transparent;
         background-clip: padding-box;
     }
 
@@ -6612,7 +6612,7 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 6px 24px 24px;
+        padding: 24px 12px 24px 24px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -6659,18 +6659,18 @@ input[type="url"]::placeholder {
     }
 
     .notifs::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .notifs:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 4px solid transparent;
         background-clip: padding-box;
     }
 
