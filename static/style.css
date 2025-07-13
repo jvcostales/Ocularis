@@ -635,14 +635,10 @@ input[type="url"]::placeholder {
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
-        background-color: var(--text-muted);
+        background-color: #008000;
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 6px solid #ff0000;
         background-clip: padding-box;
-    }
-
-    .notifs:hover::-webkit-scrollbar-track {
-        background-color: transparent;
     }
 
     .requests {
@@ -4375,10 +4371,6 @@ input[type="url"]::placeholder {
         background-clip: padding-box;
     }
 
-    .notifs:hover::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
     .requests::-webkit-scrollbar {
         width: 18px;
         opacity: 0;
@@ -6681,10 +6673,6 @@ input[type="url"]::placeholder {
         border-radius: 10px;
         border: 6px solid transparent;
         background-clip: padding-box;
-    }
-
-    .notifs:hover::-webkit-scrollbar-track {
-        background-color: transparent;
     }
 
     .requests::-webkit-scrollbar {
