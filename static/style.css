@@ -732,7 +732,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: flex-start;
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 0;    
     }
 
     .request-bar::before {
@@ -4462,7 +4464,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: flex-start;
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 0;    
     }
 
     .request-bar::before {
@@ -6783,7 +6787,9 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: flex-start;
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 0;    
     }
 
     .request-bar::before {
