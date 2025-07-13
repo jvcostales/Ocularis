@@ -659,18 +659,18 @@ input[type="url"]::placeholder {
     }
 
     .requests::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .requests:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -943,7 +943,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -1231,7 +1231,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -1325,7 +1325,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3061,7 +3061,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3330,7 +3330,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3423,7 +3423,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -4371,18 +4371,18 @@ input[type="url"]::placeholder {
     }
 
     .requests::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .requests:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -5359,7 +5359,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -5628,7 +5628,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -5723,7 +5723,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
@@ -6675,18 +6675,18 @@ input[type="url"]::placeholder {
     }
 
     .requests::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
         opacity: 0;
     }
 
     .requests:hover::-webkit-scrollbar {
-        width: 18px;
+        width: 12px;
     }
 
     .requests:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 6px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
     }
 
