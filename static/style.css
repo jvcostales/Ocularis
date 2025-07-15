@@ -2369,7 +2369,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.75);
         justify-content: center;
@@ -4258,7 +4258,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.5);
         /* semi-transparent dark */
@@ -4757,7 +4757,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.75);
         justify-content: center;
@@ -4786,7 +4786,7 @@ input[type="url"]::placeholder {
         z-index: 1000;
         left: 0;
         top: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.6);
         /* solid black overlay */
@@ -6566,7 +6566,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.5);
         /* semi-transparent dark */
@@ -6868,7 +6868,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.75);
         justify-content: center;
@@ -7104,7 +7104,7 @@ input[type="url"]::placeholder {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.75);
         justify-content: center;

@@ -22,6 +22,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+now_utc = datetime.now(timezone.utc)
+
 with open('data/countries.json') as f:
     countries = json.load(f)
 
@@ -2219,14 +2221,17 @@ def pairup():
 
     if result:
         last_action_time = result[0]
+
+        # Ensure it's timezone-aware
         if last_action_time.tzinfo is None:
             last_action_time = last_action_time.replace(tzinfo=timezone.utc)
 
         time_diff = now_utc - last_action_time
+
         if time_diff < timedelta(hours=24):
             match_locked = True
             browse_locked = True
-            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]  # hh:mm:ss
+            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]
 
     # Fetch notifications
     cur.execute("""
