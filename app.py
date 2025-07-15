@@ -3498,6 +3498,7 @@ def search_results():
                                users=users,
                                user=current_user,
                                notifications=notifications,
+                               actor_details=actor_details,
                                requests=requests)
 
     finally:
