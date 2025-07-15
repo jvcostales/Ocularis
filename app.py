@@ -2478,9 +2478,6 @@ def match():
     cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
 
-    cur.close()
-    conn.close()
-
     name_map = {
         row[0]: {
             "id": row[0],
@@ -2519,6 +2516,9 @@ def match():
             user["experience_level"] = 0
 
         users_list.append(user)
+        
+    cur.close()
+    conn.close()    
 
     return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
