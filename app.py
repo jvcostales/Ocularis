@@ -3423,6 +3423,33 @@ def search_results():
                 'relationship': relationship,
                 'request_id': request_id
             })
+            
+                        # Fetch notifications
+        cur.execute("""
+            SELECT                 
+                users.first_name || ' ' || users.last_name AS display_name,
+                notifications.action_type,
+                notifications.image_id,
+                notifications.created_at,
+                notifications.actor_id,
+                users.profile_pic,
+                notifications.notification_id
+            FROM notifications
+            JOIN users ON notifications.actor_id = users.id
+            WHERE notifications.recipient_id = %s
+            ORDER BY notifications.created_at DESC
+        """, (current_user.id,))
+        notifications = cur.fetchall()
+        
+                # Fetch friend requests
+        cur.execute("""
+            SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+            FROM friend_requests fr
+            JOIN users u ON fr.sender_id = u.id
+            WHERE fr.receiver_id = %s AND fr.status = 'pending'
+            ORDER BY fr.created_at DESC
+        """, (current_user.id,))
+        requests = cur.fetchall()    
 
         return render_template("results.html", 
                                query=query,
@@ -3433,7 +3460,9 @@ def search_results():
                                saved_image_ids=saved_image_ids,
                                profile_pic_url=profile_pic_url,
                                users=users,
-                               user=current_user)
+                               user=current_user,
+                               notifications=notifications,
+                               requests=requests)
 
     finally:
         cur.close()
