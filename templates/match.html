@@ -22,15 +22,19 @@
         <div class="info-sandp">
             <div class="info-title">Peas in a Pod</div>
             <div class="info-content">
+                {% if user.experience_level %}
                 <div class="info-one">
-                    {{ exp_map[(user.experience_level - 1) if user.experience_level else 0] }}
+                    {{ exp_map[user.experience_level - 1] }}
                 </div>
-                {% for skill in user.skills[:2] %}
-                <div class="info-one">{{ skill }}</div>
-                {% endfor %}
-                {% for pref in user.preferences[:1] %}
-                <div class="info-one">{{ pref }}</div>
-                {% endfor %}
+                {% endif %}
+
+                {% if user.skills and user.skills|length > 0 %}
+                <div class="info-one">{{ user.skills[0] }}</div>
+                {% endif %}
+
+                {% if user.preferences and user.preferences|length > 0 %}
+                <div class="info-one">{{ user.preferences[0] }}</div>
+                {% endif %}
             </div>
         </div>
 
