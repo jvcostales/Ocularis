@@ -14,6 +14,7 @@ import json
 from psycopg2.extras import RealDictCursor
 import uuid
 from urllib.parse import urlparse, urljoin
+import pytz
 
 app = Flask(__name__)
 app.secret_key = 'v$2nG#8mKqT3@z!bW7e^d6rY*9xU&j!P'
@@ -21,8 +22,6 @@ app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
-now_utc = datetime.now(timezone.utc)
 
 with open('data/countries.json') as f:
     countries = json.load(f)
@@ -2222,16 +2221,17 @@ def pairup():
     if result:
         last_action_time = result[0]
 
-        # Ensure it's timezone-aware
+        # If the timestamp has no timezone, assume it's in Asia/Manila and convert to UTC
         if last_action_time.tzinfo is None:
-            last_action_time = last_action_time.replace(tzinfo=timezone.utc)
+            manila = pytz.timezone('Asia/Manila')
+            last_action_time = manila.localize(last_action_time).astimezone(timezone.utc)
 
         time_diff = now_utc - last_action_time
 
         if time_diff < timedelta(hours=24):
             match_locked = True
             browse_locked = True
-            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]
+            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]  # hh:mm:ss
 
     # Fetch notifications
     cur.execute("""
