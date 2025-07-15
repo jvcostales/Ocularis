@@ -1457,6 +1457,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         padding: 50px;
+        margin-top: -24px;
     }
 
     .overlayShare {
@@ -3525,6 +3526,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         padding: 50px;
+        margin-top: -24px;
     }
 
     .likes-empty {
@@ -3534,6 +3536,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         padding: 50px;
+        margin-top: -24px;
     }
 
     .overlayShare {
@@ -4307,7 +4310,7 @@ input[type="url"]::placeholder {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 24px;
+        margin-top: -24px;
     }
 
     .empty-symbol {
@@ -5822,6 +5825,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         padding: 50px;
+        margin-top: -24px;
     }
 
     .likes-empty {
@@ -5831,6 +5835,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         padding: 50px;
+        margin-top: -24px;
     }
 
     .overlayShare {
@@ -6609,7 +6614,7 @@ input[type="url"]::placeholder {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 24px;
+        margin-top: -24px;
     }
 
     .empty-symbol {
