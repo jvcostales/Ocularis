@@ -123,8 +123,6 @@ input[type="radio"] {
 }
 
 .no-scroll-body {
-    overflow-y: scroll;
-    /* Keep scrollbar visible */
     position: fixed;
     /* Prevent background from scrolling */
     width: 100%;
@@ -885,7 +883,6 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
-        overflow-y: scroll;
     }
 
     .close-icon {
@@ -2994,7 +2991,6 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
-        overflow-y: scroll;
     }
 
     .close-icon {
@@ -5298,7 +5294,6 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
-        overflow-y: scroll;
     }
 
     .close-icon {
