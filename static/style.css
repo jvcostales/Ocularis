@@ -32,6 +32,10 @@
     --border-default: #dcdcdc;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 body {
     font-family: 'Schibsted Grotesk', sans-serif;
     margin: 0;
@@ -2071,6 +2075,11 @@ input[type="url"]::placeholder {
         text-align: left;
         padding: 24px;
         margin-bottom: 16px;
+    }
+
+    [data-theme="dark"] .card-pairup {
+        background-image: url('/static/pairup-dark.jpg');
+        background-position: left bottom;
     }
 
     .post-title-pairup {
