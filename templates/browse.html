@@ -1,28 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for user in users %}
-<div class="profile-more-wrapper-pairup">
-    <div class="profile-post-pairup">
-        <img src="{{ url_for('profile_pics', filename=user.profile_pic) if user.profile_pic else url_for('static', filename='pfp.jpg') }}" class="pfp">
-        <div class="profile-name-date">
-            <div class="username">
-                <a href="/profile/{{ user.id }}">
-                    {{ user.first_name }} {{ user.last_name }}
-                </a>
+<div class="card">
+    <div class="post-title">Recent</div>
+    {% for user in users %}
+    <div class="profile-more-wrapper-pairup">
+        <div class="profile-post-pairup">
+            <img src="{{ url_for('profile_pics', filename=user.profile_pic) if user.profile_pic else url_for('static', filename='pfp.jpg') }}"
+                class="pfp">
+            <div class="profile-name-date">
+                <div class="username">
+                    <a href="/profile/{{ user.id }}">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </a>
+                </div>
+                <div class="date">Jan 1</div>
             </div>
-            <div class="date">Jan 1</div>
+        </div>
+        <div class="more-frame-wrapper">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
+            <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
+                <div class="save">Save</div>
+                <div class="hide">Hide</div>
+                <div class="report">Report</div>
+            </div>
         </div>
     </div>
-    <div class="more-frame-wrapper">
-        <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
-        <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
-            <div class="save">Save</div>
-            <div class="hide">Hide</div>
-            <div class="report">Report</div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
-{% endfor %}
-
 {% endblock %}
