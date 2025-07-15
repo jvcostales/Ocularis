@@ -16,28 +16,38 @@
         </div>
     </div>
 
-    <div class="nav-section card-content-two" id="sandp">
-        {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
-
+    <div class="nav-section card-content-two" id="sandp-skills">
         <div class="info-sandp">
-            <div class="info-title">Peas in a Pod</div>
+            <div class="info-title">Top Skills</div>
+            <div class="info-content">
+                {% for skill in user.skills[:3] %}
+                <div class="info-one">{{ skill }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section card-content-three" id="sandp-preferences">
+        <div class="info-sandp">
+            <div class="info-title">Top Preferences</div>
+            <div class="info-content">
+                {% for pref in user.preferences[:3] %}
+                <div class="info-one">{{ pref }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section card-content-four" id="sandp-experience">
+        {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+        <div class="info-sandp">
+            <div class="info-title">Experience Level</div>
             <div class="info-content">
                 {% if user.experience_level %}
-                <div class="info-one">
-                    {{ exp_map[user.experience_level - 1] }}
-                </div>
-                {% endif %}
-
-                {% if user.skills and user.skills|length > 0 %}
-                <div class="info-one">{{ user.skills[0] }}</div>
-                {% endif %}
-
-                {% if user.preferences and user.preferences|length > 0 %}
-                <div class="info-one">{{ user.preferences[0] }}</div>
+                <div class="info-one">{{ exp_map[user.experience_level - 1] }}</div>
                 {% endif %}
             </div>
         </div>
-
     </div>
 
     <div class="request-icons" style="justify-content: center;">
