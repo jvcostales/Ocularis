@@ -17,14 +17,23 @@
     </div>
 
     <div class="nav-section card-content-two" id="sandp">
+        {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+
         <div class="info-sandp">
             <div class="info-title">Peas in a Pod</div>
             <div class="info-content">
-                <div class="info-one">Expert</div>
-                <div class="info-one">Advertising</div>
-                <div class="info-one">Web Design</div>
+                <div class="info-one">
+                    {{ exp_map[(user.experience_level - 1) if user.experience_level else 0] }}
+                </div>
+                {% for skill in user.skills[:2] %}
+                <div class="info-one">{{ skill }}</div>
+                {% endfor %}
+                {% for pref in user.preferences[:1] %}
+                <div class="info-one">{{ pref }}</div>
+                {% endfor %}
             </div>
         </div>
+
     </div>
 
     <div class="request-icons" style="justify-content: center;">

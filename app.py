@@ -2494,10 +2494,30 @@ def match():
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
         details = name_map.get(user["user"], {})
-        user["id"] = details.get("id", user["user"])  # Add this line to ensure 'id' is set
+        user["id"] = details.get("id", user["user"])
         user["first_name"] = details.get("first_name", "Unknown")
         user["last_name"] = details.get("last_name", "")
         user["role"] = details.get("role", "")
+
+        # 🔽 Fetch skills, preferences, experience_level for this user
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT skills, preferences, experience_level
+            FROM users
+            WHERE id = %s
+        """, (user["id"],))
+        extra = cur.fetchone()
+        cur.close()
+
+        if extra:
+            user["skills"] = extra[0] or []
+            user["preferences"] = extra[1] or []
+            user["experience_level"] = extra[2] or 0
+        else:
+            user["skills"] = []
+            user["preferences"] = []
+            user["experience_level"] = 0
+
         users_list.append(user)
 
     return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
