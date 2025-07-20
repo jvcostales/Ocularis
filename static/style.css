@@ -140,9 +140,20 @@ input[type="radio"] {
     cursor: pointer;
 }
 
-.link-symbol.copied {
-    background-color: var(--highlight);
-    color: var(--bg-main);
+.link-symbol::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    border-radius: 8px;
+    z-index: -1; /* place behind the icon */
+}
+
+.link-symbol.copied::before {
+    background-color: var(--highlight); /* blue background */
 }
 
 a {
@@ -1577,6 +1588,8 @@ input[type="url"]::placeholder {
     span.link-symbol {
         font-variation-settings: 'OUTLINE' 1;
         font-size: 24px;
+        position: relative;
+        z-index: 1;
     }
 
     .link-button {
@@ -3666,6 +3679,8 @@ input[type="url"]::placeholder {
     span.link-symbol {
         font-variation-settings: 'OUTLINE' 1;
         font-size: 24px;
+        position: relative;
+        z-index: 1;
     }
 
     .link-button {
@@ -5970,6 +5985,8 @@ input[type="url"]::placeholder {
     span.link-symbol {
         font-variation-settings: 'OUTLINE' 1;
         font-size: 24px;
+        position: relative;
+        z-index: 1;
     }
 
     .link-button {
