@@ -760,6 +760,7 @@ def feed():
 
             if user:
                 actor_details[actor_id] = {
+                    "user_id": actor_id,
                     "full_name": f"{user[0]} {user[1]}",
                     "role": user[2],
                     "city": user[3],
