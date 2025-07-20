@@ -750,17 +750,6 @@
             {% endif %}
         </div>
 
-        <!-- Match modal
-    <div id="matchModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p>You were matched with <span id="match-username" style="font-weight: 600;"></span>.</p>
-            <p>Would you like to decline this match?</p>
-            <button id="decline-match" class="btn-decline">Decline Match</button>
-            <button onclick="document.getElementById('matchModal').style.display='none'"
-                class="btn-cancel">Cancel</button>
-        </div>
-    </div> -->
-
         <div id="reportModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <button class="close-icon" onclick="closeReportModal()">
@@ -822,7 +811,7 @@
                         <div class="div-setup">
                             <img id="match-pfp-step1" class="pfpsetup1">
                             <div class="heading">
-                                <span id="match-fullname" style="font-weight: 600;"></span> found you as a match.
+                                <span id="match-username" style="font-weight: 600;"></span> found you as a match.
                             </div>
                             <div class="subheading">You're now connected, unless you say otherwise.</div>
                             <button class="next-button" onclick="showMatchStep(2)">Next</button>
@@ -1256,7 +1245,7 @@
                         const displayName = this.getAttribute('data-display-name');
 
                         // Update modal content
-                        document.getElementById('match-fullname').textContent = displayName;
+                        document.getElementById('match-username').textContent = displayName;
                         document.getElementById('decline-match').setAttribute('data-user-id', userId);
 
                         // Freeze background scroll
@@ -1661,6 +1650,7 @@
                         : `/static/pfp.jpg`;
 
                     // Fill Step 1
+                    document.getElementById('match-username').textContent = actor.full_name;
                     document.getElementById('match-pfp-step1').src = profilePic;
 
                     // Fill Step 2
