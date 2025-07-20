@@ -845,7 +845,7 @@
                         <div class="info-sandp">
                             <div class="info-title-match">Skills</div>
                             <div class="info-content-match">
-                                <div class="info-one-match" id="match-skills"></div>
+                                <div id="match-skills"></div>
                             </div>
                         </div>
 
@@ -853,7 +853,7 @@
                         <div class="info-sandp">
                             <div class="info-title-match">Preferences</div>
                             <div class="info-content-match">
-                                <div class="info-one-match" id="match-preferences"></div>
+                                <div id="match-preferences"></div>
                             </div>
                         </div>
 
@@ -1624,8 +1624,27 @@
                     document.getElementById('match-username').textContent = actor.full_name;
                     document.getElementById('match-role').textContent = actor.role;
                     document.getElementById('match-location').textContent = actor.location_display || "";
-                    document.getElementById('match-skills').textContent = actor.skills.join(', ');
-                    document.getElementById('match-preferences').textContent = actor.preferences.join(', ');
+
+                    // For Skills
+                    const skillsContainer = document.getElementById('match-skills');
+                    skillsContainer.innerHTML = '';
+                    actor.skills.forEach(skill => {
+                        const span = document.createElement('span');
+                        span.textContent = skill;
+                        span.classList.add('info-one-match'); // Optional: add a class for styling
+                        skillsContainer.appendChild(span);
+                    });
+
+                    // For Preferences
+                    const prefsContainer = document.getElementById('match-preferences');
+                    prefsContainer.innerHTML = '';
+                    actor.preferences.forEach(pref => {
+                        const span = document.createElement('span');
+                        span.textContent = pref;
+                        span.classList.add('info-one-match'); // Optional: add a class for styling
+                        prefsContainer.appendChild(span);
+                    });
+
                     document.getElementById('match-experience').textContent = levels[actor.experience_level];
                     document.getElementById('match-pfp-step1').src = profilePic;
                     document.getElementById('match-pfp-step2').src = profilePic;
