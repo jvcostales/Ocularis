@@ -802,15 +802,14 @@
             </div>
         </div>
 
-
-        {% for notif in notifications %}
-        {% set actor_id = notif[4] %}
-        {% set actor = actor_details[actor_id] %}
-        <div id="matchModal-{{ actor_id }}" class="modal" style="display: none;">
+        <div id="matchModal" class="modal" style="display: none;">
             <div class="modal-content">
+                {% for notif in notifications %}
+                {% set actor_id = notif[4] %}
+                {% set actor = actor_details[actor_id] %}
                 <!-- Step 1 -->
-                <div class="modal-step" id="match-step-1-{{ actor_id }}">
-                    <button class="close-icon" onclick="closeMatchModal('{{ actor_id }}')" class="btn-cancel">
+                <div class="modal-step" id="match-step-1">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
                         <span class="material-symbols-outlined overlay-close-symbol">close</span></button>
                     <div class="overlay-title">Match</div>
                     <div class="padding-match">
@@ -819,20 +818,19 @@
                             <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
             if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
             else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
-                            <div class="heading"><span id="match-username-{{ actor_id }}"
-                                    style="font-weight: 600;"></span> found you
+                            <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you
                                 as a
                                 match.
                             </div>
                             <div class="subheading">You're now connected, unless you say otherwise.</div>
-                            <button class="next-button" onclick="showMatchStep(2, '{{ actor_id }}')">Next</button>
+                            <button class="next-button" onclick="showMatchStep(2)">Next</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="modal-step" id="match-step-2-{{ actor_id }}" style="display: none;">
-                    <button class="close-icon" onclick="closeMatchModal('{{ actor_id }}')" class="btn-cancel">
+                <div class="modal-step" id="match-step-2" style="display: none;">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
                         <span class="material-symbols-outlined overlay-close-symbol">close</span>
                     </button>
                     <div class="overlay-title">Match</div>
@@ -888,21 +886,21 @@
                         </div>
 
                         <div class="button-wrapper">
-                            <div class="partner-back-match" onclick="showMatchStep(1, '{{ actor_id }}')">
+                            <div class="partner-back-match" onclick="showMatchStep(1)">
                                 <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
                                 <div class="partner-label-back">Back</div>
                             </div>
                             <div class="match-button-wrapper">
-                                <button id="decline-match-{{ actor_id }}" class="browse-button">Decline Match</button>
-                                <button class="next-button" onclick="showMatchStep(3, '{{ actor_id }}')">Next</button>
+                                <button id="decline-match" class="browse-button">Decline Match</button>
+                                <button class="next-button" onclick="showMatchStep(3)">Next</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="modal-step" id="match-step-3-{{ actor_id }}" style="display: none;">
-                    <button class="close-icon" onclick="closeMatchModal('{{ actor_id }}')" class="btn-cancel">
+                <div class="modal-step" id="match-step-3" style="display: none;">
+                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
                         <span class="material-symbols-outlined overlay-close-symbol">close</span>
                     </button>
                     <div class="overlay-title">Match</div>
@@ -923,11 +921,11 @@
                             </div>
                         </div>
                         <div class="button-wrapper">
-                            <div class="partner-back" onclick="showMatchStep(2, '{{ actor_id }}')">
+                            <div class="partner-back" onclick="showMatchStep(2)">
                                 <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
                                 <div class="partner-label-back">Back</div>
                             </div>
-                            <button onclick="closeMatchModal('{{ actor_id }}')" class="next-button">Done</button>
+                            <button onclick="closeMatchModal()" class="next-button">Done</button>
                         </div>
                     </div>
                 </div>
@@ -1221,24 +1219,26 @@
                         });
                     });
 
-                    function showMatchStep(step, actorId) {
-                        document.querySelectorAll(`#matchModal-${actorId} .modal-step`).forEach(stepDiv => {
-                            stepDiv.style.display = 'none';
-                        });
-                        document.getElementById(`match-step-${step}-${actorId}`).style.display = 'block';
+                    function showMatchStep(step) {
+                        document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
+                        document.getElementById(`match-step-${step}`).style.display = 'block';
                     }
 
-                    function declineMatch(actorId) {
+                    function declineMatch() {
                         alert('You have declined the match.');
-                        closeMatchModal(actorId);
+                        closeModal();
                     }
 
-                    // Expose functions globally
-                    window.openMatchModal = openMatchModal;
-                    window.closeMatchModal = closeMatchModal;
-                    window.showMatchStep = showMatchStep;
+                    function closeModal() {
+                        document.getElementById('matchModal').style.display = 'none';
+                    }
 
-                    // Delete match button logic
+                    // Expose to global scope so inline HTML can access them
+                    window.showMatchStep = showMatchStep;
+                    window.declineMatch = declineMatch;
+                    window.closeModal = closeModal;
+
+
                     document.querySelectorAll('.delete-match').forEach(btn => {
                         btn.addEventListener('click', function () {
                             const otherUserId = this.dataset.id;
@@ -1253,6 +1253,7 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.message) {
+                                        // Remove the entire match entry from the DOM
                                         this.closest('.profile-more-wrapper-pairup').remove();
                                     } else {
                                         alert('Error: ' + (data.error || 'Could not delete match.'));
@@ -1261,49 +1262,41 @@
                         });
                     });
 
-                    // Open modal buttons
                     document.querySelectorAll('.open-modal').forEach(elem => {
                         elem.addEventListener('click', function () {
                             const userId = this.getAttribute('data-user-id');
                             const displayName = this.getAttribute('data-display-name');
 
-                            // Update username if needed
-                            const usernameSpan = document.getElementById(`match-username-${userId}`);
-                            if (usernameSpan) {
-                                usernameSpan.textContent = displayName;
-                            }
+                            // Update modal content
+                            document.getElementById('match-username').textContent = displayName;
+                            document.getElementById('decline-match').setAttribute('data-user-id', userId);
 
-                            // Set user ID on decline button
-                            const declineBtn = document.getElementById(`decline-match-${userId}`);
-                            if (declineBtn) {
-                                declineBtn.setAttribute('data-user-id', userId);
-                            }
+                            // Freeze background scroll
+                            matchScrollPosition = window.scrollY;
+                            document.body.style.top = `-${matchScrollPosition}px`;
+                            document.body.classList.add('no-scrolling');
 
-                            openMatchModal(userId);
+                            // Show modal
+                            document.getElementById('matchModal').style.display = 'flex';
                         });
                     });
 
-                    // Decline match buttons in modals
-                    document.querySelectorAll('.decline-match').forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const userId = this.getAttribute('data-user-id');
+                    document.getElementById('decline-match').addEventListener('click', function () {
+                        const otherUserId = this.getAttribute('data-user-id');
 
-                            fetch('/decline_match', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ other_user_id: userId })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    alert(data.message || data.error);
-                                    closeMatchModal(userId);
-                                    // Optionally remove match container
-                                    const matchContainer = document.querySelector(`.profile-more-wrapper-pairup[data-user-id="${userId}"]`);
-                                    if (matchContainer) matchContainer.remove();
-                                });
-                        });
+                        fetch('/decline_match', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ other_user_id: otherUserId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                alert(data.message || data.error);
+                                document.getElementById('matchModal').style.display = 'none';
+                                // Optionally remove or gray out the notification
+                            });
                     });
 
                     window.handleRequest = function (requestId, action) {
@@ -1661,21 +1654,21 @@
 
                     let matchScrollPosition = 0;
 
-                    function openMatchModal(actorId) {
+                    function openMatchModal() {
                         matchScrollPosition = window.scrollY;
                         document.body.style.top = `-${matchScrollPosition}px`;
                         document.body.classList.add('no-scrolling');
-                        const modal = document.getElementById(`matchModal-${actorId}`);
-                        if (modal) modal.style.display = 'flex';
+                        document.getElementById('matchModal').style.display = 'flex';
                     }
 
-                    function closeMatchModal(actorId) {
-                        const modal = document.getElementById(`matchModal-${actorId}`);
+                    window.closeMatchModal = function () {
+                        const modal = document.getElementById('matchModal');
                         if (modal) modal.style.display = 'none';
+
                         document.body.classList.remove('no-scrolling');
                         document.body.style.top = '';
                         window.scrollTo(0, matchScrollPosition);
-                    }
+                    };
 
                     // Setup overlays
                     setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
