@@ -822,7 +822,7 @@
                         <div class="div-setup">
                             <img id="match-pfp-step1" class="pfpsetup1">
                             <div class="heading">
-                                <span id="match-username" style="font-weight: 600;"></span> found you as a match.
+                                <span id="match-fullname" style="font-weight: 600;"></span> found you as a match.
                             </div>
                             <div class="subheading">You're now connected, unless you say otherwise.</div>
                             <button class="next-button" onclick="showMatchStep(2)">Next</button>
@@ -1256,7 +1256,7 @@
                         const displayName = this.getAttribute('data-display-name');
 
                         // Update modal content
-                        document.getElementById('match-username').textContent = displayName;
+                        document.getElementById('match-fullname').textContent = displayName;
                         document.getElementById('decline-match').setAttribute('data-user-id', userId);
 
                         // Freeze background scroll
@@ -1661,7 +1661,6 @@
                         : `/static/pfp.jpg`;
 
                     // Fill Step 1
-                    document.getElementById('match-username').textContent = actor.full_name;
                     document.getElementById('match-pfp-step1').src = profilePic;
 
                     // Fill Step 2
