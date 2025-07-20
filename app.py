@@ -1911,13 +1911,16 @@ def profile(user_id):
     countries = current_app.config['COUNTRIES']
     states = current_app.config['STATES']
 
+    # Map ISO2 to country name
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
-    state_code_to_name = {s["state_code"]: s["name"] for s in states}
+    readable_country = iso_to_country.get(country, country)
 
-    country = iso_to_country.get(country, country)
-    state = state_code_to_name.get(state, state)
+    # 🔍 Filter states only for this country
+    filtered_states = [s for s in states if s["country_code"] == country]
+    state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+    readable_state = state_code_to_name.get(state, state)
 
-    location = ", ".join(filter(None, [city, state, country]))
+    location = ", ".join(filter(None, [city, readable_state, readable_country]))
 
     return render_template(
         "profile.html",
