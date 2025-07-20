@@ -140,6 +140,11 @@ input[type="radio"] {
     cursor: pointer;
 }
 
+.link-symbol.copied {
+    background-color: var(--highlight);
+    color: var(--bg-main);
+}
+
 a {
     text-decoration: none;
     color: inherit;
