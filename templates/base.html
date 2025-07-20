@@ -1239,24 +1239,6 @@
                     });
                 });
 
-                document.querySelectorAll('.open-modal').forEach(elem => {
-                    elem.addEventListener('click', function () {
-                        const userId = this.getAttribute('data-user-id');
-                        const displayName = this.getAttribute('data-display-name');
-
-                        // Update modal content
-                        document.getElementById('decline-match').setAttribute('data-user-id', actor.user_id);
-
-                        // Freeze background scroll
-                        matchScrollPosition = window.scrollY;
-                        document.body.style.top = `-${matchScrollPosition}px`;
-                        document.body.classList.add('no-scrolling');
-
-                        // Show modal
-                        document.getElementById('matchModal').style.display = 'flex';
-                    });
-                });
-
                 document.getElementById('decline-match').addEventListener('click', function () {
                     const otherUserId = this.getAttribute('data-user-id');
 
@@ -1631,41 +1613,28 @@
                 let matchScrollPosition = 0;
 
                 function openMatchModal(actor) {
-                    // Freeze scroll
-                    matchScrollPosition = window.scrollY;
-                    document.body.style.top = `-${matchScrollPosition}px`;
-                    document.body.classList.add('no-scrolling');
-                    document.getElementById('matchModal').style.display = 'flex';
+                    const profilePic = actor.profile_pic ? `/profile_pics/${actor.profile_pic}` : '/static/pfp.jpg';
+                    const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
-                    // Reset to step 1
-                    showMatchStep(1);
-
-                    // Experience level labels
-                    const levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'];
-
-                    // Profile picture logic
-                    const profilePic = actor.profile_pic && actor.profile_pic !== 'pfp.jpg'
-                        ? `/profile_pics/${actor.profile_pic}`
-                        : `/static/pfp.jpg`;
-
-                    // Fill Step 1
-                    document.getElementById('match-username').textContent = actor.full_name;
-                    document.getElementById('match-pfp-step1').src = profilePic;
-
-                    // Fill Step 2
+                    // Fill modal fields
                     document.getElementById('match-fullname').textContent = actor.full_name;
+                    document.getElementById('match-username').textContent = actor.full_name;
                     document.getElementById('match-role').textContent = actor.role;
                     document.getElementById('match-location').textContent = `${actor.city}, ${actor.state}, ${actor.country}`;
                     document.getElementById('match-experience').textContent = levels[actor.experience_level];
+                    document.getElementById('match-pfp-step1').src = profilePic;
                     document.getElementById('match-pfp-step2').src = profilePic;
 
-                    // Skills
-                    document.getElementById('match-skills').innerHTML = actor.skills.map(skill =>
-                        `<div class="info-one-match">${skill}</div>`).join('');
+                    // Set decline-match button data-user-id
+                    document.getElementById('decline-match').setAttribute('data-user-id', actor.user_id);
 
-                    // Preferences
-                    document.getElementById('match-preferences').innerHTML = actor.preferences.map(pref =>
-                        `<div class="info-one-match">${pref}</div>`).join('');
+                    // Freeze background scroll
+                    matchScrollPosition = window.scrollY;
+                    document.body.style.top = `-${matchScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+
+                    // Show modal
+                    document.getElementById('matchModal').style.display = 'flex';
                 }
 
                 window.closeMatchModal = function () {
