@@ -806,6 +806,9 @@
         </div>
 
         <div id="matchModal" class="modal" style="display: none;">
+            <!-- Debug output -->
+<pre>{{ actor_details[actor_id] | tojson(indent=2) }}</pre>
+
             <div class="modal-content">
                 <!-- Step 1 -->
                 <div class="modal-step" id="match-step-1">
@@ -1219,6 +1222,7 @@
                 window.showMatchStep = showMatchStep;
                 window.declineMatch = declineMatch;
                 window.closeModal = closeModal;
+                window.openMatchModal = openMatchModal; // make sure it's global
 
 
                 document.querySelectorAll('.delete-match').forEach(btn => {
