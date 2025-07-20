@@ -103,8 +103,7 @@
                                             <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
                                                 style="font-weight: 600;">
-                                                match
-                                            </span>.
+                                                match</span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -235,11 +234,11 @@
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                     style="font-weight: 600;">post</span></a>.
                                             {% elif action == 'collab_check' %}
-                                            found you as a <span class="open-modal"
+                                            found you as a 
+                                            <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
                                                 style="font-weight: 600;">
-                                                match
-                                            </span>.
+                                                match</span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -372,11 +371,11 @@
                                     commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                             style="font-weight: 600;">post</span></a>.
                                     {% elif action == 'collab_check' %}
-                                    found you as a <span class="open-modal"
-                                        onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
-                                        style="font-weight: 600;">
-                                        match
-                                    </span>.
+                                    found you as a 
+                                            <span class="open-modal"
+                                                onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
+                                                style="font-weight: 600;">
+                                                match</span>.
                                     {% endif %}
                                 </div>
                                 <div class="notif-date">
