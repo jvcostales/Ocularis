@@ -100,10 +100,11 @@
                                                     style="font-weight: 600;">post</span></a>.
                                             {% elif action == 'collab_check' %}
                                             found you as a
-                                            <span class="open-modal" data-user-id="{{ actor_id }}"
-                                                data-display-name="{{ display_name }}"
-                                                data-notif-id="{{ notification_id }}" style="font-weight: 600;">
-                                                match</span>.
+                                            <span class="open-modal"
+                                                onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
+                                                style="font-weight: 600;">
+                                                match
+                                            </span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -234,10 +235,11 @@
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                     style="font-weight: 600;">post</span></a>.
                                             {% elif action == 'collab_check' %}
-                                            found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                                data-display-name="{{ display_name }}"
-                                                data-notif-id="{{ notification_id }}" style="font-weight: 600;">
-                                                match</span>.
+                                            found you as a <span class="open-modal"
+                                                onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
+                                                style="font-weight: 600;">
+                                                match
+                                            </span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -370,10 +372,11 @@
                                     commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                             style="font-weight: 600;">post</span></a>.
                                     {% elif action == 'collab_check' %}
-                                    found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
-                                        data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
+                                    found you as a <span class="open-modal"
+                                        onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
                                         style="font-weight: 600;">
-                                        match</span>.
+                                        match
+                                    </span>.
                                     {% endif %}
                                 </div>
                                 <div class="notif-date">
@@ -804,23 +807,17 @@
 
         <div id="matchModal" class="modal" style="display: none;">
             <div class="modal-content">
-                {% for notif in notifications %}
-                {% set actor_id = notif[4] %}
-                {% set actor = actor_details[actor_id] %}
                 <!-- Step 1 -->
                 <div class="modal-step" id="match-step-1">
-                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
-                        <span class="material-symbols-outlined overlay-close-symbol">close</span></button>
+                    <button class="close-icon btn-cancel" onclick="closeMatchModal()">
+                        <span class="material-symbols-outlined overlay-close-symbol">close</span>
+                    </button>
                     <div class="overlay-title">Match</div>
                     <div class="padding-match">
-
                         <div class="div-setup">
-                            <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
-            if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
-            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
-                            <div class="heading"><span id="match-username" style="font-weight: 600;"></span> found you
-                                as a
-                                match.
+                            <img id="match-pfp-step1" class="pfpsetup1">
+                            <div class="heading">
+                                <span id="match-username" style="font-weight: 600;"></span> found you as a match.
                             </div>
                             <div class="subheading">You're now connected, unless you say otherwise.</div>
                             <button class="next-button" onclick="showMatchStep(2)">Next</button>
@@ -830,58 +827,44 @@
 
                 <!-- Step 2 -->
                 <div class="modal-step" id="match-step-2" style="display: none;">
-                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                    <button class="close-icon btn-cancel" onclick="closeMatchModal()">
                         <span class="material-symbols-outlined overlay-close-symbol">close</span>
                     </button>
                     <div class="overlay-title">Match</div>
                     <div class="padding-match">
                         <div class="match-wrapper">
-                            <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
-            if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
-            else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
-
+                            <img id="match-pfp-step2" class="pfpsetup1">
 
                             <div class="match-card">
-                                <div class="username-profile">{{ actor.full_name }}</div>
+                                <div class="username-profile" id="match-fullname"></div>
                                 <div class="icon-title-wrapper">
                                     <span class="material-symbols-outlined person-symbol">person</span>
-                                    <div class="title">{{ actor.role }}</div>
+                                    <div class="title" id="match-role"></div>
                                 </div>
                                 <div class="icon-title-wrapper">
                                     <span class="material-symbols-outlined world-symbol">public</span>
-                                    <div class="location-profile">{{ actor.city }}, {{ actor.state }}, {{ actor.country
-                                        }}
-                                    </div>
+                                    <div class="location-profile" id="match-location"></div>
                                 </div>
                             </div>
-
                         </div>
+
                         <!-- Skills -->
                         <div class="info-sandp">
                             <div class="info-title-match">Skills</div>
-                            <div class="info-content-match">
-                                {% for skill in actor.skills %}
-                                <div class="info-one-match">{{ skill }}</div>
-                                {% endfor %}
-                            </div>
+                            <div class="info-content-match" id="match-skills"></div>
                         </div>
 
                         <!-- Preferences -->
                         <div class="info-sandp">
                             <div class="info-title-match">Preferences</div>
-                            <div class="info-content-match">
-                                {% for pref in actor.preferences %}
-                                <div class="info-one-match">{{ pref }}</div>
-                                {% endfor %}
-                            </div>
+                            <div class="info-content-match" id="match-preferences"></div>
                         </div>
 
                         <!-- Experience Level -->
                         <div class="info-sandp">
                             <div class="info-title-match">Experience Level</div>
                             <div class="info-content-match">
-                                {% set levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
-                                <div class="info-one-match">{{ levels[actor.experience_level] }}</div>
+                                <div class="info-one-match" id="match-experience"></div>
                             </div>
                         </div>
 
@@ -900,7 +883,7 @@
 
                 <!-- Step 3 -->
                 <div class="modal-step" id="match-step-3" style="display: none;">
-                    <button class="close-icon" onclick="closeMatchModal()" class="btn-cancel">
+                    <button class="close-icon btn-cancel" onclick="closeMatchModal()">
                         <span class="material-symbols-outlined overlay-close-symbol">close</span>
                     </button>
                     <div class="overlay-title">Match</div>
@@ -908,16 +891,16 @@
                         <div class="share-wrapper">
                             <div class="share-via">Reach out via</div>
                             <div class="icon-grid">
-                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\fb.png"
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/fb.png"
                                         class="fb"></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\ig.png"
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/ig.png"
                                         class="ig"></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\x.png"
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/x.png"
                                         class="x"></a>
-                                <a href="#" target="_blank"><img src="..\static\gmail.png" class="gmail"></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="..\static\linkedin.png"
+                                <a href="#" target="_blank"><img src="../static/gmail.png" class="gmail"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/linkedin.png"
                                         class="linkedin"></a>
-                                <a href="#"><img src="..\static\telegram.png" class="telegram"></a>
+                                <a href="#"><img src="../static/telegram.png" class="telegram"></a>
                             </div>
                         </div>
                         <div class="button-wrapper">
@@ -929,122 +912,121 @@
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+        </div>
 
+        <script>
 
-            <script>
+            window.addEventListener('load', function () {
+                document.body.classList.remove('loading');       // show app
+                document.getElementById('loader').style.display = 'none';  // hide loader
+            });
 
-                window.addEventListener('load', function () {
-                    document.body.classList.remove('loading');       // show app
-                    document.getElementById('loader').style.display = 'none';  // hide loader
-                });
+            let reportImageId = null;
 
-                let reportImageId = null;
+            function openReportModal(imageId, event) {
+                if (event) event.preventDefault();
 
-                function openReportModal(imageId, event) {
-                    if (event) event.preventDefault();
+                const modal = document.getElementById("reportModal");
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden";  // lock scrolling
 
-                    const modal = document.getElementById("reportModal");
-                    modal.style.display = "flex";
-                    document.body.style.overflow = "hidden";  // lock scrolling
+                // ✅ Assign imageId to hidden input
+                document.getElementById('reportImageId').value = imageId;
+            }
 
-                    // ✅ Assign imageId to hidden input
-                    document.getElementById('reportImageId').value = imageId;
-                }
+            function closeReportModal() {
+                const modal = document.getElementById('reportModal');
+                modal.style.display = 'none';
+                document.body.style.overflow = "";  // reset it
+            }
 
-                function closeReportModal() {
-                    const modal = document.getElementById('reportModal');
-                    modal.style.display = 'none';
-                    document.body.style.overflow = "";  // reset it
-                }
+            document.getElementById('reportForm').addEventListener('submit', function (e) {
+                e.preventDefault();
 
-                document.getElementById('reportForm').addEventListener('submit', function (e) {
-                    e.preventDefault();
+                const form = this;
+                const formData = new FormData(form);
 
-                    const form = this;
-                    const formData = new FormData(form);
-
-                    fetch('/report', {
-                        method: 'POST',
-                        body: formData
+                fetch('/report', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                console.error("Server responded with error:", response.status, text);
+                                throw new Error(`Status ${response.status}: ${text}`);
+                            });
+                        }
+                        return response.json();
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.text().then(text => {
-                                    console.error("Server responded with error:", response.status, text);
-                                    throw new Error(`Status ${response.status}: ${text}`);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            const imageId = formData.get('image_id');
-                            const postElement = document.getElementById(`image-${imageId}`);
-                            if (postElement) postElement.style.display = 'none';
-                            closeReportModal();
-                        })
-                        .catch(error => {
-                            console.error("Final catch:", error);
-                            alert("An error occurred while submitting your report.");
-                        });
-                });
-
-                const sections = Array.from(document.querySelectorAll('.nav-section'));
-                let currentIndex = 0;
-
-                function showSection(index) {
-                    sections.forEach((sec, i) => {
-                        sec.classList.toggle('active', i === index);
+                    .then(data => {
+                        const imageId = formData.get('image_id');
+                        const postElement = document.getElementById(`image-${imageId}`);
+                        if (postElement) postElement.style.display = 'none';
+                        closeReportModal();
+                    })
+                    .catch(error => {
+                        console.error("Final catch:", error);
+                        alert("An error occurred while submitting your report.");
                     });
-                }
+            });
 
-                sections.forEach((section) => {
-                    section.addEventListener('click', function (e) {
-                        const clickX = e.clientX - this.getBoundingClientRect().left;
-                        const width = this.offsetWidth;
+            const sections = Array.from(document.querySelectorAll('.nav-section'));
+            let currentIndex = 0;
 
-                        if (clickX < width / 2) {
-                            // Clicked on left side - move to previous
-                            currentIndex = (currentIndex - 1 + sections.length) % sections.length;
-                        } else {
-                            // Clicked on right side - move to next
-                            currentIndex = (currentIndex + 1) % sections.length;
+            function showSection(index) {
+                sections.forEach((sec, i) => {
+                    sec.classList.toggle('active', i === index);
+                });
+            }
+
+            sections.forEach((section) => {
+                section.addEventListener('click', function (e) {
+                    const clickX = e.clientX - this.getBoundingClientRect().left;
+                    const width = this.offsetWidth;
+
+                    if (clickX < width / 2) {
+                        // Clicked on left side - move to previous
+                        currentIndex = (currentIndex - 1 + sections.length) % sections.length;
+                    } else {
+                        // Clicked on right side - move to next
+                        currentIndex = (currentIndex + 1) % sections.length;
+                    }
+
+                    showSection(currentIndex);
+                });
+            });
+
+
+
+
+            window.handleFriendship = function (userId, action, buttonElement) {
+                fetch(`/${action}/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            alert(data.message || 'Something went wrong.');
+                            return;
                         }
 
-                        showSection(currentIndex);
-                    });
-                });
+                        // Unfriend or Cancel Request → Reset to Befriend
+                        if (action === 'unfriend' || action === 'cancel_request') {
+                            buttonElement.textContent = 'Befriend';
+                            buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
+                        }
 
-
-
-
-                window.handleFriendship = function (userId, action, buttonElement) {
-                    fetch(`/${action}/${userId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!data.success) {
-                                alert(data.message || 'Something went wrong.');
-                                return;
-                            }
-
-                            // Unfriend or Cancel Request → Reset to Befriend
-                            if (action === 'unfriend' || action === 'cancel_request') {
-                                buttonElement.textContent = 'Befriend';
-                                buttonElement.onclick = () => handleFriendship(userId, 'send_request', buttonElement);
-                            }
-
-                            // Send Request → Check if there's already a pending request from the other user
-                            else if (action === 'send_request') {
-                                if (data.request_id && data.status === 'incoming_pending') {
-                                    // Replace button with confirm/decline UI
-                                    buttonElement.outerHTML = `
+                        // Send Request → Check if there's already a pending request from the other user
+                        else if (action === 'send_request') {
+                            if (data.request_id && data.status === 'incoming_pending') {
+                                // Replace button with confirm/decline UI
+                                buttonElement.outerHTML = `
                     <div class="response-wrapper" id="request-${data.request_id}">
                         <button type="button" class="follow-button-profile no-margin"
                             onclick="respondToRequest(${data.request_id}, 'accept', this)" data-userid="${userId}">
@@ -1056,686 +1038,717 @@
                         </button>
                     </div>
                 `;
-                                } else {
-                                    // Normal pending request
-                                    buttonElement.textContent = 'Cancel Request';
-                                    buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Friendship error:', err);
-                            alert('Error performing action.');
-                        });
-                };
-
-
-
-
-                window.hidePost = function (imageId) {
-                    fetch(`/hide_post/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                const post = document.querySelector(`[data-image-id="${imageId}"]`);
-                                if (post) post.remove();
                             } else {
-                                alert('Failed to hide post: ' + data.message);
+                                // Normal pending request
+                                buttonElement.textContent = 'Cancel Request';
+                                buttonElement.onclick = () => handleFriendship(userId, 'cancel_request', buttonElement);
                             }
-                        })
-                        .catch(err => {
-                            alert('Error hiding post: ' + err);
-                        });
-                };
-
-                let currentStep = 1;
-                const totalSteps = 7;
-
-                function showStep(step) {
-                    for (let i = 1; i <= totalSteps; i++) {
-                        const el = document.getElementById('step-' + i);
-                        if (el) el.style.display = (i === step) ? 'flex' : 'none';
-                    }
-                }
-
-                function nextStep() {
-                    if (currentStep < totalSteps) {
-                        currentStep++;
-                        showStep(currentStep);
-                    }
-                }
-
-                function prevStep() {
-                    if (currentStep > 1) {
-                        currentStep--;
-                        showStep(currentStep);
-                    }
-                }
-
-
-                function deleteImage(imageId) {
-                    if (!confirm("Are you sure you want to delete this image?")) return;
-
-                    fetch(`/delete/${imageId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include' // Include session cookies
+                        }
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(data => {
-                                    throw new Error(data.error || "Failed to delete image.");
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            const imageElement = document.getElementById(`image-${imageId}`);
-                            if (imageElement) {
-                                imageElement.remove();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error deleting image:', error);
-                            alert(error.message || "An error occurred.");
-                        });
-                }
+                    .catch(err => {
+                        console.error('Friendship error:', err);
+                        alert('Error performing action.');
+                    });
+            };
 
-                function openImageModal(src) {
+
+
+
+            window.hidePost = function (imageId) {
+                fetch(`/hide_post/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const post = document.querySelector(`[data-image-id="${imageId}"]`);
+                            if (post) post.remove();
+                        } else {
+                            alert('Failed to hide post: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        alert('Error hiding post: ' + err);
+                    });
+            };
+
+            let currentStep = 1;
+            const totalSteps = 7;
+
+            function showStep(step) {
+                for (let i = 1; i <= totalSteps; i++) {
+                    const el = document.getElementById('step-' + i);
+                    if (el) el.style.display = (i === step) ? 'flex' : 'none';
+                }
+            }
+
+            function nextStep() {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+
+            function prevStep() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            }
+
+
+            function deleteImage(imageId) {
+                if (!confirm("Are you sure you want to delete this image?")) return;
+
+                fetch(`/delete/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include' // Include session cookies
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.error || "Failed to delete image.");
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const imageElement = document.getElementById(`image-${imageId}`);
+                        if (imageElement) {
+                            imageElement.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting image:', error);
+                        alert(error.message || "An error occurred.");
+                    });
+            }
+
+            function openImageModal(src) {
+                const modal = document.getElementById("imageModal");
+                const img = document.getElementById("modalImage");
+                img.src = src;
+                modal.classList.add("show");
+                document.body.classList.add("no-scroll-view");
+            }
+
+            function closeImageModal(event) {
+                if (event.target.id === "imageModal" || event.target.classList.contains("close-btn")) {
                     const modal = document.getElementById("imageModal");
-                    const img = document.getElementById("modalImage");
-                    img.src = src;
-                    modal.classList.add("show");
-                    document.body.classList.add("no-scroll-view");
+                    modal.classList.remove("show");
+                    document.body.classList.remove("no-scroll-view");
                 }
+            }
 
-                function closeImageModal(event) {
-                    if (event.target.id === "imageModal" || event.target.classList.contains("close-btn")) {
-                        const modal = document.getElementById("imageModal");
-                        modal.classList.remove("show");
-                        document.body.classList.remove("no-scroll-view");
-                    }
-                }
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.link-wrapper').forEach(wrapper => {
+                    const button = wrapper.querySelector('.link-button');
+                    const linkDiv = wrapper.querySelector('.link');
+                    const icon = button.querySelector('.link-symbol');
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    document.querySelectorAll('.link-wrapper').forEach(wrapper => {
-                        const button = wrapper.querySelector('.link-button');
-                        const linkDiv = wrapper.querySelector('.link');
-                        const icon = button.querySelector('.link-symbol');
+                    button.addEventListener('click', () => {
+                        const textToCopy = linkDiv.textContent.trim();
 
-                        button.addEventListener('click', () => {
-                            const textToCopy = linkDiv.textContent.trim();
-
-                            navigator.clipboard.writeText(textToCopy)
-                                .then(() => {
-                                    icon.classList.add('copied');
-                                    setTimeout(() => {
-                                        icon.classList.remove('copied');
-                                    }, 1500);
-                                })
-                                .catch(err => {
-                                    console.error('Copy failed', err);
-                                    alert('Failed to copy link');
-                                });
-                        });
-                    });
-
-                    function resolveTheme(value) {
-                        if (value === "dark" || value === "light") return value;
-                        if (value === "auto") {
-                            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-                        }
-                        return "light";
-                    }
-
-                    // 1. Read saved setting and apply it
-                    const savedThemeSetting = localStorage.getItem("theme") || "auto";
-                    const resolvedTheme = resolveTheme(savedThemeSetting);
-                    document.documentElement.setAttribute("data-theme", resolvedTheme);
-
-                    // 2. Pre-check matching radio
-                    const radios = document.querySelectorAll('input[name="theme_mode"]');
-                    radios.forEach(radio => {
-                        if (radio.value === savedThemeSetting) {
-                            radio.checked = true;
-                        }
-                    });
-
-                    // 3. Handle change
-                    radios.forEach(radio => {
-                        radio.addEventListener("change", () => {
-                            const selectedValue = radio.value;
-                            const newTheme = resolveTheme(selectedValue);
-                            document.documentElement.setAttribute("data-theme", newTheme);
-                            localStorage.setItem("theme", selectedValue);
-                        });
-                    });
-
-                    function showMatchStep(step) {
-                        document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
-                        document.getElementById(`match-step-${step}`).style.display = 'block';
-                    }
-
-                    function declineMatch() {
-                        alert('You have declined the match.');
-                        closeModal();
-                    }
-
-                    function closeModal() {
-                        document.getElementById('matchModal').style.display = 'none';
-                    }
-
-                    // Expose to global scope so inline HTML can access them
-                    window.showMatchStep = showMatchStep;
-                    window.declineMatch = declineMatch;
-                    window.closeModal = closeModal;
-
-
-                    document.querySelectorAll('.delete-match').forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const otherUserId = this.dataset.id;
-
-                            fetch('/decline_match', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ other_user_id: otherUserId })
+                        navigator.clipboard.writeText(textToCopy)
+                            .then(() => {
+                                icon.classList.add('copied');
+                                setTimeout(() => {
+                                    icon.classList.remove('copied');
+                                }, 1500);
                             })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.message) {
-                                        // Remove the entire match entry from the DOM
-                                        this.closest('.profile-more-wrapper-pairup').remove();
-                                    } else {
-                                        alert('Error: ' + (data.error || 'Could not delete match.'));
-                                    }
-                                });
-                        });
+                            .catch(err => {
+                                console.error('Copy failed', err);
+                                alert('Failed to copy link');
+                            });
                     });
+                });
 
-                    document.querySelectorAll('.open-modal').forEach(elem => {
-                        elem.addEventListener('click', function () {
-                            const userId = this.getAttribute('data-user-id');
-                            const displayName = this.getAttribute('data-display-name');
+                function resolveTheme(value) {
+                    if (value === "dark" || value === "light") return value;
+                    if (value === "auto") {
+                        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                    }
+                    return "light";
+                }
 
-                            // Update modal content
-                            document.getElementById('match-username').textContent = displayName;
-                            document.getElementById('decline-match').setAttribute('data-user-id', userId);
+                // 1. Read saved setting and apply it
+                const savedThemeSetting = localStorage.getItem("theme") || "auto";
+                const resolvedTheme = resolveTheme(savedThemeSetting);
+                document.documentElement.setAttribute("data-theme", resolvedTheme);
 
-                            // Freeze background scroll
-                            matchScrollPosition = window.scrollY;
-                            document.body.style.top = `-${matchScrollPosition}px`;
-                            document.body.classList.add('no-scrolling');
+                // 2. Pre-check matching radio
+                const radios = document.querySelectorAll('input[name="theme_mode"]');
+                radios.forEach(radio => {
+                    if (radio.value === savedThemeSetting) {
+                        radio.checked = true;
+                    }
+                });
 
-                            // Show modal
-                            document.getElementById('matchModal').style.display = 'flex';
-                        });
+                // 3. Handle change
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        const selectedValue = radio.value;
+                        const newTheme = resolveTheme(selectedValue);
+                        document.documentElement.setAttribute("data-theme", newTheme);
+                        localStorage.setItem("theme", selectedValue);
                     });
+                });
 
-                    document.getElementById('decline-match').addEventListener('click', function () {
-                        const otherUserId = this.getAttribute('data-user-id');
+                function showMatchStep(step) {
+                    document.querySelectorAll('.modal-step').forEach(stepDiv => stepDiv.style.display = 'none');
+                    document.getElementById(`match-step-${step}`).style.display = 'block';
+                }
+
+                function declineMatch() {
+                    alert('You have declined the match.');
+                    closeModal();
+                }
+
+                function closeModal() {
+                    document.getElementById('matchModal').style.display = 'none';
+                }
+
+                // Expose to global scope so inline HTML can access them
+                window.showMatchStep = showMatchStep;
+                window.declineMatch = declineMatch;
+                window.closeModal = closeModal;
+
+
+                document.querySelectorAll('.delete-match').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const otherUserId = this.dataset.id;
 
                         fetch('/decline_match', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({ other_user_id: otherUserId })
                         })
                             .then(response => response.json())
                             .then(data => {
-                                alert(data.message || data.error);
-                                document.getElementById('matchModal').style.display = 'none';
-                                // Optionally remove or gray out the notification
-                            });
-                    });
-
-                    window.handleRequest = function (requestId, action) {
-                        const elements = document.querySelectorAll(`#request-${requestId}`);
-                        console.log(`Attempting to ${action} request with ID: ${requestId}`);
-                        console.log('Target elements:', elements);
-
-                        fetch(`/${action}_request/${requestId}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log('Parsed JSON:', data);
-                                if (data.success) {
-                                    elements.forEach(el => {
-                                        el.remove(); // Remove all matching elements
-                                        console.log(`Removed element request-${requestId}`);
-                                    });
+                                if (data.message) {
+                                    // Remove the entire match entry from the DOM
+                                    this.closest('.profile-more-wrapper-pairup').remove();
                                 } else {
-                                    console.error("Error:", data.message || "Unknown error");
-                                    alert("Error: " + data.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error("AJAX error:", error);
-                                alert("Something went wrong.");
-                            });
-                    };
-
-
-
-
-                    const backdropMobile = document.getElementById('backdrop-mobile');
-                    const backdropTablet = document.getElementById('backdrop-tablet');
-                    let lastOpenedGroup = null;
-
-                    function getActiveBackdrop() {
-                        return window.innerWidth <= 768 ? backdropMobile : backdropTablet;
-                    }
-
-                    function getInactiveBackdrop() {
-                        return window.innerWidth <= 768 ? backdropTablet : backdropMobile;
-                    }
-
-                    function closeAllDropdowns() {
-                        document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
-                            dropdown.classList.remove('dropdown-visible');
-                        });
-                        backdropMobile.style.display = 'none';
-                        backdropTablet.style.display = 'none';
-                        lastOpenedGroup = null;
-                    }
-
-                    function openDropdown(dropdown) {
-                        closeAllDropdowns();
-                        dropdown.classList.add('dropdown-visible');
-                        getActiveBackdrop().style.display = 'block';
-                        lastOpenedGroup = dropdown.dataset.group || null;
-                    }
-
-                    document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
-                        const button = wrapper.querySelector('.notifs-button');
-                        const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
-
-                        if (button && dropdown) {
-                            button.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                const isVisible = dropdown.classList.contains('dropdown-visible');
-                                if (!isVisible) {
-                                    openDropdown(dropdown);
-                                } else {
-                                    closeAllDropdowns();
+                                    alert('Error: ' + (data.error || 'Could not delete match.'));
                                 }
                             });
-                        }
                     });
+                });
 
-                    document.addEventListener('click', (e) => {
-                        const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
-                            .some(wrapper => wrapper.contains(e.target));
-                        if (!clickedInside) {
-                            closeAllDropdowns();
-                        }
-                    });
+                document.querySelectorAll('.open-modal').forEach(elem => {
+                    elem.addEventListener('click', function () {
+                        const userId = this.getAttribute('data-user-id');
+                        const displayName = this.getAttribute('data-display-name');
 
-                    backdropMobile.addEventListener('click', closeAllDropdowns);
-                    backdropTablet.addEventListener('click', closeAllDropdowns);
+                        // Update modal content
+                        document.getElementById('match-username').textContent = displayName;
+                        document.getElementById('decline-match').setAttribute('data-user-id', userId);
 
-                    // ✅ Resize logic — try reopening matching dropdown even if it's currently hidden
-                    window.addEventListener('resize', () => {
-                        if (lastOpenedGroup) {
-                            const dropdowns = document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`);
-
-                            for (const dropdown of dropdowns) {
-                                // Check if it's in the currently visible layout
-                                const wrapper = dropdown.closest('.notifs-wrapper');
-                                if (wrapper && wrapper.offsetParent !== null) {
-                                    openDropdown(dropdown);
-                                    return;
-                                }
-                            }
-
-                            // Fallback: close if none match
-                            closeAllDropdowns();
-                        }
-                    });
-
-
-
-
-
-
-
-                    document.querySelectorAll('.like-form').forEach(form => {
-                        form.addEventListener('submit', function (event) {
-                            event.preventDefault();
-
-                            const imageId = this.dataset.imageId;
-                            const icon = this.querySelector('.lcs-symbol');
-                            const label = this.querySelector('.partner-label');
-                            const countDiv = document.getElementById(`like-count-${imageId}`);
-                            const numberSpan = countDiv.querySelector('.like-number');
-                            const textSpan = countDiv.querySelector('.like-text');
-                            const buttonDiv = document.getElementById(`like-button-${imageId}`);
-
-                            fetch(`/like/${imageId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                },
-                                credentials: 'include'
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    // Update icon and label
-                                    if (data.status === 'liked') {
-                                        icon.textContent = 'thumb_up_alt';
-                                        label.textContent = 'Unlike';
-                                    } else {
-                                        icon.textContent = 'thumb_up';
-                                        label.textContent = 'Like';
-                                    }
-
-                                    // Update like count
-                                    numberSpan.textContent = data.like_count;
-                                    textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-
-                                    // Optional: style change
-                                    buttonDiv.classList.toggle('liked', data.status === 'liked');
-
-                                    // ✅ Fetch updated likers list
-                                    fetchLikers(imageId);
-                                })
-                                .catch(error => {
-                                    console.error('AJAX like error:', error);
-                                });
-                        });
-                    });
-
-                    document.addEventListener('submit', function (event) {
-                        const form = event.target;
-
-                        if (form.matches('.like-form[data-comment-id]')) {
-                            event.preventDefault();
-
-                            const commentId = form.dataset.commentId;
-                            const icon = form.querySelector('.lcs-symbol');
-                            const label = form.querySelector('.partner-label');
-                            const countDiv = document.getElementById(`like-count-comment-${commentId}`);
-                            const numberSpan = countDiv?.querySelector('.like-number');
-                            const textSpan = countDiv?.querySelector('.like-text');
-                            const buttonDiv = document.getElementById(`like-button-${commentId}`);
-
-                            fetch(`/comment/like/${commentId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                },
-                                credentials: 'include'
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (!data) throw new Error('No data returned');
-
-                                    // Update icon and label
-                                    if (data.status === 'liked') {
-                                        icon.textContent = 'thumb_up_alt';
-                                        label.textContent = 'Unlike';
-                                    } else {
-                                        icon.textContent = 'thumb_up';
-                                        label.textContent = 'Like';
-                                    }
-
-                                    // Update like count, if count elements exist
-                                    if (numberSpan && textSpan) {
-                                        numberSpan.textContent = data.like_count;
-                                        textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-                                    }
-
-                                    // Toggle 'liked' class
-                                    if (buttonDiv) {
-                                        buttonDiv.classList.toggle('liked', data.status === 'liked');
-                                    }
-
-                                    // Update liker list
-                                    if (typeof fetchCommentLikers === 'function') {
-                                        fetchCommentLikers(commentId);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('AJAX comment like error:', error);
-                                });
-                        }
-                    });
-
-                    const modal = document.getElementById('profileModal');
-                    if (modal && modal.classList.contains('show')) {
-                        showStep(currentStep);
-                    }
-
-                    const countrySelect = document.getElementById('country');
-                    const stateSelect = document.getElementById('state');
-                    const citySelect = document.getElementById('city');
-
-                    const selectedStateCode = "{{ user.state|default('') }}";
-                    const selectedCityName = "{{ user.city|default('') }}";
-
-                    if (countrySelect && stateSelect && citySelect) {
-                        let allStates = [];
-                        let allCities = [];
-
-                        // Fetch all states
-                        fetch('/api/get-states')
-                            .then(res => res.json())
-                            .then(data => {
-                                allStates = data;
-
-                                const selectedCountryIso = countrySelect.value;
-                                if (selectedCountryIso) {
-                                    const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
-                                    stateSelect.innerHTML = '<option value="">Select your region or province</option>';
-
-                                    filteredStates.forEach(state => {
-                                        const option = document.createElement('option');
-                                        option.value = state.state_code;
-                                        option.textContent = state.name;
-                                        if (state.state_code === selectedStateCode) {
-                                            option.selected = true;
-                                        }
-                                        stateSelect.appendChild(option);
-                                    }
-
-                                    );
-
-                                    // If state was already selected, trigger the city fetch too
-                                    if (selectedStateCode) {
-                                        fetchCities(selectedCountryIso, selectedStateCode);
-                                    }
-                                }
-                            });
-
-                        // Fetch all cities (needed for change listener fallback)
-                        fetch('/api/get-cities')
-                            .then(res => res.json())
-                            .then(data => {
-                                allCities = data;
-                                console.log('Fetched Cities:', allCities);
-                            });
-
-                        countrySelect.addEventListener('change', () => {
-                            const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-                            stateSelect.innerHTML = '<option value="">Select your region or province</option>';
-                            citySelect.innerHTML = '<option value="">Select your city</option>';
-
-                            if (!selectedIso) return;
-
-                            const filteredStates = allStates.filter(state => state.country_code === selectedIso);
-                            filteredStates.forEach(state => {
-                                const option = document.createElement('option');
-                                option.value = state.state_code;
-                                option.textContent = state.name;
-                                stateSelect.appendChild(option);
-                            });
-                        });
-
-                        stateSelect.addEventListener('change', () => {
-                            const selectedStateCode = stateSelect.value;
-                            const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
-
-                            citySelect.innerHTML = '<option value="">Select your city</option>';
-
-                            if (!selectedStateCode || !selectedCountryIso) return;
-
-                            fetchCities(selectedCountryIso, selectedStateCode);
-                        });
-
-                        function fetchCities(countryIso, stateCode) {
-                            fetch(`/api/get-cities?country=${countryIso}&state=${stateCode}`)
-                                .then(res => res.json())
-                                .then(filteredCities => {
-                                    filteredCities.forEach(city => {
-                                        const option = document.createElement('option');
-                                        option.value = city.name;
-                                        option.textContent = city.name;
-                                        if (city.name === selectedCityName) {
-                                            option.selected = true;
-                                        }
-                                        citySelect.appendChild(option);
-                                    });
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching cities:', error);
-                                });
-                        }
-                    }
-
-                    let scrollPosition = 0;
-
-                    function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
-                        const overlay = document.querySelector(overlaySelector);
-                        const openBtn = document.getElementById(openBtnId);
-                        const closeBtn = document.getElementById(closeBtnId);
-
-                        if (!overlay || !openBtn || !closeBtn) return;
-
-                        openBtn.addEventListener('click', () => {
-                            if (!isNested) {
-                                scrollPosition = window.scrollY;
-                                document.body.style.top = `-${scrollPosition}px`;
-                                document.body.classList.add('no-scrolling');
-                            }
-                            overlay.classList.add('active');
-                        });
-
-                        function closeOverlay() {
-                            overlay.classList.remove('active');
-                            if (!isNested) {
-                                document.body.classList.remove('no-scrolling');
-                                document.body.style.top = '';
-                                window.scrollTo(0, scrollPosition);
-                            }
-                        }
-
-                        closeBtn.addEventListener('click', closeOverlay);
-
-                        overlay.addEventListener('click', (e) => {
-                            if (e.target === overlay) {
-                                closeOverlay();
-                            }
-                        });
-                    }
-
-                    let matchScrollPosition = 0;
-
-                    function openMatchModal() {
+                        // Freeze background scroll
                         matchScrollPosition = window.scrollY;
                         document.body.style.top = `-${matchScrollPosition}px`;
                         document.body.classList.add('no-scrolling');
+
+                        // Show modal
                         document.getElementById('matchModal').style.display = 'flex';
+                    });
+                });
+
+                document.getElementById('decline-match').addEventListener('click', function () {
+                    const otherUserId = this.getAttribute('data-user-id');
+
+                    fetch('/decline_match', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ other_user_id: otherUserId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message || data.error);
+                            document.getElementById('matchModal').style.display = 'none';
+                            // Optionally remove or gray out the notification
+                        });
+                });
+
+                window.handleRequest = function (requestId, action) {
+                    const elements = document.querySelectorAll(`#request-${requestId}`);
+                    console.log(`Attempting to ${action} request with ID: ${requestId}`);
+                    console.log('Target elements:', elements);
+
+                    fetch(`/${action}_request/${requestId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Parsed JSON:', data);
+                            if (data.success) {
+                                elements.forEach(el => {
+                                    el.remove(); // Remove all matching elements
+                                    console.log(`Removed element request-${requestId}`);
+                                });
+                            } else {
+                                console.error("Error:", data.message || "Unknown error");
+                                alert("Error: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("AJAX error:", error);
+                            alert("Something went wrong.");
+                        });
+                };
+
+
+
+
+                const backdropMobile = document.getElementById('backdrop-mobile');
+                const backdropTablet = document.getElementById('backdrop-tablet');
+                let lastOpenedGroup = null;
+
+                function getActiveBackdrop() {
+                    return window.innerWidth <= 768 ? backdropMobile : backdropTablet;
+                }
+
+                function getInactiveBackdrop() {
+                    return window.innerWidth <= 768 ? backdropTablet : backdropMobile;
+                }
+
+                function closeAllDropdowns() {
+                    document.querySelectorAll('.notifs-requests-dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('dropdown-visible');
+                    });
+                    backdropMobile.style.display = 'none';
+                    backdropTablet.style.display = 'none';
+                    lastOpenedGroup = null;
+                }
+
+                function openDropdown(dropdown) {
+                    closeAllDropdowns();
+                    dropdown.classList.add('dropdown-visible');
+                    getActiveBackdrop().style.display = 'block';
+                    lastOpenedGroup = dropdown.dataset.group || null;
+                }
+
+                document.querySelectorAll('.notifs-wrapper').forEach(wrapper => {
+                    const button = wrapper.querySelector('.notifs-button');
+                    const dropdown = wrapper.querySelector('.notifs-requests-dropdown');
+
+                    if (button && dropdown) {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const isVisible = dropdown.classList.contains('dropdown-visible');
+                            if (!isVisible) {
+                                openDropdown(dropdown);
+                            } else {
+                                closeAllDropdowns();
+                            }
+                        });
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    const clickedInside = Array.from(document.querySelectorAll('.notifs-wrapper'))
+                        .some(wrapper => wrapper.contains(e.target));
+                    if (!clickedInside) {
+                        closeAllDropdowns();
+                    }
+                });
+
+                backdropMobile.addEventListener('click', closeAllDropdowns);
+                backdropTablet.addEventListener('click', closeAllDropdowns);
+
+                // ✅ Resize logic — try reopening matching dropdown even if it's currently hidden
+                window.addEventListener('resize', () => {
+                    if (lastOpenedGroup) {
+                        const dropdowns = document.querySelectorAll(`.notifs-requests-dropdown[data-group="${lastOpenedGroup}"]`);
+
+                        for (const dropdown of dropdowns) {
+                            // Check if it's in the currently visible layout
+                            const wrapper = dropdown.closest('.notifs-wrapper');
+                            if (wrapper && wrapper.offsetParent !== null) {
+                                openDropdown(dropdown);
+                                return;
+                            }
+                        }
+
+                        // Fallback: close if none match
+                        closeAllDropdowns();
+                    }
+                });
+
+
+
+
+
+
+
+                document.querySelectorAll('.like-form').forEach(form => {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const imageId = this.dataset.imageId;
+                        const icon = this.querySelector('.lcs-symbol');
+                        const label = this.querySelector('.partner-label');
+                        const countDiv = document.getElementById(`like-count-${imageId}`);
+                        const numberSpan = countDiv.querySelector('.like-number');
+                        const textSpan = countDiv.querySelector('.like-text');
+                        const buttonDiv = document.getElementById(`like-button-${imageId}`);
+
+                        fetch(`/like/${imageId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            credentials: 'include'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                // Update icon and label
+                                if (data.status === 'liked') {
+                                    icon.textContent = 'thumb_up_alt';
+                                    label.textContent = 'Unlike';
+                                } else {
+                                    icon.textContent = 'thumb_up';
+                                    label.textContent = 'Like';
+                                }
+
+                                // Update like count
+                                numberSpan.textContent = data.like_count;
+                                textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                                // Optional: style change
+                                buttonDiv.classList.toggle('liked', data.status === 'liked');
+
+                                // ✅ Fetch updated likers list
+                                fetchLikers(imageId);
+                            })
+                            .catch(error => {
+                                console.error('AJAX like error:', error);
+                            });
+                    });
+                });
+
+                document.addEventListener('submit', function (event) {
+                    const form = event.target;
+
+                    if (form.matches('.like-form[data-comment-id]')) {
+                        event.preventDefault();
+
+                        const commentId = form.dataset.commentId;
+                        const icon = form.querySelector('.lcs-symbol');
+                        const label = form.querySelector('.partner-label');
+                        const countDiv = document.getElementById(`like-count-comment-${commentId}`);
+                        const numberSpan = countDiv?.querySelector('.like-number');
+                        const textSpan = countDiv?.querySelector('.like-text');
+                        const buttonDiv = document.getElementById(`like-button-${commentId}`);
+
+                        fetch(`/comment/like/${commentId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            credentials: 'include'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (!data) throw new Error('No data returned');
+
+                                // Update icon and label
+                                if (data.status === 'liked') {
+                                    icon.textContent = 'thumb_up_alt';
+                                    label.textContent = 'Unlike';
+                                } else {
+                                    icon.textContent = 'thumb_up';
+                                    label.textContent = 'Like';
+                                }
+
+                                // Update like count, if count elements exist
+                                if (numberSpan && textSpan) {
+                                    numberSpan.textContent = data.like_count;
+                                    textSpan.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+                                }
+
+                                // Toggle 'liked' class
+                                if (buttonDiv) {
+                                    buttonDiv.classList.toggle('liked', data.status === 'liked');
+                                }
+
+                                // Update liker list
+                                if (typeof fetchCommentLikers === 'function') {
+                                    fetchCommentLikers(commentId);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('AJAX comment like error:', error);
+                            });
+                    }
+                });
+
+                const modal = document.getElementById('profileModal');
+                if (modal && modal.classList.contains('show')) {
+                    showStep(currentStep);
+                }
+
+                const countrySelect = document.getElementById('country');
+                const stateSelect = document.getElementById('state');
+                const citySelect = document.getElementById('city');
+
+                const selectedStateCode = "{{ user.state|default('') }}";
+                const selectedCityName = "{{ user.city|default('') }}";
+
+                if (countrySelect && stateSelect && citySelect) {
+                    let allStates = [];
+                    let allCities = [];
+
+                    // Fetch all states
+                    fetch('/api/get-states')
+                        .then(res => res.json())
+                        .then(data => {
+                            allStates = data;
+
+                            const selectedCountryIso = countrySelect.value;
+                            if (selectedCountryIso) {
+                                const filteredStates = allStates.filter(state => state.country_code === selectedCountryIso);
+                                stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+
+                                filteredStates.forEach(state => {
+                                    const option = document.createElement('option');
+                                    option.value = state.state_code;
+                                    option.textContent = state.name;
+                                    if (state.state_code === selectedStateCode) {
+                                        option.selected = true;
+                                    }
+                                    stateSelect.appendChild(option);
+                                }
+
+                                );
+
+                                // If state was already selected, trigger the city fetch too
+                                if (selectedStateCode) {
+                                    fetchCities(selectedCountryIso, selectedStateCode);
+                                }
+                            }
+                        });
+
+                    // Fetch all cities (needed for change listener fallback)
+                    fetch('/api/get-cities')
+                        .then(res => res.json())
+                        .then(data => {
+                            allCities = data;
+                            console.log('Fetched Cities:', allCities);
+                        });
+
+                    countrySelect.addEventListener('change', () => {
+                        const selectedIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+                        stateSelect.innerHTML = '<option value="">Select your region or province</option>';
+                        citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                        if (!selectedIso) return;
+
+                        const filteredStates = allStates.filter(state => state.country_code === selectedIso);
+                        filteredStates.forEach(state => {
+                            const option = document.createElement('option');
+                            option.value = state.state_code;
+                            option.textContent = state.name;
+                            stateSelect.appendChild(option);
+                        });
+                    });
+
+                    stateSelect.addEventListener('change', () => {
+                        const selectedStateCode = stateSelect.value;
+                        const selectedCountryIso = countrySelect.options[countrySelect.selectedIndex].dataset.iso;
+
+                        citySelect.innerHTML = '<option value="">Select your city</option>';
+
+                        if (!selectedStateCode || !selectedCountryIso) return;
+
+                        fetchCities(selectedCountryIso, selectedStateCode);
+                    });
+
+                    function fetchCities(countryIso, stateCode) {
+                        fetch(`/api/get-cities?country=${countryIso}&state=${stateCode}`)
+                            .then(res => res.json())
+                            .then(filteredCities => {
+                                filteredCities.forEach(city => {
+                                    const option = document.createElement('option');
+                                    option.value = city.name;
+                                    option.textContent = city.name;
+                                    if (city.name === selectedCityName) {
+                                        option.selected = true;
+                                    }
+                                    citySelect.appendChild(option);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error fetching cities:', error);
+                            });
+                    }
+                }
+
+                let scrollPosition = 0;
+
+                function setupOverlay(overlaySelector, openBtnId, closeBtnId, isNested = false) {
+                    const overlay = document.querySelector(overlaySelector);
+                    const openBtn = document.getElementById(openBtnId);
+                    const closeBtn = document.getElementById(closeBtnId);
+
+                    if (!overlay || !openBtn || !closeBtn) return;
+
+                    openBtn.addEventListener('click', () => {
+                        if (!isNested) {
+                            scrollPosition = window.scrollY;
+                            document.body.style.top = `-${scrollPosition}px`;
+                            document.body.classList.add('no-scrolling');
+                        }
+                        overlay.classList.add('active');
+                    });
+
+                    function closeOverlay() {
+                        overlay.classList.remove('active');
+                        if (!isNested) {
+                            document.body.classList.remove('no-scrolling');
+                            document.body.style.top = '';
+                            window.scrollTo(0, scrollPosition);
+                        }
                     }
 
-                    window.closeMatchModal = function () {
-                        const modal = document.getElementById('matchModal');
-                        if (modal) modal.style.display = 'none';
+                    closeBtn.addEventListener('click', closeOverlay);
 
-                        document.body.classList.remove('no-scrolling');
-                        document.body.style.top = '';
-                        window.scrollTo(0, matchScrollPosition);
-                    };
-
-                    // Setup overlays
-                    setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
-
-                    document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
-                        const index = overlay.id.split('-')[1];
-                        setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) {
+                            closeOverlay();
+                        }
                     });
+                }
 
-                    document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
-                        const index = overlay.id.split('-')[1];
-                        setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
-                    });
+                let matchScrollPosition = 0;
 
-                    document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
-                        const index = overlay.id.split('-')[1];
-                        setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
-                    });
+                function openMatchModal(actor) {
+                    // Freeze scroll
+                    matchScrollPosition = window.scrollY;
+                    document.body.style.top = `-${matchScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+                    document.getElementById('matchModal').style.display = 'flex';
 
-                    document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
-                        const index = overlay.id.split('-')[1];
-                        setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
-                    });
+                    // Reset to step 1
+                    showMatchStep(1);
 
-                    // Setup like overlay data fetch
-                    document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
-                        const index = likeBtn.id.split('-')[1];
-                        const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
-                        const imageId = scrollableDiv?.dataset?.imageId;
+                    // Experience level labels
+                    const levels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
-                        likeBtn.addEventListener('click', () => {
-                            if (!imageId || !scrollableDiv) return;
+                    // Profile picture logic
+                    const profilePic = actor.profile_pic && actor.profile_pic !== 'pfp.jpg'
+                        ? `/profile_pics/${actor.profile_pic}`
+                        : `/static/pfp.jpg`;
 
-                            scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+                    // Fill Step 1
+                    document.getElementById('match-username').textContent = actor.full_name;
+                    document.getElementById('match-pfp-step1').src = profilePic;
 
-                            fetch(`/likes/${imageId}`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.likers.length === 0) {
-                                        scrollableDiv.innerHTML = `<div class="likes-empty">
+                    // Fill Step 2
+                    document.getElementById('match-fullname').textContent = actor.full_name;
+                    document.getElementById('match-role').textContent = actor.role;
+                    document.getElementById('match-location').textContent = `${actor.city}, ${actor.state}, ${actor.country}`;
+                    document.getElementById('match-experience').textContent = levels[actor.experience_level];
+                    document.getElementById('match-pfp-step2').src = profilePic;
+
+                    // Skills
+                    document.getElementById('match-skills').innerHTML = actor.skills.map(skill =>
+                        `<div class="info-one-match">${skill}</div>`).join('');
+
+                    // Preferences
+                    document.getElementById('match-preferences').innerHTML = actor.preferences.map(pref =>
+                        `<div class="info-one-match">${pref}</div>`).join('');
+                }
+
+                window.closeMatchModal = function () {
+                    const modal = document.getElementById('matchModal');
+                    if (modal) modal.style.display = 'none';
+
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, matchScrollPosition);
+                };
+
+                // Setup overlays
+                setupOverlay('.overlay', 'openOverlay', 'closeOverlay');
+
+                document.querySelectorAll('[id^="overlayLikes-"]').forEach((overlay) => {
+                    const index = overlay.id.split('-')[1];
+                    setupOverlay(`#overlayLikes-${index}`, `openOverlayLikes-${index}`, `closeOverlayLikes-${index}`);
+                });
+
+                document.querySelectorAll('[id^="overlayCommentLikes-"]').forEach((overlay) => {
+                    const index = overlay.id.split('-')[1];
+                    setupOverlay(`#overlayCommentLikes-${index}`, `openOverlayCommentLikes-${index}`, `closeOverlayCommentLikes-${index}`, true);
+                });
+
+                document.querySelectorAll('[id^="overlayComments-"]').forEach((overlay) => {
+                    const index = overlay.id.split('-')[1];
+                    setupOverlay(`#overlayComments-${index}`, `openOverlayComments-${index}`, `closeOverlayComments-${index}`);
+                });
+
+                document.querySelectorAll('[id^="overlayShare-"]').forEach((overlay) => {
+                    const index = overlay.id.split('-')[1];
+                    setupOverlay(`#overlayShare-${index}`, `openOverlayShare-${index}`, `closeOverlayShare-${index}`);
+                });
+
+                // Setup like overlay data fetch
+                document.querySelectorAll('[id^="openOverlayLikes-"]').forEach((likeBtn) => {
+                    const index = likeBtn.id.split('-')[1];
+                    const scrollableDiv = document.getElementById(`scrollableDivLikes-${index}`);
+                    const imageId = scrollableDiv?.dataset?.imageId;
+
+                    likeBtn.addEventListener('click', () => {
+                        if (!imageId || !scrollableDiv) return;
+
+                        scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+
+                        fetch(`/likes/${imageId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.likers.length === 0) {
+                                    scrollableDiv.innerHTML = `<div class="likes-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
                     </div>`;
-                                        return;
-                                    }
+                                    return;
+                                }
 
-                                    const html = data.likers.map(liker => {
-                                        const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric'
-                                        });
+                                const html = data.likers.map(liker => {
+                                    const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric'
+                                    });
 
-                                        let buttonHtml = '';
-                                        switch (liker.relationship) {
-                                            case 'self':
-                                                buttonHtml = '';
-                                                break;
-                                            case 'friends':
-                                                buttonHtml = `
+                                    let buttonHtml = '';
+                                    switch (liker.relationship) {
+                                        case 'self':
+                                            buttonHtml = '';
+                                            break;
+                                        case 'friends':
+                                            buttonHtml = `
                                 <button type="button" class="follow-button-profile no-margin"
                                         onclick="handleFriendship(${liker.id}, 'unfriend', this)">
                                     Unfriend
                                 </button>`;
-                                                break;
-                                            case 'incoming_pending':
-                                                buttonHtml = `
+                                            break;
+                                        case 'incoming_pending':
+                                            buttonHtml = `
                                 <div class="response-wrapper" style="margin: 0;">
                                                                         <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
@@ -1745,31 +1758,31 @@
                                         <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
                                     </form>
                                 </div>`;
-                                                break;
-                                            case 'outgoing_pending':
-                                                buttonHtml = `
+                                            break;
+                                        case 'outgoing_pending':
+                                            buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                 </form>`;
-                                                break;
-                                            case 'outgoing_rejected':
-                                            case 'not_friends':
-                                                if (liker.verified) {
-                                                    buttonHtml = `
+                                            break;
+                                        case 'outgoing_rejected':
+                                        case 'not_friends':
+                                            if (liker.verified) {
+                                                buttonHtml = `
                                     <button type="button" class="follow-button-profile no-margin"
                                             onclick="handleFriendship(${liker.id}, 'send_request', this)">
                                         Befriend
                                     </button>`;
-                                                } else {
-                                                    buttonHtml = `
+                                            } else {
+                                                buttonHtml = `
                                     <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
-                                                }
-                                                break;
-                                            default:
-                                                buttonHtml = '';
-                                        }
+                                            }
+                                            break;
+                                        default:
+                                            buttonHtml = '';
+                                    }
 
-                                        return `
+                                    return `
                                     <div class="profile-follow-wrapper">
                                         <div class="profile-post-likes">
                                             <a href="/profile/${liker.id}" class="pfp-link">
@@ -1785,60 +1798,60 @@
                                         ${buttonHtml}
                                     </div>
                                 `;
-                                    }).join('');
+                                }).join('');
 
-                                    scrollableDiv.innerHTML = html;
-                                })
-                                .catch(err => {
-                                    scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                                    console.error(err);
-                                });
-                        });
-                    });
-
-
-
-
-
-
-
-
-
-
-
-
-                    document.querySelectorAll('.comment-form').forEach(form => {
-                        form.addEventListener('submit', function (e) {
-                            e.preventDefault();
-
-                            const imageId = this.dataset.imageId;
-                            const input = this.querySelector('.comment-input');
-                            const commentText = input.value.trim();
-
-                            if (!commentText) return;
-
-                            fetch(`/comment/${imageId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ comment: commentText })
+                                scrollableDiv.innerHTML = html;
                             })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.status === 'success') {
-                                        const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
-                                        const comment = data.comment;
+                            .catch(err => {
+                                scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                                console.error(err);
+                            });
+                    });
+                });
 
-                                        const newComment = document.createElement('div');
-                                        newComment.className = 'profile-comment-wrapper';
-                                        newComment.innerHTML = `
+
+
+
+
+
+
+
+
+
+
+
+                document.querySelectorAll('.comment-form').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const imageId = this.dataset.imageId;
+                        const input = this.querySelector('.comment-input');
+                        const commentText = input.value.trim();
+
+                        if (!commentText) return;
+
+                        fetch(`/comment/${imageId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ comment: commentText })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
+                                    const comment = data.comment;
+
+                                    const newComment = document.createElement('div');
+                                    newComment.className = 'profile-comment-wrapper';
+                                    newComment.innerHTML = `
 <div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
             <img src="${comment.profile_pic && comment.profile_pic !== 'pfp.jpg'
-                                                ? `/profile_pics/${comment.profile_pic}`
-                                                : '/static/pfp.jpg'}" class="pfp">
+                                            ? `/profile_pics/${comment.profile_pic}`
+                                            : '/static/pfp.jpg'}" class="pfp">
         </a>
         <div class="profile-name-date">
             <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
@@ -1883,70 +1896,70 @@
 <div class="line-comments"></div>
 `;
 
-                                        commentList.prepend(newComment);
+                                    commentList.prepend(newComment);
 
-                                        // Create a 16px spacer div
-                                        const spacer = document.createElement('div');
-                                        spacer.style.height = '16px';
-                                        spacer.classList.add('comment-spacer-temp');
+                                    // Create a 16px spacer div
+                                    const spacer = document.createElement('div');
+                                    spacer.style.height = '16px';
+                                    spacer.classList.add('comment-spacer-temp');
 
-                                        // Insert spacer directly after newComment
-                                        newComment.insertAdjacentElement('afterend', spacer);
+                                    // Insert spacer directly after newComment
+                                    newComment.insertAdjacentElement('afterend', spacer);
 
-                                        input.value = '';
-                                    } else {
-                                        console.error('Failed to post comment:', data);
-                                    }
-                                })
-                                .catch(err => console.error('Error:', err));
-                        });
+                                    input.value = '';
+                                } else {
+                                    console.error('Failed to post comment:', data);
+                                }
+                            })
+                            .catch(err => console.error('Error:', err));
                     });
+                });
 
 
 
 
-                    // Setup comment like overlay data fetch
-                    document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
-                        const index = likeBtn.id.split('-')[1];
-                        const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
-                        const commentId = scrollableDiv?.dataset?.commentId;
+                // Setup comment like overlay data fetch
+                document.querySelectorAll('[id^="openOverlayCommentLikes-"]').forEach((likeBtn) => {
+                    const index = likeBtn.id.split('-')[1];
+                    const scrollableDiv = document.getElementById(`scrollableDivCommentLikes-${index}`);
+                    const commentId = scrollableDiv?.dataset?.commentId;
 
-                        likeBtn.addEventListener('click', () => {
-                            if (!commentId || !scrollableDiv) return;
+                    likeBtn.addEventListener('click', () => {
+                        if (!commentId || !scrollableDiv) return;
 
-                            scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
+                        scrollableDiv.innerHTML = `<p class="loading-msg">Loading likes...</p>`;
 
-                            fetch(`/comment/likes/${commentId}`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (!data.likers || data.likers.length === 0) {
-                                        scrollableDiv.innerHTML = `<div class="notifs-empty">
+                        fetch(`/comment/likes/${commentId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (!data.likers || data.likers.length === 0) {
+                                    scrollableDiv.innerHTML = `<div class="notifs-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
                     </div>`;
-                                        return;
-                                    }
+                                    return;
+                                }
 
-                                    const html = data.likers.map(liker => {
-                                        const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric'
-                                        });
+                                const html = data.likers.map(liker => {
+                                    const dateStr = new Date(liker.timestamp).toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric'
+                                    });
 
-                                        let buttonHtml = '';
-                                        switch (liker.relationship) {
-                                            case 'self':
-                                                buttonHtml = '';
-                                                break;
-                                            case 'friends':
-                                                buttonHtml = `
+                                    let buttonHtml = '';
+                                    switch (liker.relationship) {
+                                        case 'self':
+                                            buttonHtml = '';
+                                            break;
+                                        case 'friends':
+                                            buttonHtml = `
                                 <form action="/unfriend/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
                                 </form>`;
-                                                break;
-                                            case 'incoming_pending':
-                                                buttonHtml = `
+                                            break;
+                                        case 'incoming_pending':
+                                            buttonHtml = `
                                 <div class="response-wrapper" style="margin: 0;">
                                     <!--AL-->
                                     <form action="/accept_request/${liker.request_id}" method="post">
@@ -1956,30 +1969,30 @@
                                         <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
                                     </form>
                                 </div>`;
-                                                break;
-                                            case 'outgoing_pending':
-                                                buttonHtml = `
+                                            break;
+                                        case 'outgoing_pending':
+                                            buttonHtml = `
                                 <form action="/cancel_request/${liker.id}" method="post">
                                     <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                                 </form>`;
-                                                break;
-                                            case 'outgoing_rejected':
-                                            case 'not_friends':
-                                                if (liker.verified) {
-                                                    buttonHtml = `
+                                            break;
+                                        case 'outgoing_rejected':
+                                        case 'not_friends':
+                                            if (liker.verified) {
+                                                buttonHtml = `
                                     <form action="/send_request/${liker.id}" method="post">
                                         <button type="submit" class="follow-button-profile no-margin">Befriend</button>
                                     </form>`;
-                                                } else {
-                                                    buttonHtml = `
+                                            } else {
+                                                buttonHtml = `
                                     <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>`;
-                                                }
-                                                break;
-                                            default:
-                                                buttonHtml = '';
-                                        }
+                                            }
+                                            break;
+                                        default:
+                                            buttonHtml = '';
+                                    }
 
-                                        return `
+                                    return `
                                     <div class="profile-follow-wrapper">
                                         <div class="profile-post-likes">
                                             <a href="/profile/${liker.id}" class="pfp-link">
@@ -1995,483 +2008,483 @@
                                         ${buttonHtml}
                                     </div>
                                 `;
-                                    }).join('');
+                                }).join('');
 
-                                    scrollableDiv.innerHTML = html;
-                                })
-                                .catch(err => {
-                                    scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
-                                    console.error("Comment like overlay error:", err);
-                                });
-                        });
-                    });
-
-
-
-
-
-                    document.querySelectorAll('.save-button').forEach(button => {
-                        button.addEventListener('click', function (event) {
-                            event.preventDefault();  // <-- Prevent the default anchor behavior (jump to top)
-
-                            const imageId = this.dataset.imageId;
-                            const isSaved = this.classList.contains('saved');
-                            const frame = this.closest('.frame1');
-
-                            fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Content-Type': 'application/json'
-                                },
-                                credentials: 'include'
+                                scrollableDiv.innerHTML = html;
                             })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.status === 'saved') {
-                                        button.classList.add('saved');
-                                        button.textContent = 'Unsave';
-                                    } else if (data.status === 'unsaved') {
-                                        button.classList.remove('saved');
-                                        button.textContent = 'Save';
-                                    }
-
-                                    if (frame) {
-                                        frame.style.display = 'none';
-                                    }
-                                })
-                                .catch(error => console.error('Error:', error));
-                        });
-                    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    const moreBtns = document.querySelectorAll('.more-symbol');
-                    const allFrames1 = document.querySelectorAll('.frame1');
-
-                    const pfp = document.getElementById('pfp');
-                    const frame2 = document.getElementById('frame2');
-                    const pfp3 = document.getElementById('pfp3');
-                    const frame3 = document.getElementById('frame3');
-                    const pfp4 = document.getElementById('pfp4');
-                    const frame4 = document.getElementById('frame4');
-
-                    allFrames1.forEach(frame => frame.style.display = 'none');
-                    if (frame2) frame2.style.display = 'none';
-                    if (frame3) frame3.style.display = 'none';
-                    if (frame4) frame4.style.display = 'none';
-
-                    let isFrame234Open = false;
-
-                    moreBtns.forEach((btn, index) => {
-                        btn.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            const currentFrame = document.getElementById(`frame1-${index + 1}`);
-                            const isOpen = currentFrame.style.display === 'block';
-
-                            allFrames1.forEach(frame => frame.style.display = 'none');
-
-                            currentFrame.style.display = isOpen ? 'none' : 'block';
-
-                            if (frame2) frame2.style.display = 'none';
-                            if (frame3) frame3.style.display = 'none';
-                            if (frame4) frame4.style.display = 'none';
-                            isFrame234Open = false;
-                        });
-                    });
-
-                    if (pfp) {
-                        pfp.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            const isOpen = frame2.style.display === 'block';
-                            if (isOpen) {
-                                frame2.style.display = 'none';
-                                frame3.style.display = 'none';
-                                frame4.style.display = 'none';
-                                isFrame234Open = false;
-                            } else {
-                                frame2.style.display = 'block';
-                                frame3.style.display = 'block';
-                                frame4.style.display = 'block';
-                                allFrames1.forEach(frame => frame.style.display = 'none');
-                                isFrame234Open = true;
-                            }
-                        });
-                    }
-
-                    if (pfp3) {
-                        pfp3.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            const isOpen = frame3.style.display === 'block';
-                            if (isOpen) {
-                                frame2.style.display = 'none';
-                                frame3.style.display = 'none';
-                                frame4.style.display = 'none';
-                                isFrame234Open = false;
-                            } else {
-                                frame2.style.display = 'block';
-                                frame3.style.display = 'block';
-                                frame4.style.display = 'block';
-                                allFrames1.forEach(frame => frame.style.display = 'none');
-                                isFrame234Open = true;
-                            }
-                        });
-                    }
-
-                    if (pfp4) {
-                        pfp4.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            const isOpen = frame4.style.display === 'block';
-                            if (isOpen) {
-                                frame2.style.display = 'none';
-                                frame3.style.display = 'none';
-                                frame4.style.display = 'none';
-                                isFrame234Open = false;
-                            } else {
-                                frame2.style.display = 'block';
-                                frame3.style.display = 'block';
-                                frame4.style.display = 'block';
-                                allFrames1.forEach(frame => frame.style.display = 'none');
-                                isFrame234Open = true;
-                            }
-                        });
-                    }
-
-                    document.addEventListener('click', function (event) {
-                        moreBtns.forEach((btn, index) => {
-                            const frame = document.getElementById(`frame1-${index + 1}`);
-                            if (!frame.contains(event.target) && event.target !== btn) {
-                                frame.style.display = 'none';
-                            }
-                        });
-
-                        if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
-                            frame2.style.display = 'none';
-                        }
-                        if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
-                            frame3.style.display = 'none';
-                        }
-                        if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
-                            frame4.style.display = 'none';
-                        }
-
-                        const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
-                        const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
-                        const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
-
-                        if (!frame2Visible && !frame3Visible && !frame4Visible) {
-                            isFrame234Open = false;
-                        }
-                    });
-
-                    window.addEventListener('resize', function () {
-                        if (isFrame234Open) {
-                            frame2.style.display = 'block';
-                            frame3.style.display = 'block';
-                            frame4.style.display = 'block';
-                        }
-                    });
-
-                    function checkScrollbar() {
-                        const imageInput = document.getElementById('image');
-                        const div = document.getElementById('scrollableDiv');
-                        const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
-                        const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
-                        const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-
-                        if (imageInput && div) {
-                            div.classList.remove('no-scroll', 'has-scroll');
-                            if (imageInput.files.length > 0) {
-                                div.classList.add('has-scroll');
-                            } else {
-                                div.classList.add('no-scroll');
-                            }
-                        }
-
-                        const checkScrollState = (divList) => {
-                            divList.forEach(el => {
-                                el.classList.remove('no-scroll', 'has-scroll');
-                                if (el.scrollHeight > el.clientHeight) {
-                                    el.classList.add('has-scroll');
-                                } else {
-                                    el.classList.add('no-scroll');
-                                }
+                            .catch(err => {
+                                scrollableDiv.innerHTML = `<p>Error loading likes.</p>`;
+                                console.error("Comment like overlay error:", err);
                             });
-                        };
-
-                        checkScrollState(likeDivs);
-                        checkScrollState(commentDivs);
-                        checkScrollState(commentLikeDivs);
-                    }
-
-                    window.addEventListener("load", () => {
-                        requestAnimationFrame(() => {
-                            checkScrollbar();
-                        });
                     });
-
-                    function adjustRightPaddingOnScrollCheck() {
-                        const ids = ["notifs", "requests"];
-                        ids.forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) {
-                                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                                el.style.paddingRight = hasScroll ? "12px" : "24px";
-                            }
-                        });
-                    }
-
-                    function adjustRightPaddingOnScrollCheckAll() {
-                        const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                        ids.forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) {
-                                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                                el.style.paddingRight = hasScroll ? "12px" : "24px";
-                            }
-                        });
-                    }
-
-                    // Run on page load and resize
-                    window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
-                    window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
+                });
 
 
-                    const imageInput = document.getElementById('image');
-                    if (imageInput) {
-                        imageInput.addEventListener('change', checkScrollbar);
-                    }
-                    checkScrollbar();
 
-                    document.addEventListener("click", function (event) {
-                        const button = event.target.closest(".like-button");
 
-                        if (button) {
-                            button.classList.toggle("liked");
 
-                            const label = button.querySelector(".partner-label");
-                            if (label) {
-                                label.textContent = button.classList.contains("liked") ? "Unlike" : "Like";
-                            }
-                        }
-                    });
+                document.querySelectorAll('.save-button').forEach(button => {
+                    button.addEventListener('click', function (event) {
+                        event.preventDefault();  // <-- Prevent the default anchor behavior (jump to top)
 
-                    function isChrome() {
-                        return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-                    }
+                        const imageId = this.dataset.imageId;
+                        const isSaved = this.classList.contains('saved');
+                        const frame = this.closest('.frame1');
 
-                    function setFullHeight() {
-                        const adjustment = isChrome() ? 1 : 0;
-                        const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
-
-                        const rightSidebar = document.querySelector('.right-sidebar');
-                        const leftSidebar = document.querySelector('.left-sidebar');
-
-                        if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
-                        if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
-                    }
-
-                    window.addEventListener('resize', setFullHeight);
-                    setFullHeight();
-
-                    const imageInputPreview = document.getElementById('image');
-                    const imageWrapper = document.getElementById('imageWrapper');
-                    const imagePreview = document.getElementById('uploadedImagePreview');
-                    const closeButton = document.getElementById('closeButton');
-                    const scrollableDiv = document.querySelector('.scrollable-div');
-                    const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
-
-                    if (imageInputPreview) {
-                        imageInputPreview.addEventListener('change', function () {
-                            const file = this.files[0];
-
-                            if (file && file.type.startsWith('image/')) {
-                                const reader = new FileReader();
-                                reader.onload = function (e) {
-                                    imagePreview.src = e.target.result;
-                                    imageWrapper.style.display = 'block';
-
-                                    if (collaboratorTagSection) {
-                                        collaboratorTagSection.style.display = 'block';
-                                    }
-                                };
-                                reader.readAsDataURL(file);
-                            } else {
-                                imagePreview.src = '';
-                                imageWrapper.style.display = 'none';
-
-                                if (collaboratorTagSection) {
-                                    collaboratorTagSection.style.display = 'none';
-                                }
-                            }
-                        });
-                    }
-
-                    if (closeButton) {
-                        closeButton.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            imagePreview.src = '';
-                            imageWrapper.style.display = 'none';
-                            imageInputPreview.value = '';
-
-                            if (collaboratorTagSection) {
-                                collaboratorTagSection.style.display = 'none';
-                            }
-
-                            if (scrollableDiv) {
-                                scrollableDiv.classList.remove('has-scroll');
-                                scrollableDiv.classList.add('no-scroll');
-                            }
-                        });
-                    }
-
-                    const circledClose = document.querySelector('.circled-icon-1-overlay-version');
-                    if (circledClose) {
-                        circledClose.addEventListener('click', function () {
-                            document.getElementById('uploadedImagePreview').src = '';
-                            document.getElementById('image').value = '';
-                            document.getElementById('imageWrapper').style.display = 'none';
-
-                            if (collaboratorTagSection) {
-                                collaboratorTagSection.style.display = 'none';
-                            }
-
-                            if (scrollableDiv) {
-                                scrollableDiv.classList.remove('has-scroll');
-                                scrollableDiv.classList.add('no-scroll');
-                            }
-                        });
-                    }
-
-                    const profileForm = document.getElementById('profileForm');
-                    if (profileForm) {
-                        console.log('Form found');
-
-                        profileForm.addEventListener('submit', async function (e) {
-                            e.preventDefault();
-                            console.log('Form submission prevented');
-
-                            const formData = new FormData(this);
-
-                            // Append all form data into a single array
-                            const dataArray = [];
-                            for (const [key, value] of formData.entries()) {
-                                dataArray.push([key, value]);
-                            }
-                            console.log('Form data as array:', dataArray);
-
-                            try {
-                                console.log('Sending data to the server...');
-                                const response = await fetch('/api/setup-profile', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-
-                                console.log('Response received:', response);
-                                const result = await response.json();
-                                console.log('Parsed result:', result);
-
-                                if (result.success) {
-                                    console.log('Profile saved successfully');
-                                    document.getElementById('profileModal').style.display = 'none';
-                                    window.location.href = result.redirect_url;
-                                } else {
-                                    console.log('Something went wrong while saving the profile');
-                                    alert('Something went wrong while saving your profile.');
-                                }
-                            } catch (error) {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
-                            }
-                        });
-                    } else {
-                        console.log('Form not found');
-                    }
-
-                    document.getElementById('notify-btn').addEventListener('click', function () {
-                        const recipientId = this.getAttribute('data-recipient-id');
-
-                        fetch('/notify/collab_check', {
+                        fetch(`/${isSaved ? 'unsave' : 'save'}/${imageId}`, {
                             method: 'POST',
                             headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ recipient_id: recipientId })
+                            credentials: 'include'
                         })
                             .then(response => response.json())
                             .then(data => {
-                                if (data.error) {
-                                    alert('Error: ' + data.error);
-                                } else {
-                                    alert(data.message);
-                                    // Immediately redirect after alert is dismissed
-                                    window.location.href = data.redirect_url;
+                                if (data.status === 'saved') {
+                                    button.classList.add('saved');
+                                    button.textContent = 'Unsave';
+                                } else if (data.status === 'unsaved') {
+                                    button.classList.remove('saved');
+                                    button.textContent = 'Save';
+                                }
+
+                                if (frame) {
+                                    frame.style.display = 'none';
                                 }
                             })
-                            .catch(err => alert('Request failed: ' + err));
+                            .catch(error => console.error('Error:', error));
                     });
-
-
                 });
 
-                window.respondToRequest = function (requestId, action, buttonElement) {
-                    const userId = buttonElement.getAttribute('data-userid');
 
-                    fetch(`/${action}_request/${requestId}`, {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                const moreBtns = document.querySelectorAll('.more-symbol');
+                const allFrames1 = document.querySelectorAll('.frame1');
+
+                const pfp = document.getElementById('pfp');
+                const frame2 = document.getElementById('frame2');
+                const pfp3 = document.getElementById('pfp3');
+                const frame3 = document.getElementById('frame3');
+                const pfp4 = document.getElementById('pfp4');
+                const frame4 = document.getElementById('frame4');
+
+                allFrames1.forEach(frame => frame.style.display = 'none');
+                if (frame2) frame2.style.display = 'none';
+                if (frame3) frame3.style.display = 'none';
+                if (frame4) frame4.style.display = 'none';
+
+                let isFrame234Open = false;
+
+                moreBtns.forEach((btn, index) => {
+                    btn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const currentFrame = document.getElementById(`frame1-${index + 1}`);
+                        const isOpen = currentFrame.style.display === 'block';
+
+                        allFrames1.forEach(frame => frame.style.display = 'none');
+
+                        currentFrame.style.display = isOpen ? 'none' : 'block';
+
+                        if (frame2) frame2.style.display = 'none';
+                        if (frame3) frame3.style.display = 'none';
+                        if (frame4) frame4.style.display = 'none';
+                        isFrame234Open = false;
+                    });
+                });
+
+                if (pfp) {
+                    pfp.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const isOpen = frame2.style.display === 'block';
+                        if (isOpen) {
+                            frame2.style.display = 'none';
+                            frame3.style.display = 'none';
+                            frame4.style.display = 'none';
+                            isFrame234Open = false;
+                        } else {
+                            frame2.style.display = 'block';
+                            frame3.style.display = 'block';
+                            frame4.style.display = 'block';
+                            allFrames1.forEach(frame => frame.style.display = 'none');
+                            isFrame234Open = true;
+                        }
+                    });
+                }
+
+                if (pfp3) {
+                    pfp3.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const isOpen = frame3.style.display === 'block';
+                        if (isOpen) {
+                            frame2.style.display = 'none';
+                            frame3.style.display = 'none';
+                            frame4.style.display = 'none';
+                            isFrame234Open = false;
+                        } else {
+                            frame2.style.display = 'block';
+                            frame3.style.display = 'block';
+                            frame4.style.display = 'block';
+                            allFrames1.forEach(frame => frame.style.display = 'none');
+                            isFrame234Open = true;
+                        }
+                    });
+                }
+
+                if (pfp4) {
+                    pfp4.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const isOpen = frame4.style.display === 'block';
+                        if (isOpen) {
+                            frame2.style.display = 'none';
+                            frame3.style.display = 'none';
+                            frame4.style.display = 'none';
+                            isFrame234Open = false;
+                        } else {
+                            frame2.style.display = 'block';
+                            frame3.style.display = 'block';
+                            frame4.style.display = 'block';
+                            allFrames1.forEach(frame => frame.style.display = 'none');
+                            isFrame234Open = true;
+                        }
+                    });
+                }
+
+                document.addEventListener('click', function (event) {
+                    moreBtns.forEach((btn, index) => {
+                        const frame = document.getElementById(`frame1-${index + 1}`);
+                        if (!frame.contains(event.target) && event.target !== btn) {
+                            frame.style.display = 'none';
+                        }
+                    });
+
+                    if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                        frame2.style.display = 'none';
+                    }
+                    if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                        frame3.style.display = 'none';
+                    }
+                    if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                        frame4.style.display = 'none';
+                    }
+
+                    const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+                    const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+                    const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+                    if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                        isFrame234Open = false;
+                    }
+                });
+
+                window.addEventListener('resize', function () {
+                    if (isFrame234Open) {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                    }
+                });
+
+                function checkScrollbar() {
+                    const imageInput = document.getElementById('image');
+                    const div = document.getElementById('scrollableDiv');
+                    const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+                    const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+                    const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+                    if (imageInput && div) {
+                        div.classList.remove('no-scroll', 'has-scroll');
+                        if (imageInput.files.length > 0) {
+                            div.classList.add('has-scroll');
+                        } else {
+                            div.classList.add('no-scroll');
+                        }
+                    }
+
+                    const checkScrollState = (divList) => {
+                        divList.forEach(el => {
+                            el.classList.remove('no-scroll', 'has-scroll');
+                            if (el.scrollHeight > el.clientHeight) {
+                                el.classList.add('has-scroll');
+                            } else {
+                                el.classList.add('no-scroll');
+                            }
+                        });
+                    };
+
+                    checkScrollState(likeDivs);
+                    checkScrollState(commentDivs);
+                    checkScrollState(commentLikeDivs);
+                }
+
+                window.addEventListener("load", () => {
+                    requestAnimationFrame(() => {
+                        checkScrollbar();
+                    });
+                });
+
+                function adjustRightPaddingOnScrollCheck() {
+                    const ids = ["notifs", "requests"];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                            el.style.paddingRight = hasScroll ? "12px" : "24px";
+                        }
+                    });
+                }
+
+                function adjustRightPaddingOnScrollCheckAll() {
+                    const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                            el.style.paddingRight = hasScroll ? "12px" : "24px";
+                        }
+                    });
+                }
+
+                // Run on page load and resize
+                window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
+                window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
+
+
+                const imageInput = document.getElementById('image');
+                if (imageInput) {
+                    imageInput.addEventListener('change', checkScrollbar);
+                }
+                checkScrollbar();
+
+                document.addEventListener("click", function (event) {
+                    const button = event.target.closest(".like-button");
+
+                    if (button) {
+                        button.classList.toggle("liked");
+
+                        const label = button.querySelector(".partner-label");
+                        if (label) {
+                            label.textContent = button.classList.contains("liked") ? "Unlike" : "Like";
+                        }
+                    }
+                });
+
+                function isChrome() {
+                    return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+                }
+
+                function setFullHeight() {
+                    const adjustment = isChrome() ? 1 : 0;
+                    const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
+
+                    const rightSidebar = document.querySelector('.right-sidebar');
+                    const leftSidebar = document.querySelector('.left-sidebar');
+
+                    if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
+                    if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
+                }
+
+                window.addEventListener('resize', setFullHeight);
+                setFullHeight();
+
+                const imageInputPreview = document.getElementById('image');
+                const imageWrapper = document.getElementById('imageWrapper');
+                const imagePreview = document.getElementById('uploadedImagePreview');
+                const closeButton = document.getElementById('closeButton');
+                const scrollableDiv = document.querySelector('.scrollable-div');
+                const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
+
+                if (imageInputPreview) {
+                    imageInputPreview.addEventListener('change', function () {
+                        const file = this.files[0];
+
+                        if (file && file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                imagePreview.src = e.target.result;
+                                imageWrapper.style.display = 'block';
+
+                                if (collaboratorTagSection) {
+                                    collaboratorTagSection.style.display = 'block';
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            imagePreview.src = '';
+                            imageWrapper.style.display = 'none';
+
+                            if (collaboratorTagSection) {
+                                collaboratorTagSection.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+
+                if (closeButton) {
+                    closeButton.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        imagePreview.src = '';
+                        imageWrapper.style.display = 'none';
+                        imageInputPreview.value = '';
+
+                        if (collaboratorTagSection) {
+                            collaboratorTagSection.style.display = 'none';
+                        }
+
+                        if (scrollableDiv) {
+                            scrollableDiv.classList.remove('has-scroll');
+                            scrollableDiv.classList.add('no-scroll');
+                        }
+                    });
+                }
+
+                const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+                if (circledClose) {
+                    circledClose.addEventListener('click', function () {
+                        document.getElementById('uploadedImagePreview').src = '';
+                        document.getElementById('image').value = '';
+                        document.getElementById('imageWrapper').style.display = 'none';
+
+                        if (collaboratorTagSection) {
+                            collaboratorTagSection.style.display = 'none';
+                        }
+
+                        if (scrollableDiv) {
+                            scrollableDiv.classList.remove('has-scroll');
+                            scrollableDiv.classList.add('no-scroll');
+                        }
+                    });
+                }
+
+                const profileForm = document.getElementById('profileForm');
+                if (profileForm) {
+                    console.log('Form found');
+
+                    profileForm.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+                        console.log('Form submission prevented');
+
+                        const formData = new FormData(this);
+
+                        // Append all form data into a single array
+                        const dataArray = [];
+                        for (const [key, value] of formData.entries()) {
+                            dataArray.push([key, value]);
+                        }
+                        console.log('Form data as array:', dataArray);
+
+                        try {
+                            console.log('Sending data to the server...');
+                            const response = await fetch('/api/setup-profile', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            console.log('Response received:', response);
+                            const result = await response.json();
+                            console.log('Parsed result:', result);
+
+                            if (result.success) {
+                                console.log('Profile saved successfully');
+                                document.getElementById('profileModal').style.display = 'none';
+                                window.location.href = result.redirect_url;
+                            } else {
+                                console.log('Something went wrong while saving the profile');
+                                alert('Something went wrong while saving your profile.');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                } else {
+                    console.log('Form not found');
+                }
+
+                document.getElementById('notify-btn').addEventListener('click', function () {
+                    const recipientId = this.getAttribute('data-recipient-id');
+
+                    fetch('/notify/collab_check', {
                         method: 'POST',
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'Content-Type': 'application/json'
                         },
-                        credentials: 'include'
+                        body: JSON.stringify({ recipient_id: recipientId })
                     })
-                        .then(res => res.json())
+                        .then(response => response.json())
                         .then(data => {
-                            if (!data.success) {
-                                alert(data.message || 'Something went wrong.');
-                                return;
+                            if (data.error) {
+                                alert('Error: ' + data.error);
+                            } else {
+                                alert(data.message);
+                                // Immediately redirect after alert is dismissed
+                                window.location.href = data.redirect_url;
                             }
+                        })
+                        .catch(err => alert('Request failed: ' + err));
+                });
 
-                            const wrapper = buttonElement.closest('.response-wrapper');
-                            if (!wrapper) return;
 
-                            if (action === 'accept') {
-                                wrapper.innerHTML = `
+            });
+
+            window.respondToRequest = function (requestId, action, buttonElement) {
+                const userId = buttonElement.getAttribute('data-userid');
+
+                fetch(`/${action}_request/${requestId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            alert(data.message || 'Something went wrong.');
+                            return;
+                        }
+
+                        const wrapper = buttonElement.closest('.response-wrapper');
+                        if (!wrapper) return;
+
+                        if (action === 'accept') {
+                            wrapper.innerHTML = `
                 <button type="button" class="follow-button-profile"
                     onclick="handleFriendship(${userId}, 'unfriend', this)">
                     Unfriend
                 </button>
             `;
-                            } else if (action === 'reject') {
-                                wrapper.innerHTML = `
+                        } else if (action === 'reject') {
+                            wrapper.innerHTML = `
                 <button type="button" class="follow-button-profile"
                     onclick="handleFriendship(${userId}, 'send_request', this)">
                     Befriend
                 </button>
             `;
-                            }
-                        })
-                        .catch(err => {
-                            console.error(`${action} request error:`, err);
-                            alert('Error performing action.');
-                        });
-                };
+                        }
+                    })
+                    .catch(err => {
+                        console.error(`${action} request error:`, err);
+                        alert('Error performing action.');
+                    });
+            };
 
 
-            </script>
+        </script>
 </body>
 
 </html>
