@@ -1623,7 +1623,7 @@
                     document.getElementById('match-fullname').textContent = actor.full_name;
                     document.getElementById('match-username').textContent = actor.full_name;
                     document.getElementById('match-role').textContent = actor.role;
-                    document.getElementById('match-location').textContent = `${actor.city}, ${actor.state}, ${actor.country}`;
+                    document.getElementById('match-location').textContent = actor.location_display || "";
                     document.getElementById('match-skills').textContent = actor.skills.join(', ');
                     document.getElementById('match-preferences').textContent = actor.preferences.join(', ');
                     document.getElementById('match-experience').textContent = levels[actor.experience_level];
