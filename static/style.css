@@ -129,6 +129,17 @@ input[type="radio"] {
     /* Prevent shift due to scrollbar disappearing */
 }
 
+.link {
+    user-select: all;
+    cursor: pointer;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 a {
     text-decoration: none;
     color: inherit;
