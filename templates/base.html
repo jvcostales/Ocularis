@@ -234,7 +234,7 @@
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                     style="font-weight: 600;">post</span></a>.
                                             {% elif action == 'collab_check' %}
-                                            found you as a 
+                                            found you as a
                                             <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
                                                 style="font-weight: 600;">
@@ -371,11 +371,11 @@
                                     commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                             style="font-weight: 600;">post</span></a>.
                                     {% elif action == 'collab_check' %}
-                                    found you as a 
-                                            <span class="open-modal"
-                                                onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
-                                                style="font-weight: 600;">
-                                                match</span>.
+                                    found you as a
+                                    <span class="open-modal"
+                                        onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
+                                        style="font-weight: 600;">
+                                        match</span>.
                                     {% endif %}
                                 </div>
                                 <div class="notif-date">
@@ -844,13 +844,17 @@
                         <!-- Skills -->
                         <div class="info-sandp">
                             <div class="info-title-match">Skills</div>
-                            <div class="info-content-match" id="match-skills"></div>
+                            <div class="info-content-match">
+                                <div class="info-one-match" id="match-skills"></div>
+                            </div>
                         </div>
 
                         <!-- Preferences -->
                         <div class="info-sandp">
                             <div class="info-title-match">Preferences</div>
-                            <div class="info-content-match" id="match-preferences"></div>
+                            <div class="info-content-match">
+                                <div class="info-one-match" id="match-preferences"></div>
+                            </div>
                         </div>
 
                         <!-- Experience Level -->

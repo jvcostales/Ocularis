@@ -762,30 +762,32 @@ def feed():
                 countries = current_app.config['COUNTRIES']
                 states = current_app.config['STATES']
 
-                iso_to_country = {c["iso2"]: c["name"] for c in countries}
-                state_code_to_name = {s["state_code"]: s["name"] for s in states}
-
-                # Original values
+                # Get raw codes
                 city = user[3]
-                state = user[4]
-                country = user[5]
+                state_code = user[4]
+                country_code = user[5]
 
-                # Translated to readable names
-                readable_state = state_code_to_name.get(state, state)
-                readable_country = iso_to_country.get(country, country)
+                # Look up readable country name
+                iso_to_country = {c["iso2"]: c["name"] for c in countries}
+                readable_country = iso_to_country.get(country_code, country_code)
+
+                # Filter states by selected country first
+                filtered_states = [s for s in states if s["country_code"] == country_code]
+                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+                readable_state = state_code_to_name.get(state_code, state_code)
 
                 actor_details[actor_id] = {
                     "user_id": actor_id,
                     "full_name": f"{user[0]} {user[1]}",
                     "role": user[2],
                     "city": city,
-                    "state": readable_state,     # updated
-                    "country": readable_country, # updated
+                    "state": readable_state,
+                    "country": readable_country,
                     "profile_pic": user[6],
                     "cover_photo": user[7],
-                    "skills": user[8],               # PostgreSQL array
-                    "preferences": user[9],          # PostgreSQL array
-                    "experience_level": user[10],    # int (1–4)
+                    "skills": user[8],
+                    "preferences": user[9],
+                    "experience_level": user[10],
                     "facebook": user[11],
                     "instagram": user[12],
                     "x": user[13],
