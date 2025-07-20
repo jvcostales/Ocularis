@@ -1168,19 +1168,22 @@
                 document.addEventListener('DOMContentLoaded', function () {
                     document.querySelectorAll('.link-wrapper').forEach(wrapper => {
                         const button = wrapper.querySelector('.link-button');
-                        const link = wrapper.querySelector('.link');
+                        const linkDiv = wrapper.querySelector('.link');
+                        const icon = button.querySelector('.link-symbol');
 
                         button.addEventListener('click', () => {
-                            const textToCopy = link.textContent.trim();
+                            const textToCopy = linkDiv.textContent.trim();
+
                             navigator.clipboard.writeText(textToCopy)
                                 .then(() => {
-                                    button.querySelector('.link-symbol').textContent = 'check'; // show feedback
+                                    icon.classList.add('copied');
                                     setTimeout(() => {
-                                        button.querySelector('.link-symbol').textContent = 'content_copy'; // revert
+                                        icon.classList.remove('copied');
                                     }, 1500);
                                 })
                                 .catch(err => {
-                                    console.error('Failed to copy:', err);
+                                    console.error('Copy failed', err);
+                                    alert('Failed to copy link');
                                 });
                         });
                     });
