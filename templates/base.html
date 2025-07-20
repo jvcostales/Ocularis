@@ -228,16 +228,16 @@
                                             </span>
                                             {% if action == 'like' %}
                                             liked your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                    style="font-weight: 600;">post</span></a>.
+                                                    style="font-weight: 600; cursor: pointer;">post</span></a>.
                                             {% elif action == 'comment' %}
                                             commented on your <a
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
-                                                    style="font-weight: 600;">post</span></a>.
+                                                    style="font-weight: 600; cursor: pointer;">post</span></a>.
                                             {% elif action == 'collab_check' %}
                                             found you as a
                                             <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
-                                                style="font-weight: 600;">
+                                                style="font-weight: 600; cursor: pointer;">
                                                 match</span>.
                                             {% endif %}
                                         </div>
@@ -854,10 +854,10 @@
                         </div>
 
                         <!-- Experience Level -->
-                        <div class="info-sandp" style="margin-bottom: 36px;">
+                        <div class="info-sandp">
                             <div class="info-title-match">Experience Level</div>
                             <div class="info-content-match">
-                                <div class="info-one-match" id="match-experience"></div>
+                                <div class="info-one-match" id="match-experience"  style="margin-bottom: 36px;"></div>
                             </div>
                         </div>
 

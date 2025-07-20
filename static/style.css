@@ -2557,7 +2557,7 @@ input[type="url"]::placeholder {
         display: inline-block;
         text-align: center;
         font-size: 0.875rem;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
     }
 
     .padding-match {
