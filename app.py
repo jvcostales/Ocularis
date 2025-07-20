@@ -759,13 +759,28 @@ def feed():
             user = cur.fetchone()
 
             if user:
+                countries = current_app.config['COUNTRIES']
+                states = current_app.config['STATES']
+
+                iso_to_country = {c["iso2"]: c["name"] for c in countries}
+                state_code_to_name = {s["state_code"]: s["name"] for s in states}
+
+                # Original values
+                city = user[3]
+                state = user[4]
+                country = user[5]
+
+                # Translated to readable names
+                readable_state = state_code_to_name.get(state, state)
+                readable_country = iso_to_country.get(country, country)
+
                 actor_details[actor_id] = {
                     "user_id": actor_id,
                     "full_name": f"{user[0]} {user[1]}",
                     "role": user[2],
-                    "city": user[3],
-                    "state": user[4],
-                    "country": user[5],
+                    "city": city,
+                    "state": readable_state,     # updated
+                    "country": readable_country, # updated
                     "profile_pic": user[6],
                     "cover_photo": user[7],
                     "skills": user[8],               # PostgreSQL array
@@ -1002,6 +1017,7 @@ def view_post(image_id):
 
             if user:
                 actor_details[actor_id] = {
+                    "user_id": actor_id,
                     "full_name": f"{user[0]} {user[1]}",
                     "role": user[2],
                     "city": user[3],
@@ -1789,6 +1805,7 @@ def profile(user_id):
 
         if actor_row:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{actor_row[0]} {actor_row[1]}",
                 "role": actor_row[2],
                 "city": actor_row[3],
@@ -2269,6 +2286,7 @@ def pairup():
 
         if user:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{user[0]} {user[1]}",
                 "role": user[2],
                 "city": user[3],
@@ -2413,6 +2431,7 @@ def match():
 
         if user:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{user[0]} {user[1]}",
                 "role": user[2],
                 "city": user[3],
@@ -2725,6 +2744,7 @@ def browse_users():
 
         if user:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{user[0]} {user[1]}",
                 "role": user[2],
                 "city": user[3],
@@ -2923,6 +2943,7 @@ def settings():
         actor_row = cur.fetchone()
         if actor_row:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{actor_row[0]} {actor_row[1]}",
                 "role": actor_row[2],
                 "city": actor_row[3],
@@ -3149,6 +3170,7 @@ def saved():
 
         if user:
             actor_details[actor_id] = {
+                "user_id": actor_id,
                 "full_name": f"{user[0]} {user[1]}",
                 "role": user[2],
                 "city": user[3],
@@ -3485,6 +3507,7 @@ def search_results():
 
             if user:
                 actor_details[actor_id] = {
+                    "user_id": actor_id,
                     "full_name": f"{user[0]} {user[1]}",
                     "role": user[2],
                     "city": user[3],

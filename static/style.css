@@ -149,7 +149,8 @@ input[type="radio"] {
     bottom: -4px;
     background-color: transparent;
     border-radius: 5px;
-    z-index: -1; /* place behind the icon */
+    z-index: -1;
+    /* place behind the icon */
 }
 
 .link-symbol.copied {
@@ -157,7 +158,8 @@ input[type="radio"] {
 }
 
 .link-symbol.copied::before {
-    background-color: var(--highlight); /* blue background */
+    background-color: var(--highlight);
+    /* blue background */
 }
 
 a {
@@ -1895,6 +1897,7 @@ input[type="url"]::placeholder {
         font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 16px;
+        color: var(--text-muted);
     }
 
     span.person-symbol {
