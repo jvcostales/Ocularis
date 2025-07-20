@@ -819,7 +819,8 @@
                             <img src="{{ url_for('profile_pics', filename=actor.profile_pic)
             if actor.profile_pic and actor.profile_pic != 'pfp.jpg'
             else url_for('static', filename='pfp.jpg') }}" class="pfpsetup1">
-                            <div class="heading"><span id="match-username-{{ actor_id }}" style="font-weight: 600;"></span> found you
+                            <div class="heading"><span id="match-username-{{ actor_id }}"
+                                    style="font-weight: 600;"></span> found you
                                 as a
                                 match.
                             </div>
@@ -1221,7 +1222,6 @@
                     });
 
                     function showMatchStep(step, actorId) {
-                        // Only hide/show steps for the current modal
                         for (let i = 1; i <= 3; i++) {
                             const el = document.getElementById(`match-step-${i}-${actorId}`);
                             if (el) el.style.display = (i === step) ? 'block' : 'none';
@@ -1233,11 +1233,13 @@
                         closeMatchModal(actorId);
                     }
 
-                    // Expose to global scope so you can call from inline HTML
+                    // Expose functions globally
+                    window.openMatchModal = openMatchModal;
                     window.closeMatchModal = closeMatchModal;
                     window.showMatchStep = showMatchStep;
                     window.declineMatch = declineMatch;
 
+                    // Delete match button logic
                     document.querySelectorAll('.delete-match').forEach(btn => {
                         btn.addEventListener('click', function () {
                             const otherUserId = this.dataset.id;
@@ -1260,38 +1262,29 @@
                         });
                     });
 
-                    // Open modal per user
+                    // Open modal buttons
                     document.querySelectorAll('.open-modal').forEach(elem => {
                         elem.addEventListener('click', function () {
                             const userId = this.getAttribute('data-user-id');
                             const displayName = this.getAttribute('data-display-name');
 
-                            // Update modal content (if dynamic label update needed)
+                            // Update username if needed
                             const usernameSpan = document.getElementById(`match-username-${userId}`);
                             if (usernameSpan) {
                                 usernameSpan.textContent = displayName;
                             }
 
+                            // Set user ID on decline button
                             const declineBtn = document.getElementById(`decline-match-${userId}`);
                             if (declineBtn) {
                                 declineBtn.setAttribute('data-user-id', userId);
                             }
 
-                            // Freeze background scroll
-                            matchScrollPosition = window.scrollY;
-                            document.body.style.top = `-${matchScrollPosition}px`;
-                            document.body.classList.add('no-scrolling');
-
-                            // Show specific modal
-                            const modal = document.getElementById(`matchModal-${userId}`);
-                            if (modal) {
-                                modal.style.display = 'flex';
-                                showMatchStep(1, userId); // Start from step 1
-                            }
+                            openMatchModal(userId);
                         });
                     });
 
-                    // Decline match button per modal
+                    // Decline match buttons in modals
                     document.querySelectorAll('.decline-match').forEach(btn => {
                         btn.addEventListener('click', function () {
                             const userId = this.getAttribute('data-user-id');
@@ -1306,12 +1299,10 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     alert(data.message || data.error);
-                                    const modal = document.getElementById(`matchModal-${userId}`);
-                                    if (modal) modal.style.display = 'none';
-                                    document.body.classList.remove('no-scrolling');
-                                    document.body.style.top = '';
-                                    window.scrollTo(0, matchScrollPosition);
-                                    // Optionally remove or disable the match notification
+                                    closeMatchModal(userId);
+                                    // Optionally remove match container
+                                    const matchContainer = document.querySelector(`.profile-more-wrapper-pairup[data-user-id="${userId}"]`);
+                                    if (matchContainer) matchContainer.remove();
                                 });
                         });
                     });
