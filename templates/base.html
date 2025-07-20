@@ -807,7 +807,9 @@
 
         <div id="matchModal" class="modal" style="display: none;">
             <!-- Debug output -->
-<pre>{{ actor_details[actor_id] | tojson(indent=2) }}</pre>
+            {% if actor_id in actor_details %}
+            <pre>{{ actor_details[actor_id] | tojson(indent=2) }}</pre>
+            {% endif %}
 
             <div class="modal-content">
                 <!-- Step 1 -->
