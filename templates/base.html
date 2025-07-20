@@ -102,8 +102,11 @@
                                             found you as a
                                             <span class="open-modal" data-user-id="{{ actor_id }}"
                                                 data-display-name="{{ display_name }}"
-                                                data-notif-id="{{ notification_id }}" style="font-weight: 600;">
-                                                match</span>.
+                                                data-notif-id="{{ notification_id }}"
+                                                onclick="openMatchModal('{{ actor_id }}', '{{ display_name }}')"
+                                                style="font-weight: 600; cursor: pointer;">
+                                                match
+                                            </span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -236,8 +239,11 @@
                                             {% elif action == 'collab_check' %}
                                             found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
                                                 data-display-name="{{ display_name }}"
-                                                data-notif-id="{{ notification_id }}" style="font-weight: 600;">
-                                                match</span>.
+                                                data-notif-id="{{ notification_id }}"
+                                                onclick="openMatchModal('{{ actor_id }}', '{{ display_name }}')"
+                                                style="font-weight: 600; cursor: pointer;">
+                                                match
+                                            </span>.
                                             {% endif %}
                                         </div>
                                         <div class="notif-date">
@@ -372,8 +378,10 @@
                                     {% elif action == 'collab_check' %}
                                     found you as a <span class="open-modal" data-user-id="{{ actor_id }}"
                                         data-display-name="{{ display_name }}" data-notif-id="{{ notification_id }}"
-                                        style="font-weight: 600;">
-                                        match</span>.
+                                        onclick="openMatchModal('{{ actor_id }}', '{{ display_name }}')"
+                                        style="font-weight: 600; cursor: pointer;">
+                                        match
+                                    </span>.
                                     {% endif %}
                                 </div>
                                 <div class="notif-date">
@@ -1222,10 +1230,10 @@
                     });
 
                     function showMatchStep(step, actorId) {
-                        for (let i = 1; i <= 3; i++) {
-                            const el = document.getElementById(`match-step-${i}-${actorId}`);
-                            if (el) el.style.display = (i === step) ? 'block' : 'none';
-                        }
+                        document.querySelectorAll(`#matchModal-${actorId} .modal-step`).forEach(stepDiv => {
+                            stepDiv.style.display = 'none';
+                        });
+                        document.getElementById(`match-step-${step}-${actorId}`).style.display = 'block';
                     }
 
                     function declineMatch(actorId) {
@@ -1237,7 +1245,6 @@
                     window.openMatchModal = openMatchModal;
                     window.closeMatchModal = closeMatchModal;
                     window.showMatchStep = showMatchStep;
-                    window.declineMatch = declineMatch;
 
                     // Delete match button logic
                     document.querySelectorAll('.delete-match').forEach(btn => {
@@ -1662,22 +1669,20 @@
 
                     let matchScrollPosition = 0;
 
-                    function openMatchModal(actorId) {
-                        matchScrollPosition = window.scrollY;
-                        document.body.style.top = `-${matchScrollPosition}px`;
-                        document.body.classList.add('no-scrolling');
-
+                    function openMatchModal(actorId, displayName) {
                         const modal = document.getElementById(`matchModal-${actorId}`);
                         if (modal) {
-                            modal.style.display = 'flex';
-                            showMatchStep(1, actorId);
+                            modal.style.display = 'block';
+                        }
+                        const nameSpan = document.getElementById(`match-username-${actorId}`);
+                        if (nameSpan) {
+                            nameSpan.textContent = displayName;
                         }
                     }
 
                     function closeMatchModal(actorId) {
                         const modal = document.getElementById(`matchModal-${actorId}`);
                         if (modal) modal.style.display = 'none';
-
                         document.body.classList.remove('no-scrolling');
                         document.body.style.top = '';
                         window.scrollTo(0, matchScrollPosition);
