@@ -1928,17 +1928,38 @@ def profile(user_id):
 
     countries = current_app.config['COUNTRIES']
     states = current_app.config['STATES']
+    cities = current_app.config['CITIES']
 
-    # Map ISO2 to country name
+    # Build reusable mappings
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
+
+    # Map country → list of states
+    states_by_country = {}
+    for s in states:
+        states_by_country.setdefault(s["country_code"], []).append(s)
+
+    # Map (country, state) → list of cities
+    cities_by_country_state = {}
+    for c in cities:
+        key = (c["country_code"], c["state_code"])
+        cities_by_country_state.setdefault(key, []).append(c["name"])
+
+    # Resolve readable country
     readable_country = iso_to_country.get(country, country)
 
-    # 🔍 Filter states only for this country
-    filtered_states = [s for s in states if s["country_code"] == country]
-    state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-    readable_state = state_code_to_name.get(state, state)
+    # Resolve readable state
+    readable_state = state
+    for s in states_by_country.get(country, []):
+        if s["state_code"] == state:
+            readable_state = s["name"]
+            break
 
-    location = ", ".join(filter(None, [city, readable_state, readable_country]))
+    # Resolve readable city (only if it matches the given country+state)
+    valid_city_names = cities_by_country_state.get((country, state), [])
+    readable_city = city if city in valid_city_names else None
+
+    # Compose location
+    location = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
 
     return render_template(
         "profile.html",
