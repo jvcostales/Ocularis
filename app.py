@@ -1926,40 +1926,32 @@ def profile(user_id):
         outgoing_request is not None
     )
 
+    print("DEBUG:", country, state, city)
+
     countries = current_app.config['COUNTRIES']
     states = current_app.config['STATES']
     cities = current_app.config['CITIES']
 
-    # Build reusable mappings
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
-
-    # Map country → list of states
-    states_by_country = {}
-    for s in states:
-        states_by_country.setdefault(s["country_code"], []).append(s)
-
-    # Map (country, state) → list of cities
-    cities_by_country_state = {}
-    for c in cities:
-        key = (c["country_code"], c["state_code"])
-        cities_by_country_state.setdefault(key, []).append(c["name"])
-
-    # Resolve readable country
     readable_country = iso_to_country.get(country, country)
 
-    # Resolve readable state
-    readable_state = state
-    for s in states_by_country.get(country, []):
-        if s["state_code"] == state:
-            readable_state = s["name"]
-            break
+    # Filter states for this country
+    filtered_states = [s for s in states if s["country_code"] == country]
+    state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+    readable_state = state_code_to_name.get(state, state)
 
-    # Resolve readable city (case-insensitive match within correct state & country)
-    valid_city_names = cities_by_country_state.get((country, state), [])
-    readable_city = next((c for c in valid_city_names if c.lower() == city.lower()), None) if city else None
+    # Filter cities for this (country, state)
+    filtered_cities = [c["name"] for c in cities if c["country_code"] == country and c["state_code"] == state]
 
-    # Compose final location
+    print("DEBUG: Filtered cities for", country, state, "=>", filtered_cities)
+
+    # Case-insensitive city match
+    readable_city = next((c for c in filtered_cities if c.lower() == city.lower()), None) if city else None
+
+    print("DEBUG: Matched city =>", readable_city)
+
     location = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
+    print("DEBUG: Final location =>", location)
 
     return render_template(
         "profile.html",
