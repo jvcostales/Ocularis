@@ -1853,29 +1853,35 @@ def profile(user_id):
             states = current_app.config['STATES']
 
             # Get raw codes
-            city = actor_row[3]
-            state_code = actor_row[4]
-            country_code = actor_row[5]
+            actor_city = actor_row[3]
+            actor_state_code = actor_row[4]
+            actor_country_code = actor_row[5]
 
-            # Look up readable names
+            # Map ISO2 to country name
             iso_to_country = {c["iso2"]: c["name"] for c in countries}
-            readable_country = iso_to_country.get(country_code, country_code)
+            readable_country = iso_to_country.get(actor_country_code, actor_country_code)
 
-            # Filter states by selected country
-            filtered_states = [s for s in states if s["country_code"] == country_code]
+            # Filter states only for this country
+            filtered_states = [s for s in states if s["country_code"] == actor_country_code]
             state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-            readable_state = state_code_to_name.get(state_code, state_code)
+            readable_state = state_code_to_name.get(actor_state_code, actor_state_code)
 
-            # Display-friendly location string
-            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+            # Match city correctly
+            matched_city = next(
+                (c for c in cities if c["name"] == actor_city and c["state_code"] == actor_state_code and c["country_code"] == actor_country_code),
+                None
+            )
+            readable_city = matched_city["name"] if matched_city else actor_city
+
+            location_display = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
 
             actor_details[actor_id] = {
                 "user_id": actor_id,
                 "full_name": f"{actor_row[0]} {actor_row[1]}",
                 "role": actor_row[2],
                 "city": city,
-                "state": state_code,
-                "country": country_code,
+                "state": actor_state_code,
+                "country": actor_country_code,
                 "location_display": location_display,  # ✅ new key
                 "profile_pic": actor_row[6],
                 "cover_photo": actor_row[7],
