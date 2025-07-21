@@ -3,7 +3,7 @@
 
 <div class="profile-card">
     <div class="cover-photo-wrapper">
-        <label for="coverUpload" {% if is_own_profile %}style="cursor: pointer;"{% endif %}>
+        <label for="coverUpload" {% if is_own_profile %}style="cursor: pointer;" {% endif %}>
             <img src="{{ url_for('cover_photos', filename=viewed_user_profile_cover) if viewed_user_profile_cover and viewed_user_profile_cover != 'default_cover.png' else url_for('static', filename='default_cover.png') }}"
                 alt="Banner" class="banner {% if is_own_profile %}editable{% endif %}" id="coverImage">
         </label>
@@ -30,7 +30,39 @@
                     <span class="material-symbols-outlined world-symbol">public</span>
                     <div class="location-profile">{{ location }}</div>
                 </div>
-                <div class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else '' }}</div>
+                <div id="openFriendsButton" class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else '' }}</div>
+                <div id="friendsModalOverlay" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h2>Friends</h2>
+                        <div class="modal-scrollable">
+                            {% if friends_list %}
+                            {% for friend in friends_list %}
+                            <div class="profile-follow-wrapper">
+                                <div class="profile-post-likes">
+                                    <a href="{{ url_for('profile', user_id=friend.id) }}" class="pfp-link">
+                                        <img src="{{ url_for('profile_pics', filename=friend.profile_pic) if friend.profile_pic and friend.profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                            class="pfp">
+                                    </a>
+                                    <div class="profile-name-date">
+                                        <a href="{{ url_for('profile', user_id=friend.id) }}" class="username-link">
+                                            <div class="username">{{ friend.full_name }}</div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Optionally add an "Unfriend" button here -->
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="likes-empty">
+                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                                <div class="oops">Oops!</div>
+                                <div class="nothing">No friends to show.</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <button onclick="document.getElementById('friendsModalOverlay').style.display='none'">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
 

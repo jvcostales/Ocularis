@@ -1701,7 +1701,25 @@ def profile(user_id):
         WHERE user1_id = %s OR user2_id = %s
     """, (user_id, user_id))
     friend_count = cur.fetchone()[0]
+    
+        # Fetch friends' full details
+    cur.execute("""
+        SELECT u.id, u.first_name, u.last_name, u.profile_pic
+        FROM users u
+        JOIN friends f ON (
+            (f.user1_id = u.id AND f.user2_id = %s)
+            OR (f.user2_id = u.id AND f.user1_id = %s)
+        )
+        WHERE u.id != %s
+    """, (user_id, user_id, user_id))
+    friends = cur.fetchall()
 
+    # Format the data into a list of dicts
+    friends_list = [{
+        "id": row[0],
+        "full_name": f"{row[1]} {row[2]}",
+        "profile_pic": row[3]
+    } for row in friends]
 
     # Fetch images with author and collaborator names for a specific user
     cur.execute("""
@@ -1946,7 +1964,8 @@ def profile(user_id):
         profile_pic_url=profile_pic_url,
         viewed_user_profile_pic=viewed_user_profile_pic,
         viewed_user_profile_cover=viewed_user_profile_cover,
-        actor_details=actor_details
+        actor_details=actor_details,
+        friends_list=friends_list
     )
 
 @app.route('/send_request/<int:receiver_id>', methods=['POST'])

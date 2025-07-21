@@ -1142,6 +1142,15 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
+                const openFriendsButton = document.getElementById('openFriendsButton');
+                const friendsModalOverlay = document.getElementById('friendsModalOverlay');
+
+                if (openFriendsButton && friendsModalOverlay) {
+                    openFriendsButton.addEventListener('click', () => {
+                        friendsModalOverlay.style.display = 'block';
+                    });
+                }
+
                 document.querySelectorAll('.link-wrapper').forEach(wrapper => {
                     const button = wrapper.querySelector('.link-button');
                     const linkDiv = wrapper.querySelector('.link');
