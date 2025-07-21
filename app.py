@@ -1934,19 +1934,17 @@ def profile(user_id):
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
     readable_country = iso_to_country.get(country, country)
 
-    # 🔍 Filter states only for this country
+    # Filter states only for this country
     filtered_states = [s for s in states if s["country_code"] == country]
     state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
     readable_state = state_code_to_name.get(state, state)
-    
-    # Filter cities that match both country and state
-    filtered_cities = [
-        c for c in cities if c["country_code"] == country and c["state_code"] == state
-    ]
-    
-    # Optionally map cities to a dict if you want fast access
-    city_names = {c["name"]: c["name"] for c in filtered_cities}
-    readable_city = city_names.get(city, city)
+
+    # ✅ Safely match city with full triplet
+    matched_city = next(
+        (c for c in cities if c["name"] == city and c["state_code"] == state and c["country_code"] == country),
+        None
+    )
+    readable_city = matched_city["name"] if matched_city else city
 
     location = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
 
