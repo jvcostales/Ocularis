@@ -1979,14 +1979,14 @@ def send_request(receiver_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify(success=False, message=message), 403
         flash(message)
-        return redirect(url_for('profile', user_id=receiver_id))
+        return redirect(request.referrer or url_for('feed'))
 
     if sender_id == receiver_id:
         message = "You cannot send a friend request to yourself."
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify(success=False, message=message), 400
         flash(message)
-        return redirect(url_for('profile', user_id=receiver_id))
+        return redirect(request.referrer or url_for('feed'))
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -2010,7 +2010,7 @@ def send_request(receiver_id):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
-            return redirect(url_for('profile', user_id=receiver_id))
+            return redirect(request.referrer or url_for('feed'))
 
         # ✅ Check for mutual request: if receiver already sent you a request
         cur.execute("""
@@ -2025,7 +2025,7 @@ def send_request(receiver_id):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=True, status="incoming_pending", request_id=request_id)
             flash("This user already sent you a request.")
-            return redirect(url_for('profile', user_id=receiver_id))
+            return redirect(request.referrer or url_for('feed'))
 
         # ✅ Check if request already exists
         cur.execute("""
@@ -2037,7 +2037,7 @@ def send_request(receiver_id):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(success=False, message=message), 409
             flash(message)
-            return redirect(url_for('profile', user_id=receiver_id))
+            return redirect(request.referrer or url_for('feed'))
 
         # ✅ Allow resend after rejection
         cur.execute("""
@@ -2069,7 +2069,7 @@ def send_request(receiver_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('profile', user_id=receiver_id))
+    return redirect(request.referrer or url_for('feed'))
 
 
 @app.route('/unfriend/<int:other_user_id>', methods=['POST'])
@@ -2082,7 +2082,7 @@ def unfriend(other_user_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify(success=False, message=message), 400
         flash(message)
-        return redirect(url_for('profile', user_id=other_user_id))
+        return redirect(request.referrer or url_for('profile', user_id=other_user_id))
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -2123,7 +2123,7 @@ def unfriend(other_user_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('profile', user_id=other_user_id))
+    return redirect(request.referrer or url_for('profile', user_id=other_user_id))
 
 
 
@@ -2138,7 +2138,8 @@ def cancel_request(user_id):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify(success=False, message=message), 400
         flash(message)
-        return redirect(url_for('profile', user_id=user_id))
+        return redirect(request.referrer or url_for('profile', user_id=user_id))
+
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -2171,7 +2172,7 @@ def cancel_request(user_id):
         cur.close()
         conn.close()
 
-    return redirect(url_for('profile', user_id=user_id))
+    return redirect(request.referrer or url_for('profile', user_id=user_id))
 
 @app.route('/accept_request/<int:request_id>', methods=['POST'])
 @login_required
