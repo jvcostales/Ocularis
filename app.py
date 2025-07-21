@@ -1926,32 +1926,29 @@ def profile(user_id):
         outgoing_request is not None
     )
 
-    print("DEBUG:", country, state, city)
-
     countries = current_app.config['COUNTRIES']
     states = current_app.config['STATES']
     cities = current_app.config['CITIES']
 
+    # Map ISO2 to country name
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
     readable_country = iso_to_country.get(country, country)
 
-    # Filter states for this country
+    # 🔍 Filter states only for this country
     filtered_states = [s for s in states if s["country_code"] == country]
     state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
     readable_state = state_code_to_name.get(state, state)
-
-    # Filter cities for this (country, state)
-    filtered_cities = [c["name"] for c in cities if c["country_code"] == country and c["state_code"] == state]
-
-    print("DEBUG: Filtered cities for", country, state, "=>", filtered_cities)
-
-    # Case-insensitive city match
-    readable_city = next((c for c in filtered_cities if c.lower() == city.lower()), None) if city else None
-
-    print("DEBUG: Matched city =>", readable_city)
+    
+    # Filter cities that match both country and state
+    filtered_cities = [
+        c for c in cities if c["country_code"] == country and c["state_code"] == state
+    ]
+    
+    # Optionally map cities to a dict if you want fast access
+    city_names = {c["name"]: c["name"] for c in filtered_cities}
+    readable_city = city_names.get(city, city)
 
     location = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
-    print("DEBUG: Final location =>", location)
 
     return render_template(
         "profile.html",
