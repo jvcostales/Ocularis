@@ -1627,6 +1627,11 @@ def get_comment_likes(comment_id):
 @app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
+    
+    countries = current_app.config['COUNTRIES']
+    states = current_app.config['STATES']
+    cities = current_app.config['CITIES']
+    
     current_user_id = current_user.id
 
     if request.method == 'POST':
@@ -1931,10 +1936,6 @@ def profile(user_id):
         incoming_request is not None or # you cannot add if they already sent you a request
         outgoing_request is not None
     )
-
-    countries = current_app.config['COUNTRIES']
-    states = current_app.config['STATES']
-    cities = current_app.config['CITIES']
 
     # Map ISO2 to country name
     iso_to_country = {c["iso2"]: c["name"] for c in countries}
