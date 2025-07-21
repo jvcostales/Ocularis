@@ -1954,11 +1954,11 @@ def profile(user_id):
             readable_state = s["name"]
             break
 
-    # Resolve readable city (only if it matches the given country+state)
+    # Resolve readable city (case-insensitive match within correct state & country)
     valid_city_names = cities_by_country_state.get((country, state), [])
-    readable_city = city if city in valid_city_names else None
+    readable_city = next((c for c in valid_city_names if c.lower() == city.lower()), None) if city else None
 
-    # Compose location
+    # Compose final location
     location = ", ".join(filter(None, [readable_city, readable_state, readable_country]))
 
     return render_template(
