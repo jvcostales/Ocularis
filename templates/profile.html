@@ -33,7 +33,7 @@
                 <div id="openFriendsButton" class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else ''
                     }}</div>
                 <div id="friendsModalOverlay" class="modal" style="display: none;">
-                    <div class="modal-content">
+                    <div class="modal-content" onclick="event.stopPropagation()">
                         <button class="close-icon" id="closeFriendsButton">
                             <span class="material-symbols-outlined overlay-close-symbol">close</span>
                         </button>
