@@ -126,6 +126,8 @@ input[type="radio"] {
     position: fixed;
     /* Prevent background from scrolling */
     width: 100%;
+    box-sizing: border-box;
+    ;
     /* Prevent shift due to scrollbar disappearing */
 }
 
@@ -179,6 +181,8 @@ input[type="url"] {
 td input[type="url"] {
     width: 100%;
     box-sizing: border-box;
+    ;
+    box-sizing: border-box;
 }
 
 input[type="url"]::placeholder {
@@ -202,11 +206,14 @@ input[type="url"]::placeholder {
     top: 0;
     left: 0;
     width: 100%;
+    box-sizing: border-box;
+    ;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    box-sizing: border-box;
 }
 
 /* Desktop: 12-column layout */
@@ -319,6 +326,8 @@ input[type="url"]::placeholder {
         grid-row: 1;
         height: 56px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
         padding-left: 16px;
         padding-right: 16px;
@@ -511,7 +520,10 @@ input[type="url"]::placeholder {
 
     .image-post {
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
+        box-sizing: border-box;
     }
 
     .image-container {
@@ -885,9 +897,12 @@ input[type="url"]::placeholder {
 
     .overlay {
         position: fixed;
+        box-sizing: border-box;
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -916,6 +931,8 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .close-icon {
@@ -1194,6 +1211,8 @@ input[type="url"]::placeholder {
     .line {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin: 12px 0;
         box-sizing: border-box;
     }
@@ -1222,6 +1241,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -1323,6 +1344,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -1409,6 +1432,8 @@ input[type="url"]::placeholder {
     .line-comments {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -1417,6 +1442,8 @@ input[type="url"]::placeholder {
     .scrollable-div-comments .line-comments:last-of-type {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 0;
         box-sizing: border-box;
@@ -1435,6 +1462,8 @@ input[type="url"]::placeholder {
         padding: 16px;
         border-radius: 10px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100px;
         display: flex;
         flex-direction: column;
@@ -1500,6 +1529,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -1581,6 +1612,8 @@ input[type="url"]::placeholder {
         grid-row: 1;
         height: 56px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
         padding-left: 16px;
         padding-right: 16px;
@@ -1617,6 +1650,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
@@ -1768,6 +1803,8 @@ input[type="url"]::placeholder {
         align-items: center;
         position: relative;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .partner-back {
@@ -1858,6 +1895,8 @@ input[type="url"]::placeholder {
 
     .banner {
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 200px;
         object-fit: cover;
         border-top-left-radius: 10px;
@@ -2248,6 +2287,8 @@ input[type="url"]::placeholder {
     .line-comments-section {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 24px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -2309,6 +2350,8 @@ input[type="url"]::placeholder {
         display: flex;
         justify-content: space-between;
         width: 100%;
+        box-sizing: border-box;
+        ;
         align-items: flex-start;
     }
 
@@ -2438,6 +2481,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: visible;
@@ -2701,6 +2746,8 @@ input[type="url"]::placeholder {
         grid-row: 1;
         height: 56px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
         padding-left: 16px;
         padding-right: 16px;
@@ -2931,6 +2978,8 @@ input[type="url"]::placeholder {
 
     .image-post {
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
     }
 
@@ -2999,6 +3048,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -3027,6 +3078,8 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .close-icon {
@@ -3285,6 +3338,8 @@ input[type="url"]::placeholder {
     .line {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin: 12px 0;
         box-sizing: border-box;
     }
@@ -3313,6 +3368,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -3414,6 +3471,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -3500,6 +3559,8 @@ input[type="url"]::placeholder {
     .line-comments {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -3508,6 +3569,8 @@ input[type="url"]::placeholder {
     .scrollable-div-comments .line-comments:last-of-type {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 0;
         box-sizing: border-box;
@@ -3526,6 +3589,8 @@ input[type="url"]::placeholder {
         padding: 16px;
         border-radius: 10px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100px;
         display: flex;
         flex-direction: column;
@@ -3592,6 +3657,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -3673,6 +3740,8 @@ input[type="url"]::placeholder {
         grid-row: 1;
         height: 56px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
         padding-left: 16px;
         padding-right: 16px;
@@ -3709,6 +3778,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
@@ -3864,6 +3935,8 @@ input[type="url"]::placeholder {
         align-items: center;
         position: relative;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .partner-back {
@@ -3954,6 +4027,8 @@ input[type="url"]::placeholder {
 
     .banner {
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 200px;
         object-fit: cover;
         border-top-left-radius: 10px;
@@ -4337,6 +4412,8 @@ input[type="url"]::placeholder {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
         box-sizing: border-box;
+        ;
+        box-sizing: border-box;
     }
 
     /* Shared styles for notifs and requests */
@@ -4639,6 +4716,8 @@ input[type="url"]::placeholder {
     .line-comments-section {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 24px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -4700,6 +4779,8 @@ input[type="url"]::placeholder {
         display: flex;
         justify-content: space-between;
         width: 100%;
+        box-sizing: border-box;
+        ;
         align-items: flex-start;
     }
 
@@ -5236,6 +5317,8 @@ input[type="url"]::placeholder {
 
     .image-post {
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
     }
 
@@ -5304,6 +5387,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -5333,6 +5418,8 @@ input[type="url"]::placeholder {
     .no-scrolling {
         position: fixed;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .close-icon {
@@ -5591,6 +5678,8 @@ input[type="url"]::placeholder {
     .line {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin: 12px 0;
         box-sizing: border-box;
     }
@@ -5619,6 +5708,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -5721,6 +5812,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -5807,6 +5900,8 @@ input[type="url"]::placeholder {
     .line-comments {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -5815,6 +5910,8 @@ input[type="url"]::placeholder {
     .scrollable-div-comments .line-comments:last-of-type {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 16px;
         margin-bottom: 0;
         box-sizing: border-box;
@@ -5833,6 +5930,8 @@ input[type="url"]::placeholder {
         padding: 16px;
         border-radius: 10px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100px;
         display: flex;
         flex-direction: column;
@@ -5899,6 +5998,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: hidden;
@@ -5980,6 +6081,8 @@ input[type="url"]::placeholder {
         grid-row: 1;
         height: 56px;
         width: 100%;
+        box-sizing: border-box;
+        ;
         border-radius: 10px;
         padding-left: 16px;
         padding-right: 16px;
@@ -6016,6 +6119,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
@@ -6171,6 +6276,8 @@ input[type="url"]::placeholder {
         align-items: center;
         position: relative;
         width: 100%;
+        box-sizing: border-box;
+        ;
     }
 
     .partner-back {
@@ -6266,6 +6373,8 @@ input[type="url"]::placeholder {
 
     .banner {
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 200px;
         object-fit: cover;
         border-top-left-radius: 10px;
@@ -6649,6 +6758,8 @@ input[type="url"]::placeholder {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
         box-sizing: border-box;
+        ;
+        box-sizing: border-box;
     }
 
     /* Shared styles for notifs and requests */
@@ -6989,6 +7100,8 @@ input[type="url"]::placeholder {
     .line-comments-section {
         border-top: 1px solid rgba(196, 196, 196, 0.5);
         width: 100%;
+        box-sizing: border-box;
+        ;
         margin-top: 24px;
         margin-bottom: 24px;
         box-sizing: border-box;
@@ -7050,6 +7163,8 @@ input[type="url"]::placeholder {
         display: flex;
         justify-content: space-between;
         width: 100%;
+        box-sizing: border-box;
+        ;
         align-items: flex-start;
     }
 
@@ -7179,6 +7294,8 @@ input[type="url"]::placeholder {
         top: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
+        ;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         visibility: visible;
