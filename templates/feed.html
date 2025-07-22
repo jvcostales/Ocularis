@@ -6,7 +6,7 @@
     <div class="tagline-wrapper">
         <div class="tagline-wrapper-2">
             <img src="{{ profile_pic_url }}" class="pfp">
-            <input class="post-tagline" type="text" placeholder="Do you mind sharing your work?">
+            <input class="post-tagline" type="text" placeholder="Share your work">
         </div>
         <button class="image-button" id="openOverlay"><span
                 class="material-symbols-outlined image">image</span></button>
@@ -28,7 +28,7 @@
             <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data"
                 style="display: flex; flex-direction: column;">
                 <input class="overlay-tagline" type="text" id="caption" name="caption"
-                    placeholder="Do you mind sharing your work?">
+                    placeholder="Share your work">
                 <div class="upload" id="drop-area">
                     <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
                     <div class="drop">Drop your images here or browse</div>
