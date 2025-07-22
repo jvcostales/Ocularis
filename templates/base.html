@@ -1142,17 +1142,6 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                const logo = document.getElementById('logo');
-
-                function updateLogo(e) {
-                    const isDark = e.matches;
-                    logo.src = isDark ? '/static/Logo-light.png' : '/static/Logo-dark.png';
-                }
-
-                const media = window.matchMedia('(prefers-color-scheme: dark)');
-                updateLogo(media);
-                media.addEventListener('change', updateLogo);
-
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
@@ -1234,6 +1223,26 @@
                         document.documentElement.setAttribute("data-theme", newTheme);
                         localStorage.setItem("theme", selectedValue);
                     });
+                });
+
+                const logo = document.getElementById('logo');
+
+                function updateLogoByTheme(theme) {
+                    logo.src = theme === "dark" ? "/static/Logo-light.png" : "/static/Logo-dark.png";
+                }
+
+                // Initial logo update
+                updateLogoByTheme(resolvedTheme);
+
+                // Listen to system theme changes if in "auto" mode
+                const media = window.matchMedia('(prefers-color-scheme: dark)');
+                media.addEventListener('change', () => {
+                    const currentSetting = localStorage.getItem("theme") || "auto";
+                    if (currentSetting === "auto") {
+                        const newResolvedTheme = resolveTheme("auto");
+                        document.documentElement.setAttribute("data-theme", newResolvedTheme);
+                        updateLogoByTheme(newResolvedTheme);
+                    }
                 });
 
                 function showMatchStep(step) {
