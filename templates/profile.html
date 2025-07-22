@@ -32,39 +32,62 @@
                 </div>
                 <div id="openFriendsButton" class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else ''
                     }}</div>
-                <div id="friendsModalOverlay" class="modal" style="display: none;">
-                    <div class="modal-content">
-                        <button class="close-icon" id="closeFriendsButton">
-                            <span class="material-symbols-outlined overlay-close-symbol">close</span>
-                        </button>
-                        <div class="overlay-title">Friends</div>
-                        <div class="scrollable-div-likes">
-                            {% if friends_list %}
-                            {% for friend in friends_list %}
-                            <div class="profile-follow-wrapper">
-                                <div class="profile-post-likes">
-                                    <a href="{{ url_for('profile', user_id=friend.id) }}" class="pfp-link">
-                                        <img src="{{ url_for('profile_pics', filename=friend.profile_pic) if friend.profile_pic and friend.profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                                            class="pfp">
-                                    </a>
-                                    <div class="profile-name-date">
-                                        <a href="{{ url_for('profile', user_id=friend.id) }}" class="username-link">
-                                            <div class="username">{{ friend.full_name }}</div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- Optionally add an "Unfriend" button here -->
+                <div class="scrollable-div-likes">
+                    {% if friends_list %}
+                    {% for friend in friends_list %}
+                    <div class="profile-follow-wrapper">
+                        <div class="profile-post-likes">
+                            <a href="{{ url_for('profile', user_id=friend.id) }}" class="pfp-link">
+                                <img src="{{ url_for('profile_pics', filename=friend.profile_pic) if friend.profile_pic and friend.profile_pic != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                                    class="pfp">
+                            </a>
+                            <div class="profile-name-date">
+                                <a href="{{ url_for('profile', user_id=friend.id) }}" class="username-link">
+                                    <div class="username">{{ friend.full_name }}</div>
+                                </a>
                             </div>
-                            {% endfor %}
+                        </div>
+                        <div class="follow-action">
+                            {% if friend.relationship == 'friends' %}
+                            <form action="{{ url_for('unfriend', other_user_id=friend.id) }}" method="post">
+                                <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
+                            </form>
+                            {% elif friend.relationship == 'incoming_pending' %}
+                            <div class="response-wrapper" style="margin: 0;">
+                                <form action="{{ url_for('accept_request', request_id=friend.request_id) }}"
+                                    method="post">
+                                    <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+                                </form>
+                                <form action="{{ url_for('reject_request', request_id=friend.request_id) }}"
+                                    method="post">
+                                    <button type="submit"
+                                        class="follow-button-profile-secondary no-margin">Decline</button>
+                                </form>
+                            </div>
+                            {% elif friend.relationship == 'outgoing_pending' %}
+                            <form action="{{ url_for('cancel_request', user_id=friend.id) }}" method="post">
+                                <button type="submit" class="follow-button-profile-cancel no-margin">Cancel
+                                    Request</button>
+                            </form>
+                            {% elif friend.relationship in ['outgoing_rejected', 'not_friends'] %}
+                            {% if friend.verified %}
+                            <form action="{{ url_for('send_request', receiver_id=friend.id) }}" method="post">
+                                <button type="submit" class="follow-button-profile no-margin">Befriend</button>
+                            </form>
                             {% else %}
-                            <div class="likes-empty">
-                                <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                                <div class="oops">Oops!</div>
-                                <div class="nothing">No friends to show.</div>
-                            </div>
+                            <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
+                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="likes-empty">
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">No friends to show.</div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

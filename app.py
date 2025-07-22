@@ -1707,9 +1707,9 @@ def profile(user_id):
     """, (user_id, user_id))
     friend_count = cur.fetchone()[0]
     
-        # Fetch friends' full details
+    # Fetch friends' full details with friend request relationship logic
     cur.execute("""
-        SELECT u.id, u.first_name, u.last_name, u.profile_pic
+        SELECT u.id, u.first_name, u.last_name, u.profile_pic, u.verified
         FROM users u
         JOIN friends f ON (
             (f.user1_id = u.id AND f.user2_id = %s)
@@ -1719,12 +1719,41 @@ def profile(user_id):
     """, (user_id, user_id, user_id))
     friends = cur.fetchall()
 
-    # Format the data into a list of dicts
-    friends_list = [{
-        "id": row[0],
-        "full_name": f"{row[1]} {row[2]}",
-        "profile_pic": row[3]
-    } for row in friends]
+    friends_list = []
+    for f in friends:
+        fid, fname, lname, pfp, verified = f
+
+        # Re-check relationship status (for possible pending/canceled/removed)
+        cur.execute("""
+            SELECT sender_id, receiver_id, status, request_id
+            FROM friend_requests
+            WHERE (sender_id = %s AND receiver_id = %s)
+            OR (sender_id = %s AND receiver_id = %s)
+            LIMIT 1
+        """, (user_id, fid, fid, user_id))
+        row = cur.fetchone()
+
+        relationship = 'friends'
+        request_id = None
+        if row:
+            sender, receiver, status, req_id = row
+            request_id = req_id
+            if status == 'pending':
+                if receiver == user_id:
+                    relationship = 'incoming_pending'
+                else:
+                    relationship = 'outgoing_pending'
+            elif status == 'rejected':
+                relationship = 'outgoing_rejected'
+
+        friends_list.append({
+            "id": fid,
+            "full_name": f"{fname} {lname}",
+            "profile_pic": pfp,
+            "verified": verified,
+            "relationship": relationship,
+            "request_id": request_id
+        })
 
     # Fetch images with author and collaborator names for a specific user
     cur.execute("""
