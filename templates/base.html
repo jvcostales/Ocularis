@@ -1146,11 +1146,9 @@
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
 
-                if (openFriendsButton && friendsModalOverlay) {
-                    openFriendsButton.addEventListener('click', () => {
-                        friendsModalOverlay.style.display = 'block';
-                        document.body.classList.add('no-scrolling');
-                    });
+                function openModal() {
+                    friendsModalOverlay.style.display = 'flex'; // Use 'flex' to center modal
+                    document.body.classList.add('no-scrolling');
                 }
 
                 function closeModal() {
@@ -1158,14 +1156,17 @@
                     document.body.classList.remove('no-scrolling');
                 }
 
+                if (openFriendsButton) {
+                    openFriendsButton.addEventListener('click', openModal);
+                }
+
                 if (closeFriendsButton) {
                     closeFriendsButton.addEventListener('click', closeModal);
                 }
 
                 if (friendsModalOverlay) {
-                    friendsModalOverlay.addEventListener('click', (event) => {
-                        // Close only if user clicks directly on the overlay, not inside modal content
-                        if (event.target === friendsModalOverlay) {
+                    friendsModalOverlay.addEventListener('click', (e) => {
+                        if (e.target === friendsModalOverlay) {
                             closeModal();
                         }
                     });
