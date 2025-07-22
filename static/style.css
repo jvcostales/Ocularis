@@ -3917,8 +3917,6 @@ input[type="url"]::placeholder {
 
     .social-table {
         border-collapse: collapse;
-        width: 452px;
-        margin: 0 48px;
         margin-bottom: 36px;
         border: 1px solid #ddd;
         border-radius: 5px;
@@ -4666,7 +4664,9 @@ input[type="url"]::placeholder {
 
     .sub-wrapper {
         display: flex;
+        flex-direction: column;
         align-items: flex-start;
+        margin-bottom: 8px;
     }
 
     .section-space {
@@ -6225,8 +6225,6 @@ input[type="url"]::placeholder {
 
     .social-table {
         border-collapse: collapse;
-        width: 452px;
-        margin: 0 48px;
         margin-bottom: 36px;
         border: 1px solid #ddd;
         border-radius: 5px;
@@ -7017,7 +7015,9 @@ input[type="url"]::placeholder {
 
     .sub-wrapper {
         display: flex;
+        flex-direction: column;
         align-items: flex-start;
+        margin-bottom: 8px;
     }
 
     .section-space {
