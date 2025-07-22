@@ -7003,7 +7003,7 @@ input[type="url"]::placeholder {
     .sections {
         display: flex;
         align-items: center;
-        gap: 26px;
+        justify-content: space-between;
         padding-bottom: 24px;
     }
 
