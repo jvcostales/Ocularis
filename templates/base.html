@@ -1142,6 +1142,17 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
+                const logo = document.getElementById('logo');
+
+                function updateLogo(e) {
+                    const isDark = e.matches;
+                    logo.src = isDark ? '/static/Logo-light.png' : '/static/Logo-dark.png';
+                }
+
+                const media = window.matchMedia('(prefers-color-scheme: dark)');
+                updateLogo(media);
+                media.addEventListener('change', updateLogo);
+
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
