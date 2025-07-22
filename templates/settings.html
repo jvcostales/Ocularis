@@ -101,7 +101,7 @@
                     <div class="sub-wrapper">
                         <div class="subname">Skills</div>
                         <div class="section-space"></div>
-                        <div class="checkbox-grid">
+                        <div class="checkbox-grid" style="margin-bottom: 0;">
                             {% for category in categories %}
                             <label class="checkbox-item">
                                 <input type="checkbox" name="skills[]" value="{{ category }}" {% if category in
@@ -117,7 +117,7 @@
                     <div class="sub-wrapper">
                         <div class="subname">Preferences</div>
                         <div class="section-space"></div>
-                        <div class="checkbox-grid">
+                        <div class="checkbox-grid" style="margin-bottom: 0;">
                             {% for category in categories %}
                             <label class="checkbox-item">
                                 <input type="checkbox" name="preferences[]" value="{{ category }}"
@@ -133,9 +133,9 @@
                     <div class="sub-wrapper">
                         <div class="subname">Experience Level</div>
                         <div class="section-space"></div>
-                        <div class="left-align">
+                        <div class="left-align" style="margin-bottom: 0 !important;">
                             {% for value, label in experience_levels %}
-                            <label class="radio-item">
+                            <label class="radio-item-experience">
                                 <input type="radio" name="experience_level" value="{{ value }}"
                                     {% if value == user.experience_level %}checked{% endif %}>
                                 {{ label }}
@@ -149,7 +149,7 @@
                     <div class="sub-wrapper">
                         <div class="subname">Linked Accounts</div>
                         <div class="section-space"></div>
-                        <table class="social-table">
+                        <table class="social-table" style="margin-bottom: 0 !important;">
                             <tr>
                                 <td><label for="facebook">Facebook</label></td>
                                 <td><input type="url" id="facebook" name="facebook" value="{{ user.facebook or '' }}"></td>
