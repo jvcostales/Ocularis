@@ -1897,7 +1897,7 @@ input[type="url"]::placeholder {
         font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 16px;
-        color: var(--text-muted);
+        color: var(--text-main);
     }
 
     span.person-symbol {
@@ -3993,6 +3993,7 @@ input[type="url"]::placeholder {
         font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 16px;
+        color: var(--text-main);
     }
 
     span.person-symbol {
@@ -6304,6 +6305,7 @@ input[type="url"]::placeholder {
         font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 16px;
+        color: var(--text-main);
     }
 
     span.person-symbol {
