@@ -32,6 +32,11 @@
     --border-default: #dcdcdc;
 }
 
+[data-theme="dark"] .card-pairup {
+    background-image: url('/static/pairup-dark.jpg');
+    background-position: left bottom;
+}
+
 html {
     overflow-y: scroll;
 }
@@ -2120,11 +2125,6 @@ input[type="url"]::placeholder {
         text-align: left;
         padding: 24px;
         margin-bottom: 16px;
-    }
-
-    [data-theme="dark"] .card-pairup {
-        background-image: url('/static/pairup-dark.jpg');
-        background-position: left bottom;
     }
 
     .post-title-pairup {
