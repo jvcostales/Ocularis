@@ -96,8 +96,6 @@ input[type="password"],
 textarea {
     background-color: var(--bg-secondary) !important;
     color: var(--text-main) !important;
-    min-width: 0;
-    box-sizing: border-box;
 }
 
 input[type="text"]::placeholder,
@@ -5133,8 +5131,6 @@ input[type="url"]::placeholder {
         display: flex;
         align-items: center;
         color: var(--text-muted);
-        min-width: 0;
-        overflow-x: hidden;
     }
 
     .tagline-wrapper-2 {
@@ -5142,7 +5138,7 @@ input[type="url"]::placeholder {
         flex: 1;
         align-items: center;
         gap: 16px;
-        min-width: 0;
+        max-width: calc(100vw - 112px);
     }
 
     .post-tagline {
