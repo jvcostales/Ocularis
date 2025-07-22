@@ -5862,6 +5862,7 @@ input[type="url"]::placeholder {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        max-width: calc(100vw - 184px);
     }
 
     .tagline-comment {
@@ -6058,6 +6059,7 @@ input[type="url"]::placeholder {
         width: 548px;
         height: min-content;
         padding-bottom: 24px;
+        margin: 16px;
     }
 
     span.overlay-close-symbol {
@@ -7237,6 +7239,7 @@ input[type="url"]::placeholder {
         width: 548px;
         height: min-content;
         box-sizing: border-box;
+        margin: 16px;
     }
 
     /* Buttons */
