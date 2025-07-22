@@ -1146,27 +1146,29 @@
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
 
-                function openModal() {
-                    friendsModalOverlay.style.display = 'flex'; // Set to flex from JS
+                function openFriendsModal() {
+                    friendsModalOverlay.style.display = 'flex';
                     document.body.classList.add('no-scrolling');
                 }
 
-                function closeModal() {
+                function closeFriendsModal() {
                     friendsModalOverlay.style.display = 'none';
                     document.body.classList.remove('no-scrolling');
                 }
 
                 if (openFriendsButton) {
-                    openFriendsButton.addEventListener('click', openModal);
+                    openFriendsButton.addEventListener('click', openFriendsModal);
                 }
 
                 if (closeFriendsButton) {
-                    closeFriendsButton.addEventListener('click', closeModal);
+                    closeFriendsButton.addEventListener('click', closeFriendsModal);
                 }
 
                 if (friendsModalOverlay) {
-                    friendsModalOverlay.addEventListener('click', () => {
-                        closeModal();
+                    friendsModalOverlay.addEventListener('click', (event) => {
+                        if (event.target === event.currentTarget) {
+                            closeFriendsModal();
+                        }
                     });
                 }
 
