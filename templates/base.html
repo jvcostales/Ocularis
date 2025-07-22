@@ -1147,7 +1147,7 @@
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
 
                 function openModal() {
-                    friendsModalOverlay.style.display = 'flex'; // Use 'flex' to center modal
+                    friendsModalOverlay.style.display = 'flex'; // Set to flex from JS
                     document.body.classList.add('no-scrolling');
                 }
 
@@ -1165,10 +1165,8 @@
                 }
 
                 if (friendsModalOverlay) {
-                    friendsModalOverlay.addEventListener('click', (e) => {
-                        if (e.target === friendsModalOverlay) {
-                            closeModal();
-                        }
+                    friendsModalOverlay.addEventListener('click', () => {
+                        closeModal();
                     });
                 }
 
