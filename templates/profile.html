@@ -30,7 +30,8 @@
                     <span class="material-symbols-outlined world-symbol">public</span>
                     <div class="location-profile">{{ location }}</div>
                 </div>
-                <div id="openFriendsButton" style="cursor:pointer;" class="stats">{{ friend_count }} friend{{ 's' if friend_count != 1 else ''
+                <div id="openFriendsButton" style="cursor:pointer;" class="stats">{{ friend_count }} friend{{ 's' if
+                    friend_count != 1 else ''
                     }}</div>
                 <div id="friendsModalOverlay" class="modal" style="display: none;">
                     <div class="modal-content">
@@ -183,6 +184,11 @@
                 <div class="hide">Hide</div>
                 {% if current_user.id == image[4] or current_user.id == image[8] %}
                 <div class="delete" onclick="deleteImage({{ image[0] }})">Delete</div>
+                {% endif %}
+                {% if current_user.id != image[4] and current_user.id != image[8] %}
+                <div class="report" onclick="openReportModal({{ image[0] }}, event)" style="padding-bottom: 8px;">
+                    Report
+                </div>
                 {% endif %}
             </div>
         </div>
