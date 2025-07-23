@@ -1767,6 +1767,8 @@ def profile(user_id):
         })
 
     # Fetch images with author and collaborator names for a specific user
+    query = request.args.get('query', '').strip()
+    like_query = f"%{query}%"
     cur.execute("""
         SELECT 
             images.image_id,              -- 0
@@ -1780,7 +1782,11 @@ def profile(user_id):
             collaborator.id,              -- 8 (collaborator's user ID)
             collaborator.first_name,      -- 9
             collaborator.last_name,       -- 10
-            author.profile_pic            -- 11
+            author.profile_pic,            -- 11
+            EXISTS (
+                SELECT 1 FROM likes 
+                WHERE user_id = %s AND image_id = images.image_id
+            ) AS is_liked
         FROM images
         JOIN users AS author ON images.id = author.id
         LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
@@ -1792,9 +1798,8 @@ def profile(user_id):
         ON images.image_id = likes.image_id
         WHERE images.id = %s OR images.collaborator_id = %s
         ORDER BY images.created_at DESC;
-    """, (user_id, user_id))
+    """, (user_id, user_id, like_query, like_query, like_query, like_query))
     images = cur.fetchall()
-
 
     # Fetch comments on the user's posts
     cur.execute("""
@@ -3570,7 +3575,11 @@ def search_results():
                 collaborator.first_name,
                 collaborator.last_name,
                 author.profile_pic,
-                collaborator.profile_pic
+                collaborator.profile_pic,
+                EXISTS (
+                    SELECT 1 FROM likes 
+                    WHERE user_id = %s AND image_id = images.image_id
+                ) AS is_liked
             FROM images
             JOIN users AS author ON images.id = author.id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
@@ -3589,7 +3598,7 @@ def search_results():
                     (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
                   )
             ORDER BY images.created_at DESC
-        """, (user_id, like_query, like_query, like_query, like_query))
+        """, (user_id, user_id, like_query, like_query, like_query, like_query))
         images = cur.fetchall()
 
         # 🗨️ Comments
