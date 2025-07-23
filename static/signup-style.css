@@ -43,7 +43,7 @@ body {
 }
 
 #signup-btn:disabled {
-    background-color: --btn-disabled-bg;
+    background-color: var(--btn-disabled-bg);
     color: var(--btn-disabled-text);
     cursor: not-allowed;
     pointer-events: none;
