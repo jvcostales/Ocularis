@@ -642,8 +642,8 @@ def feed():
     cur = conn.cursor()
 
     try:
-        # Fetch images
-        # Fetch images with author and collaborator names
+        query = request.args.get('query', '').strip()
+        like_query = f"%{query}%"
         cur.execute("""
             SELECT 
                 images.image_id,
@@ -658,7 +658,11 @@ def feed():
                 collaborator.first_name,
                 collaborator.last_name,
                 author.profile_pic,
-                collaborator.profile_pic
+                collaborator.profile_pic,
+                EXISTS (
+                    SELECT 1 FROM likes 
+                    WHERE user_id = %s AND image_id = images.image_id
+                ) AS is_liked
             FROM images
             JOIN users AS author ON images.id = author.id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
@@ -667,10 +671,17 @@ def feed():
                 FROM likes 
                 GROUP BY image_id
             ) AS likes ON images.image_id = likes.image_id
+            LEFT JOIN image_tags ON images.image_id = image_tags.image_id
             LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
             WHERE hp.user_id IS NULL
-            ORDER BY images.created_at DESC;
-        """, (user_id,))
+            AND (
+                    images.caption ILIKE %s OR
+                    image_tags.tag ILIKE %s OR
+                    (author.first_name || ' ' || author.last_name) ILIKE %s OR
+                    (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
+                )
+            ORDER BY images.created_at DESC
+        """, (user_id, user_id, like_query, like_query, like_query, like_query))
         images = cur.fetchall()
 
         # Fetch comments with commenter profile picture

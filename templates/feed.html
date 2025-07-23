@@ -28,8 +28,7 @@
             </div>
             <form action="{{ url_for('feed') }}" method="POST" enctype="multipart/form-data"
                 style="display: flex; flex-direction: column;">
-                <input class="overlay-tagline" type="text" id="caption" name="caption"
-                    placeholder="Share your vision.">
+                <input class="overlay-tagline" type="text" id="caption" name="caption" placeholder="Share your vision.">
                 <div class="upload" id="drop-area">
                     <span class="material-symbols-outlined overlay-upload-symbol">upload</span>
                     <div class="drop">Drop your images here or browse</div>
@@ -129,9 +128,13 @@
         <div class="lcs">
             <form class="like-form" data-image-id="{{ image[0] }}">
                 <button type="submit" style="all: unset;">
-                    <div class="partner like-button" id="like-button-{{ image[0] }}">
-                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                        <div class="partner-label">Like</div>
+                    <div class="partner like-button {% if image[-1] %}liked{% endif %}" id="like-button-{{ image[0] }}">
+                        <span class="material-symbols-outlined lcs-symbol">
+                            {{ 'thumb_up_alt' if image[-1] else 'thumb_up' }}
+                        </span>
+                        <div class="partner-label">
+                            {{ 'Unlike' if image[-1] else 'Like' }}
+                        </div>
                     </div>
                 </button>
             </form>
