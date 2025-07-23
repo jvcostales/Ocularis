@@ -114,9 +114,13 @@
         <div class="lcs">
             <form class="like-form" data-image-id="{{ image[0] }}">
                 <button type="submit" style="all: unset;">
-                    <div class="partner like-button" id="like-button-{{ image[0] }}">
-                        <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                        <div class="partner-label">Like</div>
+                    <div class="partner like-button {% if image[-1] %}liked{% endif %}" id="like-button-{{ image[0] }}">
+                        <span class="material-symbols-outlined lcs-symbol">
+                            {{ 'thumb_up_alt' if image[-1] else 'thumb_up' }}
+                        </span>
+                        <div class="partner-label">
+                            {{ 'Unlike' if image[-1] else 'Like' }}
+                        </div>
                     </div>
                 </button>
             </form>
