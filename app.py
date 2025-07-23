@@ -1780,14 +1780,15 @@ def profile(user_id):
             author.first_name,               -- 5
             author.last_name,                -- 6
             images.created_at,               -- 7
-            collaborator.id,                 -- 8 (collaborator's user ID)
+            collaborator.id,                 -- 8
             collaborator.first_name,         -- 9
             collaborator.last_name,          -- 10
             author.profile_pic,              -- 11
             collaborator.profile_pic,        -- 12
             EXISTS (
                 SELECT 1 FROM likes 
-                WHERE user_id = %s AND image_id = images.image_id
+                WHERE user_id = %s
+                AND image_id = images.image_id
             ) AS is_liked
         FROM images
         JOIN users AS author ON images.id = author.id
@@ -1810,7 +1811,16 @@ def profile(user_id):
             (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
         )
         ORDER BY images.created_at DESC;
-    """, (user_id, user_id, user_id, like_query, like_query, like_query, like_query))
+    """, (
+        user_id,      # for EXISTS
+        user_id,      # for hidden_posts join
+        user_id,      # images.id = user_id
+        user_id,      # images.collaborator_id = user_id
+        like_query,   # caption
+        like_query,   # tag
+        like_query,   # author
+        like_query    # collaborator
+    ))
 
     images = cur.fetchall()
 
