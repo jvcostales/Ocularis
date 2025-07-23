@@ -2314,19 +2314,6 @@
                 }
                 checkScrollbar();
 
-                document.addEventListener("click", function (event) {
-                    const button = event.target.closest(".like-button");
-
-                    if (button) {
-                        button.classList.toggle("liked");
-
-                        const label = button.querySelector(".partner-label");
-                        if (label) {
-                            label.textContent = button.classList.contains("liked") ? "Unlike" : "Like";
-                        }
-                    }
-                });
-
                 function isChrome() {
                     return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
                 }
