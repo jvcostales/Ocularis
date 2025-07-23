@@ -1766,23 +1766,25 @@ def profile(user_id):
             "request_id": request_id
         })
 
-    # Fetch images with author and collaborator names for a specific user
+    # Fetch images with author and collaborator names for a specific user, with search filtering
     query = request.args.get('query', '').strip()
     like_query = f"%{query}%"
+
     cur.execute("""
         SELECT 
-            images.image_id,              -- 0
-            images.image_url,             -- 1
-            images.caption,               -- 2
-            COALESCE(like_count, 0),      -- 3
-            images.id,                    -- 4 (author's user ID)
-            author.first_name,            -- 5
-            author.last_name,             -- 6
-            images.created_at,            -- 7
-            collaborator.id,              -- 8 (collaborator's user ID)
-            collaborator.first_name,      -- 9
-            collaborator.last_name,       -- 10
-            author.profile_pic,            -- 11
+            images.image_id,                 -- 0
+            images.image_url,                -- 1
+            images.caption,                  -- 2
+            COALESCE(like_count, 0),         -- 3
+            images.id,                       -- 4 (author's user ID)
+            author.first_name,               -- 5
+            author.last_name,                -- 6
+            images.created_at,               -- 7
+            collaborator.id,                 -- 8 (collaborator's user ID)
+            collaborator.first_name,         -- 9
+            collaborator.last_name,          -- 10
+            author.profile_pic,              -- 11
+            collaborator.profile_pic,        -- 12
             EXISTS (
                 SELECT 1 FROM likes 
                 WHERE user_id = %s AND image_id = images.image_id
@@ -1794,11 +1796,22 @@ def profile(user_id):
             SELECT image_id, COUNT(*) AS like_count 
             FROM likes 
             GROUP BY image_id
-        ) AS likes 
-        ON images.image_id = likes.image_id
-        WHERE images.id = %s OR images.collaborator_id = %s
+        ) AS likes ON images.image_id = likes.image_id
+        LEFT JOIN image_tags ON images.image_id = image_tags.image_id
+        LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
+        WHERE hp.user_id IS NULL
+        AND (
+            images.id = %s OR images.collaborator_id = %s
+        )
+        AND (
+            images.caption ILIKE %s OR
+            image_tags.tag ILIKE %s OR
+            (author.first_name || ' ' || author.last_name) ILIKE %s OR
+            (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
+        )
         ORDER BY images.created_at DESC;
-    """, (user_id, user_id, like_query, like_query, like_query, like_query))
+    """, (user_id, user_id, user_id, like_query, like_query, like_query, like_query))
+
     images = cur.fetchall()
 
     # Fetch comments on the user's posts
