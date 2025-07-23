@@ -64,12 +64,13 @@
 
                     <div class="input-group">
                         <span class="material-symbols filled-icon sidebar-symbol icon">mail</span>
-                        <input style="padding: 18px 18px 18px 42px;" type="email" name="email" placeholder="Email" class="custom-input" required />
+                        <input style="padding: 18px 18px 18px 42px;" type="email" name="email" placeholder="Email"
+                            class="custom-input" required />
                     </div>
 
                     <div class="input-group">
                         <span class="material-symbols filled-icon sidebar-symbol icon">lock</span>
-                        <input type="password" name="password" placeholder="Password" class="custom-input" required />
+                        <input id="password" type="password" name="password" placeholder="Password" class="custom-input" required />
                         <span class="material-symbols filled-icon sidebar-symbol toggle-eye"
                             id="toggle-password">visibility</span>
                     </div>
@@ -107,6 +108,18 @@
                 passwordInput.type = isPassword ? 'text' : 'password';
                 toggleEye.textContent = isPassword ? 'visibility_off' : 'visibility';
             });
+
+            function resolveTheme(value) {
+                if (value === "dark" || value === "light") return value;
+                if (value === "auto") {
+                    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                }
+                return "light";
+            }
+
+            const savedThemeSetting = localStorage.getItem("theme") || "auto";
+            const resolvedTheme = resolveTheme(savedThemeSetting);
+            document.documentElement.setAttribute("data-theme", resolvedTheme);
 
             const logo = document.getElementById('logo');
 

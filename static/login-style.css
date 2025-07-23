@@ -35,7 +35,7 @@
 body {
     margin: 0;
     font-family: 'Schibsted Grotesk', sans-serif;
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     display: flex;
     justify-content: center;
     align-items: center;
