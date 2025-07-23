@@ -21,7 +21,7 @@
         <div class="signup-container">
             <div class="signup-block">
                 <div class="namelogo">
-                    <a href="{{ url_for('feed') }}"><img src="..\static\Logo.png" class="logo"></a>
+                    <a href="{{ url_for('feed') }}"><img id="logo" src="..\static\Logo.png" class="logo"></a>
                     <div class="name">Ocularis</div>
                 </div>
 
@@ -30,7 +30,7 @@
                 <form method="POST">
                     <div class="input-group">
                         <span class="material-symbols filled-icon sidebar-symbol icon">mail</span>
-                        <input type="email" name="email" minlength="2" maxlength="50" placeholder="Email"
+                        <input style="padding: 18px 18px 18px 42px;" type="email" name="email" minlength="2" maxlength="50" placeholder="Email"
                             class="custom-input" required />
                     </div>
 
@@ -72,6 +72,26 @@
                 const isPassword = passwordInput.type === 'password';
                 passwordInput.type = isPassword ? 'text' : 'password';
                 toggleEye.textContent = isPassword ? 'visibility_off' : 'visibility';
+            });
+
+            const logo = document.getElementById('logo');
+
+            function updateLogoByTheme(theme) {
+                logo.src = theme === "dark" ? "/static/Logo-light.png" : "/static/Logo-dark.png";
+            }
+
+            // Initial logo update
+            updateLogoByTheme(resolvedTheme);
+
+            // Listen to system theme changes if in "auto" mode
+            const media = window.matchMedia('(prefers-color-scheme: dark)');
+            media.addEventListener('change', () => {
+                const currentSetting = localStorage.getItem("theme") || "auto";
+                if (currentSetting === "auto") {
+                    const newResolvedTheme = resolveTheme("auto");
+                    document.documentElement.setAttribute("data-theme", newResolvedTheme);
+                    updateLogoByTheme(newResolvedTheme);
+                }
             });
         });
     </script>
