@@ -1140,23 +1140,28 @@
                 }
             }
 
+
+
             function adjustPadding(id) {
                 const el = document.getElementById(id);
-                if (el) {
-                    void el.offsetHeight; // force reflow
+                if (!el) return;
 
-                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                    console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
+                // Force reflow
+                void el.offsetHeight;
 
-                    el.style.paddingRight = hasScroll ? "12px" : "24px";
-                }
+                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                console.log(`[${id}] hasScroll: ${hasScroll}, scrollHeight: ${el.scrollHeight}, clientHeight: ${el.clientHeight}`);
+
+                el.style.paddingRight = hasScroll ? "12px" : "24px";
             }
 
             function runAdjustPaddingWithDelay(id) {
                 requestAnimationFrame(() => {
                     setTimeout(() => {
-                        requestAnimationFrame(() => adjustPadding(id));
-                    }, 150);
+                        requestAnimationFrame(() => {
+                            adjustPadding(id);
+                        });
+                    }, 100); // can increase if DOM is slow to paint
                 });
             }
 
@@ -1168,6 +1173,7 @@
                 observer.observe(el, { childList: true, subtree: true });
             }
 
+
             document.addEventListener('DOMContentLoaded', function () {
 
                 const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
@@ -1178,7 +1184,7 @@
                 });
 
                 window.addEventListener("resize", () => {
-                    ids.forEach(runAdjustPaddingWithDelay);
+                    ids.forEach(id => runAdjustPaddingWithDelay(id));
                 });
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
