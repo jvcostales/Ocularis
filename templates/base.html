@@ -1140,7 +1140,62 @@
                 }
             }
 
+            function adjustRightPaddingOnScrollCheckAll() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        // Optional: Force redraw if things are glitchy
+                        // forceRedraw(el);
+
+                        // Force reflow
+                        void el.offsetHeight;
+
+                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                        console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
+                        el.style.paddingRight = hasScroll ? "12px" : "24px";
+                    }
+                });
+            }
+
+            function runAdjustPaddingWithDelay() {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            adjustRightPaddingOnScrollCheckAll();
+                        });
+                    }, 150); // delay to let layout settle
+                });
+            }
+
+            // Optional: Force redraw if needed
+            function forceRedraw(el) {
+                el.style.display = 'none';
+                void el.offsetHeight; // force reflow
+                el.style.display = '';
+            }
+
+            // Optional: Watch for dynamic content changes
+            function observeDynamicContent() {
+                const observer = new MutationObserver(() => {
+                    runAdjustPaddingWithDelay();
+                });
+
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        observer.observe(el, { childList: true, subtree: true });
+                    }
+                });
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
+
+                runAdjustPaddingWithDelay();
+                observeDynamicContent(); // optional
+
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
@@ -2302,32 +2357,6 @@
                     });
                 });
 
-                
-
-                function adjustRightPaddingOnScrollCheckAll() {
-                    const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                    ids.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                            console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
-                            el.style.paddingRight = hasScroll ? "12px" : "24px";
-                        }
-                    });
-                }
-
-                function runAdjustPaddingWithDelay() {
-                    requestAnimationFrame(() => {
-                        // Allow layout + style computation
-                        setTimeout(() => {
-                            requestAnimationFrame(adjustRightPaddingOnScrollCheckAll);
-                        }, 100); // <-- increased delay
-                    });
-                }
-
-                document.addEventListener("DOMContentLoaded", runAdjustPaddingWithDelay);
-                window.addEventListener("resize", runAdjustPaddingWithDelay);
-
 
 
                 const imageInput = document.getElementById('image');
@@ -2535,6 +2564,7 @@
                         alert('Error performing action.');
                     });
             };
+            window.addEventListener("resize", runAdjustPaddingWithDelay);
 
 
         </script>
