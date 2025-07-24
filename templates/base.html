@@ -1146,14 +1146,15 @@
                 ids.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
-                        // Optional: Force redraw if things are glitchy
-                        // forceRedraw(el);
-
                         // Force reflow
                         void el.offsetHeight;
 
+                        // Check for overflow (vertical or horizontal)
                         const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+
                         console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
+
+                        // Adjust right padding depending on scrollbar presence
                         el.style.paddingRight = hasScroll ? "12px" : "24px";
                     }
                 });
@@ -1162,21 +1163,19 @@
             function runAdjustPaddingWithDelay() {
                 requestAnimationFrame(() => {
                     setTimeout(() => {
-                        requestAnimationFrame(() => {
-                            adjustRightPaddingOnScrollCheckAll();
-                        });
-                    }, 150); // delay to let layout settle
+                        requestAnimationFrame(adjustRightPaddingOnScrollCheckAll);
+                    }, 150); // allow layout/rendering to settle
                 });
             }
 
-            // Optional: Force redraw if needed
+            // Optional: Force redraw if needed (not used by default)
             function forceRedraw(el) {
                 el.style.display = 'none';
-                void el.offsetHeight; // force reflow
+                void el.offsetHeight;
                 el.style.display = '';
             }
 
-            // Optional: Watch for dynamic content changes
+            // Optional: Observe for dynamic content changes in containers
             function observeDynamicContent() {
                 const observer = new MutationObserver(() => {
                     runAdjustPaddingWithDelay();
@@ -1186,7 +1185,10 @@
                 ids.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
-                        observer.observe(el, { childList: true, subtree: true });
+                        observer.observe(el, {
+                            childList: true,
+                            subtree: true
+                        });
                     }
                 });
             }
