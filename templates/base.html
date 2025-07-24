@@ -2302,6 +2302,8 @@
                     });
                 });
 
+                
+
                 function adjustRightPaddingOnScrollCheckAll() {
                     const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                     ids.forEach(id => {
@@ -2316,12 +2318,16 @@
 
                 function runAdjustPaddingWithDelay() {
                     requestAnimationFrame(() => {
-                        setTimeout(adjustRightPaddingOnScrollCheckAll, 50); // allow DOM to settle
+                        // Allow layout + style computation
+                        setTimeout(() => {
+                            requestAnimationFrame(adjustRightPaddingOnScrollCheckAll);
+                        }, 100); // <-- increased delay
                     });
                 }
 
                 document.addEventListener("DOMContentLoaded", runAdjustPaddingWithDelay);
                 window.addEventListener("resize", runAdjustPaddingWithDelay);
+
 
 
                 const imageInput = document.getElementById('image');
