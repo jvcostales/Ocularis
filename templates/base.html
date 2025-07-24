@@ -1333,30 +1333,30 @@
                             console.log('Parsed JSON:', data);
                             if (data.success) {
                                 elements.forEach(el => {
-                                    el.remove(); // Remove the request bar
+                                    el.remove();
                                     console.log(`Removed element request-${requestId}`);
                                 });
 
-                                // Check remaining requests
-                                const requestListContainer = document.querySelector('#requests-tablet');
-                                const remainingRequests = requestListContainer.querySelectorAll('.request-bar');
-
-                                // Remove existing empty state if any
-                                const existingEmpty = requestListContainer.querySelector('.notifs-empty');
-                                if (existingEmpty) existingEmpty.remove();
-
+                                // Check if there are no more requests in both containers
+                                const remainingRequests = document.querySelectorAll('.request-bar');
                                 if (remainingRequests.length === 0) {
-                                    const emptyState = document.createElement('div');
-                                    emptyState.className = 'notifs-empty';
-                                    emptyState.innerHTML = `
-                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-                        <div class="oops">Oops!</div>
-                        <div class="nothing">Nothing to show here at the moment.</div>
+                                    const emptyStateHTML = `
+                        <div class="notifs-empty">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>
                     `;
-                                    requestListContainer.appendChild(emptyState);
-                                    console.log("Inserted empty state.");
-                                }
 
+                                    const containers = [document.querySelector('#requests'), document.querySelector('#requests-tablet')];
+
+                                    containers.forEach(container => {
+                                        if (container && !container.querySelector('.notifs-empty')) {
+                                            container.insertAdjacentHTML('beforeend', emptyStateHTML);
+                                            console.log('Inserted empty state into', container.id);
+                                        }
+                                    });
+                                }
                             } else {
                                 console.error("Error:", data.message || "Unknown error");
                                 alert("Error: " + data.message);
