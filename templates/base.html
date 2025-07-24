@@ -1140,63 +1140,46 @@
                 }
             }
 
-            function adjustRightPaddingOnScrollCheckAll() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+            function adjustPadding(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    void el.offsetHeight; // force reflow
 
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        // Force reflow
-                        void el.offsetHeight;
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
 
-                        // Check for overflow (vertical or horizontal)
-                        const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-
-                        console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
-
-                        // Adjust right padding depending on scrollbar presence
-                        el.style.paddingRight = hasScroll ? "12px" : "24px";
-                    }
-                });
+                    el.style.paddingRight = hasScroll ? "12px" : "24px";
+                }
             }
 
-            function runAdjustPaddingWithDelay() {
+            function runAdjustPaddingWithDelay(id) {
                 requestAnimationFrame(() => {
                     setTimeout(() => {
-                        requestAnimationFrame(adjustRightPaddingOnScrollCheckAll);
-                    }, 150); // allow layout/rendering to settle
+                        requestAnimationFrame(() => adjustPadding(id));
+                    }, 150);
                 });
             }
 
-            // Optional: Force redraw if needed (not used by default)
-            function forceRedraw(el) {
-                el.style.display = 'none';
-                void el.offsetHeight;
-                el.style.display = '';
-            }
+            function observeContentChanges(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
 
-            // Optional: Observe for dynamic content changes in containers
-            function observeDynamicContent() {
-                const observer = new MutationObserver(() => {
-                    runAdjustPaddingWithDelay();
-                });
-
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        observer.observe(el, {
-                            childList: true,
-                            subtree: true
-                        });
-                    }
-                });
+                const observer = new MutationObserver(() => runAdjustPaddingWithDelay(id));
+                observer.observe(el, { childList: true, subtree: true });
             }
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                runAdjustPaddingWithDelay();
-                observeDynamicContent(); // optional
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+
+                ids.forEach(id => {
+                    runAdjustPaddingWithDelay(id);
+                    observeContentChanges(id);
+                });
+
+                window.addEventListener("resize", () => {
+                    ids.forEach(runAdjustPaddingWithDelay);
+                });
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
@@ -2573,7 +2556,6 @@
                         alert('Error performing action.');
                     });
             };
-            window.addEventListener("resize", runAdjustPaddingWithDelay);
 
 
         </script>
