@@ -2302,23 +2302,13 @@
                     });
                 });
 
-                function adjustRightPaddingOnScrollCheck() {
-                    const ids = ["notifs", "requests"];
-                    ids.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                            el.style.paddingRight = hasScroll ? "12px" : "24px";
-                        }
-                    });
-                }
-
                 function adjustRightPaddingOnScrollCheckAll() {
                     const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                     ids.forEach(id => {
                         const el = document.getElementById(id);
                         if (el) {
                             const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                            console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
                             el.style.paddingRight = hasScroll ? "12px" : "24px";
                         }
                     });
