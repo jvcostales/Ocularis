@@ -2314,9 +2314,15 @@
                     });
                 }
 
+                function runAdjustPaddingWithDelay() {
+                    requestAnimationFrame(() => {
+                        setTimeout(adjustRightPaddingOnScrollCheckAll, 0);
+                    });
+                }
+
                 // Run on page load and resize
-                window.addEventListener("load", adjustRightPaddingOnScrollCheckAll);
-                window.addEventListener("resize", adjustRightPaddingOnScrollCheckAll);
+                window.addEventListener("load", runAdjustPaddingWithDelay);
+                window.addEventListener("resize", runAdjustPaddingWithDelay);
 
 
                 const imageInput = document.getElementById('image');
