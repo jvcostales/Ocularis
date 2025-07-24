@@ -1333,14 +1333,19 @@
                             console.log('Parsed JSON:', data);
                             if (data.success) {
                                 elements.forEach(el => {
-                                    el.remove(); // Remove all matching elements
+                                    el.remove(); // Remove the request bar
                                     console.log(`Removed element request-${requestId}`);
                                 });
 
-                                // ✅ Check if any requests are left
-                                const remainingRequests = document.querySelectorAll('.request-bar');
+                                // Check remaining requests
+                                const requestListContainer = document.querySelector('#requests-tablet');
+                                const remainingRequests = requestListContainer.querySelectorAll('.request-bar');
+
+                                // Remove existing empty state if any
+                                const existingEmpty = requestListContainer.querySelector('.notifs-empty');
+                                if (existingEmpty) existingEmpty.remove();
+
                                 if (remainingRequests.length === 0) {
-                                    const requestsContainer = document.getElementById('requests-tablet');
                                     const emptyState = document.createElement('div');
                                     emptyState.className = 'notifs-empty';
                                     emptyState.innerHTML = `
@@ -1348,7 +1353,7 @@
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
                     `;
-                                    requestsContainer.appendChild(emptyState);
+                                    requestListContainer.appendChild(emptyState);
                                     console.log("Inserted empty state.");
                                 }
 
