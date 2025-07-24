@@ -1960,9 +1960,17 @@
                             .then(res => res.json())
                             .then(data => {
                                 if (data.status === 'success') {
-                                    const commentList = document.querySelector(`#commentList-${imageId}`); // This should be a container <div>
+                                    const commentList = document.querySelector(`#commentList-${imageId}`);
                                     const comment = data.comment;
 
+                                    // 🔥 Remove "comments-empty" if it exists
+                                    const overlay = form.closest('.overlay-content-comments');
+                                    const emptyMessage = overlay.querySelector('.comments-empty');
+                                    if (emptyMessage) {
+                                        emptyMessage.remove();
+                                    }
+
+                                    // 💬 Create and insert new comment
                                     const newComment = document.createElement('div');
                                     newComment.className = 'profile-comment-wrapper';
                                     newComment.innerHTML = `
@@ -1993,12 +2001,12 @@
                 </div>
             </button>
         </form>
-<div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
-    <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
-        <span class="like-number">${comment.like_count}</span>
-        <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
-    </div>
-</div>
+        <div id="openOverlayCommentLikes-0" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="metrics like-count" id="like-count-comment-${comment.comment_id}" data-comment-id="${comment.comment_id}">
+                <span class="like-number">${comment.like_count}</span>
+                <span class="like-text">${comment.like_count === 1 ? 'Like' : 'Likes'}</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2018,12 +2026,10 @@
 
                                     commentList.prepend(newComment);
 
-                                    // Create a 16px spacer div
+                                    // Optional spacer
                                     const spacer = document.createElement('div');
                                     spacer.style.height = '16px';
                                     spacer.classList.add('comment-spacer-temp');
-
-                                    // Insert spacer directly after newComment
                                     newComment.insertAdjacentElement('afterend', spacer);
 
                                     input.value = '';
