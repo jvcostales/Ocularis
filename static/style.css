@@ -688,7 +688,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 6px;
+        padding-right: 12px;
         /*due to scrollbar*/
         box-sizing: border-box;
         overflow-x: hidden;
