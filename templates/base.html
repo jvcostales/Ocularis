@@ -2316,12 +2316,11 @@
 
                 function runAdjustPaddingWithDelay() {
                     requestAnimationFrame(() => {
-                        setTimeout(adjustRightPaddingOnScrollCheckAll, 0);
+                        setTimeout(adjustRightPaddingOnScrollCheckAll, 50); // allow DOM to settle
                     });
                 }
 
-                // Run on page load and resize
-                window.addEventListener("load", runAdjustPaddingWithDelay);
+                document.addEventListener("DOMContentLoaded", runAdjustPaddingWithDelay);
                 window.addEventListener("resize", runAdjustPaddingWithDelay);
 
 

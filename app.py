@@ -3286,9 +3286,9 @@ def save_post(user_id, image_id, conn):
 @app.route('/saved')
 @login_required
 def saved():
+    query = request.args.get('query', '').strip()
+    like_query = f"%{query}%"
     user_id = current_user.id
-    if not user_id:
-        return redirect(url_for('login'))
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -3299,178 +3299,181 @@ def saved():
     )
     cur = conn.cursor()
 
-    # 1. Fetch saved posts
-    cur.execute("""
-        SELECT 
-            images.image_id,                            -- image[0]
-            images.image_url,                           -- image[1]
-            images.caption,                             -- image[2]
-            COUNT(likes.image_id) AS like_count,        -- image[3] ← updated
-            author.id AS author_id,                     -- image[4]
-            author.first_name,                          -- image[5]
-            author.last_name,                           -- image[6]
-            images.created_at,                          -- image[7] (for date formatting)
-            collaborator.id AS collaborator_id,         -- image[8]
-            collaborator.first_name,                    -- image[9]
-            collaborator.last_name,                      -- image[10]
-            author.profile_pic,
-            collaborator.profile_pic
-        FROM saved_posts
-        JOIN images ON saved_posts.image_id = images.image_id
-        JOIN users AS author ON images.id = author.id
-        LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
-        LEFT JOIN likes ON images.image_id = likes.image_id
-        WHERE saved_posts.user_id = %s
-        GROUP BY 
-            images.image_id, images.image_url, images.caption, images.created_at,
-            author.id, author.first_name, author.last_name,
-            collaborator.id, collaborator.first_name, collaborator.last_name,
-            saved_posts.saved_at
-        ORDER BY saved_posts.saved_at DESC;
-    """, (user_id,))
-    saved_posts = cur.fetchall()
-
-    # Initialize containers
-    all_comments = {}
-    likes_data = {}
-    comment_likes_data = {}
-
-    for post in saved_posts:
-        image_id = post[0]  # images.image_id
-
-        # 2. Fetch comments per image
+    try:
+        # 1. Fetch saved posts with search filter
         cur.execute("""
-            SELECT comments.comment_id, comments.image_id, 
-                   users.first_name || ' ' || users.last_name AS display_name, 
-                   comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id, users.profile_pic
-            FROM comments
-            JOIN users ON comments.user_id = users.id
+            SELECT 
+                images.image_id,
+                images.image_url,
+                images.caption,
+                COALESCE(like_counts.count, 0),
+                author.id AS author_id,
+                author.first_name,
+                author.last_name,
+                images.created_at,
+                collaborator.id AS collaborator_id,
+                collaborator.first_name,
+                collaborator.last_name,
+                author.profile_pic,
+                collaborator.profile_pic,
+                EXISTS (
+                    SELECT 1 FROM likes 
+                    WHERE user_id = %s AND image_id = images.image_id
+                ) AS is_liked
+            FROM saved_posts
+            JOIN images ON saved_posts.image_id = images.image_id
+            JOIN users AS author ON images.id = author.id
+            LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
             LEFT JOIN (
-                SELECT comment_id, COUNT(*) AS like_count
-                FROM comment_likes
-                GROUP BY comment_id
-            ) AS cl ON comments.comment_id = cl.comment_id
-            WHERE comments.image_id = %s
-            ORDER BY comments.created_at ASC
-        """, (image_id,))
-        comments = cur.fetchall()
-        all_comments[image_id] = comments
+                SELECT image_id, COUNT(*) AS count
+                FROM likes
+                GROUP BY image_id
+            ) AS like_counts ON images.image_id = like_counts.image_id
+            LEFT JOIN image_tags ON images.image_id = image_tags.image_id
+            LEFT JOIN hidden_posts hp ON images.image_id = hp.image_id AND hp.user_id = %s
+            WHERE saved_posts.user_id = %s
+              AND hp.user_id IS NULL
+              AND (
+                    images.caption ILIKE %s OR
+                    image_tags.tag ILIKE %s OR
+                    (author.first_name || ' ' || author.last_name) ILIKE %s OR
+                    (collaborator.first_name || ' ' || collaborator.last_name) ILIKE %s
+                )
+            GROUP BY 
+                images.image_id, images.image_url, images.caption, images.created_at,
+                author.id, author.first_name, author.last_name, author.profile_pic,
+                collaborator.id, collaborator.first_name, collaborator.last_name, collaborator.profile_pic,
+                like_counts.count, saved_posts.saved_at
+            ORDER BY saved_posts.saved_at DESC;
+        """, (user_id, user_id, user_id, like_query, like_query, like_query, like_query))
 
-        # 3. Likes per image
-        cur.execute("""
-            SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
-            FROM likes l
-            JOIN users u ON l.user_id = u.id
-            WHERE l.image_id = %s
-            ORDER BY l.created_at DESC
-        """, (image_id,))
-        likes_data[image_id] = cur.fetchall()
+        saved_posts = cur.fetchall()
 
-        # 4. Likes per comment
-        for comment in comments:
-            comment_id = comment[0]
+        # 2. Comments, Likes, Comment Likes
+        all_comments = {}
+        likes_data = {}
+        comment_likes_data = {}
+
+        for post in saved_posts:
+            image_id = post[0]
+
+            # Comments
             cur.execute("""
-                SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
-                FROM comment_likes cl
-                JOIN users u ON cl.user_id = u.id
-                WHERE cl.comment_id = %s
-                ORDER BY cl.created_at DESC
-            """, (comment_id,))
-            comment_likes_data[comment_id] = cur.fetchall()
+                SELECT comments.comment_id, comments.image_id, 
+                       users.first_name || ' ' || users.last_name AS display_name, 
+                       comments.comment_text, comments.created_at,
+                       COALESCE(like_count, 0), comments.user_id, users.profile_pic
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+                LEFT JOIN (
+                    SELECT comment_id, COUNT(*) AS like_count
+                    FROM comment_likes
+                    GROUP BY comment_id
+                ) AS cl ON comments.comment_id = cl.comment_id
+                WHERE comments.image_id = %s
+                ORDER BY comments.created_at ASC
+            """, (image_id,))
+            comments = cur.fetchall()
+            all_comments[image_id] = comments
 
-    # 5. Notifications
-    cur.execute("""
-        SELECT users.first_name || ' ' || users.last_name AS display_name,
-               notifications.action_type, notifications.image_id, notifications.created_at, notifications.actor_id, users.profile_pic, notifications.notification_id
+            # Likes per image
+            cur.execute("""
+                SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
+                FROM likes l
+                JOIN users u ON l.user_id = u.id
+                WHERE l.image_id = %s
+                ORDER BY l.created_at DESC
+            """, (image_id,))
+            likes_data[image_id] = cur.fetchall()
 
-        FROM notifications
-        JOIN users ON notifications.actor_id = users.id
-        WHERE notifications.recipient_id = %s
-        ORDER BY notifications.created_at DESC
-    """, (user_id,))
-    notifications = cur.fetchall()
-    
-            # Gather unique actor_ids
-    actor_ids = list(set([n[4] for n in notifications]))
+            # Comment likes
+            for comment in comments:
+                comment_id = comment[0]
+                cur.execute("""
+                    SELECT u.first_name || ' ' || u.last_name AS display_name, cl.created_at
+                    FROM comment_likes cl
+                    JOIN users u ON cl.user_id = u.id
+                    WHERE cl.comment_id = %s
+                    ORDER BY cl.created_at DESC
+                """, (comment_id,))
+                comment_likes_data[comment_id] = cur.fetchall()
 
-            # Prepare dictionary to hold actor_id → user profile details
-    actor_details = {}
-
-            # Fetch full details for each actor_id
-    for actor_id in actor_ids:
+        # 3. Notifications
         cur.execute("""
-            SELECT first_name, last_name, role, city, state, country, 
-                profile_pic, cover_photo, skills, preferences, experience_level,
-                facebook, instagram, x, linkedin, telegram, email
-            FROM users WHERE id = %s
-        """, (actor_id,))
-        user = cur.fetchone()
+            SELECT users.first_name || ' ' || users.last_name AS display_name,
+                   notifications.action_type, notifications.image_id, notifications.created_at,
+                   notifications.actor_id, users.profile_pic, notifications.notification_id
+            FROM notifications
+            JOIN users ON notifications.actor_id = users.id
+            WHERE notifications.recipient_id = %s
+            ORDER BY notifications.created_at DESC
+        """, (user_id,))
+        notifications = cur.fetchall()
 
-        if user:
-            countries = current_app.config['COUNTRIES']
-            states = current_app.config['STATES']
+        # 4. Actor Details
+        actor_ids = list(set([n[4] for n in notifications]))
+        actor_details = {}
 
-                # Get raw codes
-            city = user[3]
-            state_code = user[4]
-            country_code = user[5]
+        countries = current_app.config['COUNTRIES']
+        states = current_app.config['STATES']
+        iso_to_country = {c["iso2"]: c["name"] for c in countries}
 
-                # Look up readable names
-            iso_to_country = {c["iso2"]: c["name"] for c in countries}
-            readable_country = iso_to_country.get(country_code, country_code)
+        for actor_id in actor_ids:
+            cur.execute("""
+                SELECT first_name, last_name, role, city, state, country, 
+                    profile_pic, cover_photo, skills, preferences, experience_level,
+                    facebook, instagram, x, linkedin, telegram, email
+                FROM users WHERE id = %s
+            """, (actor_id,))
+            user = cur.fetchone()
 
-                # Filter states by selected country
-            filtered_states = [s for s in states if s["country_code"] == country_code]
-            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-            readable_state = state_code_to_name.get(state_code, state_code)
+            if user:
+                city, state_code, country_code = user[3], user[4], user[5]
+                filtered_states = [s for s in states if s["country_code"] == country_code]
+                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+                readable_country = iso_to_country.get(country_code, country_code)
+                readable_state = state_code_to_name.get(state_code, state_code)
+                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
 
-            # Display-friendly location string
-            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+                actor_details[actor_id] = {
+                    "user_id": actor_id,
+                    "full_name": f"{user[0]} {user[1]}",
+                    "role": user[2],
+                    "city": city,
+                    "state": state_code,
+                    "country": country_code,
+                    "location_display": location_display,
+                    "profile_pic": user[6],
+                    "cover_photo": user[7],
+                    "skills": user[8],
+                    "preferences": user[9],
+                    "experience_level": user[10],
+                    "facebook": user[11],
+                    "instagram": user[12],
+                    "x": user[13],
+                    "linkedin": user[14],
+                    "telegram": user[15],
+                    "email": user[16]
+                }
 
-            actor_details[actor_id] = {
-                "user_id": actor_id,
-                "full_name": f"{user[0]} {user[1]}",
-                "role": user[2],
-                "city": city,
-                "state": state_code,
-                "country": country_code,
-                "location_display": location_display,  # ✅ new key
-                "profile_pic": user[6],
-                "cover_photo": user[7],
-                "skills": user[8],
-                "preferences": user[9],
-                "experience_level": user[10],
-                "facebook": user[11],
-                "instagram": user[12],
-                "x": user[13],
-                "linkedin": user[14],
-                "telegram": user[15],
-                "email": user[16]
-            }
+        # 5. Friend Requests
+        cur.execute("""
+            SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
+            FROM friend_requests fr
+            JOIN users u ON fr.sender_id = u.id
+            WHERE fr.receiver_id = %s AND fr.status = 'pending'
+            ORDER BY fr.created_at DESC
+        """, (user_id,))
+        requests = cur.fetchall()
 
-    # 6. Friend requests
-    cur.execute("""
-        SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
-        FROM friend_requests fr
-        JOIN users u ON fr.sender_id = u.id
-        WHERE fr.receiver_id = %s AND fr.status = 'pending'
-        ORDER BY fr.created_at DESC
-    """, (user_id,))
-    requests = cur.fetchall()
+        # 6. Get current user's profile_pic
+        cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
+        result = cur.fetchone()
+        profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
-    result = cur.fetchone()
-
-    if result and result[0] and result[0] != 'pfp.jpg':
-        profile_pic_url = url_for('profile_pics', filename=result[0])
-    else:
-        profile_pic_url = url_for('static', filename='pfp.jpg')
-
-
-    cur.close()
-    conn.close()
+    finally:
+        cur.close()
+        conn.close()
 
     return render_template('saved.html',
         user=current_user,
@@ -3481,7 +3484,7 @@ def saved():
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
-        comments_by_image=all_comments,  # just pass the original directly
+        comments_by_image=all_comments,
         profile_pic_url=profile_pic_url,
         actor_details=actor_details
     )
