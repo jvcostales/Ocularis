@@ -1960,17 +1960,8 @@
                             .then(res => res.json())
                             .then(data => {
                                 if (data.status === 'success') {
-                                    const commentList = document.querySelector(`#commentList-${imageId}`);
                                     const comment = data.comment;
 
-                                    // 🔥 Remove "comments-empty" if it exists
-                                    const overlay = form.closest('.overlay-content-comments');
-                                    const emptyMessage = overlay.querySelector('.comments-empty');
-                                    if (emptyMessage) {
-                                        emptyMessage.remove();
-                                    }
-
-                                    // 💬 Create and insert new comment
                                     const newComment = document.createElement('div');
                                     newComment.className = 'profile-comment-wrapper';
                                     newComment.innerHTML = `
@@ -2024,13 +2015,17 @@
 <div class="line-comments"></div>
 `;
 
-                                    commentList.prepend(newComment);
+                                    const commentList = document.getElementById(`commentList-${imageId}`);
+                                    if (commentList) {
+                                        // Remove "No comments yet" message if it exists
+                                        const overlay = form.closest('.overlay-content-comments');
+                                        const emptyMessage = overlay?.querySelector('.comments-empty');
+                                        if (emptyMessage) {
+                                            emptyMessage.remove();
+                                        }
 
-                                    // Optional spacer
-                                    const spacer = document.createElement('div');
-                                    spacer.style.height = '16px';
-                                    spacer.classList.add('comment-spacer-temp');
-                                    newComment.insertAdjacentElement('afterend', spacer);
+                                        commentList.prepend(newComment);
+                                    }
 
                                     input.value = '';
                                 } else {
@@ -2040,6 +2035,7 @@
                             .catch(err => console.error('Error:', err));
                     });
                 });
+
 
 
 
