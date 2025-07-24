@@ -1336,6 +1336,22 @@
                                     el.remove(); // Remove all matching elements
                                     console.log(`Removed element request-${requestId}`);
                                 });
+
+                                // ✅ Check if any requests are left
+                                const remainingRequests = document.querySelectorAll('.request-bar');
+                                if (remainingRequests.length === 0) {
+                                    const requestsContainer = document.getElementById('requests-tablet');
+                                    const emptyState = document.createElement('div');
+                                    emptyState.className = 'notifs-empty';
+                                    emptyState.innerHTML = `
+                        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                        <div class="oops">Oops!</div>
+                        <div class="nothing">Nothing to show here at the moment.</div>
+                    `;
+                                    requestsContainer.appendChild(emptyState);
+                                    console.log("Inserted empty state.");
+                                }
+
                             } else {
                                 console.error("Error:", data.message || "Unknown error");
                                 alert("Error: " + data.message);
