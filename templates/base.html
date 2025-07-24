@@ -1144,30 +1144,72 @@
 
             function adjustRightPaddingOnScroll(id) {
                 const el = document.getElementById(id);
-                if (!el || el.offsetParent === null) return;
+                if (!el || el.offsetParent === null) {
+                    console.log(`[${id}] skipped (not in DOM or hidden)`);
+                    return;
+                }
 
-                void el.offsetHeight;
+                void el.offsetHeight; // Force reflow
 
                 const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
                 console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
-
                 el.style.paddingRight = hasScroll ? "12px" : "24px";
+            }
+
+            function runAdjustPaddingWithDelay(id) {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            adjustRightPaddingOnScroll(id);
+                        });
+                    }, 150); // adjust delay if needed
+                });
+            }
+
+            function observeDynamicContent(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+
+                const observer = new MutationObserver(() => {
+                    runAdjustPaddingWithDelay(id);
+                });
+
+                observer.observe(el, { childList: true, subtree: true });
             }
 
 
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                const ids = ["notifs", "requests"];
+                // Initial check (optional)
+                runAdjustPaddingWithDelay("notifs");
+                runAdjustPaddingWithDelay("requests");
 
-                ids.forEach(id => {
-                    runAdjustPaddingWithDelay(id);
-                    observeDynamicContent(id);
-                });
+                // Observe dynamic changes inside each
+                observeDynamicContent("notifs");
+                observeDynamicContent("requests");
 
+                // Recheck on window resize
                 window.addEventListener("resize", () => {
-                    ids.forEach(id => runAdjustPaddingWithDelay(id));
+                    runAdjustPaddingWithDelay("notifs");
+                    runAdjustPaddingWithDelay("requests");
                 });
+
+                // If you toggle visibility via button clicks or tab switchers, put this:
+                const notifBtn = document.getElementById("notif-button");
+                const requestBtn = document.getElementById("request-button");
+
+                if (notifBtn) {
+                    notifBtn.addEventListener("click", () => {
+                        runAdjustPaddingWithDelay("notifs");
+                    });
+                }
+
+                if (requestBtn) {
+                    requestBtn.addEventListener("click", () => {
+                        runAdjustPaddingWithDelay("requests");
+                    });
+                }
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
