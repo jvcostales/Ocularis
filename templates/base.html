@@ -1143,28 +1143,28 @@
 
 
 
+            function getVisibleIds() {
+                // Use screen width to determine which IDs are relevant
+                return window.innerWidth <= 768
+                    ? ["notifs-tablet", "requests-tablet"]
+                    : ["notifs", "requests"];
+            }
+
             function adjustRightPaddingOnScrollCheckAll() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+                const ids = getVisibleIds();
 
                 ids.forEach(id => {
                     const el = document.getElementById(id);
-
                     if (!el || el.offsetParent === null) {
                         console.log(`[${id}] skipped (not in DOM or hidden)`);
                         return;
                     }
 
-                    void el.offsetHeight;
+                    void el.offsetHeight; // Force reflow
 
-                    const hasScroll =
-                        el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
 
-                    console.log(
-                        `[${id}] hasScroll: ${hasScroll}`,
-                        `scrollHeight: ${el.scrollHeight}`,
-                        `clientHeight: ${el.clientHeight}`
-                    );
-
+                    console.log(`[${id}] hasScroll: ${hasScroll}`, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
                     el.style.paddingRight = hasScroll ? "12px" : "24px";
                 });
             }
@@ -1175,16 +1175,17 @@
                         requestAnimationFrame(() => {
                             adjustRightPaddingOnScrollCheckAll();
                         });
-                    }, 150);
+                    }, 150); // Delay to let layout settle
                 });
             }
 
             function observeDynamicContent() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+
                 const observer = new MutationObserver(() => {
                     runAdjustPaddingWithDelay();
                 });
 
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 ids.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1201,8 +1202,7 @@
             document.addEventListener('DOMContentLoaded', function () {
 
                 runAdjustPaddingWithDelay();
-                observeDynamicContent(); // Optional
-                window.addEventListener("resize", runAdjustPaddingWithDelay);
+                observeDynamicContent(); // optional
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
@@ -2579,6 +2579,7 @@
                         alert('Error performing action.');
                     });
             };
+            window.addEventListener("resize", runAdjustPaddingWithDelay);
 
 
         </script>
