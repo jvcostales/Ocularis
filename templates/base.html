@@ -1142,17 +1142,19 @@
 
 
 
-            function adjustRightPaddingOnScroll(id) {
+            function adjustRightPaddingOnScrollCheck(id) {
                 const el = document.getElementById(id);
                 if (!el || el.offsetParent === null) {
                     console.log(`[${id}] skipped (not in DOM or hidden)`);
                     return;
                 }
 
-                void el.offsetHeight; // Force reflow
+                // Force reflow to ensure accurate measurements
+                void el.offsetHeight;
 
                 const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
                 console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
+
                 el.style.paddingRight = hasScroll ? "12px" : "24px";
             }
 
@@ -1160,38 +1162,54 @@
                 requestAnimationFrame(() => {
                     setTimeout(() => {
                         requestAnimationFrame(() => {
-                            adjustRightPaddingOnScroll(id);
+                            adjustRightPaddingOnScrollCheck(id);
                         });
-                    }, 150); // adjust delay if needed
+                    }, 150); // Give layout some time to settle
                 });
             }
 
-            function observeDynamicContent(id) {
-                const el = document.getElementById(id);
-                if (!el) return;
-
+            function observeDynamicContent() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 const observer = new MutationObserver(() => {
-                    runAdjustPaddingWithDelay(id);
+                    ids.forEach(id => runAdjustPaddingWithDelay(id));
                 });
 
-                observer.observe(el, { childList: true, subtree: true });
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        observer.observe(el, { childList: true, subtree: true });
+                    }
+                });
             }
+
 
 
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                // Initial check (optional)
+                // Run initial padding check on visible elements
                 runAdjustPaddingWithDelay("notifs");
                 runAdjustPaddingWithDelay("requests");
 
-                // Observe dynamic changes inside each
-                observeDynamicContent("notifs");
-                observeDynamicContent("requests");
+                // Observe future changes (optional)
+                observeDynamicContent();
 
-                // Recheck on window resize
+                // Adjust on resize
                 window.addEventListener("resize", () => {
                     runAdjustPaddingWithDelay("notifs");
+                    runAdjustPaddingWithDelay("requests");
+                });
+
+                // If you have tabs/buttons to toggle visibility, hook into them like this:
+                document.querySelector("#show-notifs")?.addEventListener("click", () => {
+                    document.getElementById("notifs").style.display = "block";
+                    document.getElementById("requests").style.display = "none";
+                    runAdjustPaddingWithDelay("notifs");
+                });
+
+                document.querySelector("#show-requests")?.addEventListener("click", () => {
+                    document.getElementById("requests").style.display = "block";
+                    document.getElementById("notifs").style.display = "none";
                     runAdjustPaddingWithDelay("requests");
                 });
 
