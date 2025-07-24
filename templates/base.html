@@ -1142,38 +1142,49 @@
 
 
 
-            function adjustRightPaddingOnScrollCheck(id) {
-                const el = document.getElementById(id);
-                if (!el || el.offsetParent === null) {
-                    console.log(`[${id}] skipped (not in DOM or hidden)`);
-                    return;
-                }
 
-                // Force reflow to ensure accurate measurements
-                void el.offsetHeight;
+            function adjustRightPaddingOnScrollCheckAll() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
 
-                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
 
-                el.style.paddingRight = hasScroll ? "12px" : "24px";
+                    if (!el || el.offsetParent === null) {
+                        console.log(`[${id}] skipped (not in DOM or hidden)`);
+                        return;
+                    }
+
+                    void el.offsetHeight;
+
+                    const hasScroll =
+                        el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+
+                    console.log(
+                        `[${id}] hasScroll: ${hasScroll}`,
+                        `scrollHeight: ${el.scrollHeight}`,
+                        `clientHeight: ${el.clientHeight}`
+                    );
+
+                    el.style.paddingRight = hasScroll ? "12px" : "24px";
+                });
             }
 
-            function runAdjustPaddingWithDelay(id) {
+            function runAdjustPaddingWithDelay() {
                 requestAnimationFrame(() => {
                     setTimeout(() => {
                         requestAnimationFrame(() => {
-                            adjustRightPaddingOnScrollCheck(id);
+                            adjustRightPaddingOnScrollCheckAll();
                         });
-                    }, 150); // Give layout some time to settle
+                    }, 150);
                 });
             }
 
             function observeDynamicContent() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 const observer = new MutationObserver(() => {
-                    ids.forEach(id => runAdjustPaddingWithDelay(id));
+                    runAdjustPaddingWithDelay();
                 });
 
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 ids.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1185,49 +1196,13 @@
 
 
 
+
+
             document.addEventListener('DOMContentLoaded', function () {
 
-                // Run initial padding check on visible elements
-                runAdjustPaddingWithDelay("notifs");
-                runAdjustPaddingWithDelay("requests");
-
-                // Observe future changes (optional)
-                observeDynamicContent();
-
-                // Adjust on resize
-                window.addEventListener("resize", () => {
-                    runAdjustPaddingWithDelay("notifs");
-                    runAdjustPaddingWithDelay("requests");
-                });
-
-                // If you have tabs/buttons to toggle visibility, hook into them like this:
-                document.querySelector("#show-notifs")?.addEventListener("click", () => {
-                    document.getElementById("notifs").style.display = "block";
-                    document.getElementById("requests").style.display = "none";
-                    runAdjustPaddingWithDelay("notifs");
-                });
-
-                document.querySelector("#show-requests")?.addEventListener("click", () => {
-                    document.getElementById("requests").style.display = "block";
-                    document.getElementById("notifs").style.display = "none";
-                    runAdjustPaddingWithDelay("requests");
-                });
-
-                // If you toggle visibility via button clicks or tab switchers, put this:
-                const notifBtn = document.getElementById("notif-button");
-                const requestBtn = document.getElementById("request-button");
-
-                if (notifBtn) {
-                    notifBtn.addEventListener("click", () => {
-                        runAdjustPaddingWithDelay("notifs");
-                    });
-                }
-
-                if (requestBtn) {
-                    requestBtn.addEventListener("click", () => {
-                        runAdjustPaddingWithDelay("requests");
-                    });
-                }
+                runAdjustPaddingWithDelay();
+                observeDynamicContent(); // Optional
+                window.addEventListener("resize", runAdjustPaddingWithDelay);
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
