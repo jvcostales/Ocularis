@@ -1142,16 +1142,17 @@
 
 
 
-            function adjustPadding(id) {
+            function adjustRightPaddingOnScroll(id) {
                 const el = document.getElementById(id);
-                if (!el) return;
+                if (!el || el.offsetParent === null) {
+                    console.log(`[${id}] skipped (not in DOM or hidden)`);
+                    return;
+                }
 
-                // Force reflow
-                void el.offsetHeight;
+                void el.offsetHeight; // Force reflow
 
                 const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                console.log(`[${id}] hasScroll: ${hasScroll}, scrollHeight: ${el.scrollHeight}, clientHeight: ${el.clientHeight}`);
-
+                console.log(`[${id}] hasScroll:`, hasScroll, `scrollHeight: ${el.scrollHeight}`, `clientHeight: ${el.clientHeight}`);
                 el.style.paddingRight = hasScroll ? "12px" : "24px";
             }
 
@@ -1159,33 +1160,56 @@
                 requestAnimationFrame(() => {
                     setTimeout(() => {
                         requestAnimationFrame(() => {
-                            adjustPadding(id);
+                            adjustRightPaddingOnScroll(id);
                         });
-                    }, 100); // can increase if DOM is slow to paint
+                    }, 150); // adjust delay if needed
                 });
             }
 
-            function observeContentChanges(id) {
+            function observeDynamicContent(id) {
                 const el = document.getElementById(id);
                 if (!el) return;
 
-                const observer = new MutationObserver(() => runAdjustPaddingWithDelay(id));
+                const observer = new MutationObserver(() => {
+                    runAdjustPaddingWithDelay(id);
+                });
+
                 observer.observe(el, { childList: true, subtree: true });
             }
 
 
+
             document.addEventListener('DOMContentLoaded', function () {
 
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+                // Initial check (optional)
+                runAdjustPaddingWithDelay("notifs");
+                runAdjustPaddingWithDelay("requests");
 
-                ids.forEach(id => {
-                    runAdjustPaddingWithDelay(id);
-                    observeContentChanges(id);
-                });
+                // Observe dynamic changes inside each
+                observeDynamicContent("notifs");
+                observeDynamicContent("requests");
 
+                // Recheck on window resize
                 window.addEventListener("resize", () => {
-                    ids.forEach(id => runAdjustPaddingWithDelay(id));
+                    runAdjustPaddingWithDelay("notifs");
+                    runAdjustPaddingWithDelay("requests");
                 });
+
+                // If you toggle visibility via button clicks or tab switchers, put this:
+                const notifBtn = document.getElementById("notif-button");
+                const requestBtn = document.getElementById("request-button");
+
+                if (notifBtn) {
+                    notifBtn.addEventListener("click", () => {
+                        runAdjustPaddingWithDelay("notifs");
+                    });
+                }
+
+                if (requestBtn) {
+                    requestBtn.addEventListener("click", () => {
+                        runAdjustPaddingWithDelay("requests");
+                    });
+                }
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
