@@ -913,55 +913,58 @@ def feed():
 
 @app.route('/post/<int:image_id>')
 def view_post(image_id):
-
     if not current_user.is_authenticated:
         return redirect(url_for('login', next=request.url))
-    
+
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
-    
-    cur.execute("""
-        SELECT first_name, last_name, role, city, state, country, profile_pic 
-        FROM users 
-        WHERE id = %s
-    """, (current_user.id,))
-    user = cur.fetchone()
 
     try:
-        # Fetch a single image by image_id
+        # Current user details
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, profile_pic 
+            FROM users 
+            WHERE id = %s
+        """, (current_user.id,))
+        user_data = cur.fetchone()
+
+        # Fetch image
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
                 COALESCE(like_count, 0), images.id, author.first_name, author.last_name, images.created_at,
                 collaborator.id, collaborator.first_name, collaborator.last_name,
-                author.profile_pic, collaborator.profile_pic
+                author.profile_pic, collaborator.profile_pic,
+                EXISTS (
+                    SELECT 1 FROM likes 
+                    WHERE user_id = %s AND image_id = images.image_id
+                ) AS is_liked
             FROM images 
             JOIN users AS author ON images.id = author.id
             LEFT JOIN (
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
                 GROUP BY image_id
-            ) AS likes 
-            ON images.image_id = likes.image_id
+            ) AS likes ON images.image_id = likes.image_id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
             WHERE images.image_id = %s
-        """, (image_id,))
+        """, (current_user.id, image_id))
         image = cur.fetchone()
 
         if not image:
             abort(404)
 
-        # Fetch comments for that image
+        # Fetch comments
         cur.execute("""
             SELECT comments.comment_id, comments.image_id, 
                    users.first_name || ' ' || users.last_name AS display_name, 
                    comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id, users.profile_pic
+                   COALESCE(like_count, 0), comments.user_id, users.profile_pic
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
@@ -974,7 +977,7 @@ def view_post(image_id):
         """, (image_id,))
         comments = cur.fetchall()
 
-        # Likes for the image
+        # Fetch image likes
         cur.execute("""
             SELECT u.first_name || ' ' || u.last_name AS display_name, l.created_at
             FROM likes l
@@ -985,7 +988,7 @@ def view_post(image_id):
         likes = cur.fetchall()
         likes_data = {image_id: likes}
 
-        # Likes for each comment
+        # Comment likes
         comment_likes_data = {}
         for comment in comments:
             comment_id = comment[0]
@@ -996,85 +999,70 @@ def view_post(image_id):
                 WHERE cl.comment_id = %s
                 ORDER BY cl.created_at DESC
             """, (comment_id,))
-            comment_likes = cur.fetchall()
-            comment_likes_data[comment_id] = comment_likes
+            comment_likes_data[comment_id] = cur.fetchall()
 
-                # Fetch notifications
+        # Notifications
         cur.execute("""
-            SELECT                 
-                users.first_name || ' ' || users.last_name AS display_name,
-                notifications.action_type,
-                notifications.image_id,
-                notifications.created_at,
-                notifications.actor_id,
-                users.profile_pic,
-                notifications.notification_id
+            SELECT users.first_name || ' ' || users.last_name AS display_name,
+                   notifications.action_type,
+                   notifications.image_id,
+                   notifications.created_at,
+                   notifications.actor_id,
+                   users.profile_pic,
+                   notifications.notification_id
             FROM notifications
             JOIN users ON notifications.actor_id = users.id
             WHERE notifications.recipient_id = %s
             ORDER BY notifications.created_at DESC
         """, (current_user.id,))
         notifications = cur.fetchall()
-        
-                # Gather unique actor_ids
-        actor_ids = list(set([n[4] for n in notifications]))
 
-            # Prepare dictionary to hold actor_id → user profile details
+        actor_ids = list(set(n[4] for n in notifications))
         actor_details = {}
 
-            # Fetch full details for each actor_id
         for actor_id in actor_ids:
             cur.execute("""
                 SELECT first_name, last_name, role, city, state, country, 
-                    profile_pic, cover_photo, skills, preferences, experience_level,
-                    facebook, instagram, x, linkedin, telegram, email
+                       profile_pic, cover_photo, skills, preferences, experience_level,
+                       facebook, instagram, x, linkedin, telegram, email
                 FROM users WHERE id = %s
             """, (actor_id,))
-            user = cur.fetchone()
+            actor_user = cur.fetchone()
 
-            if user:
+            if actor_user:
                 countries = current_app.config['COUNTRIES']
                 states = current_app.config['STATES']
 
-                # Get raw codes
-                city = user[3]
-                state_code = user[4]
-                country_code = user[5]
-
-                # Look up readable names
                 iso_to_country = {c["iso2"]: c["name"] for c in countries}
-                readable_country = iso_to_country.get(country_code, country_code)
+                country_name = iso_to_country.get(actor_user[5], actor_user[5])
 
-                # Filter states by selected country
-                filtered_states = [s for s in states if s["country_code"] == country_code]
-                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-                readable_state = state_code_to_name.get(state_code, state_code)
+                filtered_states = [s for s in states if s["country_code"] == actor_user[5]]
+                state_name = next((s["name"] for s in filtered_states if s["state_code"] == actor_user[4]), actor_user[4])
 
-                # Display-friendly location string
-                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+                location_display = ", ".join(filter(None, [actor_user[3], state_name, country_name]))
 
                 actor_details[actor_id] = {
                     "user_id": actor_id,
-                    "full_name": f"{user[0]} {user[1]}",
-                    "role": user[2],
-                    "city": city,
-                    "state": state_code,
-                    "country": country_code,
-                    "location_display": location_display,  # ✅ new key
-                    "profile_pic": user[6],
-                    "cover_photo": user[7],
-                    "skills": user[8],
-                    "preferences": user[9],
-                    "experience_level": user[10],
-                    "facebook": user[11],
-                    "instagram": user[12],
-                    "x": user[13],
-                    "linkedin": user[14],
-                    "telegram": user[15],
-                    "email": user[16]
+                    "full_name": f"{actor_user[0]} {actor_user[1]}",
+                    "role": actor_user[2],
+                    "city": actor_user[3],
+                    "state": actor_user[4],
+                    "country": actor_user[5],
+                    "location_display": location_display,
+                    "profile_pic": actor_user[6],
+                    "cover_photo": actor_user[7],
+                    "skills": actor_user[8],
+                    "preferences": actor_user[9],
+                    "experience_level": actor_user[10],
+                    "facebook": actor_user[11],
+                    "instagram": actor_user[12],
+                    "x": actor_user[13],
+                    "linkedin": actor_user[14],
+                    "telegram": actor_user[15],
+                    "email": actor_user[16]
                 }
 
-        # Fetch friend requests
+        # Friend requests
         cur.execute("""
             SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
             FROM friend_requests fr
@@ -1084,29 +1072,25 @@ def view_post(image_id):
         """, (current_user.id,))
         requests = cur.fetchall()
 
-        # Fetch the saved image IDs for the user
-        cur.execute("""
-            SELECT image_id FROM saved_posts WHERE user_id = %s
-        """, (current_user.id,))
+        # Saved posts
+        cur.execute("SELECT image_id FROM saved_posts WHERE user_id = %s", (current_user.id,))
         saved_image_ids = [row[0] for row in cur.fetchall()]
 
-        # New query to get current user's profile_pic
+        # Profile picture URL
         cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
         result = cur.fetchone()
-
         if result and result[0] and result[0] != 'pfp.jpg':
             profile_pic_url = url_for('profile_pics', filename=result[0])
         else:
             profile_pic_url = url_for('static', filename='pfp.jpg')
 
-    
     finally:
         cur.close()
         conn.close()
 
     return render_template(
         'post.html',
-        user=user,
+        user=user_data,
         image=image,
         comments=comments,
         likes_data=likes_data,
