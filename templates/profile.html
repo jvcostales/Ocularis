@@ -275,9 +275,14 @@
                     <div class="like-metrics-wrapper">
                         <form class="like-form" data-comment-id="{{ comment[0] }}">
                             <button type="submit" style="all: unset;">
-                                <div class="partner like-button" id="like-button-{{ comment[0] }}">
-                                    <span class="material-symbols-outlined lcs-symbol">thumb_up</span>
-                                    <div class="partner-label">Like</div>
+                                <div class="partner like-button {% if comment[8] %}liked{% endif %}"
+                                    id="like-button-{{ comment[0] }}">
+                                    <span class="material-symbols-outlined lcs-symbol">
+                                        {{ 'thumb_up_alt' if comment[8] else 'thumb_up' }}
+                                    </span>
+                                    <div class="partner-label">
+                                        {{ 'Unlike' if comment[8] else 'Like' }}
+                                    </div>
                                 </div>
                             </button>
                         </form>

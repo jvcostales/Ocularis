@@ -918,6 +918,8 @@ def feed():
 
 @app.route('/post/<int:image_id>')
 def view_post(image_id):
+    
+    user_id = current_user.id
 
     if not current_user.is_authenticated:
         return redirect(url_for('login', next=request.url))
@@ -970,12 +972,22 @@ def view_post(image_id):
         if not image:
             abort(404)
 
-        # Fetch comments for that image
+        # Fetch comments for that image with like status for the current user
         cur.execute("""
-            SELECT comments.comment_id, comments.image_id, 
-                   users.first_name || ' ' || users.last_name AS display_name, 
-                   comments.comment_text, comments.created_at,
-                   COALESCE(like_count, 0) AS like_count, comments.user_id, users.profile_pic
+            SELECT 
+                comments.comment_id,                     -- 0
+                comments.image_id,                       -- 1
+                users.first_name || ' ' || users.last_name AS display_name,  -- 2
+                comments.comment_text,                   -- 3
+                comments.created_at,                     -- 4
+                COALESCE(like_count, 0) AS like_count,   -- 5
+                comments.user_id,                        -- 6
+                users.profile_pic,                       -- 7
+                EXISTS (                                 -- 8 ✅ NEW: whether current user liked the comment
+                    SELECT 1 FROM comment_likes 
+                    WHERE comment_likes.comment_id = comments.comment_id 
+                    AND comment_likes.user_id = %s
+                ) AS is_liked
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
@@ -985,7 +997,7 @@ def view_post(image_id):
             ) AS cl ON comments.comment_id = cl.comment_id
             WHERE comments.image_id = %s
             ORDER BY comments.created_at ASC
-        """, (image_id,))
+        """, (user_id, image_id))
         comments = cur.fetchall()
 
         # Likes for the image
@@ -1838,17 +1850,31 @@ def profile(user_id):
 
     images = cur.fetchall()
 
-    # Fetch comments on the user's posts
+    # Fetch comments on the user's posts, with like count and like status by the current user
     cur.execute("""
-        SELECT comments.comment_id, comments.image_id, users.first_name, 
-               comments.comment_text, comments.created_at, 
-               (SELECT COUNT(*) FROM comment_likes WHERE comment_likes.comment_id = comments.comment_id) AS like_count,
-               comments.user_id, users.profile_pic
+        SELECT 
+            comments.comment_id,                                  -- 0
+            comments.image_id,                                    -- 1
+            users.first_name,                                     -- 2
+            comments.comment_text,                                -- 3
+            comments.created_at,                                  -- 4
+            (SELECT COUNT(*) FROM comment_likes 
+            WHERE comment_likes.comment_id = comments.comment_id) AS like_count, -- 5
+            comments.user_id,                                     -- 6
+            users.profile_pic,                                    -- 7
+            EXISTS (                                               -- 8 ✅ is_liked
+                SELECT 1 FROM comment_likes 
+                WHERE comment_likes.comment_id = comments.comment_id 
+                AND comment_likes.user_id = %s
+            ) AS is_liked
         FROM comments
         JOIN users ON comments.user_id = users.id
-        WHERE comments.image_id IN (SELECT image_id FROM images WHERE id = %s OR collaborator_id = %s)
+        WHERE comments.image_id IN (
+            SELECT image_id FROM images 
+            WHERE id = %s OR collaborator_id = %s
+        )
         ORDER BY comments.created_at ASC
-    """, (user_id, user_id))
+    """, (user_id, user_id, user_id))  # user_id repeated because it's used 3 times
     comments = cur.fetchall()
 
     # Check friend status
@@ -3371,12 +3397,22 @@ def saved():
         for post in saved_posts:
             image_id = post[0]
 
-            # Comments
+            # Comments with like status
             cur.execute("""
-                SELECT comments.comment_id, comments.image_id, 
-                       users.first_name || ' ' || users.last_name AS display_name, 
-                       comments.comment_text, comments.created_at,
-                       COALESCE(like_count, 0), comments.user_id, users.profile_pic
+                SELECT 
+                    comments.comment_id,                                  -- 0
+                    comments.image_id,                                    -- 1
+                    users.first_name || ' ' || users.last_name AS display_name,  -- 2
+                    comments.comment_text,                                -- 3
+                    comments.created_at,                                  -- 4
+                    COALESCE(like_count, 0),                              -- 5
+                    comments.user_id,                                     -- 6
+                    users.profile_pic,                                    -- 7
+                    EXISTS (                                              -- 8 ✅ is_liked by current user
+                        SELECT 1 FROM comment_likes 
+                        WHERE comment_likes.comment_id = comments.comment_id 
+                        AND comment_likes.user_id = %s
+                    ) AS is_liked
                 FROM comments
                 JOIN users ON comments.user_id = users.id
                 LEFT JOIN (
@@ -3386,7 +3422,8 @@ def saved():
                 ) AS cl ON comments.comment_id = cl.comment_id
                 WHERE comments.image_id = %s
                 ORDER BY comments.created_at ASC
-            """, (image_id,))
+            """, (user_id, image_id))
+
             comments = cur.fetchall()
             all_comments[image_id] = comments
 
@@ -3644,17 +3681,23 @@ def search_results():
         # 🗨️ Comments
         image_ids = tuple([img[0] for img in images])
         comments = []
+
         if image_ids:
             cur.execute("""
                 SELECT 
-                    comments.comment_id,
-                    comments.image_id,
-                    users.first_name || ' ' || users.last_name AS display_name,
-                    comments.comment_text,
-                    comments.created_at,
-                    COALESCE(cl.like_count, 0),
-                    comments.user_id,
-                    users.profile_pic
+                    comments.comment_id,                                      -- 0
+                    comments.image_id,                                        -- 1
+                    users.first_name || ' ' || users.last_name AS display_name,  -- 2
+                    comments.comment_text,                                    -- 3
+                    comments.created_at,                                      -- 4
+                    COALESCE(cl.like_count, 0),                               -- 5
+                    comments.user_id,                                         -- 6
+                    users.profile_pic,                                        -- 7
+                    EXISTS (                                                  -- 8 ✅ is_liked
+                        SELECT 1 FROM comment_likes 
+                        WHERE comment_likes.comment_id = comments.comment_id 
+                        AND comment_likes.user_id = %s
+                    ) AS is_liked
                 FROM comments
                 JOIN users ON comments.user_id = users.id
                 LEFT JOIN (
@@ -3664,7 +3707,7 @@ def search_results():
                 ) AS cl ON comments.comment_id = cl.comment_id
                 WHERE comments.image_id IN %s
                 ORDER BY comments.created_at ASC
-            """, (image_ids,))
+            """, (user_id, image_ids))  # Make sure user_id is defined before this
             comments = cur.fetchall()
 
         # 👍 Image Likes
