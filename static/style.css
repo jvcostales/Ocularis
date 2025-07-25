@@ -214,6 +214,33 @@ input[type="url"]::placeholder {
     z-index: 9999;
 }
 
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: var(--bg-secondary);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mobile-nav li {
+    list-style: none;
+}
+
+.mobile-nav a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 32px;
+}
+
+.mobile-nav .material-symbols-outlined {
+    font-size: 32px;
+}
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
@@ -2598,6 +2625,10 @@ input[type="url"]::placeholder {
 
     .partner-back-match:hover {
         color: var(--text-hover);
+    }
+
+    .mobile-nav {
+        display: none;
     }
 }
 
@@ -4997,6 +5028,10 @@ input[type="url"]::placeholder {
     .partner-back-match:hover {
         color: var(--text-hover);
     }
+
+    .mobile-nav {
+        display: none;
+    }
 }
 
 /* Mobile: 4-column layout */
@@ -7368,5 +7403,13 @@ input[type="url"]::placeholder {
 
     .partner-back-match:hover {
         color: var(--text-hover);
+    }
+
+    .sidebar-menu {
+        display: none;
+    }
+
+    .mobile-nav {
+        display: flex;
     }
 }

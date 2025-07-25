@@ -908,6 +908,21 @@
             </div>
         </div>
 
+        <ul class="mobile-nav">
+            <li><a href="{{ url_for('feed') }}">
+                    <span class="material-symbols-outlined">newspaper</span>
+                </a></li>
+            <li><a href="{{ url_for('pairup') }}">
+                    <span class="material-symbols-outlined">group</span>
+                </a></li>
+            <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
+                    <span class="material-symbols-outlined">person</span>
+                </a></li>
+            <li><a href="{{ url_for('logout') }}">
+                    <span class="material-symbols-outlined">logout</span>
+                </a></li>
+        </ul>
+
         <script>
 
             window.addEventListener('load', function () {
