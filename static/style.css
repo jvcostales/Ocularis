@@ -7417,7 +7417,7 @@ input[type="url"]::placeholder {
         display: flex;
     }
 
-    .mobile-nav .material-symbols-outlined .current {
+    .mobile-nav .material-symbols-outlined.current {
         color: var(--highlight);
     }
 }
