@@ -2454,6 +2454,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         z-index: 9999;
+        overflow-y: scroll;
     }
 
     .image-modal.show {
@@ -3195,6 +3196,22 @@ input[type="url"]::placeholder {
         position: absolute;
         z-index: 1;
         top: 40px;
+        right: 16px;
+    }
+
+        .circled-icon-1-overview-version {
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background-color: var(--bg-secondary);
+        position: absolute;
+        z-index: 1;
+        top: 16px;
         right: 16px;
     }
 
@@ -4861,6 +4878,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         z-index: 9999;
+        overflow-y: scroll;
     }
 
     .image-modal.show {
@@ -5518,6 +5536,22 @@ input[type="url"]::placeholder {
         position: absolute;
         z-index: 1;
         top: 40px;
+        right: 16px;
+    }
+
+        .circled-icon-1-overview-version {
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background-color: var(--bg-secondary);
+        position: absolute;
+        z-index: 1;
+        top: 16px;
         right: 16px;
     }
 
@@ -6993,6 +7027,7 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         z-index: 9999;
+        overflow-y: scroll;
     }
 
     .image-modal.show {
@@ -7218,23 +7253,6 @@ input[type="url"]::placeholder {
     .location-settings option {
         background-color: var(--bg-secondary);
         color: var(--text-main);
-    }
-
-    .image-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.75);
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .image-modal.show {
-        display: flex;
     }
 
     .modal-image {
