@@ -234,13 +234,14 @@ input[type="url"]::placeholder {
 }
 
 .mobile-nav .material-symbols-outlined {
-    font-size: 32px;
     align-items: center;
     display: flex;
     color: var(--text-main);
+    font-variation-settings: 'FILL' 1;
+    font-size: 32px;
 }
 
-.mobile-nav:hover {
+.mobile-nav .material-symbols-outlined:hover {
     color: var(--text-hover);
 }
 
@@ -7416,7 +7417,7 @@ input[type="url"]::placeholder {
         display: flex;
     }
 
-    .current {
+    .mobile-nav .material-symbols-outlined .current {
         color: var(--highlight);
     }
 }
