@@ -5486,7 +5486,7 @@ input[type="url"]::placeholder {
         border: 2px dashed #e2e2e2;
         border-radius: 10px;
         text-align: center;
-        padding: 50px;
+        padding: 50px 0;
         transition: background-color 0.3s ease;
     }
 
