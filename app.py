@@ -937,20 +937,29 @@ def view_post(image_id):
         # Fetch a single image by image_id
         cur.execute("""
             SELECT images.image_id, images.image_url, images.caption,
-                COALESCE(like_count, 0), images.id, author.first_name, author.last_name, images.created_at,
-                collaborator.id, collaborator.first_name, collaborator.last_name,
-                author.profile_pic, collaborator.profile_pic
+                COALESCE(like_count, 0),
+                images.id AS author_id,
+                author.first_name, author.last_name,
+                images.created_at,
+                collaborator.id AS collaborator_id,
+                collaborator.first_name, collaborator.last_name,
+                author.profile_pic,
+                collaborator.profile_pic,
+                EXISTS (
+                    SELECT 1 FROM likes 
+                    WHERE user_id = %s AND image_id = images.image_id
+                ) AS is_liked
             FROM images 
             JOIN users AS author ON images.id = author.id
             LEFT JOIN (
                 SELECT image_id, COUNT(*) AS like_count 
                 FROM likes 
                 GROUP BY image_id
-            ) AS likes 
-            ON images.image_id = likes.image_id
+            ) AS likes ON images.image_id = likes.image_id
             LEFT JOIN users AS collaborator ON images.collaborator_id = collaborator.id
             WHERE images.image_id = %s
-        """, (image_id,))
+        """, (current_user.id, image_id))
+
         image = cur.fetchone()
 
         if not image:
