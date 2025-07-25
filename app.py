@@ -684,39 +684,28 @@ def feed():
         """, (user_id, user_id, like_query, like_query, like_query, like_query))
         images = cur.fetchall()
 
-        # Get all image_ids to fetch their comments
-        image_ids = [image[0] for image in images]
+        # Fetch comments with commenter profile picture
+        cur.execute("""
+            SELECT 
+                comments.comment_id,                   -- 0
+                comments.image_id,                     -- 1
+                users.first_name || ' ' || users.last_name AS display_name,  -- 2
+                comments.comment_text,                 -- 3
+                comments.created_at,                   -- 4
+                COALESCE(like_count, 0) AS like_count, -- 5
+                comments.user_id,                      -- 6
+                users.profile_pic                      -- 7 ✅ NEW: commenter's profile pic
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            LEFT JOIN (
+                SELECT comment_id, COUNT(*) AS like_count
+                FROM comment_likes
+                GROUP BY comment_id
+            ) AS cl ON comments.comment_id = cl.comment_id
+            ORDER BY comments.created_at ASC
+        """)
+        comments = cur.fetchall()
 
-        comments = []
-        if image_ids:
-            cur.execute("""
-                SELECT 
-                    comments.comment_id,
-                    comments.image_id,
-                    users.first_name || ' ' || users.last_name AS display_name,
-                    comments.comment_text,
-                    comments.created_at,
-                    COALESCE(cl.like_count, 0) AS like_count,
-                    comments.user_id,
-                    users.profile_pic,
-                    EXISTS (
-                        SELECT 1 FROM comment_likes
-                        WHERE comment_likes.user_id = %s AND comment_likes.comment_id = comments.comment_id
-                    ) AS is_liked
-                FROM comments
-                JOIN users ON comments.user_id = users.id
-                LEFT JOIN (
-                    SELECT comment_id, COUNT(*) AS like_count
-                    FROM comment_likes
-                    GROUP BY comment_id
-                ) AS cl ON comments.comment_id = cl.comment_id
-                WHERE comments.image_id = ANY(%s)
-                ORDER BY comments.created_at ASC
-            """, (user_id, image_ids))
-            comments = cur.fetchall()
-
-        image_ids = [image[0] for image in images]
-        comments = []
 
         # First, fetch user's notification preferences
         cur.execute("""
