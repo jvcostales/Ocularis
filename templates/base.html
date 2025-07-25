@@ -913,7 +913,7 @@
                     <span class="material-symbols-outlined {% if current_page == 'feed' %}current{% endif %}">newspaper</span>
                 </a></li>
             <li><a href="{{ url_for('pairup') }}">
-                    <span class="material-symbols-outlined {% if current_page == 'pairup' %}current{% endif %}">group</span>
+                    <span class="material-symbols-outlined {% if current_page in ['pairup', 'match'] %}current{% endif %}">group</span>
                 </a></li>
             <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
                     <span class="material-symbols-outlined {% if current_page == 'profile' and is_own_profile %}current{% endif %}">person</span>
