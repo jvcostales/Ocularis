@@ -694,7 +694,12 @@ def feed():
                 comments.created_at,                   -- 4
                 COALESCE(like_count, 0) AS like_count, -- 5
                 comments.user_id,                      -- 6
-                users.profile_pic                      -- 7 ✅ NEW: commenter's profile pic
+                users.profile_pic,                     -- 7
+                EXISTS (                               -- 8 ✅ NEW: whether current user liked this comment
+                    SELECT 1 FROM comment_likes 
+                    WHERE comment_likes.comment_id = comments.comment_id 
+                    AND comment_likes.user_id = %s
+                ) AS is_liked
             FROM comments
             JOIN users ON comments.user_id = users.id
             LEFT JOIN (
@@ -703,7 +708,7 @@ def feed():
                 GROUP BY comment_id
             ) AS cl ON comments.comment_id = cl.comment_id
             ORDER BY comments.created_at ASC
-        """)
+        """, (user_id,))
         comments = cur.fetchall()
 
 
