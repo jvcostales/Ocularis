@@ -910,13 +910,13 @@
 
         <ul class="mobile-nav">
             <li><a href="{{ url_for('feed') }}">
-                    <span class="material-symbols-outlined sidebar-symbol">newspaper</span>
+                    <span class="material-symbols-outlined sidebar-symbol {% if current_page == 'feed' %}current{% endif %}">newspaper</span>
                 </a></li>
             <li><a href="{{ url_for('pairup') }}">
-                    <span class="material-symbols-outlined sidebar-symbol">group</span>
+                    <span class="material-symbols-outlined sidebar-symbol {% if current_page == 'pairup' %}current{% endif %}">group</span>
                 </a></li>
             <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
-                    <span class="material-symbols-outlined sidebar-symbol">person</span>
+                    <span class="material-symbols-outlined sidebar-symbol {% if current_page == 'profile' and is_own_profile %}current{% endif %}">person</span>
                 </a></li>
             <li><a href="{{ url_for('logout') }}">
                     <span class="material-symbols-outlined sidebar-symbol">logout</span>

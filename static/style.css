@@ -233,14 +233,15 @@ input[type="url"]::placeholder {
     list-style: none;
 }
 
-.mobile-nav a {
-    text-decoration: none;
-    color: var(--text-main);
-    font-size: 32px;
-}
-
 .mobile-nav .material-symbols-outlined {
     font-size: 32px;
+    align-items: center;
+    display: flex;
+    color: var(--text-main);
+}
+
+.mobile-nav:hover {
+    color: var(--text-hover);
 }
 
 /* Desktop: 12-column layout */
@@ -7413,5 +7414,9 @@ input[type="url"]::placeholder {
 
     .mobile-nav {
         display: flex;
+    }
+
+    .current {
+        color: var(--highlight);
     }
 }
