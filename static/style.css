@@ -220,9 +220,11 @@ input[type="url"]::placeholder {
     left: 0;
     right: 0;
     height: 72px;
+    padding: 0;
+    margin: 0;
     background: var(--bg-secondary);
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     z-index: 1000;
 }
