@@ -8,6 +8,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <style>
+        :root[data-theme="light"] {
+            --bg-main: #f6f6f6;
+            --bg-secondary: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #c4c4c4;
+            --text-hover: #a6a6a6;
+            --highlight: #1C46F5;
+            --accent: #D3F36A;
+            --btn-disabled-bg: #DDDEDF;
+            --btn-disabled-text: #A8AAB5;
+            --highlight-hover: #4F72F7;
+            --highlight-active: #152FAE;
+            --accent-hover: #E2F89A;
+            --accent-active: #9BB35B;
+            --border-default: #dcdcdc;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-main: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #e0e0e0;
+            --text-hover: #c4c4c4;
+            --highlight: #1C46F5;
+            --accent: #D3F36A;
+            --btn-disabled-bg: #DDDEDF;
+            --btn-disabled-text: #A8AAB5;
+            --highlight-hover: #4F72F7;
+            --highlight-active: #152FAE;
+            --accent-hover: #E2F89A;
+            --accent-active: #9BB35B;
+            --border-default: #dcdcdc;
+        }
+
         .circled-icon-1-overview-version {
             border: none;
             border-radius: 50%;
@@ -33,15 +67,15 @@
         body {
             margin: 0;
             font-family: 'Schibsted Grotesk', sans-serif;
-            background-color: var(--bg-main, #f6f6f6);
+            background-color: var(--bg-main);
             color: var(--text-main, #1a1a1a);
         }
 
         .privacy-container {
             max-width: 800px;
-            margin: 3rem auto;
+            margin: 48px auto;
             background-color: var(--bg-secondary, #fff);
-            padding: 2rem;
+            padding: 36px;
             border-radius: 1rem;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
             position: relative;
@@ -51,35 +85,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-default, #ccc);
+            border-bottom: 1px solid var(--border-default);
             padding-bottom: 1rem;
         }
 
         .privacy-header h2 {
             margin: 0;
             font-size: 2rem;
-            color: var(--highlight, #1C46F5);
+            color: var(--highlight);
         }
 
         .privacy-content h3 {
-            margin-top: 2rem;
-            color: var(--highlight, #1C46F5);
-            font-size: 1.3rem;
+            margin-top: 36px;
+            color: var(--highlight);
+            font-size: 1.25rem;
         }
 
         .privacy-content p,
         .privacy-content ul {
             font-size: 1rem;
             line-height: 1.6;
-            margin-top: 0.5rem;
+            margin-top: 16px;
         }
 
         .privacy-content ul {
-            padding-left: 1.5rem;
+            padding-left: 24px;
         }
 
         .privacy-content a {
-            color: var(--highlight, #1C46F5);
+            color: var(--highlight);
             text-decoration: none;
         }
 
@@ -89,12 +123,12 @@
 
         @media (max-width: 600px) {
             .privacy-container {
-                margin: 1rem;
-                padding: 1.5rem;
+                margin: 16px;
+                padding: 24px;
             }
 
             .privacy-header h2 {
-                font-size: 1.5rem;
+                font-size: 24px;
             }
         }
     </style>
@@ -112,7 +146,7 @@
 
         <div class="privacy-content">
             <p><strong>Effective Date:</strong> July 26, 2025</p>
-            <p>Ocular is committed to protecting your privacy. This Privacy Policy explains what information we collect,
+            <p>Ocularis is committed to protecting your privacy. This Privacy Policy explains what information we collect,
                 how we use it, and your choices regarding your personal data.</p>
 
             <h3>1. Information We Collect</h3>
@@ -126,7 +160,7 @@
             <ul>
                 <li>To personalize your experience and match you with other users</li>
                 <li>To display your content on the platform</li>
-                <li>To improve the features and security of Ocular</li>
+                <li>To improve the features and security of Ocularis</li>
             </ul>
 
             <h3>3. Data Sharing</h3>
@@ -140,11 +174,7 @@
                 <li>Withdraw consent at any time</li>
             </ul>
 
-            <h3>5. Cookies & Tracking</h3>
-            <p>We use cookies to remember your preferences and improve performance. You can control cookie behavior in
-                your browser settings.</p>
-
-            <h3>6. Contact Us</h3>
+            <h3>5. Contact Us</h3>
             <p>Have questions? Reach us at <a href="mailto:support@ocular.design">support@ocular.design</a></p>
         </div>
     </div>
