@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy - Ocular</title>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        .circled-icon-1-overview-version {
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: var(--bg-secondary);
+            position: absolute;
+            z-index: 1;
+            top: 16px;
+            right: 16px;
+        }
+
+        span.close-symbol-overview-version {
+            font-variation-settings: 'FILL' 1;
+            font-size: 32px;
+            color: var(--text-muted);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Schibsted Grotesk', sans-serif;
+            background-color: var(--bg-main, #f6f6f6);
+            color: var(--text-main, #1a1a1a);
+        }
+
+        .privacy-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            background-color: var(--bg-secondary, #fff);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .privacy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-default, #ccc);
+            padding-bottom: 1rem;
+        }
+
+        .privacy-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            color: var(--highlight, #1C46F5);
+        }
+
+        .privacy-content h3 {
+            margin-top: 2rem;
+            color: var(--highlight, #1C46F5);
+            font-size: 1.3rem;
+        }
+
+        .privacy-content p,
+        .privacy-content ul {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        .privacy-content ul {
+            padding-left: 1.5rem;
+        }
+
+        .privacy-content a {
+            color: var(--highlight, #1C46F5);
+            text-decoration: none;
+        }
+
+        .privacy-content a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .privacy-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .privacy-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="privacy-container">
+        <div class="privacy-header">
+            <h2>Privacy Policy</h2>
+            <button type="button" class="circled-icon-1-overview-version" onclick="closePrivacy()">
+                <span class="material-symbols-outlined close-symbol-overview-version">close</span>
+            </button>
+        </div>
+
+        <div class="privacy-content">
+            <p><strong>Effective Date:</strong> July 26, 2025</p>
+            <p>Ocular is committed to protecting your privacy. This Privacy Policy explains what information we collect,
+                how we use it, and your choices regarding your personal data.</p>
+
+            <h3>1. Information We Collect</h3>
+            <ul>
+                <li>Profile data (name, email, country, etc.)</li>
+                <li>User content (uploaded images, comments, likes)</li>
+                <li>Activity data (logins, matches, preferences)</li>
+            </ul>
+
+            <h3>2. How We Use Your Information</h3>
+            <ul>
+                <li>To personalize your experience and match you with other users</li>
+                <li>To display your content on the platform</li>
+                <li>To improve the features and security of Ocular</li>
+            </ul>
+
+            <h3>3. Data Sharing</h3>
+            <p>We do not sell your personal information. We may share limited data with trusted service providers
+                strictly for operating the platform and improving functionality.</p>
+
+            <h3>4. Your Rights</h3>
+            <ul>
+                <li>Access or edit your profile information</li>
+                <li>Request deletion of your data</li>
+                <li>Withdraw consent at any time</li>
+            </ul>
+
+            <h3>5. Cookies & Tracking</h3>
+            <p>We use cookies to remember your preferences and improve performance. You can control cookie behavior in
+                your browser settings.</p>
+
+            <h3>6. Contact Us</h3>
+            <p>Have questions? Reach us at <a href="mailto:support@ocular.design">support@ocular.design</a></p>
+        </div>
+    </div>
+
+    <script>
+        function closePrivacy() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/settings";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

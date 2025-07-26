@@ -3979,5 +3979,9 @@ def update_notifications():
     flash("Notification preferences updated.")
     return redirect(url_for('settings'))
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
