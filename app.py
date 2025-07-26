@@ -2440,10 +2440,10 @@ def pairup():
 
         time_diff = now_utc - last_action_time
 
-        if time_diff < timedelta(hours=24):
+        if time_diff < timedelta(minutes=10):
             match_locked = True
             browse_locked = True
-            time_remaining = str(timedelta(hours=24) - time_diff).split('.')[0]  # hh:mm:ss
+            time_remaining = str(timedelta(minutes=10) - time_diff).split('.')[0]  # hh:mm:ss
 
     # Fetch notifications
     cur.execute("""
