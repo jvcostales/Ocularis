@@ -2279,6 +2279,20 @@ input[type="url"]::placeholder {
         cursor: pointer;
     }
 
+    .section-sub-privacy {
+        font-size: 1rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .section-sub-privacy {
+        font-size: 1rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        cursor: pointer;
+    }
+
     .selected-section {
         background-color: var(--accent);
         color: var(--accent-active) !important;
@@ -3199,7 +3213,7 @@ input[type="url"]::placeholder {
         right: 16px;
     }
 
-        .circled-icon-1-overview-version {
+    .circled-icon-1-overview-version {
         border: none;
         border-radius: 50%;
         width: 56px;
@@ -5539,7 +5553,7 @@ input[type="url"]::placeholder {
         right: 16px;
     }
 
-        .circled-icon-1-overview-version {
+    .circled-icon-1-overview-version {
         border: none;
         border-radius: 50%;
         width: 56px;
