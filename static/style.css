@@ -2476,10 +2476,9 @@ input[type="url"]::placeholder {
     }
 
     .modal-image {
-        max-width: 95vw;
-        max-height: 95vh;
+        max-width: calc(100vw - 36px);
+        max-height: calc(100vh - 36px);
         object-fit: contain;
-        border-radius: 8px;
     }
 
     .no-scroll-view {
@@ -4900,10 +4899,9 @@ input[type="url"]::placeholder {
     }
 
     .modal-image {
-        max-width: 95vw;
-        max-height: 95vh;
+        max-width: calc(100vw - 36px);
+        max-height: calc(100vh - 36px);
         object-fit: contain;
-        border-radius: 8px;
     }
 
     .no-scroll-view {
@@ -7049,10 +7047,9 @@ input[type="url"]::placeholder {
     }
 
     .modal-image {
-        max-width: 95vw;
-        max-height: 95vh;
+        max-width: calc(100vw - 36px);
+        max-height: calc(100vh - 36px);
         object-fit: contain;
-        border-radius: 8px;
     }
 
     .no-scroll-view {
@@ -7267,13 +7264,6 @@ input[type="url"]::placeholder {
     .location-settings option {
         background-color: var(--bg-secondary);
         color: var(--text-main);
-    }
-
-    .modal-image {
-        max-width: 95vw;
-        max-height: 95vh;
-        object-fit: contain;
-        border-radius: 8px;
     }
 
     .no-scroll-view {
