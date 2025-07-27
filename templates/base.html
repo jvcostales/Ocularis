@@ -910,13 +910,16 @@
 
         <ul class="mobile-nav">
             <li><a href="{{ url_for('feed') }}">
-                    <span class="material-symbols-outlined {% if current_page == 'feed' %}current{% endif %}">newspaper</span>
+                    <span
+                        class="material-symbols-outlined {% if current_page == 'feed' %}current{% endif %}">newspaper</span>
                 </a></li>
             <li><a href="{{ url_for('pairup') }}">
-                    <span class="material-symbols-outlined {% if current_page in ['pairup', 'match'] %}current{% endif %}">group</span>
+                    <span
+                        class="material-symbols-outlined {% if current_page in ['pairup', 'match'] %}current{% endif %}">group</span>
                 </a></li>
             <li><a href="{{ url_for('profile', user_id=current_user.id) }}">
-                    <span class="material-symbols-outlined {% if current_page == 'profile' and is_own_profile %}current{% endif %}">person</span>
+                    <span
+                        class="material-symbols-outlined {% if current_page == 'profile' and is_own_profile %}current{% endif %}">person</span>
                 </a></li>
             <li><a href="{{ url_for('logout') }}">
                     <span class="material-symbols-outlined">logout</span>
@@ -1743,6 +1746,15 @@
                     if (!overlay || !openBtn || !closeBtn) return;
 
                     openBtn.addEventListener('click', () => {
+                        // 🔁 COPY INPUT VALUE
+                        const taglineInput = document.querySelector('.post-tagline');
+                        const captionInput = overlay.querySelector('#caption'); // safer in case multiple modals
+
+                        if (taglineInput && captionInput) {
+                            captionInput.value = taglineInput.value;
+                        }
+
+                        // 🛑 DISABLE SCROLL & SHOW OVERLAY
                         if (!isNested) {
                             scrollPosition = window.scrollY;
                             document.body.style.top = `-${scrollPosition}px`;
@@ -1750,6 +1762,7 @@
                         }
                         overlay.classList.add('active');
                     });
+
 
                     function closeOverlay() {
                         overlay.classList.remove('active');
