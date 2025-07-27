@@ -283,11 +283,13 @@
     </div>
 </div>
 <!-- Modal -->
-<div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
-    <button type="button" class="circled-icon-1-overview-version" onclick="closeImageModal(event)">
-        <span class="material-symbols-outlined close-symbol-overview-version close-btn">close</span>
-    </button>
-    <img id="modalImage" class="modal-image" src="">
+<div class="image-modal" id="imageModal" onclick="closeImageModal(event)">
+    <div style="position: relative; max-width: 100%; max-height: 100%;">
+        <button type="button" class="circled-icon-1-overview-version" onclick="closeImageModal(event)">
+            <span class="material-symbols-outlined close-symbol-overview-version close-btn">close</span>
+        </button>
+        <img id="modalImage" class="modal-image" src="">
+    </div>
 </div>
 <div style="margin-bottom: 16px;"></div>
 {% endfor %}
