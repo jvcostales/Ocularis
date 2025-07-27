@@ -116,13 +116,6 @@
     </div>
     <div class="image-container" onclick="openImageModal('{{ image[1] }}')"><img src="{{ image[1] }}"
             class="image-post"></div>
-    <!-- Modal -->
-    <div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
-        <button type="button" class="circled-icon-1-overview-version" onclick="closeImageModal(event)">
-            <span class="material-symbols-outlined close-symbol-overview-version close-btn">close</span>
-        </button>
-        <img id="modalImage" class="modal-image" src="">
-    </div>
     <div class="interactions">
         <div class="lcs">
             <form class="like-form" data-image-id="{{ image[0] }}">
@@ -288,6 +281,13 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
+    <button type="button" class="circled-icon-1-overview-version" onclick="closeImageModal(event)">
+        <span class="material-symbols-outlined close-symbol-overview-version close-btn">close</span>
+    </button>
+    <img id="modalImage" class="modal-image" src="">
 </div>
 <div style="margin-bottom: 16px;"></div>
 {% endfor %}
