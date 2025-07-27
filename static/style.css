@@ -7039,7 +7039,6 @@ input[type="url"]::placeholder {
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        overflow-y: scroll;
     }
 
     .image-modal.show {
@@ -7050,6 +7049,8 @@ input[type="url"]::placeholder {
         max-width: calc(100% - 16px);
         max-height: calc(100% - 16px);
         object-fit: contain;
+        display: block;
+        margin: auto;
     }
 
     .no-scroll-view {
