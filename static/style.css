@@ -2479,6 +2479,8 @@ input[type="url"]::placeholder {
         max-width: calc(100% - 16px);
         max-height: calc(100% - 16px);
         object-fit: contain;
+        display: block;
+        margin: auto;
     }
 
     .no-scroll-view {
@@ -4902,6 +4904,8 @@ input[type="url"]::placeholder {
         max-width: calc(100% - 16px);
         max-height: calc(100% - 16px);
         object-fit: contain;
+        display: block;
+        margin: auto;
     }
 
     .no-scroll-view {
