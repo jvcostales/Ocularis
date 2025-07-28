@@ -2651,11 +2651,6 @@ input[type="url"]::placeholder {
     .mobile-nav {
         display: none;
     }
-
-    #mobileSearchToggle,
-    #mobileSearchForm {
-        display: none !important;
-    }
 }
 
 /* Tablet: 8-column layout */
@@ -5077,11 +5072,6 @@ input[type="url"]::placeholder {
     .mobile-nav {
         display: none;
     }
-
-    #mobileSearchToggle,
-    #mobileSearchForm {
-        display: none !important;
-    }
 }
 
 /* Mobile: 4-column layout */
@@ -7464,22 +7454,16 @@ input[type="url"]::placeholder {
 
     #mobileSearchToggle {
         display: inline-flex;
+        /* or block depending on your layout */
     }
 
     #mobileSearchForm {
         display: none;
         flex-direction: row;
         align-items: center;
-        justify-content: center;
-        position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
-        height: 100vh;
         padding: 0 16px;
         box-sizing: border-box;
-        background: var(--bg-secondary);
-        z-index: 9999;
     }
 
     #mobileSearchForm.show {
@@ -7491,6 +7475,8 @@ input[type="url"]::placeholder {
         color: var(--text-muted);
         display: flex;
         align-items: center;
+        grid-column: 1 / 2;
+        grid-row: 1;
         height: 56px;
         width: 100%;
         border-radius: 10px;
@@ -7505,7 +7491,6 @@ input[type="url"]::placeholder {
         outline: none;
         color: var(--text-main);
         flex: 1;
-        background: transparent;
     }
 
     .search::placeholder {
@@ -7520,7 +7505,9 @@ input[type="url"]::placeholder {
     .search-button {
         color: var(--text-muted);
         border: none;
+        background-color: transparent;
         background: none;
+        border: none;
         padding: 0;
         margin: 0;
         display: inline-flex;
