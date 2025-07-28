@@ -198,17 +198,25 @@
             <div class="mobile-only">
                 <a href="{{ url_for('feed') }}"><img id="logo" src="..\static\Logo.png" class="logo"></a>
                 <div class="button-pfp-wrapper">
-                    <!-- Mobile search trigger button -->
-                    <button class="search-button" id="mobileSearchToggle">
+
+                    <!-- Mobile Search Toggle Button (e.g., in nav) -->
+                    <button class="search-button mobile-only" id="mobileSearchToggle">
                         <span class="material-symbols-outlined search-symbol">search</span>
                     </button>
-                    <form id="mobileSearchForm" class="search-wrapper hide-mobile"
-                        action="{{ url_for('search_results') }}" method="GET">
-                        <input class="search" type="text" name="query" placeholder="Search" required>
-                        <button class="search-button" type="submit">
-                            <span class="material-symbols-outlined search-symbol">search</span>
-                        </button>
-                    </form>
+
+                    <!-- Mobile Search Overlay -->
+                    <div id="mobileSearchOverlay" class="mobile-search-overlay">
+                        <form class="mobile-search-form" action="{{ url_for('search_results') }}" method="GET">
+                            <input class="search-input" type="text" name="query" placeholder="Search" required>
+                            <button class="search-submit" type="submit">
+                                <span class="material-symbols-outlined">search</span>
+                            </button>
+                            <button type="button" class="search-close" id="mobileSearchClose">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </form>
+                    </div>
+
                     <!-- Notification wrapper -->
                     <div class="notifs-wrapper mobile-wrapper">
                         <button class="notifs-button">
@@ -1231,14 +1239,25 @@
             }
 
 
-            document.getElementById("mobileSearchToggle").addEventListener("click", () => {
-                const form = document.getElementById("mobileSearchForm");
-                form.classList.toggle("show");
-            });
-
-
 
             document.addEventListener('DOMContentLoaded', function () {
+
+                const form = document.getElementById("mobileSearchForm");
+                const toggle = document.getElementById("mobileSearchToggle");
+
+                toggle.addEventListener("click", () => {
+                    form.classList.toggle("show");
+                    form.querySelector("input").focus();
+                    document.body.classList.add("no-scrolling"); // optional if you're freezing scroll
+                });
+
+                // Optional: close on ESC key
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") {
+                        form.classList.remove("show");
+                        document.body.classList.remove("no-scrolling");
+                    }
+                });
 
                 runAdjustPaddingWithDelay();
                 observeDynamicContent(); // Optional
