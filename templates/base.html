@@ -202,7 +202,7 @@
                     <button class="search-button mobile-search-only" id="mobileSearchToggle">
                         <span class="material-symbols-outlined search-symbol">search</span>
                     </button>
-                    <div id="mobileSearchOverlay" class="search-overlay mobile-search-only">
+                    <div id="mobileSearchOverlay" class="search-overlay mobile-only">
                         <form class="search-form-overlay" action="{{ url_for('search_results') }}" method="GET">
                             <input class="search" type="text" name="query" placeholder="Search" required>
                             <button class="search-button" type="submit">
