@@ -43,12 +43,10 @@
                         <div class="subname">Name</div>
                         <div class="section-space"></div>
                         <div class="name-field-wrapper">
-                            <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text"
-                                placeholder="First Name" id="first-name" name="first_name" value="{{ user.first_name }}"
-                                maxlength="100" required>
-                            <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text"
-                                placeholder="Last Name" id="last-name" name="last_name" value="{{ user.last_name }}"
-                                maxlength="100" required>
+                            <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text" placeholder="First Name" id="first-name"
+                                name="first_name" value="{{ user.first_name }}" maxlength="100" required>
+                            <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text" placeholder="Last Name" id="last-name"
+                                name="last_name" value="{{ user.last_name }}" maxlength="100" required>
                         </div>
                     </div>
 
@@ -57,9 +55,8 @@
                     <div class="sub-wrapper">
                         <div class="subname">Role</div>
                         <div class="section-space"></div>
-                        <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text"
-                            placeholder="ex. Graphic Designer" id="role" name="role" value="{{ user.role or '' }}"
-                            maxlength="100" required>
+                        <input style="max-width: calc(100vw - 80px);" class="settings-field" type="text" placeholder="ex. Graphic Designer" id="role"
+                            name="role" value="{{ user.role or '' }}" maxlength="100" required>
                     </div>
 
                     <!-- LOCATION -->
@@ -69,8 +66,7 @@
                         <div class="section-space"></div>
                         <div class="sub-location-wrapper">
                             <div class="label-wrapper" style="margin-bottom: 12px">
-                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="country"
-                                    name="country" required>
+                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="country" name="country" required>
                                     <option value="">Select your country</option>
                                     {% for c in countries %}
                                     <option value="{{ c.iso2 }}" data-iso="{{ c.iso2 }}" {% if
@@ -82,8 +78,7 @@
                                 <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
                             </div>
                             <div class="label-wrapper" style="margin-bottom: 12px">
-                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="state"
-                                    name="state" required>
+                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="state" name="state" required>
                                     <option value="">Select your region or province</option>
                                     {% if user.state %}
                                     <option selected value="{{ user.state }}">{{ user.state }}</option>
@@ -92,8 +87,7 @@
                                 <span class="material-symbols-outlined down-symbol">arrow_drop_down</span>
                             </div>
                             <div class="label-wrapper">
-                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="city"
-                                    name="city" required>
+                                <select style="max-width: calc(100vw - 80px);" class="location-settings" id="city" name="city" required>
                                     <option value="">Select your city</option>
                                     {% if user.city %}
                                     <option selected value="{{ user.city }}">{{ user.city }}</option>
@@ -112,8 +106,8 @@
                         <div class="checkbox-grid" style="margin-bottom: 0;">
                             {% for category in categories %}
                             <label class="checkbox-item">
-                                <input style="max-width: calc(100vw - 80px);" type="checkbox" name="skills[]"
-                                    value="{{ category }}" {% if category in user.skills.split(', ') %}checked{% endif %}>
+                                <input style="max-width: calc(100vw - 80px);" type="checkbox" name="skills[]" value="{{ category }}" {% if category in
+                                    user.skills.split(', ') %}checked{% endif %}>
                             {{ category }}
                             </label>
                             {% endfor %}
@@ -129,7 +123,7 @@
                             {% for category in categories %}
                             <label class="checkbox-item">
                                 <input style="max-width: calc(100vw - 80px);" type="checkbox" name="preferences[]" value="{{ category }}"
-                                    {% if category in user.preferences.split(' , ') %}checked{% endif %}>
+                                    {% if category in user.preferences.split(', ') %}checked{% endif %}>
                                 {{ category }}
                             </label>
                             {% endfor %}
@@ -190,10 +184,9 @@
 
 <div>Delete Account</div>
 
-<form id="deleteAccountForm" method="POST" action="{{ url_for(' delete_account_route') }}">
-                                <button type="button" class="danger-btn" onclick="confirmDelete()">Delete
-                                    Account</button>
-                </form>
+        <form id="deleteAccountForm" method="POST" action="{{ url_for('delete_account_route') }}">
+            <button type="button" class="danger-btn" onclick="confirmDelete()">Delete Account</button>
+        </form>
             </div>
         </div>
 
@@ -406,7 +399,7 @@
     <script>
 
         function confirmDelete() {
-            const confirmed = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+            const confirmed = confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.");
             if (confirmed) {
                 document.getElementById('deleteAccountForm').submit();
             }
