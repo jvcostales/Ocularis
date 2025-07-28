@@ -245,6 +245,16 @@ input[type="url"]::placeholder {
     color: var(--text-hover);
 }
 
+/* 🔹 MOBILE SEARCH OVERLAY */
+.search-overlay {
+    display: none;
+}
+
+.search-overlay.show {
+    display: flex;
+}
+
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
@@ -2651,6 +2661,11 @@ input[type="url"]::placeholder {
     .mobile-nav {
         display: none;
     }
+
+    #mobileSearchToggle {
+        display: none;
+    }
+}
 }
 
 /* Tablet: 8-column layout */
@@ -5072,6 +5087,11 @@ input[type="url"]::placeholder {
     .mobile-nav {
         display: none;
     }
+
+    #mobileSearchToggle {
+        display: none;
+    }
+
 }
 
 /* Mobile: 4-column layout */
@@ -7452,37 +7472,44 @@ input[type="url"]::placeholder {
         color: var(--highlight);
     }
 
-    #mobileSearchToggle {
-        display: inline-flex;
-        /* or block depending on your layout */
-    }
-
-    #mobileSearchForm {
-        display: none;
-        flex-direction: row;
-        align-items: center;
+    .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 0 16px;
+        height: 100%;
+        padding: 16px;
+        background-color: rgba(255, 255, 255, 0.97);
+        z-index: 9999;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
         box-sizing: border-box;
     }
 
-    #mobileSearchForm.show {
+    .search-form-overlay {
+        width: 100%;
         display: flex;
-    }
-
-    .search-wrapper {
+        gap: 8px;
         background: var(--bg-secondary);
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        grid-column: 1 / 2;
-        grid-row: 1;
-        height: 56px;
-        width: 100%;
         border-radius: 10px;
-        padding-left: 16px;
-        padding-right: 16px;
+        padding: 0 16px;
+        align-items: center;
+        height: 56px;
         box-sizing: border-box;
+    }
+
+    .search-form-overlay input.search {
+        font-size: 1rem;
+        border: none;
+        outline: none;
+        color: var(--text-main);
+        flex: 1;
+        background: transparent;
+    }
+
+    .search-form-overlay input.search::placeholder {
+        color: var(--text-muted);
     }
 
     .search {
