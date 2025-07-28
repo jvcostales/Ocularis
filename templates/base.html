@@ -60,9 +60,11 @@
             </div>
             <div class="header">
                 <form class="search-wrapper hide-mobile" action="{{ url_for('search_results') }}" method="GET">
-                    <input class="search" type="text" name="query" placeholder="Search" required>
-                    <button class="search-button" type="submit"><span
-                            class="material-symbols-outlined search-symbol">search</span></button>
+                    <input id="desktopSearchInput" class="search" type="text" name="query" placeholder="Search"
+                        required>
+                    <button class="search-button" type="submit">
+                        <span class="material-symbols-outlined search-symbol">search</span>
+                    </button>
                 </form>
                 <div class="hide-pfp">
 
@@ -210,7 +212,8 @@
                             <button type="button" id="closeMobileSearch" class="search-button">
                                 <span class="material-symbols-outlined search-symbol">arrow_back</span>
                             </button>
-                            <input class="search" type="text" name="query" placeholder="Search" required>
+                            <input id="mobileSearchInput" class="search" type="text" name="query" placeholder="Search"
+                                required>
                             <button class="search-button" type="submit">
                                 <span class="material-symbols-outlined search-symbol">search</span>
                             </button>
@@ -1249,6 +1252,20 @@
 
             closeBtn.addEventListener('click', () => {
                 overlay.classList.remove('show');
+            });
+
+
+
+            const desktopInput = document.getElementById('desktopSearchInput');
+            const mobileInput = document.getElementById('mobileSearchInput');
+
+            // 🔄 Keep both inputs in sync
+            desktopInput.addEventListener('input', () => {
+                mobileInput.value = desktopInput.value;
+            });
+
+            mobileInput.addEventListener('input', () => {
+                desktopInput.value = mobileInput.value;
             });
 
 
