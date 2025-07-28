@@ -1147,14 +1147,24 @@
                 const img = document.getElementById("modalImage");
                 img.src = src;
                 modal.classList.add("show");
-                document.body.classList.add("no-scroll-view");
+
+                // Freeze background scroll
+                const scrollY = window.scrollY;
+                document.body.style.top = `-${scrollY}px`;
+                document.body.classList.add("no-scrolling");
+                document.body.dataset.scrollY = scrollY; // save scroll position
             }
 
             function closeImageModal(event) {
                 if (event.target.id === "imageModal" || event.target.classList.contains("close-btn")) {
                     const modal = document.getElementById("imageModal");
                     modal.classList.remove("show");
-                    document.body.classList.remove("no-scroll-view");
+
+                    // Unfreeze background scroll
+                    const scrollY = parseInt(document.body.dataset.scrollY || "0");
+                    document.body.classList.remove("no-scrolling");
+                    document.body.style.top = "";
+                    window.scrollTo(0, scrollY);
                 }
             }
 
