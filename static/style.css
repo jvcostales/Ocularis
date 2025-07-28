@@ -7473,7 +7473,7 @@ input[type="url"]::placeholder {
         padding: 0 16px;
         background: var(--bg-secondary);
         z-index: 9999;
-        height: 56px;
+        height: 72px;
         box-sizing: border-box;
     }
 
