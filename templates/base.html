@@ -198,12 +198,18 @@
             <div class="mobile-only">
                 <a href="{{ url_for('feed') }}"><img id="logo" src="..\static\Logo.png" class="logo"></a>
                 <div class="button-pfp-wrapper">
-                    <!-- Mobile search trigger button -->
-                    <button class="search-button mobile-search-only" id="mobileSearchToggle">
+                    <!-- 🔍 Mobile Search Toggle Button -->
+                    <button id="mobileSearchToggle" class="search-button hide-desktop">
                         <span class="material-symbols-outlined search-symbol">search</span>
                     </button>
-                    <div id="mobileSearchOverlay" class="search-overlay mobile-only">
-                        <form class="search-form-overlay" action="{{ url_for('search_results') }}" method="GET">
+
+                    <!-- 🔍 Mobile Search Overlay -->
+                    <div id="mobileSearchOverlay" class="mobile-search-overlay">
+                        <form class="search-wrapper mobile-search-bar" action="{{ url_for('search_results') }}"
+                            method="GET">
+                            <button type="button" id="closeMobileSearch" class="search-button">
+                                <span class="material-symbols-outlined search-symbol">arrow_back</span>
+                            </button>
                             <input class="search" type="text" name="query" placeholder="Search" required>
                             <button class="search-button" type="submit">
                                 <span class="material-symbols-outlined search-symbol">search</span>
@@ -1233,9 +1239,16 @@
             }
 
 
-            document.getElementById("mobileSearchToggle").addEventListener("click", () => {
-                const form = document.getElementById("mobileSearchForm");
-                form.classList.toggle("show");
+            const toggleBtn = document.getElementById('mobileSearchToggle');
+            const overlay = document.getElementById('mobileSearchOverlay');
+            const closeBtn = document.getElementById('closeMobileSearch');
+
+            toggleBtn.addEventListener('click', () => {
+                overlay.classList.add('show');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.remove('show');
             });
 
 
