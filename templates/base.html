@@ -198,8 +198,17 @@
             <div class="mobile-only">
                 <a href="{{ url_for('feed') }}"><img id="logo" src="..\static\Logo.png" class="logo"></a>
                 <div class="button-pfp-wrapper">
-                    <button class="search-button"><span
-                            class="material-symbols-outlined search-symbol">search</span></button>
+                    <!-- Mobile search trigger button -->
+                    <button class="search-button" id="mobileSearchToggle">
+                        <span class="material-symbols-outlined search-symbol">search</span>
+                    </button>
+                    <form id="mobileSearchForm" class="search-wrapper hide-mobile"
+                        action="{{ url_for('search_results') }}" method="GET">
+                        <input class="search" type="text" name="query" placeholder="Search" required>
+                        <button class="search-button" type="submit">
+                            <span class="material-symbols-outlined search-symbol">search</span>
+                        </button>
+                    </form>
                     <!-- Notification wrapper -->
                     <div class="notifs-wrapper mobile-wrapper">
                         <button class="notifs-button">
@@ -1222,7 +1231,10 @@
             }
 
 
-
+            document.getElementById("mobileSearchToggle").addEventListener("click", () => {
+                const form = document.getElementById("mobileSearchForm");
+                form.classList.toggle("show");
+            });
 
 
 

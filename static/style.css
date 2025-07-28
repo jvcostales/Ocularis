@@ -7451,4 +7451,24 @@ input[type="url"]::placeholder {
     .mobile-nav .material-symbols-outlined.current {
         color: var(--highlight);
     }
+
+    #mobileSearchToggle {
+        display: inline-flex;
+        /* or block depending on your layout */
+    }
+
+    #mobileSearchForm {
+        display: none;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+        margin-top: 8px;
+        /* optional spacing from nav */
+    }
+
+    #mobileSearchForm.show {
+        display: flex;
+    }
 }
