@@ -1191,49 +1191,52 @@
 
 
 
-            function adjustRightPaddingOnScrollCheckAll() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
+            function adjustRightPadding(id) {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.log(`[${id}] skipped: not in DOM`);
+                    return;
+                }
 
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (!el) {
-                        console.log(`[${id}] skipped: not in DOM`);
-                        return;
-                    }
+                const computed = getComputedStyle(el);
+                const isHidden = computed.display === "none" || el.offsetParent === null;
 
-                    const computed = getComputedStyle(el);
-                    if (computed.display === "none" || el.offsetParent === null) {
-                        console.log(`[${id}] skipped: hidden (display:none or offsetParent null)`);
-                        return;
-                    }
+                if (isHidden) {
+                    console.log(`[${id}] skipped: hidden (display:none or offsetParent null)`);
+                    return;
+                }
 
-                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                    el.style.paddingRight = hasScroll ? "12px" : "24px";
-                });
+                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                el.style.paddingRight = hasScroll ? "12px" : "24px";
+                console.log(`[${id}] adjusted: scroll=${hasScroll}, padding=${el.style.paddingRight}`);
             }
 
+            function adjustAllPanelsIndividually() {
+                adjustRightPadding("notifs");
+                adjustRightPadding("requests");
+                adjustRightPadding("notifs-tablet");
+                adjustRightPadding("requests-tablet");
+            }
 
             function runAdjustPaddingWithDelay() {
                 requestAnimationFrame(() => {
                     setTimeout(() => {
                         requestAnimationFrame(() => {
-                            adjustRightPaddingOnScrollCheckAll();
+                            adjustAllPanelsIndividually();
                         });
                     }, 500);
                 });
             }
 
             function observeDynamicContent() {
+                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 const observer = new MutationObserver(() => {
                     runAdjustPaddingWithDelay();
                 });
 
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
                 ids.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) {
-                        observer.observe(el, { childList: true, subtree: true });
-                    }
+                    if (el) observer.observe(el, { childList: true, subtree: true });
                 });
             }
 
@@ -1269,7 +1272,7 @@
             document.addEventListener('DOMContentLoaded', function () {
 
                 runAdjustPaddingWithDelay();
-                observeDynamicContent(); // Optional
+                observeDynamicContent();
                 window.addEventListener("resize", runAdjustPaddingWithDelay);
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
