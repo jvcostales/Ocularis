@@ -1191,40 +1191,49 @@
 
 
 
-            function waitUntilVisible(id, callback, attempts = 10, delay = 100) {
-                const el = document.getElementById(id);
-                if (!el) {
-                    if (attempts > 0) {
-                        setTimeout(() => waitUntilVisible(id, callback, attempts - 1, delay), delay);
-                    } else {
-                        console.warn(`[${id}] failed: not found after retries`);
+            function adjustDesktopPanels() {
+                ["notifs", "requests"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+
+                    const computed = getComputedStyle(el);
+                    if (computed.display === "none" || el.offsetParent === null) {
+                        console.log(`[${id}] skipped (desktop): hidden`);
+                        return;
                     }
-                    return;
-                }
 
-                const isVisible = getComputedStyle(el).display !== "none" && el.offsetParent !== null;
-
-                if (isVisible) {
-                    callback(el);
-                } else if (attempts > 0) {
-                    setTimeout(() => waitUntilVisible(id, callback, attempts - 1, delay), delay);
-                } else {
-                    console.warn(`[${id}] failed: still hidden after retries`);
-                }
-            }
-
-            function adjustRightPadding(el) {
-                const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                el.style.paddingRight = hasScroll ? "12px" : "24px";
-                console.log(`[${el.id}] adjusted: scroll=${hasScroll}, padding=${el.style.paddingRight}`);
-            }
-
-            function adjustAllPanelsWhenReady() {
-                const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                ids.forEach(id => {
-                    waitUntilVisible(id, adjustRightPadding);
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    el.style.paddingRight = hasScroll ? "12px" : "24px";
+                    console.log(`[${id}] (desktop) scroll=${hasScroll}`);
                 });
             }
+
+            function adjustTabletPanels() {
+                ["notifs-tablet", "requests-tablet"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+
+                    const computed = getComputedStyle(el);
+                    if (computed.display === "none" || el.offsetParent === null) {
+                        console.log(`[${id}] skipped (tablet): hidden`);
+                        return;
+                    }
+
+                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
+                    el.style.paddingRight = hasScroll ? "12px" : "24px";
+                    console.log(`[${id}] (tablet) scroll=${hasScroll}`);
+                });
+            }
+
+            function adjustPerMode() {
+                const isTablet = window.innerWidth <= 1024; // or whatever your breakpoint is
+                if (isTablet) {
+                    adjustTabletPanels();
+                } else {
+                    adjustDesktopPanels();
+                }
+            }
+
 
 
             const toggleBtn = document.getElementById('mobileSearchToggle');
@@ -1257,18 +1266,17 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                adjustAllPanelsWhenReady();
-                window.addEventListener("resize", adjustAllPanelsWhenReady);
-
-                // Optional: MutationObserver
-                const observer = new MutationObserver(() => {
-                    adjustAllPanelsWhenReady();
-                });
-                ["notifs", "requests", "notifs-tablet", "requests-tablet"].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) observer.observe(el, { childList: true, subtree: true });
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            adjustPerMode();
+                        });
+                    }, 400);
                 });
 
+                window.addEventListener("resize", () => {
+                    adjustPerMode();
+                });
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
