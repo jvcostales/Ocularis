@@ -1215,6 +1215,10 @@
 
                     el.style.paddingRight = hasScroll ? "12px" : "24px";
                 });
+
+                console.log(`[${id}] el:`, el);
+                console.log(`[${id}] offsetParent:`, el && el.offsetParent);
+
             }
 
             function runAdjustPaddingWithDelay() {
@@ -1223,7 +1227,7 @@
                         requestAnimationFrame(() => {
                             adjustRightPaddingOnScrollCheckAll();
                         });
-                    }, 150);
+                    }, 500);
                 });
             }
 
