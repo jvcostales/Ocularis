@@ -3190,42 +3190,6 @@ def settings():
                 facebook, instagram, x, linkedin, telegram,
                 user_id
             ))
-            
-            current_password = request.form.get('current_password')
-            new_password = request.form.get('new_password')
-            confirm_password = request.form.get('confirm_password')
-
-            if current_password or new_password or confirm_password:
-                if not (current_password and new_password and confirm_password):
-                    flash("All password fields are required.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
-
-                cur.execute("SELECT password FROM users WHERE id = %s", (user_id,))
-                stored_hash = cur.fetchone()[0]
-
-                if not check_password_hash(stored_hash, current_password):
-                    flash("Current password is incorrect.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
-
-                if new_password != confirm_password:
-                    flash("New passwords do not match.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
-
-                if len(new_password) < 6:
-                    flash("New password must be at least 6 characters long.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
-
-                new_password_hash = generate_password_hash(new_password)
-                cur.execute("UPDATE users SET password = %s WHERE id = %s", (new_password_hash, user_id))
-                flash("Password updated successfully.", "success")
 
             conn.commit()
             cur.close()
