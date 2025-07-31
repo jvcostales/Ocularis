@@ -1191,52 +1191,38 @@
 
 
 
-            function adjustRightPadding(id) {
+            function waitUntilVisible(id, callback, attempts = 10, delay = 100) {
                 const el = document.getElementById(id);
                 if (!el) {
-                    console.log(`[${id}] skipped: not in DOM`);
+                    if (attempts > 0) {
+                        setTimeout(() => waitUntilVisible(id, callback, attempts - 1, delay), delay);
+                    } else {
+                        console.warn(`[${id}] failed: not found after retries`);
+                    }
                     return;
                 }
 
-                const computed = getComputedStyle(el);
-                const isHidden = computed.display === "none" || el.offsetParent === null;
+                const isVisible = getComputedStyle(el).display !== "none" && el.offsetParent !== null;
 
-                if (isHidden) {
-                    console.log(`[${id}] skipped: hidden (display:none or offsetParent null)`);
-                    return;
+                if (isVisible) {
+                    callback(el);
+                } else if (attempts > 0) {
+                    setTimeout(() => waitUntilVisible(id, callback, attempts - 1, delay), delay);
+                } else {
+                    console.warn(`[${id}] failed: still hidden after retries`);
                 }
+            }
 
+            function adjustRightPadding(el) {
                 const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
                 el.style.paddingRight = hasScroll ? "12px" : "24px";
-                console.log(`[${id}] adjusted: scroll=${hasScroll}, padding=${el.style.paddingRight}`);
+                console.log(`[${el.id}] adjusted: scroll=${hasScroll}, padding=${el.style.paddingRight}`);
             }
 
-            function adjustAllPanelsIndividually() {
-                adjustRightPadding("notifs");
-                adjustRightPadding("requests");
-                adjustRightPadding("notifs-tablet");
-                adjustRightPadding("requests-tablet");
-            }
-
-            function runAdjustPaddingWithDelay() {
-                requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        requestAnimationFrame(() => {
-                            adjustAllPanelsIndividually();
-                        });
-                    }, 500);
-                });
-            }
-
-            function observeDynamicContent() {
+            function adjustAllPanelsWhenReady() {
                 const ids = ["notifs", "requests", "notifs-tablet", "requests-tablet"];
-                const observer = new MutationObserver(() => {
-                    runAdjustPaddingWithDelay();
-                });
-
                 ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) observer.observe(el, { childList: true, subtree: true });
+                    waitUntilVisible(id, adjustRightPadding);
                 });
             }
 
@@ -1271,9 +1257,17 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                runAdjustPaddingWithDelay();
-                observeDynamicContent();
-                window.addEventListener("resize", runAdjustPaddingWithDelay);
+                adjustAllPanelsWhenReady();
+                window.addEventListener("resize", adjustAllPanelsWhenReady);
+
+                // Optional: MutationObserver
+                const observer = new MutationObserver(() => {
+                    adjustAllPanelsWhenReady();
+                });
+                ["notifs", "requests", "notifs-tablet", "requests-tablet"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) observer.observe(el, { childList: true, subtree: true });
+                });
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
