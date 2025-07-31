@@ -3092,111 +3092,80 @@ def settings():
     cover_photo_url = url_for('cover_photos', filename=result[1]) if result and result[1] and result[1] != 'default_cover.png' else url_for('static', filename='default_cover.png')
 
     if request.method == 'POST':
-        form_type = request.form.get("form_type")
+        # Form values
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        role = request.form.get('role')
+        country = request.form.get('country')
+        state = request.form.get('state')
+        city = request.form.get('city')
+        experience_level = request.form.get('experience_level')
+        skills_list = request.form.getlist('skills[]')
+        preferences_list = request.form.getlist('preferences[]')
+        facebook = request.form.get('facebook')
+        instagram = request.form.get('instagram')
+        x = request.form.get('x')
+        linkedin = request.form.get('linkedin')
+        telegram = request.form.get('telegram')
 
-        if form_type == "change_password":
-            # change password logic only
-            current_password = request.form.get('current_password')
-            new_password = request.form.get('new_password')
-            confirm_password = request.form.get('confirm_password')
-
-            if not all([current_password, new_password, confirm_password]):
-                flash("All password fields are required.", "danger")
+        # Handle uploads
+        profile_pic = request.files.get('profile_pic')
+        if profile_pic and profile_pic.filename != '':
+            if allowed_file(profile_pic.filename):
+                ext = profile_pic.filename.rsplit('.', 1)[1].lower()
+                filename = f"pfp_user_{user_id}.{ext}"
+                profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filename, user_id))
             else:
-                cur.execute("SELECT password FROM users WHERE id = %s", (user_id,))
-                stored_hash = cur.fetchone()[0]
+                flash("Invalid profile picture file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
 
-                if not check_password_hash(stored_hash, current_password):
-                    flash("Current password is incorrect.", "danger")
-                elif new_password != confirm_password:
-                    flash("New passwords do not match.", "danger")
-                elif len(new_password) < 6:
-                    flash("New password must be at least 6 characters long.", "danger")
-                else:
-                    new_hash = generate_password_hash(new_password)
-                    cur.execute("UPDATE users SET password = %s WHERE id = %s", (new_hash, user_id))
-                    conn.commit()
-                    flash("Password updated successfully.", "success")
+        cover_photo = request.files.get('cover_photo')
+        if cover_photo and cover_photo.filename != '':
+            if allowed_file(cover_photo.filename):
+                ext = cover_photo.filename.rsplit('.', 1)[1].lower()
+                filename = f"cover_user_{user_id}.{ext}"
+                cover_photo.save(os.path.join(app.config['COVER_PHOTO_FOLDER'], filename))
+                cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (filename, user_id))
+            else:
+                flash("Invalid cover photo file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
 
-            cur.close()
-            conn.close()
-            return redirect(url_for('settings'))
-        
-        else:
-            # Form values
-            first_name = request.form.get('first_name')
-            last_name = request.form.get('last_name')
-            role = request.form.get('role')
-            country = request.form.get('country')
-            state = request.form.get('state')
-            city = request.form.get('city')
-            experience_level = request.form.get('experience_level')
-            skills_list = request.form.getlist('skills[]')
-            preferences_list = request.form.getlist('preferences[]')
-            facebook = request.form.get('facebook')
-            instagram = request.form.get('instagram')
-            x = request.form.get('x')
-            linkedin = request.form.get('linkedin')
-            telegram = request.form.get('telegram')
+        # Update user info
+        cur.execute("""
+            UPDATE users SET
+                first_name = %s,
+                last_name = %s,
+                role = %s,
+                country = %s,
+                state = %s,
+                city = %s,
+                skills = %s,
+                preferences = %s,
+                experience_level = %s,
+                facebook = %s,
+                instagram = %s,
+                x = %s,
+                linkedin = %s,
+                telegram = %s
+            WHERE id = %s
+        """, (
+            first_name, last_name, role, country, state, city,
+            skills_list, preferences_list, experience_level,
+            facebook, instagram, x, linkedin, telegram,
+            user_id
+        ))
 
-            # Handle uploads
-            profile_pic = request.files.get('profile_pic')
-            if profile_pic and profile_pic.filename != '':
-                if allowed_file(profile_pic.filename):
-                    ext = profile_pic.filename.rsplit('.', 1)[1].lower()
-                    filename = f"pfp_user_{user_id}.{ext}"
-                    profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filename, user_id))
-                else:
-                    flash("Invalid profile picture file type.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
+        conn.commit()
+        cur.close()
+        conn.close()
 
-            cover_photo = request.files.get('cover_photo')
-            if cover_photo and cover_photo.filename != '':
-                if allowed_file(cover_photo.filename):
-                    ext = cover_photo.filename.rsplit('.', 1)[1].lower()
-                    filename = f"cover_user_{user_id}.{ext}"
-                    cover_photo.save(os.path.join(app.config['COVER_PHOTO_FOLDER'], filename))
-                    cur.execute("UPDATE users SET cover_photo = %s WHERE id = %s", (filename, user_id))
-                else:
-                    flash("Invalid cover photo file type.", "danger")
-                    cur.close()
-                    conn.close()
-                    return redirect(url_for('settings'))
-
-            # Update user info
-            cur.execute("""
-                UPDATE users SET
-                    first_name = %s,
-                    last_name = %s,
-                    role = %s,
-                    country = %s,
-                    state = %s,
-                    city = %s,
-                    skills = %s,
-                    preferences = %s,
-                    experience_level = %s,
-                    facebook = %s,
-                    instagram = %s,
-                    x = %s,
-                    linkedin = %s,
-                    telegram = %s
-                WHERE id = %s
-            """, (
-                first_name, last_name, role, country, state, city,
-                skills_list, preferences_list, experience_level,
-                facebook, instagram, x, linkedin, telegram,
-                user_id
-            ))
-
-            conn.commit()
-            cur.close()
-            conn.close()
-
-            flash("Settings updated successfully.", "success")
-            return redirect(url_for('settings'))
+        flash("Settings updated successfully.", "success")
+        return redirect(url_for('settings'))
 
     # GET: fetch user data
     cur.execute("""
@@ -4013,6 +3982,38 @@ def update_notifications():
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
+
+@app.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not current_password or not new_password or not confirm_password:
+        flash('Please fill out all password fields.', 'error')
+        return redirect(url_for('settings'))
+
+    if new_password != confirm_password:
+        flash('New password and confirm password do not match.', 'error')
+        return redirect(url_for('settings'))
+
+    # Check if current password is correct
+    cur = conn.cursor()
+    cur.execute("SELECT password FROM users WHERE id = %s", (current_user.id,))
+    db_password = cur.fetchone()[0]
+    if not check_password_hash(db_password, current_password):
+        flash('Current password is incorrect.', 'error')
+        return redirect(url_for('settings'))
+
+    # Update the password
+    hashed_new_password = generate_password_hash(new_password)
+    cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_new_password, current_user.id))
+    conn.commit()
+    cur.close()
+
+    flash('Password changed successfully.', 'success')
+    return redirect(url_for('settings'))
 
 if __name__ == '__main__':
     app.run(debug=True)
