@@ -1197,13 +1197,18 @@
                 ids.forEach(id => {
                     const el = document.getElementById(id);
 
-                    if (!el || el.offsetParent === null) {
-                        console.log(`[${id}] skipped (not in DOM or hidden)`);
+                    if (!el) {
+                        console.log(`[${id}] skipped: not in DOM at`, new Date().toISOString());
                         return;
                     }
 
-                    console.log(`[${id}] el:`, el);
+                    console.log(`[${id}] style.display:`, getComputedStyle(el).display);
                     console.log(`[${id}] offsetParent:`, el.offsetParent);
+
+                    if (el.offsetParent === null) {
+                        console.log(`[${id}] skipped: hidden at`, new Date().toISOString());
+                        return;
+                    }
 
                     void el.offsetHeight;
 
@@ -1213,7 +1218,8 @@
                     console.log(
                         `[${id}] hasScroll: ${hasScroll}`,
                         `scrollHeight: ${el.scrollHeight}`,
-                        `clientHeight: ${el.clientHeight}`
+                        `clientHeight: ${el.clientHeight}`,
+                        `at: ${new Date().toISOString()}`
                     );
 
                     el.style.paddingRight = hasScroll ? "12px" : "24px";
