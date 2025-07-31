@@ -274,17 +274,15 @@
                     <div class="left-align" style="margin-bottom: 0;">
                         <form method="POST" action="{{ url_for('change_password') }}">
                             <div>
-                                <input class="settings-field" type="password" name="current_password" placeholder="Current Password" required>
+                                <input style="margin-bottom: 12px" class="settings-field" type="password" name="current_password" placeholder="Current Password" required>
                             </div>
                             <div>
-                                <input class="settings-field" type="password" name="new_password" placeholder="New Password" required>
+                                <input style="margin-bottom: 12px" class="settings-field" type="password" name="new_password" placeholder="New Password" required>
                             </div>
                             <div>
-                                <input class="settings-field" type="password" name="confirm_password" placeholder="Confirm Password" required>
+                                <input style="margin-bottom: 24px" class="settings-field" type="password" name="confirm_password" placeholder="Confirm Password" required>
                             </div>
-                            <div class="button-container">
-                                <button class="save-changes-button" type="submit">Save Password</button>
-                            </div>
+                            <button class="save-changes-button" type="submit">Submit</button>
                         </form>
                     </div>
             </div>
