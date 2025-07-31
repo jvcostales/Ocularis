@@ -3998,19 +3998,30 @@ def change_password():
         flash('New password and confirm password do not match.', 'error')
         return redirect(url_for('settings'))
 
-    # Check if current password is correct
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
+
+    # Check current password
     cur.execute("SELECT password FROM users WHERE id = %s", (current_user.id,))
-    db_password = cur.fetchone()[0]
-    if not check_password_hash(db_password, current_password):
+    result = cur.fetchone()
+    if not result or not check_password_hash(result[0], current_password):
         flash('Current password is incorrect.', 'error')
+        cur.close()
+        conn.close()
         return redirect(url_for('settings'))
 
-    # Update the password
+    # Update password
     hashed_new_password = generate_password_hash(new_password)
     cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_new_password, current_user.id))
     conn.commit()
     cur.close()
+    conn.close()
 
     flash('Password changed successfully.', 'success')
     return redirect(url_for('settings'))
