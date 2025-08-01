@@ -656,7 +656,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 24px;
+        padding-right: 14px;
         /*due to scrollbar*/
         box-sizing: border-box;
         margin-bottom: 16px;
@@ -724,7 +724,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 24px;
+        padding-right: 14px;
         /*due to scrollbar*/
         box-sizing: border-box;
         overflow-x: hidden;
@@ -4443,7 +4443,8 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 24px 24px 24px;
+        padding: 24px;
+        padding-right: 14px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -6801,8 +6802,8 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 24px 24px 24px;
-        /* shorthand for spacing */
+        padding: 24px;
+        padding-right: 14px;
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
