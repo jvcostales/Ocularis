@@ -2398,7 +2398,12 @@
                 document.addEventListener('click', function (event) {
                     moreBtns.forEach((btn, index) => {
                         const frame = document.getElementById(`frame1-${index + 1}`);
-                        if (frame && !frame.contains(event.target) && event.target !== btn) {
+                        if (!frame) return;
+
+                        const clickedInsideFrame = frame.contains(event.target);
+                        const clickedButton = event.target === btn;
+
+                        if (!clickedInsideFrame && !clickedButton) {
                             frame.style.display = 'none';
                         }
                     });
