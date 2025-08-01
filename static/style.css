@@ -245,6 +245,19 @@ input[type="url"]::placeholder {
     color: var(--text-hover);
 }
 
+.frame-comment-delete {
+    position: absolute;
+    right: 0;
+    background-color: var(--bg-secondary);
+    z-index: 1;
+    width: 125px;
+    padding: 16px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
 /* Desktop: 12-column layout */
 @media (min-width: 1025px) {
     .container {
