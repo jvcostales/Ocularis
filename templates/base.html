@@ -2398,7 +2398,7 @@
                 document.addEventListener('click', function (event) {
                     moreBtns.forEach((btn, index) => {
                         const frame = document.getElementById(`frame1-${index + 1}`);
-                        if (!frame.contains(event.target) && event.target !== btn) {
+                        if (frame && !frame.contains(event.target) && event.target !== btn) {
                             frame.style.display = 'none';
                         }
                     });
