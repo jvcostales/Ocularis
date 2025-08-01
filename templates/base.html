@@ -1252,40 +1252,25 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                window.toggleCommentMenu = function (commentId) {
-                    const menu = document.getElementById(`comment-menu-${commentId}`);
-
-                    // Close all other open menus
-                    document.querySelectorAll('.frame-comment-delete').forEach(el => {
-                        if (el.id !== `comment-menu-${commentId}`) {
-                            el.style.display = 'none';
-                        }
-                    });
-
+                window.toggleCommentMenu = function (index) {
+                    const menu = document.getElementById(`comment-menu-${index}`);
                     if (!menu) return;
 
-                    // Determine if the menu is currently open
-                    const currentlyVisible = menu.style.display === 'block';
-
-                    if (currentlyVisible) {
-                        menu.style.display = 'none';
-                        return;
-                    }
-
-                    // Show the selected menu
-                    menu.style.display = 'block';
-
-                    // Set up one-time outside click listener
-                    setTimeout(() => {
-                        const outsideClickListener = function (e) {
-                            if (!menu.contains(e.target) && !e.target.matches(`#comment-more-${commentId}`)) {
-                                menu.style.display = 'none';
-                                document.removeEventListener('click', outsideClickListener);
-                            }
-                        };
-                        document.addEventListener('click', outsideClickListener);
-                    }, 0);
+                    // Toggle visibility
+                    const isVisible = menu.style.display === 'block';
+                    document.querySelectorAll('.frame-comment-delete').forEach(m => m.style.display = 'none');
+                    menu.style.display = isVisible ? 'none' : 'block';
                 };
+
+                // Click-outside detection
+                document.addEventListener('click', function (event) {
+                    document.querySelectorAll('.frame-comment-delete').forEach(menu => {
+                        if (!menu.contains(event.target) &&
+                            !event.target.closest('.more-symbol')) {
+                            menu.style.display = 'none';
+                        }
+                    });
+                });
 
 
 
@@ -2165,7 +2150,7 @@
                             .then(res => res.json())
                             .then(data => {
                                 if (!data.likers || data.likers.length === 0) {
-                                    scrollableDiv.innerHTML = `<div class="notifs-empty">
+                                    scrollableDiv.innerHTML = `<div class="likes-empty">
                         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
                         <div class="oops">Oops!</div>
                         <div class="nothing">Nothing to show here at the moment.</div>
