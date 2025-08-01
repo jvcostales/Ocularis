@@ -1255,33 +1255,38 @@
                 window.toggleCommentMenu = function (commentId) {
                     const menu = document.getElementById(`comment-menu-${commentId}`);
 
-                    // Close any open menus first
+                    // Close all other open menus
                     document.querySelectorAll('.frame-comment-delete').forEach(el => {
                         if (el.id !== `comment-menu-${commentId}`) {
                             el.style.display = 'none';
                         }
                     });
 
-                    // Toggle visibility
-                    if (menu) {
-                        const isOpen = menu.style.display === 'block';
-                        menu.style.display = isOpen ? 'none' : 'block';
+                    if (!menu) return;
 
-                        // Set up click-outside listener if opening
-                        if (!isOpen) {
-                            // Slight delay to avoid immediate closure from original click
-                            setTimeout(() => {
-                                const outsideClickListener = function (e) {
-                                    if (!menu.contains(e.target) && !e.target.matches(`#comment-more-${commentId}`)) {
-                                        menu.style.display = 'none';
-                                        document.removeEventListener('click', outsideClickListener);
-                                    }
-                                };
-                                document.addEventListener('click', outsideClickListener);
-                            }, 0);
-                        }
+                    // Determine if the menu is currently open
+                    const currentlyVisible = menu.style.display === 'block';
+
+                    if (currentlyVisible) {
+                        menu.style.display = 'none';
+                        return;
                     }
+
+                    // Show the selected menu
+                    menu.style.display = 'block';
+
+                    // Set up one-time outside click listener
+                    setTimeout(() => {
+                        const outsideClickListener = function (e) {
+                            if (!menu.contains(e.target) && !e.target.matches(`#comment-more-${commentId}`)) {
+                                menu.style.display = 'none';
+                                document.removeEventListener('click', outsideClickListener);
+                            }
+                        };
+                        document.addEventListener('click', outsideClickListener);
+                    }, 0);
                 };
+
 
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
