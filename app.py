@@ -742,7 +742,6 @@ def feed():
         disabled_types = []
         if not notify_likes:
             disabled_types.append('like')
-            disabled_types.append('comment_like')
         if not notify_comments:
             disabled_types.append('comment')
         if not notify_requests:
@@ -1521,9 +1520,8 @@ def like_comment(comment_id):
             )
             status = 'liked'
 
-            # Get the comment owner and their notify_likes setting
             cur.execute("""
-                SELECT users.id, users.notify_likes, comments.image_id
+                SELECT users.id, comments.image_id
                 FROM comments
                 JOIN users ON comments.user_id = users.id
                 WHERE comments.comment_id = %s
@@ -1531,10 +1529,10 @@ def like_comment(comment_id):
             owner_info = cur.fetchone()
 
             if owner_info:
-                owner_id, notify_likes, image_id = owner_info
+                owner_id, image_id = owner_info
 
                 # Only create notification if the liker isn't the comment owner and they want like notifs
-                if owner_id != current_user.id and notify_likes:
+                if owner_id != current_user.id:
                     cur.execute("""
                         INSERT INTO notifications (recipient_id, actor_id, image_id, comment_id, action_type)
                         VALUES (%s, %s, %s, %s, 'comment_like')
