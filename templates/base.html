@@ -1252,22 +1252,36 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                window.toggleCommentMenu = function (index) {
-                    const menu = document.getElementById(`comment-menu-${index}`);
-                    if (!menu) return;
+                window.toggleCommentMenu = function (commentId) {
+                    const menu = document.getElementById(`comment-menu-${commentId}`);
+                    const allMenus = document.querySelectorAll('.frame-comment-delete');
 
-                    // Toggle visibility
-                    const isVisible = menu.style.display === 'block';
-                    document.querySelectorAll('.frame-comment-delete').forEach(m => m.style.display = 'none');
-                    menu.style.display = isVisible ? 'none' : 'block';
+                    // First: close all menus that exist
+                    allMenus.forEach(el => {
+                        if (el && el.id !== `comment-menu-${commentId}`) {
+                            el.style.display = 'none';
+                        }
+                    });
+
+                    // Then: toggle the clicked one
+                    if (menu) {
+                        const isVisible = menu.style.display === 'block';
+                        menu.style.display = isVisible ? 'none' : 'block';
+                    }
                 };
 
-                // Click-outside detection
                 document.addEventListener('click', function (event) {
                     document.querySelectorAll('.frame-comment-delete').forEach(menu => {
-                        if (!menu.contains(event.target) &&
-                            !event.target.closest('.more-symbol')) {
-                            menu.style.display = 'none';
+                        if (menu) {
+                            const moreButtonId = menu.id.replace("comment-menu", "comment-more");
+                            const moreButton = document.getElementById(moreButtonId);
+
+                            const clickedInsideMenu = menu.contains(event.target);
+                            const clickedOnMoreBtn = moreButton && moreButton.contains(event.target);
+
+                            if (!clickedInsideMenu && !clickedOnMoreBtn) {
+                                menu.style.display = 'none';
+                            }
                         }
                     });
                 });
