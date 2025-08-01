@@ -1415,23 +1415,30 @@ def delete_comment(comment_id):
         port=5432
     )
     cur = conn.cursor()
-    
+
     try:
-        # Ensure only the author can delete their comment
         cur.execute("SELECT user_id FROM comments WHERE comment_id = %s", (comment_id,))
         comment = cur.fetchone()
 
-        if comment and comment[0] == current_user.id:
-            cur.execute("DELETE FROM comments WHERE comment_id = %s", (comment_id,))
-            conn.commit()
-        else:
-            return "Unauthorized action", 403
+        if not comment:
+            return jsonify({'success': False, 'error': 'Comment not found'}), 404
+
+        if comment[0] != current_user.id:
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+
+        cur.execute("DELETE FROM comments WHERE comment_id = %s", (comment_id,))
+        conn.commit()
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print("Error deleting comment:", e)
+        return jsonify({'success': False, 'error': 'Server error'}), 500
 
     finally:
         cur.close()
         conn.close()
-    
-    return redirect(url_for('feed'))
+
 
 @app.route('/delete/<int:image_id>', methods=['POST'])
 @login_required

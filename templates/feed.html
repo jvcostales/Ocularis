@@ -161,8 +161,10 @@
 </div>
 <div class="overlayComments" id="overlayComments-{{ loop.index }}">
     <div class="overlay-content-comments">
-        <button class="close-icon"><span class="material-symbols-outlined overlay-close-symbol"
-                id="closeOverlayComments-{{ loop.index }}">close</span></button>
+        <button class="close-icon">
+            <span class="material-symbols-outlined overlay-close-symbol"
+                id="closeOverlayComments-{{ loop.index }}">close</span>
+        </button>
         <div class="overlay-title">Comment</div>
         <div class="scrollable-div-comments" id="scrollableDivComments-{{ loop.index }}">
             <div id="commentList-{{ image[0] }}"></div>
@@ -170,24 +172,32 @@
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
             {% set ns.has_comments = true %}
-            <div class="profile-comment-wrapper">
+            <div class="profile-comment-wrapper" id="comment-{{ comment[0] }}">
                 <div class="profile-more-wrapper">
                     <div class="profile-post-comments">
-                        <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
-    url_for('profile_pics', filename=comment[7])
-    if comment[7] and comment[7] != 'pfp.jpg'
-    else url_for('static', filename='pfp.jpg')
-}}" class="pfp"></a>
+                        <a href="{{ url_for('profile', user_id=comment[6]) }}">
+                            <img src="{{
+                                url_for('profile_pics', filename=comment[7])
+                                if comment[7] and comment[7] != 'pfp.jpg'
+                                else url_for('static', filename='pfp.jpg')
+                            }}" class="pfp">
+                        </a>
                         <div class="profile-name-date">
-                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
-                                    comment[2] }}</a></div>
-                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
+                            <div class="username">
+                                <a href="{{ url_for('profile', user_id=comment[6]) }}">{{ comment[2] }}</a>
                             </div>
+                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}</div>
                         </div>
                     </div>
+                    {% if current_user.id == comment[6] %}
                     <div class="more-frame-wrapper">
-                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+                        <span class="material-symbols-outlined more-symbol" id="comment-more-{{ loop.index }}"
+                            onclick="toggleCommentMenu({{ loop.index }})">more_horiz</span>
+                        <div class="frame1" id="comment-menu-{{ loop.index }}" style="display: none;">
+                            <div class="delete" onclick="deleteComment({{ comment[0] }})">Delete</div>
+                        </div>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="comment-like-wrapper">
                     <div class="comment">{{ comment[3] }}</div>
@@ -210,8 +220,9 @@
                             <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
                                 data-comment-id="{{ comment[0] }}">
                                 <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
-                                <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1 else
-                                    'Likes' }}</span>
+                                <span class="like-text">
+                                    {{ 'Like' if comment_likes_data[comment[0]] | length == 1 else 'Likes' }}
+                                </span>
                             </div>
                         </div>
                     </div>
