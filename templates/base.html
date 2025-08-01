@@ -1252,12 +1252,37 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                window.toggleCommentMenu = function (index) {
-                    const menu = document.getElementById(`comment-menu-${index}`);
+                window.toggleCommentMenu = function (commentId) {
+                    const menu = document.getElementById(`comment-menu-${commentId}`);
+
+                    // Close any open menus first
+                    document.querySelectorAll('.frame-comment-delete').forEach(el => {
+                        if (el.id !== `comment-menu-${commentId}`) {
+                            el.style.display = 'none';
+                        }
+                    });
+
+                    // Toggle visibility
                     if (menu) {
-                        menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+                        const isOpen = menu.style.display === 'block';
+                        menu.style.display = isOpen ? 'none' : 'block';
+
+                        // Set up click-outside listener if opening
+                        if (!isOpen) {
+                            // Slight delay to avoid immediate closure from original click
+                            setTimeout(() => {
+                                const outsideClickListener = function (e) {
+                                    if (!menu.contains(e.target) && !e.target.matches(`#comment-more-${commentId}`)) {
+                                        menu.style.display = 'none';
+                                        document.removeEventListener('click', outsideClickListener);
+                                    }
+                                };
+                                document.addEventListener('click', outsideClickListener);
+                            }, 0);
+                        }
                     }
                 };
+
 
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
