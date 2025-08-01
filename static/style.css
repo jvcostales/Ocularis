@@ -656,7 +656,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 12px;
+        padding-right: 24px;
         /*due to scrollbar*/
         box-sizing: border-box;
         margin-bottom: 16px;
@@ -665,6 +665,8 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
+        position: relative;
+        scrollbar-gutter: stable;
     }
 
     .notifs-empty {
@@ -697,20 +699,23 @@ input[type="url"]::placeholder {
         text-align: center;
     }
 
+    /* Webkit-based browsers */
     .notifs::-webkit-scrollbar {
         width: 12px;
-        opacity: 0;
+        background: transparent;
     }
 
-    .notifs:hover::-webkit-scrollbar {
-        width: 12px;
+    .notifs::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
+        /* only on hover */
     }
 
     .requests {
@@ -719,7 +724,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 12px;
+        padding-right: 24px;
         /*due to scrollbar*/
         box-sizing: border-box;
         overflow-x: hidden;
@@ -728,23 +733,27 @@ input[type="url"]::placeholder {
         overscroll-behavior: contain;
         display: flex;
         flex-direction: column;
+        position: relative;
+        scrollbar-gutter: stable;
+        /* Optional: prevents layout shift */
     }
 
-    .requests::-webkit-scrollbar {
-        width: 12px;
-        opacity: 0;
-    }
+.requests::-webkit-scrollbar {
+    width: 12px;
+    background: transparent;
+}
 
-    .requests:hover::-webkit-scrollbar {
-        width: 12px;
-    }
+.requests::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.3s;
+}
 
-    .requests:hover::-webkit-scrollbar-thumb {
-        background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
-    }
+.requests:hover::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted);
+}
 
     .notifs-title,
     .requests-title {
@@ -4434,7 +4443,7 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 12px 24px 24px;
+        padding: 24px 24px 24px 24px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -4448,6 +4457,9 @@ input[type="url"]::placeholder {
         height: 50%;
         /* ensure equal height */
         /* Required for flex children to scroll properly */
+        scrollbar-gutter: stable;
+        /* Optional: keeps space for scrollbar to prevent layout shift */
+        position: relative;
     }
 
     .notifs-empty {
@@ -4480,37 +4492,41 @@ input[type="url"]::placeholder {
         text-align: center;
     }
 
+    /* Webkit-based browsers */
     .notifs::-webkit-scrollbar {
         width: 12px;
-        opacity: 0;
+        background: transparent;
     }
 
-    .notifs:hover::-webkit-scrollbar {
-        width: 12px;
+    .notifs::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
+        /* only on hover */
     }
 
-    .requests::-webkit-scrollbar {
-        width: 12px;
-        opacity: 0;
-    }
+.requests::-webkit-scrollbar {
+    width: 12px;
+    background: transparent;
+}
 
-    .requests:hover::-webkit-scrollbar {
-        width: 12px;
-    }
+.requests::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.3s;
+}
 
-    .requests:hover::-webkit-scrollbar-thumb {
-        background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
-    }
+.requests:hover::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted);
+}
 
     .notifs-title,
     .requests-title {
@@ -6785,7 +6801,7 @@ input[type="url"]::placeholder {
     .requests {
         background: var(--bg-secondary);
         border-radius: 10px;
-        padding: 24px 12px 24px 24px;
+        padding: 24px 24px 24px 24px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -6799,6 +6815,9 @@ input[type="url"]::placeholder {
         height: 50%;
         /* ensure equal height */
         /* Required for flex children to scroll properly */
+        scrollbar-gutter: stable;
+        /* Optional: keeps space for scrollbar to prevent layout shift */
+        position: relative;
     }
 
     .notifs-empty {
@@ -6831,37 +6850,41 @@ input[type="url"]::placeholder {
         text-align: center;
     }
 
+    /* Webkit-based browsers */
     .notifs::-webkit-scrollbar {
         width: 12px;
-        opacity: 0;
+        background: transparent;
     }
 
-    .notifs:hover::-webkit-scrollbar {
-        width: 12px;
+    .notifs::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
     }
 
     .notifs:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
+        /* only on hover */
     }
 
-    .requests::-webkit-scrollbar {
-        width: 12px;
-        opacity: 0;
-    }
+.requests::-webkit-scrollbar {
+    width: 12px;
+    background: transparent;
+}
 
-    .requests:hover::-webkit-scrollbar {
-        width: 12px;
-    }
+.requests::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.3s;
+}
 
-    .requests:hover::-webkit-scrollbar-thumb {
-        background-color: var(--text-muted);
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: padding-box;
-    }
+.requests:hover::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted);
+}
 
     .notifs-title,
     .requests-title {

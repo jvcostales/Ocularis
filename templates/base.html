@@ -1188,54 +1188,6 @@
                 }
             }
 
-
-
-
-            function adjustDesktopPanels() {
-                ["notifs", "requests"].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-
-                    const computed = getComputedStyle(el);
-                    if (computed.display === "none" || el.offsetParent === null) {
-                        console.log(`[${id}] skipped (desktop): hidden`);
-                        return;
-                    }
-
-                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                    el.style.paddingRight = hasScroll ? "12px" : "24px";
-                    console.log(`[${id}] (desktop) scroll=${hasScroll}`);
-                });
-            }
-
-            function adjustTabletPanels() {
-                ["notifs-tablet", "requests-tablet"].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-
-                    const computed = getComputedStyle(el);
-                    if (computed.display === "none" || el.offsetParent === null) {
-                        console.log(`[${id}] skipped (tablet): hidden`);
-                        return;
-                    }
-
-                    const hasScroll = el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;
-                    el.style.paddingRight = hasScroll ? "12px" : "24px";
-                    console.log(`[${id}] (tablet) scroll=${hasScroll}`);
-                });
-            }
-
-            function adjustPerMode() {
-                const isTablet = window.innerWidth <= 1024; // or whatever your breakpoint is
-                if (isTablet) {
-                    adjustTabletPanels();
-                } else {
-                    adjustDesktopPanels();
-                }
-            }
-
-
-
             const toggleBtn = document.getElementById('mobileSearchToggle');
             const overlay = document.getElementById('mobileSearchOverlay');
             const closeBtn = document.getElementById('closeMobileSearch');
@@ -1265,14 +1217,6 @@
 
 
             document.addEventListener('DOMContentLoaded', function () {
-
-                requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        requestAnimationFrame(() => {
-                            adjustPerMode();
-                        });
-                    }, 400);
-                });
 
                 window.addEventListener("resize", () => {
                     adjustPerMode();
