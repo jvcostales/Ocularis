@@ -1506,39 +1506,20 @@ def like_comment(comment_id):
         existing_like = cur.fetchone()
 
         if existing_like:
-            # User already liked -> unlike
+            # Unlike the comment
             cur.execute(
                 "DELETE FROM comment_likes WHERE user_id = %s AND comment_id = %s",
                 (current_user.id, comment_id)
             )
             status = 'unliked'
         else:
-            # User has not liked -> like
+            # Like the comment
             cur.execute(
                 "INSERT INTO comment_likes (user_id, comment_id) VALUES (%s, %s)",
                 (current_user.id, comment_id)
             )
             status = 'liked'
 
-            cur.execute("""
-                SELECT users.id, comments.image_id
-                FROM comments
-                JOIN users ON comments.user_id = users.id
-                WHERE comments.comment_id = %s
-            """, (comment_id,))
-            owner_info = cur.fetchone()
-
-            if owner_info:
-                owner_id, image_id = owner_info
-
-                # Only create notification if the liker isn't the comment owner and they want like notifs
-                if owner_id != current_user.id:
-                    cur.execute("""
-                        INSERT INTO notifications (recipient_id, actor_id, image_id, comment_id, action_type)
-                        VALUES (%s, %s, %s, %s, 'comment_like')
-                    """, (owner_id, current_user.id, image_id, comment_id))
-
-        # Commit the insert/delete and any notification
         conn.commit()
 
         # Get updated like count
