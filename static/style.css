@@ -656,7 +656,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 14px;
+        padding-right: 10px;
         /*due to scrollbar*/
         box-sizing: border-box;
         margin-bottom: 16px;
@@ -708,7 +708,7 @@ input[type="url"]::placeholder {
     .notifs::-webkit-scrollbar-thumb {
         background-color: transparent;
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
         transition: background-color 0.3s;
     }
@@ -724,7 +724,7 @@ input[type="url"]::placeholder {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 24px;
-        padding-right: 14px;
+        padding-right: 10px;
         /*due to scrollbar*/
         box-sizing: border-box;
         overflow-x: hidden;
@@ -738,22 +738,22 @@ input[type="url"]::placeholder {
         /* Optional: prevents layout shift */
     }
 
-.requests::-webkit-scrollbar {
-    width: 18px;
-    background: transparent;
-}
+    .requests::-webkit-scrollbar {
+        width: 18px;
+        background: transparent;
+    }
 
-.requests::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 10px;
-    border: 4px solid transparent;
-    background-clip: padding-box;
-    transition: background-color 0.3s;
-}
+    .requests::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 6px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
+    }
 
-.requests:hover::-webkit-scrollbar-thumb {
-    background-color: var(--text-muted);
-}
+    .requests:hover::-webkit-scrollbar-thumb {
+        background-color: var(--text-muted);
+    }
 
     .notifs-title,
     .requests-title {
@@ -1042,7 +1042,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -1330,7 +1330,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -1424,7 +1424,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3181,7 +3181,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3466,7 +3466,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -3559,7 +3559,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -4444,7 +4444,7 @@ input[type="url"]::placeholder {
         background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
-        padding-right: 14px;
+        padding-right: 10px;
         /* shorthand for spacing */
         box-sizing: border-box;
         overflow-y: auto;
@@ -4502,7 +4502,7 @@ input[type="url"]::placeholder {
     .notifs::-webkit-scrollbar-thumb {
         background-color: transparent;
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
         transition: background-color 0.3s;
     }
@@ -4512,22 +4512,22 @@ input[type="url"]::placeholder {
         /* only on hover */
     }
 
-.requests::-webkit-scrollbar {
-    width: 18px;
-    background: transparent;
-}
+    .requests::-webkit-scrollbar {
+        width: 18px;
+        background: transparent;
+    }
 
-.requests::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 10px;
-    border: 4px solid transparent;
-    background-clip: padding-box;
-    transition: background-color 0.3s;
-}
+    .requests::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 6px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
+    }
 
-.requests:hover::-webkit-scrollbar-thumb {
-    background-color: var(--text-muted);
-}
+    .requests:hover::-webkit-scrollbar-thumb {
+        background-color: var(--text-muted);
+    }
 
     .notifs-title,
     .requests-title {
@@ -5531,7 +5531,7 @@ input[type="url"]::placeholder {
     .scrollable-div:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -5816,7 +5816,7 @@ input[type="url"]::placeholder {
     .scrollable-div-likes:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -5911,7 +5911,7 @@ input[type="url"]::placeholder {
     .scrollable-div-comments:hover::-webkit-scrollbar-thumb {
         background-color: var(--text-muted);
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
     }
 
@@ -6803,7 +6803,7 @@ input[type="url"]::placeholder {
         background: var(--bg-secondary);
         border-radius: 10px;
         padding: 24px;
-        padding-right: 14px;
+        padding-right: 10px;
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
@@ -6860,7 +6860,7 @@ input[type="url"]::placeholder {
     .notifs::-webkit-scrollbar-thumb {
         background-color: transparent;
         border-radius: 10px;
-        border: 4px solid transparent;
+        border: 6px solid transparent;
         background-clip: padding-box;
         transition: background-color 0.3s;
     }
@@ -6870,22 +6870,22 @@ input[type="url"]::placeholder {
         /* only on hover */
     }
 
-.requests::-webkit-scrollbar {
-    width: 18px;
-    background: transparent;
-}
+    .requests::-webkit-scrollbar {
+        width: 18px;
+        background: transparent;
+    }
 
-.requests::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 10px;
-    border: 4px solid transparent;
-    background-clip: padding-box;
-    transition: background-color 0.3s;
-}
+    .requests::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 10px;
+        border: 6px solid transparent;
+        background-clip: padding-box;
+        transition: background-color 0.3s;
+    }
 
-.requests:hover::-webkit-scrollbar-thumb {
-    background-color: var(--text-muted);
-}
+    .requests:hover::-webkit-scrollbar-thumb {
+        background-color: var(--text-muted);
+    }
 
     .notifs-title,
     .requests-title {
