@@ -1284,14 +1284,20 @@
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
 
+                let scrollPosition = 0;
+
                 function openFriendsModal() {
-                    friendsModalOverlay.style.display = 'flex';
+                    scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    document.body.style.top = `-${scrollPosition}px`;
                     document.body.classList.add('no-scrolling');
+                    friendsModalOverlay.style.display = 'flex';
                 }
 
                 function closeFriendsModal() {
                     friendsModalOverlay.style.display = 'none';
                     document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollPosition);
                 }
 
                 if (openFriendsButton) {
@@ -1309,6 +1315,7 @@
                         }
                     });
                 }
+
 
                 document.querySelectorAll('.link-wrapper').forEach(wrapper => {
                     const button = wrapper.querySelector('.link-button');
