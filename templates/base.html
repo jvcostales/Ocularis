@@ -1172,7 +1172,7 @@
                         'X-Requested-With': 'XMLHttpRequest',
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include'
+                    credentials: 'include' // Include session cookies
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -1185,14 +1185,7 @@
                     .then(data => {
                         const commentElement = document.getElementById(`comment-${commentId}`);
                         if (commentElement) {
-                            // Remove the comment element
                             commentElement.remove();
-
-                            // Also remove the line-comments divider right after it
-                            const nextSibling = commentElement.nextElementSibling;
-                            if (nextSibling && nextSibling.classList.contains('line-comments')) {
-                                nextSibling.remove();
-                            }
                         }
                     })
                     .catch(error => {

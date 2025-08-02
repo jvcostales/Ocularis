@@ -108,23 +108,27 @@
             {% if comment[1] == image[0] %}
             {% set ns.has_comments = true %}
             <div class="profile-comment-wrapper">
-                <div class="profile-more-wrapper">
-                    <div class="profile-post-comments">
-                        <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
+                <div class="profile-post-comments">
+                    <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
     url_for('profile_pics', filename=comment[7])
     if comment[7] and comment[7] != 'pfp.jpg'
     else url_for('static', filename='pfp.jpg')
 }}" class="pfp"></a>
+                    <div class="align-top">
                         <div class="profile-name-date">
                             <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
                                     comment[2] }}</a></div>
                             <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
                             </div>
                         </div>
+                        {% if current_user.id == comment[6] %}
+                        <span class="material-symbols-outlined delete-symbol"
+                            onclick="deleteComment({{ comment[0] }})">delete</span>
+                        {% endif %}
                     </div>
-                    <div class="more-frame-wrapper">
-                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
-                    </div>
+                </div>
+                <div class="more-frame-wrapper">
+                    <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
                 </div>
                 <div class="comment-like-wrapper">
                     <div class="comment">{{ comment[3] }}</div>
