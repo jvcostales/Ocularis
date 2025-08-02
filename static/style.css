@@ -223,6 +223,7 @@ span.delete-symbol {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    width: 100%;
 }
 
 span.delete-symbol:hover {

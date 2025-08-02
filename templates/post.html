@@ -107,70 +107,73 @@
             {% for comment in comments %}
             {% if comment[1] == image[0] %}
             {% set ns.has_comments = true %}
-            <div class="profile-comment-wrapper">
-                <div class="profile-post-comments">
-                    <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
+            <div class="comment-block" id="comment-{{ comment[0] }}">
+                <div class="profile-comment-wrapper">
+                    <div class="profile-post-comments">
+                        <a href="{{ url_for('profile', user_id=comment[6]) }}"><img src="{{
     url_for('profile_pics', filename=comment[7])
     if comment[7] and comment[7] != 'pfp.jpg'
     else url_for('static', filename='pfp.jpg')
 }}" class="pfp"></a>
-                    <div class="align-top">
-                        <div class="profile-name-date">
-                            <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
-                                    comment[2] }}</a></div>
-                            <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
-                            </div>
-                        </div>
-                        {% if current_user.id == comment[6] %}
-                        <span class="material-symbols-outlined delete-symbol"
-                            onclick="deleteComment({{ comment[0] }})">delete</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="more-frame-wrapper">
-                    <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
-                </div>
-                <div class="comment-like-wrapper">
-                    <div class="comment">{{ comment[3] }}</div>
-                    <div class="like-metrics-wrapper">
-                        <form class="like-form" data-comment-id="{{ comment[0] }}">
-                            <button type="submit" style="all: unset;">
-                                <div class="partner like-button {% if comment[8] %}liked{% endif %}"
-                                    id="like-button-{{ comment[0] }}">
-                                    <span class="material-symbols-outlined lcs-symbol">
-                                        {{ 'thumb_up_alt' if comment[8] else 'thumb_up' }}
-                                    </span>
-                                    <div class="partner-label">
-                                        {{ 'Unlike' if comment[8] else 'Like' }}
-                                    </div>
+                        <div class="align-top">
+                            <div class="profile-name-date">
+                                <div class="username"><a href="{{ url_for('profile', user_id=comment[6]) }}">{{
+                                        comment[2] }}</a></div>
+                                <div class="date">{{ comment[4].strftime('%b') }} {{ comment[4].day }}
                                 </div>
-                            </button>
-                        </form>
-                        <div id="openOverlayCommentLikes-1" role="button" tabindex="0" style="cursor: pointer;">
-                            <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
-                                data-comment-id="{{ comment[0] }}">
-                                <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
-                                <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1 else
-                                    'Likes' }}</span>
+                            </div>
+                            {% if current_user.id == comment[6] %}
+                            <span class="material-symbols-outlined delete-symbol"
+                                onclick="deleteComment({{ comment[0] }})">delete</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="more-frame-wrapper">
+                        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
+                    </div>
+                    <div class="comment-like-wrapper">
+                        <div class="comment">{{ comment[3] }}</div>
+                        <div class="like-metrics-wrapper">
+                            <form class="like-form" data-comment-id="{{ comment[0] }}">
+                                <button type="submit" style="all: unset;">
+                                    <div class="partner like-button {% if comment[8] %}liked{% endif %}"
+                                        id="like-button-{{ comment[0] }}">
+                                        <span class="material-symbols-outlined lcs-symbol">
+                                            {{ 'thumb_up_alt' if comment[8] else 'thumb_up' }}
+                                        </span>
+                                        <div class="partner-label">
+                                            {{ 'Unlike' if comment[8] else 'Like' }}
+                                        </div>
+                                    </div>
+                                </button>
+                            </form>
+                            <div id="openOverlayCommentLikes-1" role="button" tabindex="0" style="cursor: pointer;">
+                                <div class="metrics like-count" id="like-count-comment-{{ comment[0] }}"
+                                    data-comment-id="{{ comment[0] }}">
+                                    <span class="like-number">{{ comment_likes_data[comment[0]] | length }}</span>
+                                    <span class="like-text">{{ 'Like' if comment_likes_data[comment[0]] | length == 1
+                                        else
+                                        'Likes' }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="overlayLikes" id="overlayCommentLikes-1">
-                <div class="overlay-content-likes">
-                    <button class="close-icon">
-                        <span class="material-symbols-outlined overlay-close-symbol"
-                            id="closeOverlayCommentLikes-1">close</span>
-                    </button>
-                    <div class="overlay-title">Likes</div>
-                    <div class="scrollable-div-likes" id="scrollableDivCommentLikes-1"
-                        data-comment-id="{{ comment[0] }}">
-                        <p class="loading-msg" style="display: none;">Loading likes...</p>
+                <div class="overlayLikes" id="overlayCommentLikes-1">
+                    <div class="overlay-content-likes">
+                        <button class="close-icon">
+                            <span class="material-symbols-outlined overlay-close-symbol"
+                                id="closeOverlayCommentLikes-1">close</span>
+                        </button>
+                        <div class="overlay-title">Likes</div>
+                        <div class="scrollable-div-likes" id="scrollableDivCommentLikes-1"
+                            data-comment-id="{{ comment[0] }}">
+                            <p class="loading-msg" style="display: none;">Loading likes...</p>
+                        </div>
                     </div>
                 </div>
+                <div class="line-comments"></div>
             </div>
-            <div class="line-comments"></div>
             {% endif %}
             {% endfor %}
             {% if not ns.has_comments %}
