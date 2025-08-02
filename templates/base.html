@@ -2031,22 +2031,22 @@
                                     const newComment = document.createElement('div');
                                     newComment.className = 'profile-comment-wrapper';
                                     newComment.innerHTML = `
-<div class="profile-more-wrapper">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
             <img src="${comment.profile_pic && comment.profile_pic !== 'pfp.jpg'
                                             ? `/profile_pics/${comment.profile_pic}`
                                             : '/static/pfp.jpg'}" class="pfp">
         </a>
-        <div class="profile-name-date">
-            <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
-            <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
-        </div>
+        <div class="align-top">
+            <div class="profile-name-date">
+                <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
+                <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
+            </div>
+            <span class="material-symbols-outlined delete-symbol"
+                onclick="deleteComment(${comment.comment_id})">delete</span>
+        </div>    
     </div>
-    <div class="more-frame-wrapper">
-        <!--<span class="material-symbols-outlined more-symbol">more_horiz</span>-->
-    </div>
-</div>
+
 <div class="comment-like-wrapper">
     <div class="comment">${comment.text}</div>
     <div class="like-metrics-wrapper">
@@ -2080,7 +2080,6 @@
 </div>
 <div class="line-comments"></div>
 `;
-
                                     const commentList = document.getElementById(`commentList-${imageId}`);
                                     if (commentList) {
                                         // Remove empty message if it exists
@@ -2089,7 +2088,7 @@
                                         if (emptyMessage) emptyMessage.remove();
 
                                         // Insert new comment
-                                        commentList.prepend(newComment);
+                                        commentList.appendChild(newComment);
 
                                         // Insert 16px spacer only if there are existing comments (i.e., this isn't the first)
                                         if (commentList.children.length > 1) {
