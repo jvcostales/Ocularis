@@ -1172,7 +1172,7 @@
                         'X-Requested-With': 'XMLHttpRequest',
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include'
+                    credentials: 'include' // Include session cookies
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -1183,9 +1183,9 @@
                         return response.json();
                     })
                     .then(data => {
-                        const commentBlock = document.getElementById(`comment-${commentId}`);
-                        if (commentBlock) {
-                            commentBlock.remove();
+                        const commentElement = document.getElementById(`comment-${commentId}`);
+                        if (commentElement) {
+                            commentElement.remove();
                         }
                     })
                     .catch(error => {
@@ -2031,16 +2031,20 @@
                                     const newComment = document.createElement('div');
                                     newComment.className = 'profile-comment-wrapper';
                                     newComment.innerHTML = `
-<div class="profile-more-wrapper">
+<div class="profile-more-wrapper" id="comment-${comment.comment_id}">
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
             <img src="${comment.profile_pic && comment.profile_pic !== 'pfp.jpg'
                                             ? `/profile_pics/${comment.profile_pic}`
                                             : '/static/pfp.jpg'}" class="pfp">
         </a>
-        <div class="profile-name-date">
-            <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
-            <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
+        <div class="align-top">
+            <div class="profile-name-date">
+                <a href="/profile/${comment.user_id}"><div class="username">${comment.name}</div></a>
+                <div class="date">${new Date(comment.timestamp).toLocaleString('default', { month: 'short' })} ${new Date(comment.timestamp).getDate()}</div>
+            </div>
+            <span class="material-symbols-outlined delete-symbol"
+            onclick="deleteComment(${comment.comment_id})">delete</span>
         </div>
     </div>
     <div class="more-frame-wrapper">
