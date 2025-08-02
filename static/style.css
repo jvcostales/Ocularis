@@ -13,6 +13,11 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
+
+    /* Delete icon colors */
+    --delete-default: #F54141;
+    --delete-hover: #D32F2F;
+    --delete-active: #B71C1C;
 }
 
 :root[data-theme="dark"] {
@@ -30,6 +35,11 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
+
+    /* Delete icon colors */
+    --delete-default: #F54141;
+    --delete-hover: #D32F2F;
+    --delete-active: #B71C1C;
 }
 
 [data-theme="dark"] .card-pairup {
@@ -199,6 +209,30 @@ input[type="url"]::placeholder {
 
 .like-button.liked .lcs-symbol {
     color: var(--highlight);
+}
+
+span.delete-symbol {
+    font-variation-settings: 'FILL' 1;
+    font-size: 26px;
+    color: var(--delete-default);
+    user-select: none;
+    cursor: pointer;
+}
+
+span.delete-symbol:hover {
+    font-variation-settings: 'FILL' 1;
+    font-size: 26px;
+    color: var(--delete-hover);
+    user-select: none;
+    cursor: pointer;
+}
+
+span.delete-symbol:active {
+    font-variation-settings: 'FILL' 1;
+    font-size: 26px;
+    color: var(--delete-active);
+    user-select: none;
+    cursor: pointer;
 }
 
 .modal {

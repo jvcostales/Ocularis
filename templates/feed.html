@@ -190,7 +190,7 @@
                         </div>
                     </div>
                     {% if current_user.id == comment[6] %}
-                    <div class="material-symbols-outlined more-symbol" onclick="deleteComment({{ comment[0] }})">delete</div>
+                    <span class="material-symbols-outlined delete-symbol" onclick="deleteComment({{ comment[0] }})">delete</span>
                     {% endif %}
                 </div>
                 <div class="comment-like-wrapper">
