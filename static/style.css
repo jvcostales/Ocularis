@@ -222,11 +222,12 @@ span.delete-symbol {
 .align-top {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
 }
 
 span.delete-symbol:hover {
     font-variation-settings: 'FILL' 1;
-    font-size: 26px;
+    font-size: 32px;
     color: var(--delete-hover);
     user-select: none;
     cursor: pointer;
@@ -234,7 +235,7 @@ span.delete-symbol:hover {
 
 span.delete-symbol:active {
     font-variation-settings: 'FILL' 1;
-    font-size: 26px;
+    font-size: 32px;
     color: var(--delete-active);
     user-select: none;
     cursor: pointer;
