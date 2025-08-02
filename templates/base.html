@@ -2030,6 +2030,7 @@
 
                                     const newComment = document.createElement('div');
                                     newComment.className = 'profile-comment-wrapper';
+                                    newComment.id = `comment-${comment.comment_id}`;
                                     newComment.innerHTML = `
     <div class="profile-post-comments">
         <a href="/profile/${comment.user_id}">
@@ -2088,7 +2089,7 @@
                                         if (emptyMessage) emptyMessage.remove();
 
                                         // Insert new comment
-                                        commentList.appendChild(newComment);
+                                        commentList.prepend(newComment);
 
                                         // Insert 16px spacer only if there are existing comments (i.e., this isn't the first)
                                         if (commentList.children.length > 1) {
