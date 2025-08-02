@@ -1163,7 +1163,64 @@
             }
 
 
+            function deleteComment(commentId) {
+                if (!confirm("Are you sure you want to delete this comment?")) return;
 
+                fetch(`/comment/delete/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.error || "Failed to delete comment.");
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const commentElement = document.getElementById(`comment-${commentId}`);
+                        if (commentElement) {
+                            commentElement.remove();
+                        }
+
+                        // Only check scroll on comment divs
+                        checkCommentScrollbar();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting comment:', error);
+                        alert(error.message || "An error occurred.");
+                    });
+            }
+
+            // Check scrollbar only on scrollableDiv and comment section
+            function checkCommentScrollbar() {
+                const imageInput = document.getElementById('image');
+                const div = document.getElementById('scrollableDiv');
+                const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+                if (imageInput && div) {
+                    div.classList.remove('no-scroll', 'has-scroll');
+                    if (imageInput.files.length > 0) {
+                        div.classList.add('has-scroll');
+                    } else {
+                        div.classList.add('no-scroll');
+                    }
+                }
+
+                commentDivs.forEach(el => {
+                    el.classList.remove('no-scroll', 'has-scroll');
+                    if (el.scrollHeight > el.clientHeight) {
+                        el.classList.add('has-scroll');
+                    } else {
+                        el.classList.add('no-scroll');
+                    }
+                });
+            }
 
 
 
@@ -2400,42 +2457,6 @@
                     });
                 });
 
-
-
-                function deleteComment(commentId) {
-                    if (!confirm("Are you sure you want to delete this comment?")) return;
-
-                    fetch(`/comment/delete/${commentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include' // Include session cookies
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(data => {
-                                    throw new Error(data.error || "Failed to delete comment.");
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            const commentElement = document.getElementById(`comment-${commentId}`);
-                            if (commentElement) {
-                                const scrollableDiv = commentElement.closest('.scrollable-div-comments');
-                                commentElement.remove();
-                                if (scrollableDiv) {
-                                    checkScrollState([scrollableDiv]);
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error deleting comment:', error);
-                            alert(error.message || "An error occurred.");
-                        });
-                }
 
 
                 const imageInput = document.getElementById('image');
