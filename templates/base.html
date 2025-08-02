@@ -1284,10 +1284,10 @@
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
 
-                let scrollPosition = 0;
+                let scrollFriendsPosition = 0;
 
                 function openFriendsModal() {
-                    scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    scrollFriendsPosition = window.pageYOffset || document.documentElement.scrollTop;
                     document.body.style.top = `-${scrollPosition}px`;
                     document.body.classList.add('no-scrolling');
                     friendsModalOverlay.style.display = 'flex';
