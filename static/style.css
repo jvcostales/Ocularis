@@ -213,10 +213,15 @@ input[type="url"]::placeholder {
 
 span.delete-symbol {
     font-variation-settings: 'FILL' 1;
-    font-size: 26px;
+    font-size: 32px;
     color: var(--delete-default);
     user-select: none;
     cursor: pointer;
+}
+
+.align-top {
+    display: flex;
+    align-items: flex-start;
 }
 
 span.delete-symbol:hover {
@@ -1479,8 +1484,6 @@ span.delete-symbol:active {
         display: flex;
         align-items: center;
         gap: 16px;
-
-
     }
 
     .comment-like-wrapper {
@@ -3614,8 +3617,6 @@ span.delete-symbol:active {
         display: flex;
         align-items: center;
         gap: 16px;
-
-
     }
 
     .comment-like-wrapper {
@@ -5966,7 +5967,6 @@ span.delete-symbol:active {
         display: flex;
         align-items: center;
         gap: 16px;
-
     }
 
     .comment-like-wrapper {
