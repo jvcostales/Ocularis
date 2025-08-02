@@ -1280,25 +1280,29 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                const openFriendsButton = document.getElementById('openFriendsButton');
-                const friendsModalOverlay = document.getElementById('friendsModalOverlay');
-                const closeFriendsButton = document.getElementById('closeFriendsButton');
-
-                let scrollFriendsPosition = 0;
+                let friendsScrollPosition = 0;
 
                 function openFriendsModal() {
-                    scrollFriendsPosition = window.pageYOffset || document.documentElement.scrollTop;
-                    document.body.style.top = `-${scrollPosition}px`;
+                    friendsScrollPosition = window.scrollY;
+                    document.body.style.top = `-${friendsScrollPosition}px`;
                     document.body.classList.add('no-scrolling');
-                    friendsModalOverlay.style.display = 'flex';
+
+                    const overlay = document.getElementById('friendsModalOverlay');
+                    if (overlay) overlay.style.display = 'flex';
                 }
 
                 function closeFriendsModal() {
-                    friendsModalOverlay.style.display = 'none';
+                    const overlay = document.getElementById('friendsModalOverlay');
+                    if (overlay) overlay.style.display = 'none';
+
                     document.body.classList.remove('no-scrolling');
                     document.body.style.top = '';
-                    window.scrollTo(0, scrollPosition);
+                    window.scrollTo(0, friendsScrollPosition);
                 }
+
+                const openFriendsButton = document.getElementById('openFriendsButton');
+                const closeFriendsButton = document.getElementById('closeFriendsButton');
+                const friendsModalOverlay = document.getElementById('friendsModalOverlay');
 
                 if (openFriendsButton) {
                     openFriendsButton.addEventListener('click', openFriendsModal);
