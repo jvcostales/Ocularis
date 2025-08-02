@@ -1252,40 +1252,6 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                window.toggleCommentOptions = function (commentId) {
-                    const menu = document.getElementById(`comment-options-menu-${commentId}`);
-                    const allMenus = document.querySelectorAll('.comment-options-menu');
-
-                    // Close all other comment menus
-                    allMenus.forEach(el => {
-                        if (el && el !== menu) {
-                            el.style.display = 'none';
-                        }
-                    });
-
-                    // Toggle the clicked one
-                    if (menu) {
-                        const isVisible = menu.style.display === 'block';
-                        menu.style.display = isVisible ? 'none' : 'block';
-                    }
-                };
-
-                // Close comment menus when clicking outside
-                document.addEventListener('click', function (event) {
-                    document.querySelectorAll('.comment-options-menu').forEach(menu => {
-                        const btnId = menu.id.replace("menu", "btn");
-                        const moreBtn = document.getElementById(btnId);
-
-                        const clickedInside = menu.contains(event.target);
-                        const clickedOnBtn = moreBtn && moreBtn.contains(event.target);
-
-                        if (!clickedInside && !clickedOnBtn) {
-                            menu.style.display = 'none';
-                        }
-                    });
-                });
-
-
                 const openFriendsButton = document.getElementById('openFriendsButton');
                 const friendsModalOverlay = document.getElementById('friendsModalOverlay');
                 const closeFriendsButton = document.getElementById('closeFriendsButton');
@@ -2395,239 +2361,244 @@
 
                 document.addEventListener('click', function (event) {
                     moreBtns.forEach((btn, index) => {
-                        const frame = document.getElementById(frame1 - ${ index + 1});
-                    if (!frame.contains(event.target) && event.target !== btn) {
-                        frame.style.display = 'none';
-                    }
-                });
+                        const frame = document.getElementById(`frame1-${index + 1}`);
+                        if (!frame) return;
 
-                if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
-                    frame2.style.display = 'none';
-                }
-                if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
-                    frame3.style.display = 'none';
-                }
-                if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
-                    frame4.style.display = 'none';
-                }
+                        const clickedInsideFrame = frame.contains(event.target);
+                        const clickedButton = event.target === btn;
 
-                const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
-                const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
-                const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
-
-                if (!frame2Visible && !frame3Visible && !frame4Visible) {
-                    isFrame234Open = false;
-                }
-            });
-
-            window.addEventListener('resize', function () {
-                if (isFrame234Open) {
-                    frame2.style.display = 'block';
-                    frame3.style.display = 'block';
-                    frame4.style.display = 'block';
-                }
-            });
-
-            function checkScrollbar() {
-                const imageInput = document.getElementById('image');
-                const div = document.getElementById('scrollableDiv');
-                const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
-                const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
-                const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
-
-                if (imageInput && div) {
-                    div.classList.remove('no-scroll', 'has-scroll');
-                    if (imageInput.files.length > 0) {
-                        div.classList.add('has-scroll');
-                    } else {
-                        div.classList.add('no-scroll');
-                    }
-                }
-
-                const checkScrollState = (divList) => {
-                    divList.forEach(el => {
-                        el.classList.remove('no-scroll', 'has-scroll');
-                        if (el.scrollHeight > el.clientHeight) {
-                            el.classList.add('has-scroll');
-                        } else {
-                            el.classList.add('no-scroll');
+                        if (!clickedInsideFrame && !clickedButton) {
+                            frame.style.display = 'none';
                         }
                     });
-                };
 
-                checkScrollState(likeDivs);
-                checkScrollState(commentDivs);
-                checkScrollState(commentLikeDivs);
-            }
+                    if (frame2 && !frame2.contains(event.target) && event.target !== pfp) {
+                        frame2.style.display = 'none';
+                    }
+                    if (frame3 && !frame3.contains(event.target) && event.target !== pfp3) {
+                        frame3.style.display = 'none';
+                    }
+                    if (frame4 && !frame4.contains(event.target) && event.target !== pfp4) {
+                        frame4.style.display = 'none';
+                    }
 
-            window.addEventListener("load", () => {
-                requestAnimationFrame(() => {
-                    checkScrollbar();
+                    const frame2Visible = frame2 && window.getComputedStyle(frame2).display !== 'none';
+                    const frame3Visible = frame3 && window.getComputedStyle(frame3).display !== 'none';
+                    const frame4Visible = frame4 && window.getComputedStyle(frame4).display !== 'none';
+
+                    if (!frame2Visible && !frame3Visible && !frame4Visible) {
+                        isFrame234Open = false;
+                    }
                 });
-            });
+
+                window.addEventListener('resize', function () {
+                    if (isFrame234Open) {
+                        frame2.style.display = 'block';
+                        frame3.style.display = 'block';
+                        frame4.style.display = 'block';
+                    }
+                });
+
+                function checkScrollbar() {
+                    const imageInput = document.getElementById('image');
+                    const div = document.getElementById('scrollableDiv');
+                    const likeDivs = document.querySelectorAll('[id^="scrollableDivLikes"]');
+                    const commentLikeDivs = document.querySelectorAll('[id^="scrollableDivCommentLikes"]');
+                    const commentDivs = document.querySelectorAll('[id^="scrollableDivComments"]');
+
+                    if (imageInput && div) {
+                        div.classList.remove('no-scroll', 'has-scroll');
+                        if (imageInput.files.length > 0) {
+                            div.classList.add('has-scroll');
+                        } else {
+                            div.classList.add('no-scroll');
+                        }
+                    }
+
+                    const checkScrollState = (divList) => {
+                        divList.forEach(el => {
+                            el.classList.remove('no-scroll', 'has-scroll');
+                            if (el.scrollHeight > el.clientHeight) {
+                                el.classList.add('has-scroll');
+                            } else {
+                                el.classList.add('no-scroll');
+                            }
+                        });
+                    };
+
+                    checkScrollState(likeDivs);
+                    checkScrollState(commentDivs);
+                    checkScrollState(commentLikeDivs);
+                }
+
+                window.addEventListener("load", () => {
+                    requestAnimationFrame(() => {
+                        checkScrollbar();
+                    });
+                });
 
 
 
-            const imageInput = document.getElementById('image');
-            if (imageInput) {
-                imageInput.addEventListener('change', checkScrollbar);
-            }
-            checkScrollbar();
+                const imageInput = document.getElementById('image');
+                if (imageInput) {
+                    imageInput.addEventListener('change', checkScrollbar);
+                }
+                checkScrollbar();
 
-            function isChrome() {
-                return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-            }
+                function isChrome() {
+                    return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+                }
 
-            function setFullHeight() {
-                const adjustment = isChrome() ? 1 : 0;
-                const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
+                function setFullHeight() {
+                    const adjustment = isChrome() ? 1 : 0;
+                    const adjustedHeight = Math.floor(window.innerHeight) - adjustment;
 
-                const rightSidebar = document.querySelector('.right-sidebar');
-                const leftSidebar = document.querySelector('.left-sidebar');
+                    const rightSidebar = document.querySelector('.right-sidebar');
+                    const leftSidebar = document.querySelector('.left-sidebar');
 
-                if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
-                if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
-            }
+                    if (rightSidebar) rightSidebar.style.height = adjustedHeight + 'px';
+                    if (leftSidebar) leftSidebar.style.height = adjustedHeight + 'px';
+                }
 
-            window.addEventListener('resize', setFullHeight);
-            setFullHeight();
+                window.addEventListener('resize', setFullHeight);
+                setFullHeight();
 
-            const imageInputPreview = document.getElementById('image');
-            const imageWrapper = document.getElementById('imageWrapper');
-            const imagePreview = document.getElementById('uploadedImagePreview');
-            const closeButton = document.getElementById('closeButton');
-            const scrollableDiv = document.querySelector('.scrollable-div');
-            const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
+                const imageInputPreview = document.getElementById('image');
+                const imageWrapper = document.getElementById('imageWrapper');
+                const imagePreview = document.getElementById('uploadedImagePreview');
+                const closeButton = document.getElementById('closeButton');
+                const scrollableDiv = document.querySelector('.scrollable-div');
+                const collaboratorTagSection = document.getElementById('collaboratorTagSection'); // New
 
-            if (imageInputPreview) {
-                imageInputPreview.addEventListener('change', function () {
-                    const file = this.files[0];
+                if (imageInputPreview) {
+                    imageInputPreview.addEventListener('change', function () {
+                        const file = this.files[0];
 
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imagePreview.src = e.target.result;
-                            imageWrapper.style.display = 'block';
+                        if (file && file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                imagePreview.src = e.target.result;
+                                imageWrapper.style.display = 'block';
+
+                                if (collaboratorTagSection) {
+                                    collaboratorTagSection.style.display = 'block';
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            imagePreview.src = '';
+                            imageWrapper.style.display = 'none';
 
                             if (collaboratorTagSection) {
-                                collaboratorTagSection.style.display = 'block';
+                                collaboratorTagSection.style.display = 'none';
                             }
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
+                        }
+                    });
+                }
+
+                if (closeButton) {
+                    closeButton.addEventListener('click', function (e) {
+                        e.preventDefault();
                         imagePreview.src = '';
                         imageWrapper.style.display = 'none';
+                        imageInputPreview.value = '';
 
                         if (collaboratorTagSection) {
                             collaboratorTagSection.style.display = 'none';
                         }
-                    }
-                });
-            }
 
-            if (closeButton) {
-                closeButton.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    imagePreview.src = '';
-                    imageWrapper.style.display = 'none';
-                    imageInputPreview.value = '';
-
-                    if (collaboratorTagSection) {
-                        collaboratorTagSection.style.display = 'none';
-                    }
-
-                    if (scrollableDiv) {
-                        scrollableDiv.classList.remove('has-scroll');
-                        scrollableDiv.classList.add('no-scroll');
-                    }
-                });
-            }
-
-            const circledClose = document.querySelector('.circled-icon-1-overlay-version');
-            if (circledClose) {
-                circledClose.addEventListener('click', function () {
-                    document.getElementById('uploadedImagePreview').src = '';
-                    document.getElementById('image').value = '';
-                    document.getElementById('imageWrapper').style.display = 'none';
-
-                    if (collaboratorTagSection) {
-                        collaboratorTagSection.style.display = 'none';
-                    }
-
-                    if (scrollableDiv) {
-                        scrollableDiv.classList.remove('has-scroll');
-                        scrollableDiv.classList.add('no-scroll');
-                    }
-                });
-            }
-
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) {
-                console.log('Form found');
-
-                profileForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    console.log('Form submission prevented');
-
-                    const formData = new FormData(this);
-
-                    // Append all form data into a single array
-                    const dataArray = [];
-                    for (const [key, value] of formData.entries()) {
-                        dataArray.push([key, value]);
-                    }
-                    console.log('Form data as array:', dataArray);
-
-                    try {
-                        console.log('Sending data to the server...');
-                        const response = await fetch('/api/setup-profile', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        console.log('Response received:', response);
-                        const result = await response.json();
-                        console.log('Parsed result:', result);
-
-                        if (result.success) {
-                            console.log('Profile saved successfully');
-                            document.getElementById('profileModal').style.display = 'none';
-                            window.location.href = result.redirect_url;
-                        } else {
-                            console.log('Something went wrong while saving the profile');
-                            alert('Something went wrong while saving your profile.');
+                        if (scrollableDiv) {
+                            scrollableDiv.classList.remove('has-scroll');
+                            scrollableDiv.classList.add('no-scroll');
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                console.log('Form not found');
-            }
+                    });
+                }
 
-            document.getElementById('notify-btn').addEventListener('click', function () {
-                const recipientId = this.getAttribute('data-recipient-id');
+                const circledClose = document.querySelector('.circled-icon-1-overlay-version');
+                if (circledClose) {
+                    circledClose.addEventListener('click', function () {
+                        document.getElementById('uploadedImagePreview').src = '';
+                        document.getElementById('image').value = '';
+                        document.getElementById('imageWrapper').style.display = 'none';
 
-                fetch('/notify/collab_check', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ recipient_id: recipientId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            alert('Error: ' + data.error);
-                        } else {
-                            alert(data.message);
-                            // Immediately redirect after alert is dismissed
-                            window.location.href = data.redirect_url;
+                        if (collaboratorTagSection) {
+                            collaboratorTagSection.style.display = 'none';
                         }
+
+                        if (scrollableDiv) {
+                            scrollableDiv.classList.remove('has-scroll');
+                            scrollableDiv.classList.add('no-scroll');
+                        }
+                    });
+                }
+
+                const profileForm = document.getElementById('profileForm');
+                if (profileForm) {
+                    console.log('Form found');
+
+                    profileForm.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+                        console.log('Form submission prevented');
+
+                        const formData = new FormData(this);
+
+                        // Append all form data into a single array
+                        const dataArray = [];
+                        for (const [key, value] of formData.entries()) {
+                            dataArray.push([key, value]);
+                        }
+                        console.log('Form data as array:', dataArray);
+
+                        try {
+                            console.log('Sending data to the server...');
+                            const response = await fetch('/api/setup-profile', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            console.log('Response received:', response);
+                            const result = await response.json();
+                            console.log('Parsed result:', result);
+
+                            if (result.success) {
+                                console.log('Profile saved successfully');
+                                document.getElementById('profileModal').style.display = 'none';
+                                window.location.href = result.redirect_url;
+                            } else {
+                                console.log('Something went wrong while saving the profile');
+                                alert('Something went wrong while saving your profile.');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                } else {
+                    console.log('Form not found');
+                }
+
+                document.getElementById('notify-btn').addEventListener('click', function () {
+                    const recipientId = this.getAttribute('data-recipient-id');
+
+                    fetch('/notify/collab_check', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ recipient_id: recipientId })
                     })
-                    .catch(err => alert('Request failed: ' + err));
-            });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert('Error: ' + data.error);
+                            } else {
+                                alert(data.message);
+                                // Immediately redirect after alert is dismissed
+                                window.location.href = data.redirect_url;
+                            }
+                        })
+                        .catch(err => alert('Request failed: ' + err));
+                });
 
 
             });

@@ -190,16 +190,7 @@
                         </div>
                     </div>
                     {% if current_user.id == comment[6] %}
-                    <div class="comment-options-wrapper">
-                        <span class="material-symbols-outlined comment-options-btn"
-                            id="comment-options-btn-{{ comment[0] }}"
-                            onclick="toggleCommentOptions({{ comment[0] }})">more_horiz</span>
-
-                        <div class="comment-options-menu" id="comment-options-menu-{{ comment[0] }}"
-                            style="display: none;">
-                            <div class="delete" onclick="deleteComment({{ comment[0] }})">Delete</div>
-                        </div>
-                    </div>
+                    <div class="material-symbols-outlined more-symbol" onclick="deleteComment({{ comment[0] }})">delete</div>
                     {% endif %}
                 </div>
                 <div class="comment-like-wrapper">
