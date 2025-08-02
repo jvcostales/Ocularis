@@ -1185,7 +1185,11 @@
                     .then(data => {
                         const commentElement = document.getElementById(`comment-${commentId}`);
                         if (commentElement) {
+                            const scrollableDiv = commentElement.closest('.scrollable-div-comments');
                             commentElement.remove();
+                            if (scrollableDiv) {
+                                checkScrollState([scrollableDiv]);
+                            }
                         }
                     })
                     .catch(error => {
