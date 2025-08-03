@@ -2918,13 +2918,23 @@ def get_random_users(current_user_id):
     )
     cur = conn.cursor()
 
+    # Exclude current user and accepted friends
     cur.execute("""
         SELECT id, first_name, last_name, profile_pic, verified
         FROM users
         WHERE id != %s
+          AND id NOT IN (
+              SELECT CASE 
+                         WHEN sender_id = %s THEN receiver_id
+                         ELSE sender_id
+                     END
+              FROM friend_requests
+              WHERE (sender_id = %s OR receiver_id = %s)
+                AND status = 'accepted'
+          )
         ORDER BY RANDOM()
         LIMIT 12
-    """, (current_user_id,))
+    """, (current_user_id, current_user_id, current_user_id, current_user_id))
     user_rows = cur.fetchall()
 
     users = []
@@ -2944,9 +2954,7 @@ def get_random_users(current_user_id):
         if row:
             sender, receiver, status, req_id = row
             request_id = req_id
-            if status == 'accepted':
-                relationship = 'friends'
-            elif status == 'pending':
+            if status == 'pending':
                 if receiver == current_user_id:
                     relationship = 'incoming_pending'
                 else:
