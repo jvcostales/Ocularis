@@ -46,14 +46,18 @@
                 </div>
                 <div id="collaboratorTagSection" style="display: none;">
                     <label for="collaborator">Select a collaborator (optional):</label>
-                    <select name="collaborator" id="collaborator">
-                        <option value="">-- None --</option>
-                        {% for user in matched_users %}
-                        <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
-                        {% endfor %}
-                    </select>
-                    <label for="tags">Tags:</label>
-                    <select name="tags" id="tags" multiple size="6">
+                    <div style="position: relative;">
+                        <select name="collaborator" id="collaborator" class="location">
+                            <option value="">-- None --</option>
+                            {% for user in matched_users %}
+                            <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="material-symbols-outlined down-symbol">expand_more</span>
+                    </div>
+
+                    <label for="tags" style="margin-top: 12px; display: block;">Tags:</label>
+                    <select name="tags" id="tags" multiple size="6" class="tag-multiselect">
                         {% for tag in tags %}
                         <option value="{{ tag }}">{{ tag }}</option>
                         {% endfor %}
