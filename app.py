@@ -2746,7 +2746,7 @@ def match():
 
     # Get recommended user info
     user_ids = similar_users_df['user'].tolist()
-    cur.execute("SELECT id, first_name, last_name, role FROM users WHERE id = ANY(%s)", (user_ids,))
+    cur.execute("SELECT id, first_name, last_name, role, profile_pic FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
 
     name_map = {
@@ -2754,7 +2754,8 @@ def match():
             "id": row[0],
             "first_name": row[1],
             "last_name": row[2],
-            "role": row[3]
+            "role": row[3],
+            "profile_pic": row[4]
         }
         for row in name_rows
     }
@@ -2766,6 +2767,13 @@ def match():
         user["first_name"] = details.get("first_name", "Unknown")
         user["last_name"] = details.get("last_name", "")
         user["role"] = details.get("role", "")
+
+        # ✅ Add profile_pic_url
+        profile_pic = details.get("profile_pic")
+        if profile_pic and profile_pic != "pfp.jpg":
+            user["profile_pic_url"] = url_for("profile_pics", filename=profile_pic)
+        else:
+            user["profile_pic_url"] = url_for("static", filename="pfp.jpg")
 
         # 🔽 Fetch skills, preferences, experience_level for this user
         cur = conn.cursor()

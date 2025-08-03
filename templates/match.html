@@ -5,7 +5,7 @@
     <div class="post-title">Match</div>
     {% if user %}
     <div class="nav-section active card-content">
-        <div class="photo" style="background: url('{{ profile_pic_url }}') center center / cover no-repeat;"></div>
+        <div class="photo" style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;"></div>
         <div class="info">
             <div class="name-card">{{ user.first_name }}</div>
             <div class="who">{{ user.role }}</div>
