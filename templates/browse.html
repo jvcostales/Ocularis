@@ -17,13 +17,37 @@
                 <div class="date">Jan 1</div>
             </div>
         </div>
-        <div class="more-frame-wrapper">
-            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
-            <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
-                <div class="save">Save</div>
-                <div class="hide">Hide</div>
-                <div class="report">Report</div>
+        <div class="follow-action">
+            {% if user.relationship == 'friends' %}
+            <form action="{{ url_for('unfriend', other_user_id=user.id) }}" method="post">
+                <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
+            </form>
+            {% elif user.relationship == 'incoming_pending' %}
+            <div class="response-wrapper" style="margin: 0;">
+                <form action="{{ url_for('accept_request', request_id=user.request_id) }}" method="post">
+                    <button type="submit" class="follow-button-profile no-margin">Confirm</button>
+                </form>
+                <form action="{{ url_for('reject_request', request_id=user.request_id) }}" method="post">
+                    <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
+                </form>
             </div>
+            {% elif user.relationship == 'outgoing_pending' %}
+            <form action="{{ url_for('cancel_request', user_id=user.id) }}" method="post">
+                <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
+            </form>
+            {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
+            {% if user.verified %}
+            <form action="{{ url_for('send_request', receiver_id=user.id) }}" method="post">
+                <button type="submit" class="follow-button-profile no-margin">Befriend</button>
+            </form>
+            {% else %}
+            <div title="Verify your email to add friends">
+                <form action="#" method="post">
+                    <button type="submit" class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
+                </form>
+            </div>
+            {% endif %}
+            {% endif %}
         </div>
     </div>
     {% endfor %}

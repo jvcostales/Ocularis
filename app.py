@@ -2935,9 +2935,44 @@ def get_random_users(user_id):
                 LIMIT 20;
             """, (user_id, user_id, user_id))
 
-            users = cur.fetchall()
+            raw_users = cur.fetchall()
+            enhanced_users = []
 
-    return users
+            for u in raw_users:
+                uid = u["id"]
+
+                # Default values
+                relationship = 'not_friends'
+                request_id = None
+
+                cur.execute("""
+                    SELECT sender_id, receiver_id, status, request_id
+                    FROM friend_requests
+                    WHERE (sender_id = %s AND receiver_id = %s)
+                       OR (sender_id = %s AND receiver_id = %s)
+                    LIMIT 1
+                """, (user_id, uid, uid, user_id))
+                row = cur.fetchone()
+
+                if row:
+                    sender, receiver, status, req_id = row
+                    request_id = req_id
+                    if status == 'accepted':
+                        relationship = 'friends'
+                    elif status == 'pending':
+                        if receiver == user_id:
+                            relationship = 'incoming_pending'
+                        else:
+                            relationship = 'outgoing_pending'
+                    elif status == 'rejected':
+                        relationship = 'outgoing_rejected'
+
+                u["relationship"] = relationship
+                u["request_id"] = request_id
+
+                enhanced_users.append(u)
+
+    return enhanced_users
 
 
 @app.route('/browse', methods=['POST'])
@@ -2952,10 +2987,9 @@ def browse_users():
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
-
     cur = conn.cursor()
 
-    # Fetch notifications
+    # --- Fetch notifications ---
     cur.execute("""
         SELECT 
             users.first_name || ' ' || users.last_name AS display_name,
@@ -2969,16 +3003,12 @@ def browse_users():
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
-    """, (current_user.id,))
+    """, (user_id,))
     notifications = cur.fetchall()
-    
-            # Gather unique actor_ids
+
+    # --- Get actor details ---
     actor_ids = list(set([n[4] for n in notifications]))
-
-            # Prepare dictionary to hold actor_id → user profile details
     actor_details = {}
-
-            # Fetch full details for each actor_id
     for actor_id in actor_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
@@ -2987,69 +3017,55 @@ def browse_users():
             FROM users WHERE id = %s
         """, (actor_id,))
         user = cur.fetchone()
-
         if user:
-                countries = current_app.config['COUNTRIES']
-                states = current_app.config['STATES']
+            countries = current_app.config['COUNTRIES']
+            states = current_app.config['STATES']
 
-                # Get raw codes
-                city = user[3]
-                state_code = user[4]
-                country_code = user[5]
+            city, state_code, country_code = user[3], user[4], user[5]
+            iso_to_country = {c["iso2"]: c["name"] for c in countries}
+            readable_country = iso_to_country.get(country_code, country_code)
+            filtered_states = [s for s in states if s["country_code"] == country_code]
+            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+            readable_state = state_code_to_name.get(state_code, state_code)
+            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
 
-                # Look up readable names
-                iso_to_country = {c["iso2"]: c["name"] for c in countries}
-                readable_country = iso_to_country.get(country_code, country_code)
+            actor_details[actor_id] = {
+                "user_id": actor_id,
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": city,
+                "state": state_code,
+                "country": country_code,
+                "location_display": location_display,
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],
+                "preferences": user[9],
+                "experience_level": user[10],
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
-                # Filter states by selected country
-                filtered_states = [s for s in states if s["country_code"] == country_code]
-                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-                readable_state = state_code_to_name.get(state_code, state_code)
-
-                # Display-friendly location string
-                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
-
-                actor_details[actor_id] = {
-                    "user_id": actor_id,
-                    "full_name": f"{user[0]} {user[1]}",
-                    "role": user[2],
-                    "city": city,
-                    "state": state_code,
-                    "country": country_code,
-                    "location_display": location_display,  # ✅ new key
-                    "profile_pic": user[6],
-                    "cover_photo": user[7],
-                    "skills": user[8],
-                    "preferences": user[9],
-                    "experience_level": user[10],
-                    "facebook": user[11],
-                    "instagram": user[12],
-                    "x": user[13],
-                    "linkedin": user[14],
-                    "telegram": user[15],
-                    "email": user[16]
-                }
-
-    # Fetch friend requests
+    # --- Friend requests ---
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
         JOIN users u ON fr.sender_id = u.id
         WHERE fr.receiver_id = %s AND fr.status = 'pending'
         ORDER BY fr.created_at DESC
-    """, (current_user.id,))
+    """, (user_id,))
     requests = cur.fetchall()
 
-        # New query to get current user's profile_pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    # --- Current user profile pic ---
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
+    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    if result and result[0] and result[0] != 'pfp.jpg':
-        profile_pic_url = url_for('profile_pics', filename=result[0])
-    else:
-        profile_pic_url = url_for('static', filename='pfp.jpg')
-
-    # 4. Get filtered random users
+    # --- Get filtered random users ---
     users = get_random_users(user_id)
 
     return render_template(
