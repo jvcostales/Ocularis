@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 import smtplib
 import secrets
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from recommender import get_similar_users
 from datetime import datetime, timedelta, timezone
@@ -264,23 +265,45 @@ def load_user(user_id):
     return None
 
 def send_verification_email(recipient_email, token):
-    verification_link = f"https://ocular-zmcu.onrender.com/verify-email/{token}"
+    confirmation_link = f"https://ocular-zmcu.onrender.com/confirm-email/{token}"
     subject = "Verify your email for Ocularis"
-    body = f"Hi there! Please click the link below to verify your email:\n{verification_link}"
 
-    msg = MIMEText(body)
+    text_body = f"Hi there!\nPlease verify your email by clicking this link:\n{confirmation_link}"
+
+    html_body = f"""
+    <html>
+    <body>
+        <p>Hi there!</p>
+        <p>Click the button below to verify your email for <strong>Ocularis</strong>:</p>
+        <a href="{confirmation_link}" 
+           style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white;
+                  text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Verify Email
+        </a>
+        <p>If you did not sign up, please ignore this message.</p>
+    </body>
+    </html>
+    """
+
+    msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = "jadynicolecostales2@gmail.com"
     msg["To"] = recipient_email
 
+    msg.attach(MIMEText(text_body, "plain"))
+    msg.attach(MIMEText(html_body, "html"))
+
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
-            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")
+            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")  # Use env var in production
             server.send_message(msg)
     except Exception as e:
         app.logger.error(f"Failed to send email: {e}")
-
+        
+@app.route('/confirm-email/<token>')
+def confirm_email(token):
+    return render_template('confirm_verification.html', token=token)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -342,8 +365,8 @@ def signup():
 
     return render_template('signup.html')
 
-@app.route('/verify-email/<token>')
-def verify_email(token):
+@app.route('/finalize-verification/<token>', methods=['POST'])
+def finalize_verification(token):
     try:
         conn = psycopg2.connect(
             host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
@@ -354,20 +377,21 @@ def verify_email(token):
         )
         cur = conn.cursor()
 
-        # Check token
-        cur.execute("SELECT id FROM users WHERE verification_token = %s", (token,))
+        cur.execute("SELECT id, verified FROM users WHERE verification_token = %s", (token,))
         user = cur.fetchone()
+
         if not user:
             return "Invalid or expired token."
+        if user[1]:
+            return "Account already verified."
 
-        # Mark as verified
         cur.execute("""
             UPDATE users
             SET verified = TRUE, verification_token = NULL
             WHERE id = %s
         """, (user[0],))
         conn.commit()
-        return "Email verified! You can now log in."
+        return "Email verified successfully! You can now log in."
     except Exception as e:
         app.logger.error(f"Verification error: {e}")
         return "An error occurred during verification."
