@@ -271,7 +271,7 @@ def index():
         return redirect(url_for('login'))
 
 def send_verification_email(recipient_email, token):
-    confirmation_link = f"https://ocular-zmcu.onrender.com/confirm-email/{token}"
+    confirmation_link = f"https://ocularis.onrender.com/confirm-email/{token}"
     subject = "Verify your email for Ocularis"
 
     text_body = f"Hi there!\nPlease verify your email by clicking this link:\n{confirmation_link}"
@@ -626,7 +626,7 @@ def feed():
             file_path = os.path.join('/var/data', unique_filename)
             file.save(file_path)
 
-            image_url = f"https://ocular-zmcu.onrender.com/images/{unique_filename}"
+            image_url = f"https://ocularis.onrender.com/images/{unique_filename}"
 
             conn = psycopg2.connect(
                 host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
