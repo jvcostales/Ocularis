@@ -43,7 +43,7 @@
 }
 
 [data-theme="dark"] .card-pairup {
-    background-image: url('/static/pairup-dark.jpg');
+    background-image: url('/static/pairup-dark-compressed.jpg');
     background-position: left bottom;
 }
 
@@ -4344,7 +4344,7 @@ span.delete-symbol:active {
     .card-pairup {
         background-image: url('/static/pairup-compressed.jpg');
         background-size: cover;
-        background-position: right top;
+        background-position: center top;
         background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;
@@ -6693,7 +6693,7 @@ span.delete-symbol:active {
     .card-pairup {
         background-image: url('/static/pairup-compressed.jpg');
         background-size: cover;
-        background-position: right top;
+        background-position: left top;
         background-repeat: no-repeat;
         border-radius: 10px;
         text-align: left;

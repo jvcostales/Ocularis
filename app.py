@@ -237,7 +237,6 @@ class User(UserMixin):
         self.password = password
         self.verified = verified
 
-
 @login_manager.user_loader
 def load_user(user_id):
     conn = psycopg2.connect(
@@ -263,6 +262,13 @@ def load_user(user_id):
             verified=user[5]
         )
     return None
+
+@app.route('/')
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('feed'))
+    else:
+        return redirect(url_for('login'))
 
 def send_verification_email(recipient_email, token):
     confirmation_link = f"https://ocular-zmcu.onrender.com/confirm-email/{token}"
