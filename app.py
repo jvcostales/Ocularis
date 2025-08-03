@@ -2770,10 +2770,11 @@ def match():
 
         # ✅ Add profile_pic_url
         profile_pic = details.get("profile_pic")
-        if profile_pic and profile_pic != "pfp.jpg":
-            user["profile_pic_url"] = url_for("profile_pics", filename=profile_pic)
-        else:
-            user["profile_pic_url"] = url_for("static", filename="pfp.jpg")
+        user["profile_pic_url"] = (
+            url_for("profile_pics", filename=profile_pic)
+            if profile_pic and profile_pic != "pfp.jpg"
+            else url_for("static", filename="pfp.jpg")
+        )
 
         # 🔽 Fetch skills, preferences, experience_level for this user
         cur = conn.cursor()
