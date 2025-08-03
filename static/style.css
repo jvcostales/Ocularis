@@ -219,6 +219,21 @@ span.delete-symbol {
     cursor: pointer;
 }
 
+.form-error-popup {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffdede;
+    color: #cc0000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-size: 14px;
+    z-index: 9999;
+}
+
 .align-top {
     display: flex;
     align-items: flex-start;

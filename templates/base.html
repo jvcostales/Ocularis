@@ -769,6 +769,8 @@
             {% endif %}
         </div>
 
+        <div id="formError" class="form-error-popup">Please fill out all required fields.</div>
+
         <div id="reportModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <button class="close-icon" onclick="closeReportModal()">
@@ -1117,6 +1119,11 @@
             }
 
             function nextStep() {
+                if (!validateStep(currentStep)) {
+                    showFormError("Please fill out all required fields.");
+                    return;
+                }
+
                 if (currentStep < totalSteps) {
                     currentStep++;
                     showStep(currentStep);
@@ -1128,6 +1135,43 @@
                     currentStep--;
                     showStep(currentStep);
                 }
+            }
+
+            function validateStep(step) {
+                if (step === 2) {
+                    const role = document.getElementById("role")?.value.trim();
+                    return role !== "";
+                }
+                if (step === 3) {
+                    const country = document.getElementById("country")?.value;
+                    const state = document.getElementById("state")?.value;
+                    const city = document.getElementById("city")?.value;
+                    return country && state && city;
+                }
+                if (step === 4) {
+                    const skills = document.querySelectorAll("input[name='skills']:checked");
+                    return skills.length > 0;
+                }
+                if (step === 5) {
+                    const preferences = document.querySelectorAll("input[name='preferences']:checked");
+                    return preferences.length > 0;
+                }
+                if (step === 6) {
+                    const experience = document.querySelector("input[name='experience_level']:checked");
+                    return experience !== null;
+                }
+                return true; // steps 1 and 7 are optional/no validation
+            }
+
+            function showFormError(message) {
+                const errorBox = document.getElementById("formError");
+                if (!errorBox) return;
+
+                errorBox.textContent = message;
+                errorBox.style.display = "block";
+                setTimeout(() => {
+                    errorBox.style.display = "none";
+                }, 3000);
             }
 
 
