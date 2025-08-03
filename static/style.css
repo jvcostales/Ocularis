@@ -255,6 +255,10 @@ span.delete-symbol:active {
     z-index: 9999;
 }
 
+.modal.show {
+    display: flex;
+}
+
 .mobile-nav {
     position: fixed;
     bottom: 0;
