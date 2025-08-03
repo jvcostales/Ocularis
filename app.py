@@ -2923,17 +2923,18 @@ def get_random_users(user_id):
                 SELECT id, first_name, last_name, city, role, profile_pic, verified
                 FROM users
                 WHERE is_profile_complete = TRUE
-                  AND id != %s
-                  AND id NOT IN (
-                      SELECT recipient_id FROM notifications 
-                      WHERE actor_id = %s AND action_type = 'collab_check'
-                      UNION
-                      SELECT actor_id FROM notifications 
-                      WHERE recipient_id = %s AND action_type = 'collab_check'
-                  )
+                AND id != %s
+                AND id NOT IN (
+                    SELECT recipient_id FROM notifications 
+                    WHERE actor_id = %s AND action_type = 'collab_check'
+                    UNION
+                    SELECT actor_id FROM notifications 
+                    WHERE recipient_id = %s AND action_type = 'collab_check'
+                )
                 ORDER BY RANDOM()
                 LIMIT 20;
             """, (user_id, user_id, user_id))
+
 
             raw_users = cur.fetchall()
             enhanced_users = []
@@ -2965,7 +2966,8 @@ def get_random_users(user_id):
                 u["relationship"] = relationship
                 u["request_id"] = request_id
                 enhanced_users.append(u)
-
+    
+    print(enhanced_users)    
     return enhanced_users
 
 
