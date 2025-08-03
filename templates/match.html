@@ -10,8 +10,17 @@
             <div class="name-card">{{ user.first_name }}</div>
             <div class="who">{{ user.role }}</div>
             <div class="icons">
-                <img src="../static/fb.png" alt="Facebook" class="icon1">
-                <img src="../static/gmail.png" alt="Gmail" class="icon2">
+                {% if user.facebook %}
+                <a href="{{ 'https://facebook.com/' + user.facebook if 'facebook.com' not in user.facebook else user.facebook }}"
+                    target="_blank">
+                    <img src="{{ url_for('static', filename='fb.png') }}" alt="Facebook" class="icon1">
+                </a>
+                {% endif %}
+                {% if user.email %}
+                <a href="mailto:{{ user.email }}">
+                    <img src="{{ url_for('static', filename='gmail.png') }}" alt="Gmail" class="icon2">
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>

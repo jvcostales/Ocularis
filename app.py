@@ -2752,7 +2752,7 @@ def match():
 
     # Get recommended user info
     user_ids = similar_users_df['user'].tolist()
-    cur.execute("SELECT id, first_name, last_name, role, profile_pic FROM users WHERE id = ANY(%s)", (user_ids,))
+    cur.execute("SELECT id, first_name, last_name, role, profile_pic, facebook, email FROM users WHERE id = ANY(%s)", (user_ids,))
     name_rows = cur.fetchall()
 
     name_map = {
@@ -2761,7 +2761,9 @@ def match():
             "first_name": row[1],
             "last_name": row[2],
             "role": row[3],
-            "profile_pic": row[4]
+            "profile_pic": row[4],
+            "facebook": row[5],
+            "email": row[6]
         }
         for row in name_rows
     }
@@ -2773,6 +2775,9 @@ def match():
         user["first_name"] = details.get("first_name", "Unknown")
         user["last_name"] = details.get("last_name", "")
         user["role"] = details.get("role", "")
+        user["facebook"] = details.get("facebook", "")
+        user["email"] = details.get("email", "")
+
 
         # ✅ Add profile_pic_url
         profile_pic = details.get("profile_pic")
