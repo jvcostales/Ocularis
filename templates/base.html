@@ -1031,6 +1031,11 @@
                 });
             });
 
+            document.querySelectorAll('.nav-section .icons').forEach((iconDiv) => {
+                iconDiv.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            });
 
 
 
