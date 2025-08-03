@@ -305,10 +305,14 @@ span.delete-symbol:active {
 
 .nav-section,
 .nav-section * {
-    user-select: none;           /* Prevent text selection */
-    -webkit-user-select: none;   /* Safari */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* IE/Edge */
+    user-select: none;
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE/Edge */
 }
 
 /* Desktop: 12-column layout */
@@ -2153,7 +2157,6 @@ span.delete-symbol:active {
 
     .photo {
         width: 50%;
-        background: url('pfp.jpg') center center / cover no-repeat;
         border-radius: 10px 0 0 10px;
     }
 
@@ -4280,9 +4283,9 @@ span.delete-symbol:active {
 
     .photo {
         width: 50%;
-        background: url('pfp.jpg') center center / cover no-repeat;
         border-radius: 10px 0 0 10px;
     }
+
 
     .info {
         width: 50%;
@@ -6629,9 +6632,9 @@ span.delete-symbol:active {
 
     .photo {
         width: 50%;
-        background: url('pfp.jpg') center center / cover no-repeat;
         border-radius: 10px 0 0 10px;
     }
+
 
     .info {
         width: 50%;
