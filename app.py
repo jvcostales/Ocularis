@@ -2919,18 +2919,22 @@ def get_random_users(user_id):
 
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            # Fetch up to 20 users that:
+            # - Are not the current user
+            # - Have completed their profile
+            # - Have not exchanged 'collab_check' notifications with the current user
             cur.execute("""
-                SELECT id, first_name, last_name, city, role, profile_pic
+                SELECT id, first_name, last_name, city, role, profile_pic, verified
                 FROM users
                 WHERE is_profile_complete = TRUE
-                AND id != %s
-                AND id NOT IN (
-                    SELECT recipient_id FROM notifications 
-                    WHERE actor_id = %s AND action_type = 'collab_check'
-                    UNION
-                    SELECT actor_id FROM notifications 
-                    WHERE recipient_id = %s AND action_type = 'collab_check'
-                )
+                  AND id != %s
+                  AND id NOT IN (
+                      SELECT recipient_id FROM notifications 
+                      WHERE actor_id = %s AND action_type = 'collab_check'
+                      UNION
+                      SELECT actor_id FROM notifications 
+                      WHERE recipient_id = %s AND action_type = 'collab_check'
+                  )
                 ORDER BY RANDOM()
                 LIMIT 20;
             """, (user_id, user_id, user_id))
@@ -2940,8 +2944,6 @@ def get_random_users(user_id):
 
             for u in raw_users:
                 uid = u["id"]
-
-                # Default values
                 relationship = 'not_friends'
                 request_id = None
 
@@ -2952,24 +2954,20 @@ def get_random_users(user_id):
                        OR (sender_id = %s AND receiver_id = %s)
                     LIMIT 1
                 """, (user_id, uid, uid, user_id))
-                row = cur.fetchone()
 
+                row = cur.fetchone()
                 if row:
                     sender, receiver, status, req_id = row
                     request_id = req_id
                     if status == 'accepted':
                         relationship = 'friends'
                     elif status == 'pending':
-                        if receiver == user_id:
-                            relationship = 'incoming_pending'
-                        else:
-                            relationship = 'outgoing_pending'
+                        relationship = 'incoming_pending' if receiver == user_id else 'outgoing_pending'
                     elif status == 'rejected':
                         relationship = 'outgoing_rejected'
 
                 u["relationship"] = relationship
                 u["request_id"] = request_id
-
                 enhanced_users.append(u)
 
     return enhanced_users
