@@ -299,15 +299,14 @@
 {% endfor %}
 
 <script>
-    const form = document.querySelector('form'); // Adjust selector if needed
+    const form = document.querySelector('form[action="{{ url_for('feed') }}"]');
     const postButton = document.getElementById('postButton');
 
     form.addEventListener('submit', function (e) {
         if (postButton.disabled) {
-            e.preventDefault(); // Prevent resubmitting
+            e.preventDefault();
             return;
         }
-
         postButton.disabled = true;
     });
 
