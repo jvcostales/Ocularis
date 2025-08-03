@@ -222,15 +222,15 @@ span.delete-symbol {
 .form-error-popup {
     display: none;
     position: fixed;
-    top: 20px;
+    top: 24px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #ffdede;
     color: #cc0000;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    font-size: 14px;
+    font-size: 1rem;
     z-index: 9999;
 }
 
@@ -5161,6 +5161,7 @@ span.delete-symbol:active {
         grid-template-rows: auto 1fr;
         box-sizing: border-box;
         padding: 0 16px;
+        padding-bottom: 72px;
     }
 
     .left-sidebar {
