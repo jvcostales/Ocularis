@@ -43,7 +43,12 @@
                     <button type="submit" class="follow-button-profile no-margin">Befriend</button>
                 </form>
                 {% else %}
-                <button class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
+                <div title="Verify your email to add friends">
+                    <form action="#" method="post">
+                        <button type="submit" class="follow-button-profile-disabled no-margin"
+                            disabled>Befriend</button>
+                    </form>
+                </div>
                 {% endif %}
                 {% endif %}
             </div>
