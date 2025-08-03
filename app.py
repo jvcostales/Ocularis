@@ -2581,7 +2581,7 @@ def pairup():
         actor_details=actor_details
     )
 
-@app.route('/match')
+@app.route('/match', methods=['POST'])
 @login_required
 def match():
     user_id = current_user.id
@@ -2801,11 +2801,6 @@ def match():
     conn.close()    
 
     return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
-
-@app.route('/match_init', methods=['POST'])
-@login_required
-def match_init():
-    return redirect(url_for('match'))
 
 @app.route('/api/get-countries')
 def get_countries():
