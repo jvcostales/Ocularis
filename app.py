@@ -2919,10 +2919,6 @@ def get_random_users(user_id):
 
     with conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # Fetch up to 20 users that:
-            # - Are not the current user
-            # - Have completed their profile
-            # - Have not exchanged 'collab_check' notifications with the current user
             cur.execute("""
                 SELECT id, first_name, last_name, city, role, profile_pic, verified
                 FROM users
@@ -2948,7 +2944,7 @@ def get_random_users(user_id):
                 request_id = None
 
                 cur.execute("""
-                    SELECT sender_id, receiver_id, status, request_id
+                    SELECT receiver_id, status, request_id
                     FROM friend_requests
                     WHERE (sender_id = %s AND receiver_id = %s)
                        OR (sender_id = %s AND receiver_id = %s)
@@ -2957,7 +2953,7 @@ def get_random_users(user_id):
 
                 row = cur.fetchone()
                 if row:
-                    sender, receiver, status, req_id = row
+                    receiver, status, req_id = row
                     request_id = req_id
                     if status == 'accepted':
                         relationship = 'friends'
