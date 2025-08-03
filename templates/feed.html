@@ -60,7 +60,7 @@
                     </select>
                 </div>
         </div>
-        <input type="submit" value="Post" class="post-button">
+        <input type="submit" value="Post" class="post-button" id="postButton">
         </form>
     </div>
 </div>
@@ -299,6 +299,18 @@
 {% endfor %}
 
 <script>
+    const form = document.querySelector('form'); // Adjust selector if needed
+    const postButton = document.getElementById('postButton');
+
+    form.addEventListener('submit', function (e) {
+        if (postButton.disabled) {
+            e.preventDefault(); // Prevent resubmitting
+            return;
+        }
+
+        postButton.disabled = true;
+    });
+
     const dropArea = document.getElementById("drop-area");
     const fileInput = document.getElementById("image");
 
