@@ -2908,7 +2908,7 @@ def decline_match():
         if conn:
             conn.close()
 
-def get_random_users(user_id):
+def get_random_users(current_user_id):
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -2916,58 +2916,57 @@ def get_random_users(user_id):
         password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
+    cur = conn.cursor()
 
-    with conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("""
-                SELECT id, first_name, last_name, city, role, profile_pic, verified
-                FROM users
-                WHERE is_profile_complete = TRUE
-                  AND id != %s
-                  AND id NOT IN (
-                      SELECT recipient_id FROM notifications 
-                      WHERE actor_id = %s AND action_type = 'collab_check'
-                      UNION
-                      SELECT actor_id FROM notifications 
-                      WHERE recipient_id = %s AND action_type = 'collab_check'
-                  )
-                ORDER BY RANDOM()
-                LIMIT 20;
-            """, (user_id, user_id, user_id))
+    cur.execute("""
+        SELECT id, first_name, last_name, profile_pic, verified
+        FROM users
+        WHERE id != %s
+        ORDER BY RANDOM()
+        LIMIT 12
+    """, (current_user_id,))
+    user_rows = cur.fetchall()
 
-            raw_users = cur.fetchall()
-            enhanced_users = []
+    users = []
+    for uid, fname, lname, pfp, verified in user_rows:
+        # Get relationship status
+        cur.execute("""
+            SELECT sender_id, receiver_id, status, request_id
+            FROM friend_requests
+            WHERE (sender_id = %s AND receiver_id = %s)
+               OR (sender_id = %s AND receiver_id = %s)
+            LIMIT 1
+        """, (current_user_id, uid, uid, current_user_id))
+        row = cur.fetchone()
 
-            for u in raw_users:
-                uid = u["id"]
-                relationship = 'not_friends'
-                request_id = None
+        relationship = 'not_friends'
+        request_id = None
+        if row:
+            sender, receiver, status, req_id = row
+            request_id = req_id
+            if status == 'accepted':
+                relationship = 'friends'
+            elif status == 'pending':
+                if receiver == current_user_id:
+                    relationship = 'incoming_pending'
+                else:
+                    relationship = 'outgoing_pending'
+            elif status == 'rejected':
+                relationship = 'outgoing_rejected'
 
-                cur.execute("""
-                    SELECT receiver_id, status, request_id
-                    FROM friend_requests
-                    WHERE (sender_id = %s AND receiver_id = %s)
-                       OR (sender_id = %s AND receiver_id = %s)
-                    LIMIT 1
-                """, (user_id, uid, uid, user_id))
+        users.append({
+            'id': uid,
+            'first_name': fname,
+            'last_name': lname,
+            'profile_pic': pfp,
+            'verified': verified,
+            'relationship': relationship,
+            'request_id': request_id
+        })
 
-                row = cur.fetchone()
-                if row:
-                    receiver, status, req_id = row
-                    request_id = req_id
-                    if status == 'accepted':
-                        relationship = 'friends'
-                    elif status == 'pending':
-                        relationship = 'incoming_pending' if receiver == user_id else 'outgoing_pending'
-                    elif status == 'rejected':
-                        relationship = 'outgoing_rejected'
-
-                u["relationship"] = relationship
-                u["request_id"] = request_id
-                enhanced_users.append(u)
-
-    return enhanced_users
-
+    cur.close()
+    conn.close()
+    return users
 
 @app.route('/browse', methods=['POST'])
 @login_required
