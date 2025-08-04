@@ -45,7 +45,8 @@
                             class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
                 </div>
                 <div id="collaboratorTagSection" style="display: none;">
-                    <label class="label" for="collaborator" style="margin-top: 16px; margin-bottom: 8px;">Select your collaborator (optional)</label>
+                    <label class="label" for="collaborator" style="margin-top: 16px; margin-bottom: 8px;">Select your
+                        collaborator (optional)</label>
                     <div style="position: relative;">
                         <select name="collaborator" id="collaborator" class="location">
                             <option value="">None</option>
@@ -56,8 +57,9 @@
                         <span class="material-symbols-outlined down-symbol">expand_more</span>
                     </div>
 
-                    <label  class="label" for="tags" style="display: block;">Tags</label>
+                    <label class="label" for="tags" style="display: block;">Tags (optional)</label>
                     <select name="tags" id="tags" multiple size="6" class="tag-multiselect">
+                        <option value="" selected>None</option>
                         {% for tag in tags %}
                         <option value="{{ tag }}">{{ tag }}</option>
                         {% endfor %}
@@ -303,6 +305,23 @@
 {% endfor %}
 
 <script>
+    document.getElementById('tags').addEventListener('change', function () {
+        const noneOption = this.querySelector('option[value=""]');
+        const selected = Array.from(this.selectedOptions);
+
+        const selectedValues = selected.map(opt => opt.value);
+
+        if (selectedValues.includes("")) {
+            // "None" was selected: deselect all others
+            this.querySelectorAll('option').forEach(opt => {
+                if (opt.value !== "") opt.selected = false;
+            });
+        } else {
+            // Any other option selected: deselect "None"
+            noneOption.selected = false;
+        }
+    });
+
     const form = document.querySelector('form[action="{{ url_for('feed') }}"]');
     const postButton = document.getElementById('postButton');
 
