@@ -45,10 +45,10 @@
                             class="material-symbols-outlined close-symbol-overlay-version">close</span></button>
                 </div>
                 <div id="collaboratorTagSection" style="display: none;">
-                    <label for="collaborator">Select a collaborator (optional):</label>
+                    <label class="label" for="collaborator">Select your collaborator (optional)</label>
                     <div style="position: relative;">
                         <select name="collaborator" id="collaborator" class="location">
-                            <option value="">-- None --</option>
+                            <option value="">None</option>
                             {% for user in matched_users %}
                             <option value="{{ user[0] }}">{{ user[1] }} {{ user[2] }}</option>
                             {% endfor %}
@@ -56,7 +56,7 @@
                         <span class="material-symbols-outlined down-symbol">expand_more</span>
                     </div>
 
-                    <label for="tags" style="margin-top: 12px; display: block;">Tags:</label>
+                    <label  class="label" for="tags" style="display: block;">Tags</label>
                     <select name="tags" id="tags" multiple size="6" class="tag-multiselect">
                         {% for tag in tags %}
                         <option value="{{ tag }}">{{ tag }}</option>

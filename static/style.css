@@ -234,16 +234,6 @@ span.delete-symbol {
     z-index: 9999;
 }
 
-#collaboratorTagSection {
-    margin-top: 16px;
-}
-
-#collaboratorTagSection label {
-    font-size: 0.95rem;
-    color: var(--text-main);
-    margin-bottom: 4px;
-}
-
 #collaborator {
     width: 100%;
 }
@@ -258,7 +248,6 @@ span.delete-symbol {
     padding: 8px 12px;
     background-color: white;
     box-sizing: border-box;
-    margin-top: 4px;
 }
 
 .align-top {
