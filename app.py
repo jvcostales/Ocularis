@@ -293,7 +293,7 @@ def send_verification_email(recipient_email, token):
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = "jadynicolecostales2@gmail.com"
+    msg["From"] = "ocularis.research@gmail.com"
     msg["To"] = recipient_email
 
     msg.attach(MIMEText(text_body, "plain"))
@@ -302,7 +302,7 @@ def send_verification_email(recipient_email, token):
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
-            server.login("jadynicolecostales2@gmail.com", "erxt hevv irmn rjyy")  # Use env var in production
+            server.login("ocularis.research@gmail.com", "dpjv lgbn cdcw osop")  # Use env var in production
             server.send_message(msg)
     except Exception as e:
         app.logger.error(f"Failed to send email: {e}")
