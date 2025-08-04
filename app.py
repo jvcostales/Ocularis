@@ -278,15 +278,42 @@ def send_verification_email(recipient_email, token):
 
     html_body = f"""
     <html>
-    <body>
-        <p>Hi there!</p>
-        <p>Click the button below to verify your email for <strong>Ocularis</strong>:</p>
+    <body style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 1rem; color: #1a1a1a; text-align: center; background-color: #ffffff; padding: 40px;">
+
+        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">
+            Verify Your Email Address
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            Click the button below to verify your email for <strong>Ocularis</strong>.
+        </div>
+
         <a href="{confirmation_link}" 
-           style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white;
-                  text-decoration: none; border-radius: 6px; font-weight: bold;">
+        style="display: inline-block;
+                font-size: 1rem;
+                font-family: 'Schibsted Grotesk', sans-serif;
+                padding: 12px 24px;
+                box-sizing: border-box;
+                border: none;
+                background-color: #1C46F5;
+                border-radius: 10px;
+                cursor: pointer;
+                color: #f6f6f6;
+                text-align: center;
+                text-decoration: none;
+                font-weight: bold;
+                margin-bottom: 24px;">
             Verify Email
         </a>
-        <p>If you did not sign up, please ignore this message.</p>
+
+        <div style="margin-top: 24px; font-size: 1rem; color: #a6a6a6;">
+            If you did not sign up, please ignore this message.
+        </div>
+
+        <div style="margin-top: 40px; font-size: 0.75rem; color: #a6a6a6;">
+            © 2025 Jady Nicole Costales. All rights reserved.
+        </div>
+
     </body>
     </html>
     """
