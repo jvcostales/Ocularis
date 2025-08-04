@@ -285,7 +285,7 @@ def send_verification_email(recipient_email, token):
         </div>
 
         <div style="margin-bottom: 24px;">
-            Click the button below to verify your email for <strong>Ocularis</strong>.
+            Click the button below to verify your email for Ocularis.
         </div>
 
         <a href="{confirmation_link}" 
@@ -565,11 +565,11 @@ def forgot_password():
     return render_template('forgot_password.html')
 
 def send_reset_email(to_email, reset_link):
-    sender_email = "jadynicolecostales2@gmail.com"
-    sender_password = "erxt hevv irmn rjyy"
+    sender_email = "ocularis.research@gmail.com"
+    sender_password = "dpjv lgbn cdcw osop"
 
-    msg = MIMEText(f'Click the link to reset your password: {reset_link}')
-    msg['Subject'] = 'Password Reset - Ocularis'
+    msg = MIMEText(f'Click the link to reset your password on Ocularis: {reset_link}')
+    msg['Subject'] = 'Reset Your Password'
     msg['From'] = sender_email
     msg['To'] = to_email
 
