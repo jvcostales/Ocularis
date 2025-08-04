@@ -2564,8 +2564,10 @@
                                 imageWrapper.style.display = 'block';
 
                                 if (collaboratorTagSection) {
-                                    collaboratorTagSection.style.display = 'block';
+                                    collaboratorTagSection.style.display = 'flex';
+                                    collaboratorTagSection.style.flexDirection = 'column';
                                 }
+
                             };
                             reader.readAsDataURL(file);
                         } else {
