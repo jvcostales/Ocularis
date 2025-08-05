@@ -2476,17 +2476,16 @@ def pairup():
     if result:
         last_action_time = result[0]
 
-        # If the timestamp has no timezone, assume it's in Asia/Manila and convert to UTC
         if last_action_time.tzinfo is None:
             manila = pytz.timezone('Asia/Manila')
             last_action_time = manila.localize(last_action_time).astimezone(timezone.utc)
 
         time_diff = now_utc - last_action_time
 
-        if time_diff < timedelta(minutes=10):
+        if time_diff < timedelta(minutes=3):
             match_locked = True
             browse_locked = True
-            time_remaining = str(timedelta(minutes=10) - time_diff).split('.')[0]  # hh:mm:ss
+            time_remaining = str(timedelta(minutes=3) - time_diff).split('.')[0]  # hh:mm:ss
 
     # Fetch notifications
     cur.execute("""
