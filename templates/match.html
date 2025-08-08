@@ -94,23 +94,6 @@
 {% endif %}
 
 <style>
-    .match-slider-container {
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .match-slider {
-        display: flex;
-        transition: transform 0.3s ease;
-        width: max-content;
-    }
-
-    .match-card {
-        flex: 0 0 calc(100% / 3);
-        box-sizing: border-box;
-        padding: 10px;
-    }
-
     .match-nav-buttons {
         display: flex;
         justify-content: center;
@@ -142,7 +125,22 @@
         slider.style.transform = `translateX(${shift}%)`;
     }
 
-    // Next button
+    function attachCloseHandlers() {
+        document.querySelectorAll(".close-symbol-match").forEach(button => {
+            button.onclick = function () {
+                const card = this.closest(".match-card");
+                if (card) {
+                    card.remove();
+                    const maxIndex = getMaxIndex();
+                    if (matchCurrentIndex > maxIndex) {
+                        matchCurrentIndex = Math.max(0, maxIndex);
+                    }
+                    updateSlider();
+                }
+            };
+        });
+    }
+
     document.getElementById("nextBtn").addEventListener("click", () => {
         const maxIndex = getMaxIndex();
         if (matchCurrentIndex < maxIndex) {
@@ -151,7 +149,6 @@
         }
     });
 
-    // Previous button
     document.getElementById("prevBtn").addEventListener("click", () => {
         if (matchCurrentIndex > 0) {
             matchCurrentIndex--;
@@ -159,25 +156,9 @@
         }
     });
 
-    // Close (delete card) buttons
-    document.querySelectorAll(".close-symbol-match").forEach(button => {
-        button.addEventListener("click", function () {
-            const card = this.closest(".match-card");
-            if (card) {
-                card.remove();
-
-                const maxIndex = getMaxIndex();
-                if (matchCurrentIndex > maxIndex) {
-                    matchCurrentIndex = Math.max(0, maxIndex);
-                }
-
-                updateSlider();
-            }
-        });
-    });
-
-
-    updateSlider();  // Initial call
+    // Initial setup
+    updateSlider();
+    attachCloseHandlers();
 </script>
 
 {% endblock %}
