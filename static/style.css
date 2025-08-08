@@ -219,11 +219,6 @@ span.delete-symbol {
     cursor: pointer;
 }
 
-span.close-symbol-match {
-    font-variation-settings: 'FILL' 1;
-    font-size: 24px;
-}
-
 .form-error-popup {
     display: none;
     position: fixed;

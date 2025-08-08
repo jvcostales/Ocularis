@@ -1,173 +1,78 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% if users %}
-<div class="match-slider-container">
-    <div class="match-slider" id="matchSlider">
-        {% for user in users %}
-        <div class="card match-card">
-            <div class="post-title">Match</div>
-
-            <div class="nav-section active card-content">
-                <div class="photo"
-                    style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;"></div>
-                <div class="info">
-                    <div class="name-card">{{ user.first_name }}</div>
-                    <div class="who">{{ user.role }}</div>
-                    <div class="icons">
-                        {% if user.facebook %}
-                        <a href="{{ 'https://facebook.com/' + user.facebook if 'facebook.com' not in user.facebook else user.facebook }}"
-                            target="_blank">
-                            <img src="{{ url_for('static', filename='fb.png') }}" alt="Facebook" class="icon1">
-                        </a>
-                        {% endif %}
-                        {% if user.email %}
-                        <a href="mailto:{{ user.email }}">
-                            <img src="{{ url_for('static', filename='gmail.png') }}" alt="Gmail" class="icon2">
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-section card-content-two">
-                <div class="info-sandp">
-                    <div class="info-title">Top Skills</div>
-                    <div class="info-content">
-                        {% for skill in user.skills[:3] %}
-                        <div class="info-one">{{ skill }}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-section card-content-two">
-                <div class="info-sandp">
-                    <div class="info-title">Top Preferences</div>
-                    <div class="info-content">
-                        {% for pref in user.preferences[:3] %}
-                        <div class="info-one">{{ pref }}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-section card-content-two">
-                {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
-                <div class="info-sandp">
-                    <div class="info-title">Experience Level</div>
-                    <div class="info-content">
-                        {% if user.experience_level %}
-                        <div class="info-one">{{ exp_map[user.experience_level - 1] }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="request-icons" style="justify-content: center;">
-                <button class="circled-icon-1">
-                    <span class="material-symbols-outlined close-symbol-match">close</span>
-                </button>
-                <button class="circled-icon-2" id="notify-btn" data-recipient-id="{{ user.id }}">
-                    <span class="material-symbols-outlined check-symbol">check</span>
-                </button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Navigation Buttons -->
-    <div class="match-nav-buttons">
-        <button id="prevBtn" class="nav-btn">Back</button>
-        <button id="nextBtn" class="nav-btn">Next</button>
-    </div>
-</div>
-{% else %}
 <div class="card">
     <div class="post-title">Match</div>
+    {% if user %}
+    <div class="nav-section active card-content">
+        <div class="photo" style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;"></div>
+        <div class="info">
+            <div class="name-card">{{ user.first_name }}</div>
+            <div class="who">{{ user.role }}</div>
+            <div class="icons">
+                {% if user.facebook %}
+                <a href="{{ 'https://facebook.com/' + user.facebook if 'facebook.com' not in user.facebook else user.facebook }}"
+                    target="_blank">
+                    <img src="{{ url_for('static', filename='fb.png') }}" alt="Facebook" class="icon1">
+                </a>
+                {% endif %}
+                {% if user.email %}
+                <a href="mailto:{{ user.email }}">
+                    <img src="{{ url_for('static', filename='gmail.png') }}" alt="Gmail" class="icon2">
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section card-content-two">
+        <div class="info-sandp">
+            <div class="info-title">Top Skills</div>
+            <div class="info-content">
+                {% for skill in user.skills[:3] %}
+                <div class="info-one">{{ skill }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section card-content-two">
+        <div class="info-sandp">
+            <div class="info-title">Top Preferences</div>
+            <div class="info-content">
+                {% for pref in user.preferences[:3] %}
+                <div class="info-one">{{ pref }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section card-content-two">
+        {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
+        <div class="info-sandp">
+            <div class="info-title">Experience Level</div>
+            <div class="info-content">
+                {% if user.experience_level %}
+                <div class="info-one">{{ exp_map[user.experience_level - 1] }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="request-icons" style="justify-content: center;">
+        <button class="circled-icon-1">
+            <span class="material-symbols-outlined close-symbol">close</span>
+        </button>
+        <button class="circled-icon-2" id="notify-btn" data-recipient-id="{{ user.id }}">
+            <span class="material-symbols-outlined check-symbol">check</span>
+        </button>
+    </div>
+    {% else %}
     <div class="notifs-empty">
         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
         <div class="oops">Oops!</div>
         <div class="nothing">Nothing to show here at the moment.</div>
-    </div>
+    </div> {% endif %}
 </div>
-{% endif %}
-
-<style>
-    .match-nav-buttons {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .nav-btn {
-        margin: 0 10px;
-        padding: 8px 20px;
-        cursor: pointer;
-    }
-</style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const slider = document.getElementById("matchSlider");
-        const cardsPerPage = 3;
-        let matchCurrentIndex = 0;
-
-        function getTotalCards() {
-            return document.querySelectorAll(".match-card").length;
-        }
-
-        function getMaxIndex() {
-            return Math.ceil(getTotalCards() / cardsPerPage) - 1;
-        }
-
-        function updateSlider() {
-            const shift = -(100 / cardsPerPage) * matchCurrentIndex;
-            slider.style.transform = `translateX(${shift}%)`;
-        }
-
-        // Next button
-        const nextBtn = document.getElementById("nextBtn");
-        if (nextBtn) {
-            nextBtn.addEventListener("click", () => {
-                const maxIndex = getMaxIndex();
-                if (matchCurrentIndex < maxIndex) {
-                    matchCurrentIndex++;
-                    updateSlider();
-                }
-            });
-        }
-
-        // Previous button
-        const prevBtn = document.getElementById("prevBtn");
-        if (prevBtn) {
-            prevBtn.addEventListener("click", () => {
-                if (matchCurrentIndex > 0) {
-                    matchCurrentIndex--;
-                    updateSlider();
-                }
-            });
-        }
-
-        // Close (delete card) buttons
-        document.querySelectorAll(".close-symbol-match").forEach(button => {
-            button.addEventListener("click", function () {
-                const card = this.closest(".match-card");
-                if (card) {
-                    card.remove();
-
-                    const maxIndex = getMaxIndex();
-                    if (matchCurrentIndex > maxIndex) {
-                        matchCurrentIndex = Math.max(0, maxIndex);
-                    }
-
-                    updateSlider();
-                }
-            });
-        });
-
-        updateSlider(); // Initial call
-    });
-</script>
 
 {% endblock %}
