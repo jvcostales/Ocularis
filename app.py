@@ -2837,7 +2837,7 @@ def match():
     cur.close()
     conn.close()    
 
-    return render_template("match.html", current_page='match', user=current_user, users=users_list, notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
 @app.route('/api/get-countries')
 def get_countries():
