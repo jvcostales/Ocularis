@@ -108,57 +108,66 @@
 </style>
 
 <script>
-    const slider = document.getElementById("matchSlider");
-    const cardsPerPage = 3;
-    let matchCurrentIndex = 0;
+    document.addEventListener("DOMContentLoaded", function () {
+        const slider = document.getElementById("matchSlider");
+        const cardsPerPage = 3;
+        let matchCurrentIndex = 0;
 
-    function getTotalCards() {
-        return document.querySelectorAll(".match-card").length;
-    }
+        function getTotalCards() {
+            return document.querySelectorAll(".match-card").length;
+        }
 
-    function getMaxIndex() {
-        return Math.ceil(getTotalCards() / cardsPerPage) - 1;
-    }
+        function getMaxIndex() {
+            return Math.ceil(getTotalCards() / cardsPerPage) - 1;
+        }
 
-    function updateSlider() {
-        const shift = -(100 / cardsPerPage) * matchCurrentIndex;
-        slider.style.transform = `translateX(${shift}%)`;
-    }
+        function updateSlider() {
+            const shift = -(100 / cardsPerPage) * matchCurrentIndex;
+            slider.style.transform = `translateX(${shift}%)`;
+        }
 
-    function attachCloseHandlers() {
+        // Next button
+        const nextBtn = document.getElementById("nextBtn");
+        if (nextBtn) {
+            nextBtn.addEventListener("click", () => {
+                const maxIndex = getMaxIndex();
+                if (matchCurrentIndex < maxIndex) {
+                    matchCurrentIndex++;
+                    updateSlider();
+                }
+            });
+        }
+
+        // Previous button
+        const prevBtn = document.getElementById("prevBtn");
+        if (prevBtn) {
+            prevBtn.addEventListener("click", () => {
+                if (matchCurrentIndex > 0) {
+                    matchCurrentIndex--;
+                    updateSlider();
+                }
+            });
+        }
+
+        // Close (delete card) buttons
         document.querySelectorAll(".close-symbol-match").forEach(button => {
-            button.onclick = function () {
+            button.addEventListener("click", function () {
                 const card = this.closest(".match-card");
                 if (card) {
                     card.remove();
+
                     const maxIndex = getMaxIndex();
                     if (matchCurrentIndex > maxIndex) {
                         matchCurrentIndex = Math.max(0, maxIndex);
                     }
+
                     updateSlider();
                 }
-            };
+            });
         });
-    }
 
-    document.getElementById("nextBtn").addEventListener("click", () => {
-        const maxIndex = getMaxIndex();
-        if (matchCurrentIndex < maxIndex) {
-            matchCurrentIndex++;
-            updateSlider();
-        }
+        updateSlider(); // Initial call
     });
-
-    document.getElementById("prevBtn").addEventListener("click", () => {
-        if (matchCurrentIndex > 0) {
-            matchCurrentIndex--;
-            updateSlider();
-        }
-    });
-
-    // Initial setup
-    updateSlider();
-    attachCloseHandlers();
 </script>
 
 {% endblock %}
