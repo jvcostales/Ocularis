@@ -2837,7 +2837,16 @@ def match():
     cur.close()
     conn.close()
     
-    app.logger.info(f"Top 3 users: {[user['first_name'] for user in users_list[:3]]}")
+    # Debug route to test what’s being sent
+    if request.args.get("debug") == "1":
+        return jsonify([
+            {
+                "id": u["id"],
+                "first_name": u["first_name"],
+                "skills": u["skills"],
+                "preferences": u["preferences"],
+            } for u in users_list
+        ])
 
     return render_template("match.html", user=None, current_page='match', users=users_list[:3], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 

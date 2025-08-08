@@ -4,7 +4,8 @@
 <div class="card">
     <div class="post-title">Match</div>
     {% if users and users|length > 0 %}
-    {% for user in users %}
+    {% for user in users[:3] %}
+    <p>User {{ loop.index }}: {{ user.first_name }}</p>
     <div class="card-container">
         <div class="nav-section active card-content">
             <div class="photo" style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;">
