@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card">
+{% if users %}
+{% for user in users %}
+<div class="card user-card" style="margin-bottom: 30px;">
     <div class="post-title">Match</div>
 
-    {% if users %}
-    {% for user in users %}
     <div class="nav-section active card-content" style="margin-bottom: 20px;">
         <div class="photo" style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;"></div>
         <div class="info">
@@ -69,15 +69,17 @@
             <span class="material-symbols-outlined check-symbol">check</span>
         </button>
     </div>
-    {% endfor %}
-    {% else %}
+</div>
+{% endfor %}
+{% else %}
+<div class="card">
     <div class="notifs-empty">
         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
         <div class="oops">Oops!</div>
         <div class="nothing">Nothing to show here at the moment.</div>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -91,7 +93,7 @@
             button.addEventListener("click", () => {
                 if (locked) return;
 
-                const card = button.closest(".nav-section").parentElement;
+                const card = button.closest(".user-card");
                 card.style.display = "none";
                 declinedCount++;
 
@@ -107,7 +109,6 @@
 
                 const recipientId = button.getAttribute("data-recipient-id");
 
-                // Optional: send a notification to the accepted user
                 fetch("/send_notification", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -117,7 +118,6 @@
                     })
                 });
 
-                // Lock the route after accepting
                 lockMatchRoute();
             });
         });
@@ -136,6 +136,5 @@
         }
     });
 </script>
-
 
 {% endblock %}
