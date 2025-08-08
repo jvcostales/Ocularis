@@ -90,7 +90,7 @@
 </div>
 
 <script>
-    let currentIndex = 0;
+    let currentIndexMatch = 0;
     const cards = document.querySelectorAll('.match-card');
     const total = cards.length;
     let declinedCount = 0;
@@ -103,16 +103,16 @@
     }
 
     document.getElementById("next-btn").addEventListener("click", () => {
-        if (currentIndex < total - 1) {
-            currentIndex++;
-            showCard(currentIndex);
+        if (currentIndexMatch < total - 1) {
+            currentIndexMatch++;
+            showCard(currentIndexMatch);
         }
     });
 
     document.getElementById("prev-btn").addEventListener("click", () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            showCard(currentIndex);
+        if (currentIndexMatch > 0) {
+            currentIndexMatch--;
+            showCard(currentIndexMatch);
         }
     });
 
@@ -122,9 +122,9 @@
             const card = btn.closest('.match-card');
             card.style.display = 'none';
             declinedCount++;
-            currentIndex++;
-            if (currentIndex < total) {
-                showCard(currentIndex);
+            currentIndexMatch++;
+            if (currentIndexMatch < total) {
+                showCard(currentIndexMatch);
             }
 
             if (declinedCount === total && !locked) {
