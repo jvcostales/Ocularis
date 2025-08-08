@@ -2837,7 +2837,7 @@ def match():
     cur.close()
     conn.close()    
 
-    return render_template("match.html", user=current_user, current_page='match', users=users_list[:3], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
+    return render_template("match.html", current_page='match', user=users_list[0], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -4098,24 +4098,6 @@ def change_password():
 
     flash('Password changed successfully.', 'success')
     return redirect(url_for('settings'))
-
-@app.route("/lock_match_route", methods=["POST"])
-@login_required
-def lock_match_route():
-    user_id = current_user.id
-    conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
-        port=5432
-    )
-    with conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO collab_actions (user_id) VALUES (%s)
-            """, (user_id,))
-    return '', 204
 
 if __name__ == '__main__':
     app.run(debug=True)
