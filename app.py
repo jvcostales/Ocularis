@@ -2837,8 +2837,7 @@ def match():
     cur.close()
     conn.close()
     
-    print("Top 3 users:", [u["first_name"] for u in users_list])
-    print("Total matches:", len(users_list))
+    app.logger.info(f"Top 3 users: {[user['first_name'] for user in users_list[:3]]}")
 
     return render_template("match.html", user=None, current_page='match', users=users_list[:3], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
 
