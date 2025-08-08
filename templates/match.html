@@ -66,7 +66,7 @@
 
             <div class="request-icons" style="justify-content: center;">
                 <button class="circled-icon-1">
-                    <span class="material-symbols-outlined close-symbol">close</span>
+                    <span class="material-symbols-outlined close-symbol-match">close</span>
                 </button>
                 <button class="circled-icon-2" id="notify-btn" data-recipient-id="{{ user.id }}">
                     <span class="material-symbols-outlined check-symbol">check</span>
@@ -125,49 +125,57 @@
 </style>
 
 <script>
-    // Card deletion (close button)
-    document.querySelectorAll(".close-btn").forEach(button => {
+    const slider = document.getElementById("matchSlider");
+    const cardsPerPage = 3;
+    let matchCurrentIndex = 0;
+
+    function getTotalCards() {
+        return document.querySelectorAll(".match-card").length;
+    }
+
+    function getMaxIndex() {
+        return Math.ceil(getTotalCards() / cardsPerPage) - 1;
+    }
+
+    function updateSlider() {
+        const shift = -(100 / cardsPerPage) * matchCurrentIndex;
+        slider.style.transform = `translateX(${shift}%)`;
+    }
+
+    // Next button
+    document.getElementById("nextBtn").addEventListener("click", () => {
+        const maxIndex = getMaxIndex();
+        if (matchCurrentIndex < maxIndex) {
+            matchCurrentIndex++;
+            updateSlider();
+        }
+    });
+
+    // Previous button
+    document.getElementById("prevBtn").addEventListener("click", () => {
+        if (matchCurrentIndex > 0) {
+            matchCurrentIndex--;
+            updateSlider();
+        }
+    });
+
+    // Close (delete card) buttons
+    document.querySelectorAll(".close-symbol-match").forEach(button => {
         button.addEventListener("click", function () {
             const card = this.closest(".match-card");
             if (card) {
                 card.remove();
 
-                // Optional: recalculate slide limits
-                const totalCards = document.querySelectorAll(".match-card").length;
-                const maxIndex = Math.ceil(totalCards / cardsPerPage) - 1;
-                if (currentIndex > maxIndex) {
-                    currentIndex = maxIndex;
-                    updateSlider();
+                const maxIndex = getMaxIndex();
+                if (matchCurrentIndex > maxIndex) {
+                    matchCurrentIndex = Math.max(0, maxIndex);
                 }
+
+                updateSlider();
             }
         });
     });
 
-
-    const slider = document.getElementById("matchSlider");
-    const totalCards = slider.children.length;
-    const cardsPerPage = 3;
-    const maxIndex = Math.ceil(totalCards / cardsPerPage) - 1;
-    let currentIndex = 0;
-
-    function updateSlider() {
-        const shift = -(100 / cardsPerPage) * currentIndex;
-        slider.style.transform = `translateX(${shift}%)`;
-    }
-
-    document.getElementById("nextBtn").addEventListener("click", () => {
-        if (currentIndex < maxIndex) {
-            currentIndex++;
-            updateSlider();
-        }
-    });
-
-    document.getElementById("prevBtn").addEventListener("click", () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateSlider();
-        }
-    });
 
     updateSlider();  // Initial call
 </script>
