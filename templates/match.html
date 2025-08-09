@@ -82,4 +82,30 @@
     {% endif %}
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".circled-icon-2").forEach(btn => {
+        btn.addEventListener("click", function() {
+            fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
+            .then(res => res.json()).then(data => {
+                if (data.status === "locked") window.location.href = "/match";
+            });
+        });
+    });
+
+    document.querySelectorAll(".circled-icon-1").forEach(btn => {
+        btn.addEventListener("click", function() {
+            fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
+            .then(res => res.json()).then(data => {
+                if (data.status === "locked") {
+                    window.location.href = "/match";
+                } else {
+                    this.closest(".card-container").remove();
+                }
+            });
+        });
+    });
+});
+</script>
+
 {% endblock %}

@@ -2613,10 +2613,22 @@ def pairup():
         actor_details=actor_details
     )
 
-@app.route('/match', methods=['POST'])
+@app.route('/match', methods=['GET'])
 @login_required
 def match():
     user_id = current_user.id
+
+    # ✅ Lock check
+    if session.get("match_locked"):
+        return render_template(
+            "match.html",
+            users=[],
+            notifications=[],
+            requests=[],
+            verified=current_user.verified,
+            profile_pic_url=url_for("static", filename="pfp.jpg"),
+            actor_details={}
+        )
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -2627,108 +2639,79 @@ def match():
     )
     cur = conn.cursor()
 
-    # Get all matched user IDs for current user
-    cur.execute("""
-    SELECT matched_user_id FROM recent_matches WHERE user_id = %s
-    """, (user_id,))
+    # Get matched IDs
+    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
+    exclude_ids = matched_ids + [user_id] or [-1]
 
-    exclude_ids = matched_ids + [user_id] or [-1]  # Ensure not empty
-
-    # Fetch candidate users excluding matched ones and current user
+    # Fetch candidates
     cur.execute("""
-        SELECT id, skills, preferences, experience_level FROM users
+        SELECT id, skills, preferences, experience_level
+        FROM users
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
 
-    # Also fetch current user's data to include in DataFrame
+    # Also fetch current user's own data
     cur.execute("""
-        SELECT id, skills, preferences, experience_level FROM users
+        SELECT id, skills, preferences, experience_level
+        FROM users
         WHERE id = %s AND is_profile_complete = TRUE
     """, (user_id,))
     self_data = cur.fetchone()
-
     if self_data:
         rows.append(self_data)
 
-
-    # Fetch notifications
+    # Fetch notifications (unchanged from your version)...
     cur.execute("""
-        SELECT
-            users.first_name || ' ' || users.last_name AS display_name,
-            notifications.action_type,
-            notifications.image_id,
-            notifications.created_at,
-            notifications.actor_id,
-            users.profile_pic,
-            notifications.notification_id
+        SELECT users.first_name || ' ' || users.last_name AS display_name,
+               notifications.action_type,
+               notifications.image_id,
+               notifications.created_at,
+               notifications.actor_id,
+               users.profile_pic,
+               notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
-    
-            # Gather unique actor_ids
+
     actor_ids = list(set([n[4] for n in notifications]))
-
-            # Prepare dictionary to hold actor_id → user profile details
     actor_details = {}
-
-            # Fetch full details for each actor_id
     for actor_id in actor_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
-                profile_pic, cover_photo, skills, preferences, experience_level,
-                facebook, instagram, x, linkedin, telegram, email
+                   profile_pic, cover_photo, skills, preferences, experience_level,
+                   facebook, instagram, x, linkedin, telegram, email
             FROM users WHERE id = %s
         """, (actor_id,))
         user = cur.fetchone()
-
         if user:
-                countries = current_app.config['COUNTRIES']
-                states = current_app.config['STATES']
+            countries = current_app.config['COUNTRIES']
+            states = current_app.config['STATES']
+            city, state_code, country_code = user[3], user[4], user[5]
+            iso_to_country = {c["iso2"]: c["name"] for c in countries}
+            readable_country = iso_to_country.get(country_code, country_code)
+            filtered_states = [s for s in states if s["country_code"] == country_code]
+            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+            readable_state = state_code_to_name.get(state_code, state_code)
+            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+            actor_details[actor_id] = {
+                "user_id": actor_id,
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "location_display": location_display,
+                "profile_pic": user[6],
+                "skills": user[8],
+                "preferences": user[9],
+                "experience_level": user[10],
+                "facebook": user[11],
+                "email": user[16]
+            }
 
-                # Get raw codes
-                city = user[3]
-                state_code = user[4]
-                country_code = user[5]
-
-                # Look up readable names
-                iso_to_country = {c["iso2"]: c["name"] for c in countries}
-                readable_country = iso_to_country.get(country_code, country_code)
-
-                # Filter states by selected country
-                filtered_states = [s for s in states if s["country_code"] == country_code]
-                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-                readable_state = state_code_to_name.get(state_code, state_code)
-
-                # Display-friendly location string
-                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
-
-                actor_details[actor_id] = {
-                    "user_id": actor_id,
-                    "full_name": f"{user[0]} {user[1]}",
-                    "role": user[2],
-                    "city": city,
-                    "state": state_code,
-                    "country": country_code,
-                    "location_display": location_display,  # ✅ new key
-                    "profile_pic": user[6],
-                    "cover_photo": user[7],
-                    "skills": user[8],
-                    "preferences": user[9],
-                    "experience_level": user[10],
-                    "facebook": user[11],
-                    "instagram": user[12],
-                    "x": user[13],
-                    "linkedin": user[14],
-                    "telegram": user[15],
-                    "email": user[16]
-                }
-
-    # Fetch friend requests
+    # Friend requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2738,17 +2721,12 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # New query to get current user's profile_pic
+    # Current user profile pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
+    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    if result and result[0] and result[0] != 'pfp.jpg':
-        profile_pic_url = url_for('profile_pics', filename=result[0])
-    else:
-        profile_pic_url = url_for('static', filename='pfp.jpg')
-
-
-    # Prepare data for recommender
+    # Prepare recommender data (unchanged)
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2761,16 +2739,13 @@ def match():
         users_data.append(row_data)
 
     df = pd.DataFrame(users_data)
-
     if user_id not in df["user"].values:
         cur.close()
         conn.close()
         return "Please complete your profile to get recommendations."
 
-    # Recommender logic
     target_index = df[df['user'] == user_id].index[0]
     similar_users_df = get_similar_users(target_index, df)
-
     if similar_users_df.empty:
         cur.close()
         conn.close()
@@ -2778,77 +2753,65 @@ def match():
 
     # Get recommended user info
     user_ids = similar_users_df['user'].tolist()
-    cur.execute("SELECT id, first_name, last_name, role, profile_pic, facebook, email FROM users WHERE id = ANY(%s)", (user_ids,))
+    cur.execute("""
+        SELECT id, first_name, last_name, role, profile_pic, facebook, email
+        FROM users WHERE id = ANY(%s)
+    """, (user_ids,))
     name_rows = cur.fetchall()
-
-    name_map = {
-        row[0]: {
-            "id": row[0],
-            "first_name": row[1],
-            "last_name": row[2],
-            "role": row[3],
-            "profile_pic": row[4],
-            "facebook": row[5],
-            "email": row[6]
-        }
-        for row in name_rows
-    }
+    name_map = {row[0]: {"id": row[0], "first_name": row[1], "last_name": row[2], "role": row[3], "profile_pic": row[4], "facebook": row[5], "email": row[6]} for row in name_rows}
 
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
         details = name_map.get(user["user"], {})
-        user["id"] = details.get("id", user["user"])
-        user["first_name"] = details.get("first_name", "Unknown")
-        user["last_name"] = details.get("last_name", "")
-        user["role"] = details.get("role", "")
-        user["facebook"] = details.get("facebook", "")
-        user["email"] = details.get("email", "")
-
-
-        # ✅ Add profile_pic_url
         profile_pic = details.get("profile_pic")
-        user["profile_pic_url"] = (
-            url_for("profile_pics", filename=profile_pic)
-            if profile_pic and profile_pic != "pfp.jpg"
-            else url_for("static", filename="pfp.jpg")
-        )
-
-        # 🔽 Fetch skills, preferences, experience_level for this user
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT skills, preferences, experience_level
-            FROM users
-            WHERE id = %s
-        """, (user["id"],))
+        user["profile_pic_url"] = url_for("profile_pics", filename=profile_pic) if profile_pic and profile_pic != "pfp.jpg" else url_for("static", filename="pfp.jpg")
+        cur.execute("SELECT skills, preferences, experience_level FROM users WHERE id = %s", (details["id"],))
         extra = cur.fetchone()
-        cur.close()
-
-        if extra:
-            user["skills"] = extra[0] or []
-            user["preferences"] = extra[1] or []
-            user["experience_level"] = extra[2] or 0
-        else:
-            user["skills"] = []
-            user["preferences"] = []
-            user["experience_level"] = 0
-
+        user["skills"] = extra[0] or []
+        user["preferences"] = extra[1] or []
+        user["experience_level"] = extra[2] or 0
+        user.update(details)
         users_list.append(user)
-        
+
     cur.close()
     conn.close()
-    
-    # Debug route to test what’s being sent
-    if request.args.get("debug") == "1":
-        return jsonify([
-            {
-                "id": u["id"],
-                "first_name": u["first_name"],
-                "skills": u["skills"],
-                "preferences": u["preferences"],
-            } for u in users_list
-        ])
 
-    return render_template("match.html", user=None, current_page='match', users=users_list[:3], notifications=notifications, requests=requests, verified=current_user.verified, profile_pic_url=profile_pic_url, actor_details=actor_details)
+    return render_template("match.html",
+        current_page='match',
+        users=users_list[:3],
+        notifications=notifications,
+        requests=requests,
+        verified=current_user.verified,
+        profile_pic_url=profile_pic_url,
+        actor_details=actor_details
+    )
+
+# ✅ Accept and Decline handlers
+@app.route('/match/accept/<int:target_id>', methods=['POST'])
+@login_required
+def accept_match(target_id):
+    user_id = current_user.id
+    conn = psycopg2.connect(...)
+    cur = conn.cursor()
+    cur.execute("INSERT INTO recent_matches (user_id, matched_user_id, created_at) VALUES (%s, %s, NOW())", (user_id, target_id))
+    cur.execute("INSERT INTO notifications (recipient_id, actor_id, action_type, created_at) VALUES (%s, %s, 'match_accept', NOW())", (target_id, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    session["match_locked"] = True
+    return jsonify({"status": "locked"})
+
+@app.route('/match/decline/<int:target_id>', methods=['POST'])
+@login_required
+def decline_match(target_id):
+    declines = session.get("declines", [])
+    declines.append(target_id)
+    session["declines"] = declines
+    if len(declines) >= 3:
+        session["match_locked"] = True
+        return jsonify({"status": "locked"})
+    return jsonify({"status": "continue"})
+
 
 @app.route('/api/get-countries')
 def get_countries():
@@ -3038,6 +3001,12 @@ def get_random_users(current_user_id):
 def browse_users():
     user_id = current_user.id
 
+    # ✅ If match is locked, don't show users
+    if session.get("match_locked"):
+        users = []
+    else:
+        users = get_random_users(user_id)
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -3123,13 +3092,13 @@ def browse_users():
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # --- Get filtered random users ---
-    users = get_random_users(user_id)
+    cur.close()
+    conn.close()
 
     return render_template(
         'browse.html',
         user=current_user,
-        users=users,
+        users=users,  # ✅ now empty if locked
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
