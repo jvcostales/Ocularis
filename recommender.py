@@ -34,8 +34,8 @@ def get_similar_users(target_user, all_users_df):
     if len(all_users_df) < 2:
         return pd.DataFrame()
 
-    # Fit KNN model (asking for more than 1 to handle ties)
-    n_neighbors = min(5, len(all_users_df))  # flexible neighbor count
+    # Ask for more neighbors than needed to handle ties
+    n_neighbors = min(len(all_users_df), 6)  # more than 3 to allow filtering
     knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
     knn.fit(X_combined)
 
@@ -44,8 +44,8 @@ def get_similar_users(target_user, all_users_df):
     # Exclude the user themself
     similar_indices = [i for i in indices.flatten() if i != target_user]
 
-    # Return the top match (if available)
+    # Return up to 3 similar users
     if similar_indices:
-        return all_users_df.iloc[[similar_indices[0]]]
+        return all_users_df.iloc[similar_indices[:3]]
     else:
         return pd.DataFrame()
