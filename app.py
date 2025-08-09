@@ -2783,7 +2783,8 @@ def match():
         requests=requests,
         verified=current_user.verified,
         profile_pic_url=profile_pic_url,
-        actor_details=actor_details
+        actor_details=actor_details,
+        user=current_user
     )
 
 # ✅ Accept and Decline handlers
