@@ -68,7 +68,7 @@
         {% else %}
         if (matchBtn) {
             matchBtn.addEventListener('click', function () {
-                window.location.href = "/match";
+                document.getElementById('matchForm').submit();
             });
         }
         {% endif %}

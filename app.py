@@ -2613,7 +2613,7 @@ def pairup():
         actor_details=actor_details
     )
 
-@app.route('/match', methods=['GET'])
+@app.route('/match', methods=['POST'])
 @login_required
 def match():
     user_id = current_user.id
@@ -2627,7 +2627,8 @@ def match():
             requests=[],
             verified=current_user.verified,
             profile_pic_url=url_for("static", filename="pfp.jpg"),
-            actor_details={}
+            actor_details={},
+            user=current_user
         )
 
     conn = psycopg2.connect(
@@ -2642,7 +2643,11 @@ def match():
     # Get matched IDs
     cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
-    exclude_ids = matched_ids + [user_id] or [-1]
+    declined_ids = session.get("declines", [])
+    exclude_ids = matched_ids + declined_ids + [user_id]
+
+    if not exclude_ids:
+        exclude_ids = [-1]  # to prevent SQL error on empty tuple
 
     # Fetch candidates
     cur.execute("""
@@ -2662,7 +2667,7 @@ def match():
     if self_data:
         rows.append(self_data)
 
-    # Fetch notifications (unchanged from your version)...
+    # Fetch notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
                notifications.action_type,
