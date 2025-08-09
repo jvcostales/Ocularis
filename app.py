@@ -2805,7 +2805,7 @@ def accept_match(target_id):
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("INSERT INTO recent_matches (user_id, matched_user_id, created_at) VALUES (%s, %s, NOW())", (user_id, target_id))
+    cur.execute("INSERT INTO recent_matches (user_id, matched_user_id, matched_at) VALUES (%s, %s, NOW())", (user_id, target_id))
     cur.execute("INSERT INTO notifications (recipient_id, actor_id, action_type, created_at) VALUES (%s, %s, 'match_accept', NOW())", (target_id, user_id))
     conn.commit()
     cur.close()
