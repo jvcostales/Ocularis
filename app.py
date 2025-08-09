@@ -2848,16 +2848,17 @@ def accept_match(target_id):
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
 @login_required
 def decline_match(target_id):
-    declines = session.get("declines")
-    if declines is None:
-        declines = []
-    declines.append(target_id)
+    declines = session.get("declines", [])
+    if target_id not in declines:
+        declines.append(target_id)
     session["declines"] = declines
 
     total_recs = session.get("total_recommendations", 3)  # default fallback
 
     if len(declines) >= total_recs:
         session["match_locked"] = True
+        # Clear declines when locked to avoid stuck state
+        session.pop("declines", None)
         return jsonify({"status": "locked"})
     return jsonify({"status": "continue"})
 
