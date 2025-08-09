@@ -2669,54 +2669,80 @@ def match():
 
     # Fetch notifications
     cur.execute("""
-        SELECT users.first_name || ' ' || users.last_name AS display_name,
-               notifications.action_type,
-               notifications.image_id,
-               notifications.created_at,
-               notifications.actor_id,
-               users.profile_pic,
-               notifications.notification_id
+        SELECT
+            users.first_name || ' ' || users.last_name AS display_name,
+            notifications.action_type,
+            notifications.image_id,
+            notifications.created_at,
+            notifications.actor_id,
+            users.profile_pic,
+            notifications.notification_id
         FROM notifications
         JOIN users ON notifications.actor_id = users.id
         WHERE notifications.recipient_id = %s
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
-
+    
+            # Gather unique actor_ids
     actor_ids = list(set([n[4] for n in notifications]))
+
+            # Prepare dictionary to hold actor_id → user profile details
     actor_details = {}
+
+            # Fetch full details for each actor_id
     for actor_id in actor_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
-                   profile_pic, cover_photo, skills, preferences, experience_level,
-                   facebook, instagram, x, linkedin, telegram, email
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
             FROM users WHERE id = %s
         """, (actor_id,))
         user = cur.fetchone()
-        if user:
-            countries = current_app.config['COUNTRIES']
-            states = current_app.config['STATES']
-            city, state_code, country_code = user[3], user[4], user[5]
-            iso_to_country = {c["iso2"]: c["name"] for c in countries}
-            readable_country = iso_to_country.get(country_code, country_code)
-            filtered_states = [s for s in states if s["country_code"] == country_code]
-            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-            readable_state = state_code_to_name.get(state_code, state_code)
-            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
-            actor_details[actor_id] = {
-                "user_id": actor_id,
-                "full_name": f"{user[0]} {user[1]}",
-                "role": user[2],
-                "location_display": location_display,
-                "profile_pic": user[6],
-                "skills": user[8],
-                "preferences": user[9],
-                "experience_level": user[10],
-                "facebook": user[11],
-                "email": user[16]
-            }
 
-    # Friend requests
+        if user:
+                countries = current_app.config['COUNTRIES']
+                states = current_app.config['STATES']
+
+                # Get raw codes
+                city = user[3]
+                state_code = user[4]
+                country_code = user[5]
+
+                # Look up readable names
+                iso_to_country = {c["iso2"]: c["name"] for c in countries}
+                readable_country = iso_to_country.get(country_code, country_code)
+
+                # Filter states by selected country
+                filtered_states = [s for s in states if s["country_code"] == country_code]
+                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+                readable_state = state_code_to_name.get(state_code, state_code)
+
+                # Display-friendly location string
+                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+
+                actor_details[actor_id] = {
+                    "user_id": actor_id,
+                    "full_name": f"{user[0]} {user[1]}",
+                    "role": user[2],
+                    "city": city,
+                    "state": state_code,
+                    "country": country_code,
+                    "location_display": location_display,  # ✅ new key
+                    "profile_pic": user[6],
+                    "cover_photo": user[7],
+                    "skills": user[8],
+                    "preferences": user[9],
+                    "experience_level": user[10],
+                    "facebook": user[11],
+                    "instagram": user[12],
+                    "x": user[13],
+                    "linkedin": user[14],
+                    "telegram": user[15],
+                    "email": user[16]
+                }
+
+    # Fetch friend requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2726,11 +2752,15 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # Current user profile pic
+    # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
-    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
+    if result and result[0] and result[0] != 'pfp.jpg':
+        profile_pic_url = url_for('profile_pics', filename=result[0])
+    else:
+        profile_pic_url = url_for('static', filename='pfp.jpg')
+        
     # Prepare recommender data (unchanged)
     users_data = []
     for row in rows:
