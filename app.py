@@ -2886,7 +2886,7 @@ def notify_collab_check():
 
 @app.route('/decline_match', methods=['POST'])
 @login_required
-def decline_match():
+def decline_match_api():  # renamed to avoid clash
     data = request.get_json()
     try:
         other_user_id = int(data.get('other_user_id'))
@@ -2927,6 +2927,7 @@ def decline_match():
     finally:
         if conn:
             conn.close()
+
 
 def get_random_users(current_user_id):
     conn = psycopg2.connect(
