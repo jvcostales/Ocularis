@@ -2777,6 +2777,8 @@ def match():
         user["experience_level"] = extra[2] or 0
         user.update(details)
         users_list.append(user)
+        
+        session['total_recommendations'] = len(users_list[:3])
 
     cur.close()
     conn.close()
@@ -2813,7 +2815,11 @@ def decline_match(target_id):
     declines = session.get("declines", [])
     declines.append(target_id)
     session["declines"] = declines
-    if len(declines) >= 3:
+
+    # Get total number of recommendations available (from session or DB)
+    total_recs = session.get("total_recommendations", 3)  # default to 3 if not set
+
+    if len(declines) >= total_recs:
         session["match_locked"] = True
         return jsonify({"status": "locked"})
     return jsonify({"status": "continue"})
