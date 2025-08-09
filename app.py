@@ -2808,7 +2808,7 @@ def match():
         user.update(details)
         users_list.append(user)
         
-        session['total_recommendations'] = len(users_list[:3])
+    session['total_recommendations'] = len(users_list[:3])
 
     cur.close()
     conn.close()
@@ -2848,12 +2848,13 @@ def accept_match(target_id):
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
 @login_required
 def decline_match(target_id):
-    declines = session.get("declines", [])
+    declines = session.get("declines")
+    if declines is None:
+        declines = []
     declines.append(target_id)
     session["declines"] = declines
 
-    # Get total number of recommendations available (from session or DB)
-    total_recs = session.get("total_recommendations", 3)  # default to 3 if not set
+    total_recs = session.get("total_recommendations", 3)  # default fallback
 
     if len(declines) >= total_recs:
         session["match_locked"] = True
