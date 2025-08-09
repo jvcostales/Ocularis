@@ -2829,7 +2829,13 @@ def match():
 @login_required
 def accept_match(target_id):
     user_id = current_user.id
-    conn = psycopg2.connect(...)
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        port=5432
+    )
     cur = conn.cursor()
     cur.execute("INSERT INTO recent_matches (user_id, matched_user_id, created_at) VALUES (%s, %s, NOW())", (user_id, target_id))
     cur.execute("INSERT INTO notifications (recipient_id, actor_id, action_type, created_at) VALUES (%s, %s, 'match_accept', NOW())", (target_id, user_id))
