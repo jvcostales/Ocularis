@@ -16,7 +16,7 @@
                 <div class="icons">
                     {% if user.facebook %}
                     <a href="{{ 'https://facebook.com/' + user.facebook if 'facebook.com' not in user.facebook else user.facebook }}"
-                        target="_blank">
+                        target="_blank" rel="noopener noreferrer">
                         <img src="{{ url_for('static', filename='fb.png') }}" alt="Facebook" class="icon1">
                     </a>
                     {% endif %}
@@ -64,10 +64,12 @@
         </div>
 
         <div class="request-icons" style="justify-content: center;">
-            <button class="circled-icon-1" data-user-id="{{ user.id }}">
+            <button class="circled-icon-1" data-user-id="{{ user.id }}" type="button"
+                aria-label="Decline user {{ user.first_name }}">
                 <span class="material-symbols-outlined close-symbol">close</span>
             </button>
-            <button class="circled-icon-2" id="notify-btn" data-recipient-id="{{ user.id }}">
+            <button class="circled-icon-2" data-recipient-id="{{ user.id }}" type="button"
+                aria-label="Accept user {{ user.first_name }}">
                 <span class="material-symbols-outlined check-symbol">check</span>
             </button>
         </div>
@@ -89,6 +91,7 @@
                 fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
                     .then(res => res.json()).then(data => {
                         if (data.status === "locked") window.location.href = "/match";
+                        else location.reload(); // Optionally reload to update UI or remove accepted user
                     });
             });
         });
