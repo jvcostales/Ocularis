@@ -64,7 +64,7 @@
         </div>
 
         <div class="request-icons" style="justify-content: center;">
-            <button class="circled-icon-1" data-user-id="{{ user.id }}">
+            <button type="button" class="circled-icon-1" data-user-id="{{ user.id }}">
                 <span class="material-symbols-outlined close-symbol">close</span>
             </button>
             <button class="circled-icon-2" id="notify-btn" data-recipient-id="{{ user.id }}">
@@ -83,29 +83,32 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".circled-icon-2").forEach(btn => {
-        btn.addEventListener("click", function() {
-            fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
-            .then(res => res.json()).then(data => {
-                if (data.status === "locked") window.location.href = "/match";
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".circled-icon-2").forEach(btn => {
+            btn.addEventListener("click", function () {
+                fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
+                    .then(res => res.json()).then(data => {
+                        if (data.status === "locked") window.location.href = "/match";
+                    });
             });
         });
-    });
 
-    document.querySelectorAll(".circled-icon-1").forEach(btn => {
-        btn.addEventListener("click", function() {
-            fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
-            .then(res => res.json()).then(data => {
-                if (data.status === "locked") {
-                    window.location.href = "/match";
-                } else {
-                    this.closest(".card-container").remove();
-                }
+        document.querySelectorAll(".circled-icon-1").forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault(); // stop form/page reload
+                fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === "locked") {
+                            window.location.href = "/match";
+                        } else {
+                            this.closest(".card-container").remove();
+                        }
+                    })
+                    .catch(err => console.error("Decline error:", err));
             });
         });
     });
-});
 </script>
 
 {% endblock %}
