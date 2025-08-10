@@ -2,6 +2,8 @@
 {% block content %}
 
 <div class="card">
+    <p>Match Locked? {{ match_locked }}</p>
+
     <div class="post-title">Match</div>
     {% if users and users|length > 0 %}
     {% for user in users[:3] %}
