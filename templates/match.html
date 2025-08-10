@@ -32,7 +32,7 @@
 
             <div class="nav-section card-content-two">
                 <div class="info-sandp">
-                    <div class="info-title">Top Skills</div>
+                    <div class="info-title">{{ user.first_name }}'s Top Skills</div>
                     <div class="info-content">
                         {% for skill in user.skills[:3] %}
                         <div class="info-one">{{ skill }}</div>
@@ -43,7 +43,7 @@
 
             <div class="nav-section card-content-two">
                 <div class="info-sandp">
-                    <div class="info-title">Top Preferences</div>
+                    <div class="info-title">{{ user.first_name }}'s Top Preferences</div>
                     <div class="info-content">
                         {% for pref in user.preferences[:3] %}
                         <div class="info-one">{{ pref }}</div>
@@ -55,7 +55,7 @@
             <div class="nav-section card-content-two">
                 {% set exp_map = ['Beginner', 'Intermediate', 'Advanced', 'Expert'] %}
                 <div class="info-sandp">
-                    <div class="info-title">Experience Level</div>
+                    <div class="info-title">{{ user.first_name }}'s Experience Level</div>
                     <div class="info-content">
                         {% if user.experience_level %}
                         <div class="info-one">{{ exp_map[user.experience_level - 1] }}</div>
