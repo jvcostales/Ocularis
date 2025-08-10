@@ -2575,7 +2575,7 @@ def pairup():
     # Fetch recent matches
     cur.execute("""
         SELECT 
-            u.id,                 -- match[0]
+            u.id,                 -- match[0] user_id
             u.first_name,         -- match[1]
             u.last_name,          -- match[2]
             rm.matched_at,        -- match[3]
@@ -2587,27 +2587,31 @@ def pairup():
     """, (current_user.id,))
     recent_matches = cur.fetchall()
 
-    # Gather unique matched_user_ids
+    # Gather unique matched user IDs
     match_user_ids = list(set([m[0] for m in recent_matches]))
 
-    # Prepare actor_details for matches
+    # Prepare dictionary: matched_user_id → full user profile details
     match_details = {}
-    for uid in match_user_ids:
+
+    for user_id in match_user_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
                 profile_pic, cover_photo, skills, preferences, experience_level,
                 facebook, instagram, x, linkedin, telegram, email
             FROM users WHERE id = %s
-        """, (uid,))
+        """, (user_id,))
         user = cur.fetchone()
+
         if user:
             countries = current_app.config['COUNTRIES']
             states = current_app.config['STATES']
 
+            # Get raw codes
             city = user[3]
             state_code = user[4]
             country_code = user[5]
 
+            # Look up readable names
             iso_to_country = {c["iso2"]: c["name"] for c in countries}
             readable_country = iso_to_country.get(country_code, country_code)
 
@@ -2615,10 +2619,11 @@ def pairup():
             state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
             readable_state = state_code_to_name.get(state_code, state_code)
 
+            # Friendly location
             location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
 
-            match_details[uid] = {
-                "user_id": uid,
+            match_details[user_id] = {
+                "user_id": user_id,
                 "full_name": f"{user[0]} {user[1]}",
                 "role": user[2],
                 "city": city,
@@ -2661,7 +2666,8 @@ def pairup():
         match_locked=match_locked,
         browse_locked=browse_locked,
         time_remaining=time_remaining,
-        actor_details=actor_details
+        actor_details=actor_details,
+        match_details=match_details
     )
 
 @app.route('/match', methods=['POST'])
