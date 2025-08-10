@@ -930,6 +930,124 @@
             </div>
         </div>
 
+
+        <div id="matchRecentModal" class="modal" style="display: none;">
+            <!-- Debug output -->
+            {% if actor_id in actor_details %}
+            <pre>{{ actor_details[actor_id] | tojson(indent=2) }}</pre>
+            {% endif %}
+
+            <div class="modal-content">
+                <!-- Step 1 -->
+                <div class="modal-step-recent" id="match-recent-step-1">
+                    <button class="close-icon btn-cancel" onclick="closeMatchRecentModal()">
+                        <spanRecent class="material-symbols-outlined overlay-close-symbol">close</spanRecent>
+                    </button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+                        <div class="div-setup">
+                            <img id="match-recent-pfp-step1" class="pfpsetup1">
+                            <div class="heading">
+                                <spanRecent id="match-recent-username" style="font-weight: 600;"></spanRecent> found you
+                                as a match.
+                            </div>
+                            <div class="subheading">You're now connected, unless you say otherwise.</div>
+                            <button class="next-button" onclick="showMatchRecentStep(2)">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="modal-step-recent" id="match-recent-step-2" style="display: none;">
+                    <button class="close-icon btn-cancel" onclick="closeMatchRecentModal()">
+                        <spanRecent class="material-symbols-outlined overlay-close-symbol">close</spanRecent>
+                    </button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+                        <div class="match-wrapper">
+                            <img id="match-recent-pfp-step2" class="pfpsetup1">
+
+                            <div class="match-card">
+                                <div class="username-profile" id="match-recent-fullname"></div>
+                                <div class="icon-title-wrapper">
+                                    <spanRecent class="material-symbols-outlined person-symbol">person</spanRecent>
+                                    <div class="title" id="match-recent-role"></div>
+                                </div>
+                                <div class="icon-title-wrapper">
+                                    <spanRecent class="material-symbols-outlined world-symbol">public</spanRecent>
+                                    <div class="location-profile" id="match-recent-location"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Skills</div>
+                            <div class="info-content-match" id="match-recent-skills"></div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Preferences</div>
+                            <div class="info-content-match" id="match-recent-preferences"></div>
+                        </div>
+
+                        <!-- Experience Level -->
+                        <div class="info-sandp">
+                            <div class="info-title-match">Experience Level</div>
+                            <div class="info-content-match">
+                                <div class="info-one-match-recent" id="match-recent-experience"
+                                    style="margin-bottom: 36px;"></div>
+                            </div>
+                        </div>
+
+                        <div class="button-wrapper">
+                            <div class="partner-back-match" onclick="showMatchRecentStep(1)">
+                                <spanRecent class="material-symbols-outlined lcs-symbol-back">arrow_back</spanRecent>
+                                <div class="partner-label-back">Back</div>
+                            </div>
+                            <div class="match-button-wrapper">
+                                <button id="decline-match-recent-recent" class="browse-button">Decline Match</button>
+                                <button class="next-button" onclick="showMatchRecentStep(3)">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="modal-step-recent" id="match-recent-step-3" style="display: none;">
+                    <button class="close-icon btn-cancel" onclick="closeMatchRecentModal()">
+                        <spanRecent class="material-symbols-outlined overlay-close-symbol">close</spanRecent>
+                    </button>
+                    <div class="overlay-title">Match</div>
+                    <div class="padding-match">
+                        <div class="share-wrapper">
+                            <div class="share-via">Reach out via</div>
+                            <div class="icon-grid">
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/fb.png"
+                                        class="fb"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/ig.png"
+                                        class="ig"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/x.png"
+                                        class="x"></a>
+                                <a href="#" target="_blank"><img src="../static/gmail.png" class="gmail"></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><img src="../static/linkedin.png"
+                                        class="linkedin"></a>
+                                <a href="#"><img src="../static/telegram.png" class="telegram"></a>
+                            </div>
+                        </div>
+                        <div class="button-wrapper">
+                            <div class="partner-back" onclick="showMatchRecentStep(2)">
+                                <spanRecent class="material-symbols-outlined lcs-symbol-back">arrow_back</spanRecent>
+                                <div class="partner-label-back">Back</div>
+                            </div>
+                            <button onclick="closeMatchRecentModal()" class="next-button">Done</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <ul class="mobile-nav">
             <li><a href="{{ url_for('feed') }}">
                     <span
@@ -1516,6 +1634,21 @@
                         });
                 });
 
+
+                function showMatchRecentStep(step) {
+                    document.querySelectorAll('.modal-step-recent').forEach(stepDiv => stepDiv.style.display = 'none');
+                    document.getElementById(`match-step-${step}`).style.display = 'block';
+                }
+
+                function closeModalRecent() {
+                    document.getElementById('matchRecentModal').style.display = 'none';
+                }
+
+                // Expose to global scope so inline HTML can access them
+                window.showMatchRecentStep = showMatchRecentStep;
+                window.closeModalRecent = closeModalRecent;
+                window.openmatchRecentModal = openmatchRecentModal; // make sure it's global
+
                 window.handleRequest = function (requestId, action) {
                     const elements = document.querySelectorAll(`#request-${requestId}`);
                     console.log(`Attempting to ${action} request with ID: ${requestId}`);
@@ -1955,6 +2088,64 @@
                     document.body.classList.remove('no-scrolling');
                     document.body.style.top = '';
                     window.scrollTo(0, matchScrollPosition);
+                };
+
+
+                let matchRecentScrollPosition = 0;
+
+                function openmatchRecentModal(actor) {
+                    const profilePic = actor.profile_pic ? `/profile_pics/${actor.profile_pic}` : '/static/pfp.jpg';
+                    const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
+
+                    // Fill modal fields
+                    document.getElementById('match-recent-fullname').textContent = actor.full_name;
+                    document.getElementById('match-recent-username').textContent = actor.full_name;
+                    document.getElementById('match-recent-role').textContent = actor.role;
+                    document.getElementById('match-recent-location').textContent = actor.location_display || "";
+
+                    // For Skills
+                    const skillsContainerRecent = document.getElementById('match-recent-skills');
+                    skillsContainerRecent.innerHTML = '';
+                    actor.skills.forEach(skill => {
+                        const spanRecent = document.createElement('spanRecent');
+                        spanRecent.textContent = skill;
+                        spanRecent.classList.add('info-one-match-recent'); // Optional: add a class for styling
+                        skillsContainerRecent.appendChild(spanRecent);
+                    });
+
+                    // For Preferences
+                    const prefsContainerRecent = document.getElementById('match-recent-preferences');
+                    prefsContainerRecent.innerHTML = '';
+                    actor.preferences.forEach(pref => {
+                        const spanRecent = document.createElement('spanRecent');
+                        spanRecent.textContent = pref;
+                        spanRecent.classList.add('info-one-match-recent'); // Optional: add a class for styling
+                        prefsContainerRecent.appendChild(spanRecent);
+                    });
+
+                    document.getElementById('match-recent-experience').textContent = levels[actor.experience_level];
+                    document.getElementById('match-recent-pfp-step1').src = profilePic;
+                    document.getElementById('match-recent-pfp-step2').src = profilePic;
+
+                    // Set decline-match-recent-recent button data-user-id
+                    document.getElementById('decline-match-recent-recent').setAttribute('data-user-id', actor.user_id);
+
+                    // Freeze background scroll
+                    matchRecentScrollPosition = window.scrollY;
+                    document.body.style.top = `-${matchRecentScrollPosition}px`;
+                    document.body.classList.add('no-scrolling');
+
+                    // Show modal
+                    document.getElementById('matchRecentModal').style.display = 'flex';
+                }
+
+                window.closeMatchRecentModal = function () {
+                    const modalRecent = document.getElementById('matchRecentModal');
+                    if (modalRecent) modalRecent.style.display = 'none';
+
+                    document.body.classList.remove('no-scrolling');
+                    document.body.style.top = '';
+                    window.scrollTo(0, matchRecentScrollPosition);
                 };
 
                 // Setup overlays

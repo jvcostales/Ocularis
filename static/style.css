@@ -2718,6 +2718,18 @@ span.delete-symbol:active {
         margin-bottom: 16px;
     }
 
+    .info-one-match-recent {
+        background-color: transparent;
+        color: var(--text-main) !important;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--text-main);
+        display: inline-block;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-bottom: 16px;
+    }
+
     .padding-match {
         padding-bottom: 24px;
         padding-left: 48px;
@@ -5136,6 +5148,18 @@ span.delete-symbol:active {
         margin-bottom: 12px;
     }
 
+    .info-one-match-recent {
+        background-color: transparent;
+        color: var(--text-main) !important;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--text-main);
+        display: inline-block;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-bottom: 16px;
+    }
+
     .padding-match {
         padding-bottom: 24px;
         padding-left: 48px;
@@ -7503,6 +7527,18 @@ span.delete-symbol:active {
         text-align: center;
         font-size: 0.875rem;
         margin-bottom: 12px;
+    }
+
+    .info-one-match-recent {
+        background-color: transparent;
+        color: var(--text-main) !important;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--text-main);
+        display: inline-block;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-bottom: 16px;
     }
 
     .padding-match {
