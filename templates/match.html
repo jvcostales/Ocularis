@@ -66,13 +66,13 @@
             <div class="match-back-next-wrapper">
                 <div class="button-back-next">
                     <button class="carousel-prev" type="button" aria-label="Previous user">
-                        <div class="partner-back">
+                        <div class="partner-back-recent">
                             <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
                             <div class="partner-label-back">Back</div>
                         </div>
                     </button>
                     <button class="carousel-next" type="button" aria-label="Next user">
-                        <div class="partner-back">
+                        <div class="partner-back-recent">
                             <span class="material-symbols-outlined lcs-symbol-back">arrow_forward</span>
                             <div class="partner-label-back">Next</div>
                         </div>
@@ -106,13 +106,16 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const cards = Array.from(document.querySelectorAll(".card-container"));
-        const indicatorBar = document.querySelector(".scroll-indicator-bar");
         let carouselIndex = 0;
+        const cards = Array.from(document.querySelectorAll(".card-container"));
 
         function updateIndicator(index) {
+            // Find the visible card's own indicator
+            const activeCard = cards[index];
+            const indicatorBar = activeCard.querySelector(".scroll-indicator-bar");
             if (!indicatorBar) return;
-            const stepWidth = 90 / cards.length; // 90px divided into equal steps
+
+            const stepWidth = 90 / cards.length; // 90px total, divided equally
             indicatorBar.style.width = `${stepWidth * (index + 1)}px`;
         }
 

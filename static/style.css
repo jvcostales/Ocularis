@@ -353,10 +353,12 @@ span.delete-symbol:active {
     position: relative;
     overflow: hidden;
 }
+
 .scroll-indicator-bar {
     height: 100%;
     background-color: #B9B9B9;
-    width: 0; /* updated via JS */
+    width: 0;
+    /* updated via JS */
     transition: all 0.3s ease;
 }
 
@@ -1950,6 +1952,16 @@ span.delete-symbol:active {
         cursor: pointer;
         user-select: none;
         position: absolute;
+        left: 48px;
+    }
+
+    .partner-back-recent {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-muted);
+        cursor: pointer;
+        user-select: none;
         left: 48px;
     }
 
@@ -4090,6 +4102,16 @@ span.delete-symbol:active {
         cursor: pointer;
         user-select: none;
         position: absolute;
+        left: 48px;
+    }
+
+    .partner-back-recent {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-muted);
+        cursor: pointer;
+        user-select: none;
         left: 48px;
     }
 
@@ -6446,6 +6468,16 @@ span.delete-symbol:active {
         cursor: pointer;
         user-select: none;
         position: absolute;
+        left: 48px;
+    }
+
+    .partner-back-recent {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-muted);
+        cursor: pointer;
+        user-select: none;
         left: 48px;
     }
 
