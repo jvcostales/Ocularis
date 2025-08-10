@@ -22,7 +22,8 @@
                         </a>
                         {% endif %}
                         {% if user.email %}
-                        <a href="mailto:{{ user.email }}">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ user.email | urlencode }}"
+                            target="_blank" rel="noopener noreferrer">
                             <img src="{{ url_for('static', filename='gmail.png') }}" alt="Gmail" class="icon2">
                         </a>
                         {% endif %}
