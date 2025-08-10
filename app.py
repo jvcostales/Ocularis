@@ -2572,20 +2572,71 @@ def pairup():
     """, (current_user.id,))
     requests = cur.fetchall()
 
-    # Fetch recent matches with viewed user's profile_pic added at the end
+    # Fetch recent matches
     cur.execute("""
         SELECT 
             u.id,                 -- match[0]
             u.first_name,         -- match[1]
             u.last_name,          -- match[2]
             rm.matched_at,        -- match[3]
-            u.profile_pic         -- match[4] ✅ viewed user's profile_pic
+            u.profile_pic         -- match[4]
         FROM recent_matches rm
         JOIN users u ON rm.matched_user_id = u.id
         WHERE rm.user_id = %s
         ORDER BY rm.matched_at DESC
     """, (current_user.id,))
     recent_matches = cur.fetchall()
+
+    # Gather unique matched_user_ids
+    match_user_ids = list(set([m[0] for m in recent_matches]))
+
+    # Prepare actor_details for matches
+    match_details = {}
+    for uid in match_user_ids:
+        cur.execute("""
+            SELECT first_name, last_name, role, city, state, country, 
+                profile_pic, cover_photo, skills, preferences, experience_level,
+                facebook, instagram, x, linkedin, telegram, email
+            FROM users WHERE id = %s
+        """, (uid,))
+        user = cur.fetchone()
+        if user:
+            countries = current_app.config['COUNTRIES']
+            states = current_app.config['STATES']
+
+            city = user[3]
+            state_code = user[4]
+            country_code = user[5]
+
+            iso_to_country = {c["iso2"]: c["name"] for c in countries}
+            readable_country = iso_to_country.get(country_code, country_code)
+
+            filtered_states = [s for s in states if s["country_code"] == country_code]
+            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+            readable_state = state_code_to_name.get(state_code, state_code)
+
+            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+
+            match_details[uid] = {
+                "user_id": uid,
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": city,
+                "state": state_code,
+                "country": country_code,
+                "location_display": location_display,
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],
+                "preferences": user[9],
+                "experience_level": user[10],
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # New query to get current user's profile_pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
