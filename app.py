@@ -2444,23 +2444,17 @@ def reject_request(request_id):
             return jsonify({'success': True, 'message': "Friend request rejected."})
     return redirect(request.referrer or url_for('feed'))
 
-
-@app.route('/pairup')
-@login_required
-def pairup():
-    user_id = current_user.id
+def check_lock_status(user_id, cooldown_minutes=3):
     now_utc = datetime.now(timezone.utc)
 
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
-
-    # 🔒 Check for match lock (based on collab_actions)
     cur.execute("""
         SELECT action_time FROM collab_actions
         WHERE user_id = %s
@@ -2468,24 +2462,40 @@ def pairup():
         LIMIT 1
     """, (user_id,))
     result = cur.fetchone()
-
-    match_locked = False
-    browse_locked = False
-    time_remaining = None
+    cur.close()
+    conn.close()
 
     if result:
         last_action_time = result[0]
 
+        # Ensure datetime has timezone info
         if last_action_time.tzinfo is None:
             manila = pytz.timezone('Asia/Manila')
             last_action_time = manila.localize(last_action_time).astimezone(timezone.utc)
 
         time_diff = now_utc - last_action_time
+        if time_diff < timedelta(minutes=cooldown_minutes):
+            time_remaining = str(timedelta(minutes=cooldown_minutes) - time_diff).split('.')[0]
+            return True, time_remaining
 
-        if time_diff < timedelta(minutes=3):
-            match_locked = True
-            browse_locked = True
-            time_remaining = str(timedelta(minutes=3) - time_diff).split('.')[0]  # hh:mm:ss
+    return False, None
+
+@app.route('/pairup')
+@login_required
+def pairup():
+    user_id = current_user.id
+
+    match_locked, time_remaining = check_lock_status(user_id)
+    browse_locked = match_locked  # if browsing lock is same as matching lock
+
+    conn = psycopg2.connect(
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        port=5432
+    )
+    cur = conn.cursor()
 
     # Fetch notifications
     cur.execute("""
@@ -2503,14 +2513,14 @@ def pairup():
         ORDER BY notifications.created_at DESC
     """, (current_user.id,))
     notifications = cur.fetchall()
-    
-            # Gather unique actor_ids
+
+    # Gather unique actor_ids
     actor_ids = list(set([n[4] for n in notifications]))
 
-            # Prepare dictionary to hold actor_id → user profile details
+    # Prepare dictionary to hold actor_id → user profile details
     actor_details = {}
 
-            # Fetch full details for each actor_id
+    # Fetch full details for each actor_id
     for actor_id in actor_ids:
         cur.execute("""
             SELECT first_name, last_name, role, city, state, country, 
@@ -2521,46 +2531,42 @@ def pairup():
         user = cur.fetchone()
 
         if user:
-                countries = current_app.config['COUNTRIES']
-                states = current_app.config['STATES']
+            countries = current_app.config['COUNTRIES']
+            states = current_app.config['STATES']
 
-                # Get raw codes
-                city = user[3]
-                state_code = user[4]
-                country_code = user[5]
+            city = user[3]
+            state_code = user[4]
+            country_code = user[5]
 
-                # Look up readable names
-                iso_to_country = {c["iso2"]: c["name"] for c in countries}
-                readable_country = iso_to_country.get(country_code, country_code)
+            iso_to_country = {c["iso2"]: c["name"] for c in countries}
+            readable_country = iso_to_country.get(country_code, country_code)
 
-                # Filter states by selected country
-                filtered_states = [s for s in states if s["country_code"] == country_code]
-                state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
-                readable_state = state_code_to_name.get(state_code, state_code)
+            filtered_states = [s for s in states if s["country_code"] == country_code]
+            state_code_to_name = {s["state_code"]: s["name"] for s in filtered_states}
+            readable_state = state_code_to_name.get(state_code, state_code)
 
-                # Display-friendly location string
-                location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
+            location_display = ", ".join(filter(None, [city, readable_state, readable_country]))
 
-                actor_details[actor_id] = {
-                    "user_id": actor_id,
-                    "full_name": f"{user[0]} {user[1]}",
-                    "role": user[2],
-                    "city": city,
-                    "state": state_code,
-                    "country": country_code,
-                    "location_display": location_display,  # ✅ new key
-                    "profile_pic": user[6],
-                    "cover_photo": user[7],
-                    "skills": user[8],
-                    "preferences": user[9],
-                    "experience_level": user[10],
-                    "facebook": user[11],
-                    "instagram": user[12],
-                    "x": user[13],
-                    "linkedin": user[14],
-                    "telegram": user[15],
-                    "email": user[16]
-                }
+            actor_details[actor_id] = {
+                "user_id": actor_id,
+                "full_name": f"{user[0]} {user[1]}",
+                "role": user[2],
+                "city": city,
+                "state": state_code,
+                "country": country_code,
+                "location_display": location_display,
+                "profile_pic": user[6],
+                "cover_photo": user[7],
+                "skills": user[8],
+                "preferences": user[9],
+                "experience_level": user[10],
+                "facebook": user[11],
+                "instagram": user[12],
+                "x": user[13],
+                "linkedin": user[14],
+                "telegram": user[15],
+                "email": user[16]
+            }
 
     # Fetch friend requests
     cur.execute("""
@@ -2572,14 +2578,14 @@ def pairup():
     """, (current_user.id,))
     requests = cur.fetchall()
 
-    # Fetch recent matches with viewed user's profile_pic added at the end
+    # Fetch recent matches with viewed user's profile_pic added
     cur.execute("""
         SELECT 
-            u.id,                 -- match[0]
-            u.first_name,         -- match[1]
-            u.last_name,          -- match[2]
-            rm.matched_at,        -- match[3]
-            u.profile_pic         -- match[4] ✅ viewed user's profile_pic
+            u.id,
+            u.first_name,
+            u.last_name,
+            rm.matched_at,
+            u.profile_pic
         FROM recent_matches rm
         JOIN users u ON rm.matched_user_id = u.id
         WHERE rm.user_id = %s
@@ -2587,7 +2593,7 @@ def pairup():
     """, (current_user.id,))
     recent_matches = cur.fetchall()
 
-    # New query to get current user's profile_pic
+    # Get current user's profile pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
 
@@ -2618,39 +2624,28 @@ def pairup():
 def match():
     user_id = current_user.id
 
-    lock_duration_seconds = 3 * 60  # 3 minutes
-    lock_time = session.get("match_locked_time")
-
-    if session.get("match_locked") and lock_time:
-        now_utc = datetime.now(timezone.utc)
-        locked_at = datetime.fromtimestamp(lock_time, timezone.utc)
-        elapsed = (now_utc - locked_at).total_seconds()
-
-        if elapsed > lock_duration_seconds:
-            # Unlock
-            session.pop("match_locked", None)
-            session.pop("match_locked_time", None)
-            session.pop("declines", None)
-        else:
-            time_remaining = str(timedelta(seconds=lock_duration_seconds - elapsed)).split('.')[0]
-            return render_template(
-                "match.html",
-                users=[],
-                notifications=[],
-                requests=[],
-                verified=current_user.verified,
-                profile_pic_url=url_for("static", filename="pfp.jpg"),
-                actor_details={},
-                user=current_user,
-                debug_info={},
-                time_remaining=time_remaining
-            )
+    # Use centralized lock check
+    match_locked, time_remaining = check_lock_status(user_id)
+    if match_locked:
+        # If locked, render empty or a locked message with time_remaining
+        return render_template(
+            "match.html",
+            users=[],
+            notifications=[],
+            requests=[],
+            verified=current_user.verified,
+            profile_pic_url=url_for("static", filename="pfp.jpg"),
+            actor_details={},
+            user=current_user,
+            debug_info={},
+            time_remaining=time_remaining
+        )
 
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
@@ -2658,11 +2653,12 @@ def match():
     # Get matched IDs
     cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
-    declined_ids = session.get("declines", [])
+    # Previously used session declines; if you want to keep declines in session, keep it here, else empty list:
+    declined_ids = []  
     exclude_ids = matched_ids + declined_ids + [user_id]
 
     if not exclude_ids:
-        exclude_ids = [-1]  # to prevent SQL error on empty tuple
+        exclude_ids = [-1]  # prevent SQL error on empty tuple
 
     # Fetch candidates
     cur.execute("""
@@ -2671,9 +2667,6 @@ def match():
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
-    
-    # Store total candidates count in session
-    session["total_candidates"] = len(rows)
 
     # Also fetch current user's own data
     cur.execute("""
@@ -2749,7 +2742,7 @@ def match():
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # Prepare recommender data (unchanged)
+    # Prepare recommender data
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2798,7 +2791,7 @@ def match():
 
     cur.close()
     conn.close()
-    
+
     debug_info = {
         "matched_ids": matched_ids,
         "declined_ids": declined_ids,
@@ -2816,10 +2809,10 @@ def match():
         profile_pic_url=profile_pic_url,
         actor_details=actor_details,
         user=current_user,
-        debug_info=debug_info
+        debug_info=debug_info,
+        time_remaining=None  # no need to pass remaining here since unlocked
     )
 
-# ✅ Accept and Decline handlers
 @app.route('/match/accept/<int:target_id>', methods=['POST'])
 @login_required
 def accept_match(target_id):
@@ -3044,17 +3037,17 @@ def get_random_users(current_user_id):
 def browse_users():
     user_id = current_user.id
 
-    # ✅ If match is locked, don't show users
-    if session.get("match_locked"):
-        users = []
-    else:
-        users = get_random_users(user_id)
+    # Check if browsing is locked (same lock as match/pairup)
+    browse_locked, time_remaining = check_lock_status(user_id)
+
+    # If locked, show empty users and pass time_remaining for UI
+    users = [] if browse_locked else get_random_users(user_id)
 
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
@@ -3141,12 +3134,14 @@ def browse_users():
     return render_template(
         'browse.html',
         user=current_user,
-        users=users,  # ✅ now empty if locked
+        users=users,
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
         profile_pic_url=profile_pic_url,
-        actor_details=actor_details
+        actor_details=actor_details,
+        browse_locked=browse_locked,
+        time_remaining=time_remaining
     )
         
 UPLOAD_FOLDER = '/var/data'
