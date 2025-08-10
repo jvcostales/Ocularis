@@ -2823,6 +2823,8 @@ def match():
 @login_required
 def accept_match(target_id):
     user_id = current_user.id
+    now = datetime.now(timezone.utc)
+
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -2831,14 +2833,30 @@ def accept_match(target_id):
         port=5432
     )
     cur = conn.cursor()
-    cur.execute("INSERT INTO recent_matches (user_id, matched_user_id, matched_at) VALUES (%s, %s, NOW())", (user_id, target_id))
-    cur.execute("INSERT INTO notifications (recipient_id, actor_id, action_type, created_at) VALUES (%s, %s, 'match_accept', NOW())", (target_id, user_id))
+
+    # Save the match
+    cur.execute("""
+        INSERT INTO recent_matches (user_id, matched_user_id, matched_at) 
+        VALUES (%s, %s, %s)
+    """, (user_id, target_id, now))
+
+    # Send notification
+    cur.execute("""
+        INSERT INTO notifications (recipient_id, actor_id, action_type, created_at) 
+        VALUES (%s, %s, 'match_accept', %s)
+    """, (target_id, user_id, now))
+
+    # Record cooldown start in collab_actions
+    cur.execute("""
+        INSERT INTO collab_actions (user_id, action_time) 
+        VALUES (%s, %s)
+    """, (user_id, now))
+
     conn.commit()
     cur.close()
     conn.close()
-    session["match_locked"] = True
-    session["match_locked_time"] = datetime.now(timezone.utc).timestamp()
-    return jsonify({"status": "locked"})
+
+    return jsonify({"status": "locked", "cooldown_start": now.isoformat()})
 
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
 @login_required
@@ -2846,12 +2864,33 @@ def decline_match(target_id):
     declines = session.get("declines", [])
     declines.append(target_id)
     session["declines"] = declines
+
     total_candidates = session.get("total_candidates", 3)  # or pass dynamically
 
     if len(declines) >= total_candidates:
-        session["match_locked"] = True
-        session["match_locked_time"] = datetime.now(timezone.utc).timestamp()
-        return jsonify({"status": "locked"})
+        now = datetime.now(timezone.utc)
+
+        conn = psycopg2.connect(
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+            dbname="ocularis_db", 
+            user="ocularis_db_user", 
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+            port=5432
+        )
+        cur = conn.cursor()
+
+        # Record cooldown start in collab_actions
+        cur.execute("""
+            INSERT INTO collab_actions (user_id, action_time) 
+            VALUES (%s, %s)
+        """, (current_user.id, now))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify({"status": "locked", "cooldown_start": now.isoformat()})
+
     return jsonify({"status": "continue"})
 
 @app.route('/api/get-countries')
