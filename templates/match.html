@@ -108,15 +108,17 @@
     document.addEventListener("DOMContentLoaded", () => {
         let carouselIndex = 0;
         const cards = Array.from(document.querySelectorAll(".card-container"));
+        const totalCards = cards.length;
+        const stepWidth = 90 / totalCards; // 30px if totalCards = 3
 
         function updateIndicator(index) {
-            // Find the visible card's own indicator
             const activeCard = cards[index];
             const indicatorBar = activeCard.querySelector(".scroll-indicator-bar");
             if (!indicatorBar) return;
 
-            const stepWidth = 90 / cards.length; // 90px total, divided equally
-            indicatorBar.style.width = `${stepWidth * (index + 1)}px`;
+            // Fixed width (1/3 of the total bar), moves horizontally
+            indicatorBar.style.width = `${stepWidth}px`;
+            indicatorBar.style.transform = `translateX(${index * stepWidth}px)`;
         }
 
         function showCard(index) {
@@ -128,14 +130,14 @@
 
         document.querySelectorAll(".carousel-next").forEach(btn => {
             btn.addEventListener("click", () => {
-                carouselIndex = (carouselIndex + 1) % cards.length;
+                carouselIndex = (carouselIndex + 1) % totalCards;
                 showCard(carouselIndex);
             });
         });
 
         document.querySelectorAll(".carousel-prev").forEach(btn => {
             btn.addEventListener("click", () => {
-                carouselIndex = (carouselIndex - 1 + cards.length) % cards.length;
+                carouselIndex = (carouselIndex - 1 + totalCards) % totalCards;
                 showCard(carouselIndex);
             });
         });

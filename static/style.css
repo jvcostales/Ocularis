@@ -357,9 +357,9 @@ span.delete-symbol:active {
 .scroll-indicator-bar {
     height: 100%;
     background-color: #B9B9B9;
-    width: 0;
-    /* updated via JS */
-    transition: all 0.3s ease;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .match-back-next-wrapper {
