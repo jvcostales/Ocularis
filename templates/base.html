@@ -1643,7 +1643,7 @@
                 // Expose to global scope so inline HTML can access them
                 window.showMatchRecentStep = showMatchRecentStep;
                 window.closeModalRecent = closeModalRecent;
-                window.openmatchRecentModal = openmatchRecentModal; // make sure it's global
+                window.openMatchRecentModal = openMatchRecentModal; // make sure it's global
 
                 window.handleRequest = function (requestId, action) {
                     const elements = document.querySelectorAll(`#request-${requestId}`);
@@ -2089,7 +2089,7 @@
 
                 let matchRecentScrollPosition = 0;
 
-                function openmatchRecentModal(actor) {
+                function openMatchRecentModal(actor) {
                     const profilePic = actor.profile_pic ? `/profile_pics/${actor.profile_pic}` : '/static/pfp.jpg';
                     const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
