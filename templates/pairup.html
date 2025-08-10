@@ -38,6 +38,11 @@
             <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
             <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
                 <div class="save delete-match" data-id="{{ match[0] }}">Delete</div>
+                {% if actor_id in actor_details %}
+                <div class="save" onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'>View</div>
+                {% else %}
+                <div class="save">View</div>
+                {% endif %}
             </div>
         </div>
     </div>
