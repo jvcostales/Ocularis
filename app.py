@@ -2780,6 +2780,14 @@ def match():
 
     cur.close()
     conn.close()
+    
+    debug_info = {
+        "matched_ids": matched_ids,
+        "declined_ids": declined_ids,
+        "exclude_ids": exclude_ids,
+        "candidate_count": len(rows),
+        "similar_users_count": len(similar_users_df) if not similar_users_df.empty else 0,
+    }
 
     return render_template("match.html",
         current_page='match',
@@ -2789,7 +2797,8 @@ def match():
         verified=current_user.verified,
         profile_pic_url=profile_pic_url,
         actor_details=actor_details,
-        user=current_user
+        user=current_user,
+        debug_info=debug_info
     )
 
 # ✅ Accept and Decline handlers

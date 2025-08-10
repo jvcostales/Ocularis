@@ -2,6 +2,14 @@
 {% block content %}
 
 <div class="card">
+
+    <div style="background: #fdd; padding: 10px; font-family: monospace; white-space: pre-wrap;">
+        <h3>Debug Info</h3>
+        {% for key, val in debug_info.items() %}
+        <b>{{ key }}:</b> {{ val }}<br>
+        {% endfor %}
+    </div>
+
     <div class="post-title">Match</div>
     {% if users and users|length > 0 %}
     {% for user in users[:3] %}
