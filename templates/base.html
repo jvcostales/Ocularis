@@ -1005,39 +1005,39 @@
                     });
             });
 
-            const sections = Array.from(document.querySelectorAll('.nav-section'));
-            let currentIndex = 0;
+            // CARD NAVIGATION – scoped per container
+            document.querySelectorAll(".card-container").forEach(card => {
+                const sections = Array.from(card.querySelectorAll(".nav-section"));
+                let currentIndex = 0;
 
-            function showSection(index) {
-                sections.forEach((sec, i) => {
-                    sec.classList.toggle('active', i === index);
+                function showSection(index) {
+                    sections.forEach((sec, i) => {
+                        sec.classList.toggle("active", i === index);
+                    });
+                }
+
+                sections.forEach(section => {
+                    section.addEventListener("click", function (e) {
+                        const clickX = e.clientX - this.getBoundingClientRect().left;
+                        const width = this.offsetWidth;
+
+                        if (clickX < width / 2) {
+                            // left click area → previous
+                            currentIndex = (currentIndex - 1 + sections.length) % sections.length;
+                        } else {
+                            // right click area → next
+                            currentIndex = (currentIndex + 1) % sections.length;
+                        }
+
+                        showSection(currentIndex);
+                    });
                 });
-            }
 
-            sections.forEach((section) => {
-                section.addEventListener('click', function (e) {
-                    const clickX = e.clientX - this.getBoundingClientRect().left;
-                    const width = this.offsetWidth;
-
-                    if (clickX < width / 2) {
-                        // Clicked on left side - move to previous
-                        currentIndex = (currentIndex - 1 + sections.length) % sections.length;
-                    } else {
-                        // Clicked on right side - move to next
-                        currentIndex = (currentIndex + 1) % sections.length;
-                    }
-
-                    showSection(currentIndex);
+                // Prevent clicks on social icons from triggering section change
+                card.querySelectorAll(".icons").forEach(iconDiv => {
+                    iconDiv.addEventListener("click", e => e.stopPropagation());
                 });
             });
-
-            document.querySelectorAll('.nav-section .icons').forEach((iconDiv) => {
-                iconDiv.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            });
-
-
 
             window.handleFriendship = function (userId, action, buttonElement) {
                 fetch(`/${action}/${userId}`, {
