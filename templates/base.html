@@ -2123,9 +2123,6 @@
                     document.getElementById('match-recent-pfp-step1').src = profilePic;
                     document.getElementById('match-recent-pfp-step2').src = profilePic;
 
-                    // Set decline-match-recent-recent button data-user-id
-                    document.getElementById('decline-match-recent-recent').setAttribute('data-user-id', actor.user_id);
-
                     // Freeze background scroll
                     matchRecentScrollPosition = window.scrollY;
                     document.body.style.top = `-${matchRecentScrollPosition}px`;
