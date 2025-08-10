@@ -12,10 +12,10 @@
         <form id="browseForm" action="/browse" method="POST" style="display: none;"></form>
 
         <!-- Action buttons -->
-        <button id="matchBtn" class="match-button">
+        <button id="matchBtn" class="match-button" type="button">
             Match
         </button>
-        <button id="browseBtn" class="browse-button">
+        <button id="browseBtn" class="browse-button" type="button">
             Browse
         </button>
     </div>
@@ -57,35 +57,36 @@
     document.addEventListener("DOMContentLoaded", function () {
         const matchBtn = document.getElementById('matchBtn');
         const browseBtn = document.getElementById('browseBtn');
-        const matchLocked = {{ 'true' if match_locked else 'false' }};
-        const browseLocked = {{ 'true' if browse_locked else 'false' }};
-        const timeRemaining = "{{ time_remaining or '' }}";
 
+        {% if match_locked %}
         if (matchBtn) {
-            if (matchLocked) {
-                matchBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    alert('Matching is locked for ' + timeRemaining + '.');
-                });
-            } else {
-                matchBtn.addEventListener('click', function () {
-                    document.getElementById('matchForm').submit();
-                });
-            }
+            matchBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Matching is locked for {{ time_remaining }}.');
+            });
         }
+        {% else %}
+        if (matchBtn) {
+            matchBtn.addEventListener('click', function () {
+                document.getElementById('matchForm').submit();
+            });
+        }
+        {% endif %}
 
+        {% if browse_locked %}
         if (browseBtn) {
-            if (browseLocked) {
-                browseBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    alert('Browsing is locked for ' + timeRemaining + '.');
-                });
-            } else {
-                browseBtn.addEventListener('click', function () {
-                    document.getElementById('browseForm').submit();
-                });
-            }
+            browseBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Browsing is locked for {{ time_remaining }}.');
+            });
         }
+        {% else %}
+        if (browseBtn) {
+            browseBtn.addEventListener('click', function () {
+                document.getElementById('browseForm').submit();
+            });
+        }
+        {% endif %}
     });
 </script>
 
