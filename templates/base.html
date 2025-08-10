@@ -948,7 +948,8 @@
                         <div class="div-setup">
                             <img id="match-recent-pfp-step1" class="pfpsetup1">
                             <div class="heading">
-                                You found <spanRecent id="match-recent-username" style="font-weight: 600;"></spanRecent> as a match.
+                                You found <spanRecent id="match-recent-username" style="font-weight: 600;"></spanRecent>
+                                as a match.
                             </div>
                             <div class="subheading">View your collaborator's details here.</div>
                             <button class="next-button" onclick="showMatchRecentStep(2)">Next</button>
@@ -1603,8 +1604,20 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.message) {
-                                    // Remove the entire match entry from the DOM
-                                    this.closest('.profile-more-wrapper-pairup').remove();
+                                    const wrapper = this.closest('.profile-more-wrapper-pairup');
+                                    wrapper.remove();
+
+                                    // Check if no recent matches remain
+                                    if (document.querySelectorAll('.profile-more-wrapper-pairup').length === 0) {
+                                        const card = document.querySelector('.card'); // parent container
+                                        card.innerHTML = `
+                        <div class="notifs-empty" style="margin: 48px 0;">
+                            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+                            <div class="oops">Oops!</div>
+                            <div class="nothing">Nothing to show here at the moment.</div>
+                        </div>
+                    `;
+                                    }
                                 } else {
                                     alert('Error: ' + (data.error || 'Could not delete match.'));
                                 }
