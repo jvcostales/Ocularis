@@ -2,8 +2,6 @@
 {% block content %}
 
 <div class="card">
-    <p>Match Locked? {{ match_locked }}</p>
-
     <div class="post-title">Match</div>
     {% if users and users|length > 0 %}
     {% for user in users[:3] %}
@@ -78,7 +76,7 @@
     </div>
     {% endfor %}
     {% else %}
-    <div class="notifs-empty">
+    <div class="comments-empty">
         <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
         <div class="oops">Oops!</div>
         <div class="nothing">Nothing to show here at the moment.</div>
