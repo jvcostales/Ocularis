@@ -2618,8 +2618,8 @@ def pairup():
 def match():
     user_id = current_user.id
 
-    # ✅ Lock check
     if session.get("match_locked"):
+        debug_info = {"match_locked": True}
         return render_template(
             "match.html",
             users=[],
@@ -2629,7 +2629,7 @@ def match():
             profile_pic_url=url_for("static", filename="pfp.jpg"),
             actor_details={},
             user=current_user,
-            debug_info={}
+            debug_info=debug_info
         )
 
     conn = psycopg2.connect(
