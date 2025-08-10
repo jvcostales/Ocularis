@@ -57,36 +57,35 @@
     document.addEventListener("DOMContentLoaded", function () {
         const matchBtn = document.getElementById('matchBtn');
         const browseBtn = document.getElementById('browseBtn');
-        const matchLocked = {{ 'true' if match_locked else 'false' }
-    };
-    const browseLocked = {{ 'true' if browse_locked else 'false' }};
-    const timeRemaining = "{{ time_remaining or '' }}";
+        const matchLocked = {{ 'true' if match_locked else 'false' }};
+        const browseLocked = {{ 'true' if browse_locked else 'false' }};
+        const timeRemaining = "{{ time_remaining or '' }}";
 
-    if (matchBtn) {
-        if (matchLocked) {
-            matchBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Matching is locked for ' + timeRemaining + '.');
-            });
-        } else {
-            matchBtn.addEventListener('click', function () {
-                document.getElementById('matchForm').submit();
-            });
+        if (matchBtn) {
+            if (matchLocked) {
+                matchBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Matching is locked for ' + timeRemaining + '.');
+                });
+            } else {
+                matchBtn.addEventListener('click', function () {
+                    document.getElementById('matchForm').submit();
+                });
+            }
         }
-    }
 
-    if (browseBtn) {
-        if (browseLocked) {
-            browseBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Browsing is locked for ' + timeRemaining + '.');
-            });
-        } else {
-            browseBtn.addEventListener('click', function () {
-                document.getElementById('browseForm').submit();
-            });
+        if (browseBtn) {
+            if (browseLocked) {
+                browseBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Browsing is locked for ' + timeRemaining + '.');
+                });
+            } else {
+                browseBtn.addEventListener('click', function () {
+                    document.getElementById('browseForm').submit();
+                });
+            }
         }
-    }
     });
 </script>
 
