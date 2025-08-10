@@ -2671,6 +2671,9 @@ def match():
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
+    
+    # Store total candidates count in session
+    session["total_candidates"] = len(rows)
 
     # Also fetch current user's own data
     cur.execute("""
@@ -2835,7 +2838,7 @@ def accept_match(target_id):
     cur.close()
     conn.close()
     session["match_locked"] = True
-    session["match_locked_time"] = datetime.utcnow().timestamp()
+    session["match_locked_time"] = datetime.now(timezone.utc).timestamp()
     return jsonify({"status": "locked"})
 
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
@@ -2844,9 +2847,11 @@ def decline_match(target_id):
     declines = session.get("declines", [])
     declines.append(target_id)
     session["declines"] = declines
-    if len(declines) >= 3:
+    total_candidates = session.get("total_candidates", 3)  # or pass dynamically
+
+    if len(declines) >= total_candidates:
         session["match_locked"] = True
-        session["match_locked_time"] = datetime.utcnow().timestamp()
+        session["match_locked_time"] = datetime.now(timezone.utc).timestamp()
         return jsonify({"status": "locked"})
     return jsonify({"status": "continue"})
 
