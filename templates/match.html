@@ -63,18 +63,36 @@
                     </div>
                 </div>
             </div>
-
-            <div class="request-icons" style="justify-content: center; gap: 10px;">
-                <button class="circled-icon-1" data-user-id="{{ user.id }}" type="button"
-                    aria-label="Decline user {{ user.first_name }}">
-                    <span class="material-symbols-outlined close-symbol">close</span>
-                </button>
-                <button class="circled-icon-2" data-recipient-id="{{ user.id }}" type="button"
-                    aria-label="Accept user {{ user.first_name }}">
-                    <span class="material-symbols-outlined check-symbol">check</span>
-                </button>
-                <button class="carousel-prev" type="button" aria-label="Previous user">&lt;</button>
-                <button class="carousel-next" type="button" aria-label="Next user">&gt;</button>
+            <div class="match-button-wrapper">
+                <div class="button-back-next">
+                    <button class="carousel-prev" type="button" aria-label="Previous user">
+                        <div class="partner-back">
+                            <span class="material-symbols-outlined lcs-symbol-back">arrow_back</span>
+                            <div class="partner-label-back">Back</div>
+                        </div>
+                    </button>
+                    <button class="carousel-next" type="button" aria-label="Next user">
+                        <div class="partner-back">
+                            <span class="material-symbols-outlined lcs-symbol-back">arrow_forward</span>
+                            <div class="partner-label-back">Next</div>
+                        </div>
+                    </button>
+                </div>
+                <div class="request-icons" style="justify-content: center; gap: 10px;">
+                    <button class="circled-icon-1" data-user-id="{{ user.id }}" type="button"
+                        aria-label="Decline user {{ user.first_name }}">
+                        <span class="material-symbols-outlined close-symbol">close</span>
+                    </button>
+                    <button class="circled-icon-2" data-recipient-id="{{ user.id }}" type="button"
+                        aria-label="Accept user {{ user.first_name }}">
+                        <span class="material-symbols-outlined check-symbol">check</span>
+                    </button>
+                </div>
+                <div class="scroll-indicator">
+                    <div class="si-track">
+                        <div class="si-thumb"></div>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -93,10 +111,20 @@
         const cards = Array.from(document.querySelectorAll(".card-container"));
         let carouselIndex = 0; // renamed from currentIndex
 
+        const indicatorThumb = document.querySelector(".si-thumb");
+
+        function updateScrollIndicator() {
+            if (!indicatorThumb) return;
+            const total = Math.max(cards.length, 1);
+            indicatorThumb.style.width = `calc(100% / ${total})`;
+            indicatorThumb.style.transform = `translateX(${carouselIndex * 100}%)`;
+        }
+
         function showCard(index) {
             cards.forEach((card, i) => {
                 card.style.display = (i === index) ? "block" : "none";
             });
+            updateScrollIndicator();
         }
 
         document.querySelectorAll(".carousel-next").forEach(btn => {
@@ -153,6 +181,10 @@
                     });
             });
         });
+
+        // Init
+        updateScrollIndicator();
+        showCard(carouselIndex);
     });
 </script>
 
