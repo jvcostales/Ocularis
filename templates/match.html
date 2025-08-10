@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            <div class="match-button-wrapper">
+            <div class="match-back-next-wrapper">
                 <div class="button-back-next">
                     <button class="carousel-prev" type="button" aria-label="Previous user">
                         <div class="partner-back">
@@ -89,9 +89,7 @@
                     </button>
                 </div>
                 <div class="scroll-indicator">
-                    <div class="si-track">
-                        <div class="si-thumb"></div>
-                    </div>
+                    <div class="scroll-indicator-bar"></div>
                 </div>
             </div>
         </div>
@@ -109,22 +107,20 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const cards = Array.from(document.querySelectorAll(".card-container"));
-        let carouselIndex = 0; // renamed from currentIndex
+        const indicatorBar = document.querySelector(".scroll-indicator-bar");
+        let carouselIndex = 0;
 
-        const indicatorThumb = document.querySelector(".si-thumb");
-
-        function updateScrollIndicator() {
-            if (!indicatorThumb) return;
-            const total = Math.max(cards.length, 1);
-            indicatorThumb.style.width = `calc(100% / ${total})`;
-            indicatorThumb.style.transform = `translateX(${carouselIndex * 100}%)`;
+        function updateIndicator(index) {
+            if (!indicatorBar) return;
+            const stepWidth = 90 / cards.length; // 90px divided into equal steps
+            indicatorBar.style.width = `${stepWidth * (index + 1)}px`;
         }
 
         function showCard(index) {
             cards.forEach((card, i) => {
                 card.style.display = (i === index) ? "block" : "none";
             });
-            updateScrollIndicator();
+            updateIndicator(index);
         }
 
         document.querySelectorAll(".carousel-next").forEach(btn => {
@@ -182,8 +178,7 @@
             });
         });
 
-        // Init
-        updateScrollIndicator();
+        // Initialize on load
         showCard(carouselIndex);
     });
 </script>

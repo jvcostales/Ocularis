@@ -349,36 +349,18 @@ span.delete-symbol:active {
 .scroll-indicator {
     width: 90px;
     height: 6px;
-    /* overall height (track height) */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.si-track {
-    width: 90px;
-    height: 6px;
-    background: #E0E0E0;
-    /* whole bar color */
+    background-color: #E0E0E0;
     position: relative;
     overflow: hidden;
 }
-
-.si-thumb {
-    position: absolute;
-    left: 0;
-    top: 0;
+.scroll-indicator-bar {
     height: 100%;
-    width: calc(100% / 3);
-    /* default for 3 cards; will be updated by JS for dynamic count */
-    background: #B9B9B9;
-    /* indicator color */
-    transform: translateX(0%);
-    transition: transform 240ms ease, width 240ms ease;
-    will-change: transform, width;
+    background-color: #B9B9B9;
+    width: 0; /* updated via JS */
+    transition: all 0.3s ease;
 }
 
-.match-button-wrapper {
+.match-back-next-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -388,6 +370,17 @@ span.delete-symbol:active {
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.carousel-prev,
+.carousel-next {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Desktop: 12-column layout */
