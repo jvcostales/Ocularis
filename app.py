@@ -2618,19 +2618,33 @@ def pairup():
 def match():
     user_id = current_user.id
 
-    if session.get("match_locked"):
-        debug_info = {"match_locked": True}
-        return render_template(
-            "match.html",
-            users=[],
-            notifications=[],
-            requests=[],
-            verified=current_user.verified,
-            profile_pic_url=url_for("static", filename="pfp.jpg"),
-            actor_details={},
-            user=current_user,
-            debug_info=debug_info
-        )
+    lock_duration_seconds = 3 * 60  # 3 minutes
+    lock_time = session.get("match_locked_time")
+
+    if session.get("match_locked") and lock_time:
+        now_utc = datetime.now(timezone.utc)
+        locked_at = datetime.fromtimestamp(lock_time, timezone.utc)
+        elapsed = (now_utc - locked_at).total_seconds()
+
+        if elapsed > lock_duration_seconds:
+            # Unlock
+            session.pop("match_locked", None)
+            session.pop("match_locked_time", None)
+            session.pop("declines", None)
+        else:
+            time_remaining = str(timedelta(seconds=lock_duration_seconds - elapsed)).split('.')[0]
+            return render_template(
+                "match.html",
+                users=[],
+                notifications=[],
+                requests=[],
+                verified=current_user.verified,
+                profile_pic_url=url_for("static", filename="pfp.jpg"),
+                actor_details={},
+                user=current_user,
+                debug_info={},
+                time_remaining=time_remaining
+            )
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -2821,6 +2835,7 @@ def accept_match(target_id):
     cur.close()
     conn.close()
     session["match_locked"] = True
+    session["match_locked_time"] = datetime.utcnow().timestamp()
     return jsonify({"status": "locked"})
 
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
@@ -2831,6 +2846,7 @@ def decline_match(target_id):
     session["declines"] = declines
     if len(declines) >= 3:
         session["match_locked"] = True
+        session["match_locked_time"] = datetime.utcnow().timestamp()
         return jsonify({"status": "locked"})
     return jsonify({"status": "continue"})
 
