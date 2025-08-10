@@ -2628,7 +2628,8 @@ def match():
             verified=current_user.verified,
             profile_pic_url=url_for("static", filename="pfp.jpg"),
             actor_details={},
-            user=current_user
+            user=current_user,
+            debug_info={}
         )
 
     conn = psycopg2.connect(
@@ -2754,7 +2755,7 @@ def match():
     if similar_users_df.empty:
         cur.close()
         conn.close()
-        return render_template("match.html", users=[])
+        return render_template("match.html", users=[], debug_info={})
 
     # Get recommended user info
     user_ids = similar_users_df['user'].tolist()
