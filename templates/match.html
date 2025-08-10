@@ -98,7 +98,7 @@
             btn.addEventListener("click", function () {
                 fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
                     .then(res => res.json()).then(data => {
-                        if (data.status === "locked") window.location.href = "/match";
+                        if (data.status === "locked") window.location.href = "/pairup";
                         else location.reload(); // Optionally reload to update UI or remove accepted user
                     });
             });
@@ -111,7 +111,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "locked") {
-                            window.location.href = "/match";
+                            window.location.href = "/pairup";
                         } else {
                             this.closest(".card-container").remove();
                         }
