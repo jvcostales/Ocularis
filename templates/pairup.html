@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<p>Match Locked: {{ match_locked }}</p>
-<p>Browse Locked: {{ browse_locked }}</p>
-<p>Time Remaining: {{ time_remaining }}</p>
-
 <div class="card-pairup">
     <div class="post-title-pairup">Pair Up</div>
     <div class="pairup-tagline">One eye sees,
@@ -15,50 +11,43 @@
         <form id="matchForm" action="/match" method="POST" style="display: none;"></form>
         <form id="browseForm" action="/browse" method="POST" style="display: none;"></form>
 
-        <!-- Action buttons wrapped in div with tooltip if disabled -->
-        <div {% if match_locked %} title="Matching is locked for {{ time_remaining }}" {% endif %}>
-            <button id="matchBtn" class="match-button" type="button" 
-                {% if match_locked %} disabled {% endif %}>
-                Match
-            </button>
-        </div>
-
-        <div {% if browse_locked %} title="Browsing is locked for {{ time_remaining }}" {% endif %}>
-            <button id="browseBtn" class="browse-button" type="button" 
-                {% if browse_locked %} disabled {% endif %}>
-                Browse
-            </button>
-        </div>
+        <!-- Action buttons -->
+        <button id="matchBtn" class="match-button">
+            Match
+        </button>
+        <button id="browseBtn" class="browse-button">
+            Browse
+        </button>
     </div>
 </div>
 
 <div class="card">
     <div class="post-title">Recent</div>
     {% if recent_matches %}
-        {% for match in recent_matches %}
-        <div class="profile-more-wrapper-pairup">
-            <div class="profile-post-pairup">
-                <img src="{{ url_for('profile_pics', filename=match[4]) if match[4] and match[4] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
-                    class="pfp">
-                <div class="profile-name-date">
-                    <div class="username"><a href="/profile/{{ match[0] }}">{{ match[1] }} {{ match[2] }}</a></div>
-                    <div class="date">{{ match[3].strftime('%b') }} {{ match[3].day }}</div>
-                </div>
-            </div>
-            <div class="more-frame-wrapper">
-                <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
-                <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
-                    <div class="save delete-match" data-id="{{ match[0] }}">Delete</div>
-                </div>
+    {% for match in recent_matches %}
+    <div class="profile-more-wrapper-pairup">
+        <div class="profile-post-pairup">
+            <img src="{{ url_for('profile_pics', filename=match[4]) if match[4] and match[4] != 'pfp.jpg' else url_for('static', filename='pfp.jpg') }}"
+                class="pfp">
+            <div class="profile-name-date">
+                <div class="username"><a href="/profile/{{ match[0] }}">{{ match[1] }} {{ match[2] }}</a></div>
+                <div class="date">{{ match[3].strftime('%b') }} {{ match[3].day }}</div>
             </div>
         </div>
-        {% endfor %}
+        <div class="more-frame-wrapper">
+            <span class="material-symbols-outlined more-symbol" id="moreBtn-{{ loop.index }}">more_horiz</span>
+            <div class="frame1" id="frame1-{{ loop.index }}" style="display: none;">
+                <div class="save delete-match" data-id="{{ match[0] }}">Delete</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
     {% else %}
-        <div class="notifs-empty" style="margin: 48px 0;">
-            <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
-            <div class="oops">Oops!</div>
-            <div class="nothing">Nothing to show here at the moment.</div>
-        </div>
+    <div class="notifs-empty" style="margin: 48px 0;">
+        <span class="material-symbols-outlined empty-symbol">sentiment_dissatisfied</span>
+        <div class="oops">Oops!</div>
+        <div class="nothing">Nothing to show here at the moment.</div>
+    </div>
     {% endif %}
 </div>
 
@@ -69,17 +58,35 @@
         const matchBtn = document.getElementById('matchBtn');
         const browseBtn = document.getElementById('browseBtn');
 
-        if (matchBtn && !matchBtn.disabled) {
+        {% if match_locked %}
+        if (matchBtn) {
+            matchBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Matching is locked for {{ time_remaining }}.');
+            });
+        }
+        {% else %}
+        if (matchBtn) {
             matchBtn.addEventListener('click', function () {
                 document.getElementById('matchForm').submit();
             });
         }
+        {% endif %}
 
-        if (browseBtn && !browseBtn.disabled) {
+        {% if browse_locked %}
+        if (browseBtn) {
+            browseBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Browsing is locked for {{ time_remaining }}.');
+            });
+        }
+        {% else %}
+        if (browseBtn) {
             browseBtn.addEventListener('click', function () {
                 document.getElementById('browseForm').submit();
             });
         }
+        {% endif %}
     });
 </script>
 
