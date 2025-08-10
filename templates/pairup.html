@@ -57,36 +57,36 @@
     document.addEventListener("DOMContentLoaded", function () {
         const matchBtn = document.getElementById('matchBtn');
         const browseBtn = document.getElementById('browseBtn');
+        const matchLocked = {{ 'true' if match_locked else 'false' }
+    };
+    const browseLocked = {{ 'true' if browse_locked else 'false' }};
+    const timeRemaining = "{{ time_remaining or '' }}";
 
-        {% if match_locked %}
-        if (matchBtn) {
+    if (matchBtn) {
+        if (matchLocked) {
             matchBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                alert('Matching is locked for {{ time_remaining }}.');
+                alert('Matching is locked for ' + timeRemaining + '.');
             });
-        }
-        {% else %}
-        if (matchBtn) {
+        } else {
             matchBtn.addEventListener('click', function () {
                 document.getElementById('matchForm').submit();
             });
         }
-        {% endif %}
+    }
 
-        {% if browse_locked %}
-        if (browseBtn) {
+    if (browseBtn) {
+        if (browseLocked) {
             browseBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                alert('Browsing is locked for {{ time_remaining }}.');
+                alert('Browsing is locked for ' + timeRemaining + '.');
             });
-        }
-        {% else %}
-        if (browseBtn) {
+        } else {
             browseBtn.addEventListener('click', function () {
                 document.getElementById('browseForm').submit();
             });
         }
-        {% endif %}
+    }
     });
 </script>
 
