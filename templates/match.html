@@ -95,18 +95,7 @@
 
         function showCard(index) {
             cards.forEach((card, i) => {
-                if (i === index) {
-                    card.style.display = "block";
-
-                    // Reset nav-section to first
-                    const sections = card.querySelectorAll(".nav-section");
-                    sections.forEach((sec, idx) => {
-                        sec.style.display = (idx === 0) ? "block" : "none";
-                    });
-
-                } else {
-                    card.style.display = "none";
-                }
+                card.style.display = (i === index) ? "block" : "none";
             });
         }
 
