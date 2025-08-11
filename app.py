@@ -2670,39 +2670,52 @@ def pairup():
         match_details=match_details
     )
 
+LOCK_DURATION_SECONDS = 3 * 60  # 3 minutes
+
+def is_locked():
+    """Check if the match/browse routes are in cooldown."""
+    lock_time = session.get("match_locked_time")
+    if not session.get("match_locked") or not lock_time:
+        return False, 0
+    now_utc = datetime.now(timezone.utc)
+    locked_at = datetime.fromtimestamp(lock_time, timezone.utc)
+    elapsed = (now_utc - locked_at).total_seconds()
+    if elapsed > LOCK_DURATION_SECONDS:
+        # Unlock if time expired
+        session.pop("match_locked", None)
+        session.pop("match_locked_time", None)
+        session.pop("declines", None)
+        return False, 0
+    return True, LOCK_DURATION_SECONDS - elapsed
+
+
+def set_lock():
+    """Set cooldown lock for match/browse routes."""
+    session["match_locked"] = True
+    session["match_locked_time"] = datetime.now(timezone.utc).timestamp()
+
+
 @app.route('/match', methods=['POST'])
 @login_required
 def match():
+    
     user_id = current_user.id
+    locked, time_remaining_secs = is_locked()
+    if locked:
+        return render_template(
+            "match.html",
+            users=[],
+            notifications=[],
+            requests=[],
+            verified=current_user.verified,
+            profile_pic_url=url_for("static", filename="pfp.jpg"),
+            actor_details={},
+            user=current_user,
+            debug_info={},
+            time_remaining=str(timedelta(seconds=time_remaining_secs)).split('.')[0]
+        )
 
-    lock_duration_seconds = 3 * 60  # 3 minutes
-    lock_time = session.get("match_locked_time")
-
-    if session.get("match_locked") and lock_time:
-        now_utc = datetime.now(timezone.utc)
-        locked_at = datetime.fromtimestamp(lock_time, timezone.utc)
-        elapsed = (now_utc - locked_at).total_seconds()
-
-        if elapsed > lock_duration_seconds:
-            # Unlock
-            session.pop("match_locked", None)
-            session.pop("match_locked_time", None)
-            session.pop("declines", None)
-        else:
-            time_remaining = str(timedelta(seconds=lock_duration_seconds - elapsed)).split('.')[0]
-            return render_template(
-                "match.html",
-                users=[],
-                notifications=[],
-                requests=[],
-                verified=current_user.verified,
-                profile_pic_url=url_for("static", filename="pfp.jpg"),
-                actor_details={},
-                user=current_user,
-                debug_info={},
-                time_remaining=time_remaining
-            )
-
+    # --- DB connection ---
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
         dbname="ocularis_db", 
@@ -2713,13 +2726,12 @@ def match():
     cur = conn.cursor()
 
     # Get matched IDs
-    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
+    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (current_user.id,))
     matched_ids = [row[0] for row in cur.fetchall()]
     declined_ids = session.get("declines", [])
-    exclude_ids = matched_ids + declined_ids + [user_id]
-
+    exclude_ids = matched_ids + declined_ids + [current_user.id]
     if not exclude_ids:
-        exclude_ids = [-1]  # to prevent SQL error on empty tuple
+        exclude_ids = [-1]  # prevent SQL syntax error
 
     # Fetch candidates
     cur.execute("""
@@ -2728,8 +2740,6 @@ def match():
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
-    
-    # Store total candidates count in session
     session["total_candidates"] = len(rows)
 
     # Also fetch current user's own data
@@ -2903,7 +2913,7 @@ def accept_match(target_id):
         VALUES (%s, %s, 'match_accept', %s)
     """, (target_id, user_id, now))
 
-    # Record cooldown start in collab_actions
+    # Record cooldown in DB
     cur.execute("""
         INSERT INTO collab_actions (user_id, action_time) 
         VALUES (%s, %s)
@@ -2913,16 +2923,10 @@ def accept_match(target_id):
     cur.close()
     conn.close()
 
-    # Track decline count in session for batch locking
-    declines = session.get("declines", [])
-    declines.append(target_id)
-    session["declines"] = declines
-    total_candidates = session.get("total_candidates", 3)
+    # Set cooldown lock immediately
+    set_lock()
 
-    if len(declines) >= total_candidates:
-        return redirect(url_for("pairup"))
-
-    return redirect(url_for("match"))
+    return redirect(url_for("pairup"))
 
 
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
@@ -2945,15 +2949,17 @@ def decline_match(target_id):
         )
         cur = conn.cursor()
 
-        # Record cooldown start in collab_actions
+        # Record cooldown start
         cur.execute("""
             INSERT INTO collab_actions (user_id, action_time) 
             VALUES (%s, %s)
         """, (current_user.id, now))
-
         conn.commit()
         cur.close()
         conn.close()
+
+        # Set lock
+        set_lock()
 
         return redirect(url_for("pairup"))
 
@@ -3148,11 +3154,9 @@ def get_random_users(current_user_id):
 def browse_users():
     user_id = current_user.id
 
-    # ✅ If match is locked, don't show users
-    if session.get("match_locked"):
-        users = []
-    else:
-        users = get_random_users(user_id)
+    # ✅ Unified cooldown logic
+    locked, time_remaining_secs = is_locked()
+    users = [] if locked else get_random_users(user_id)
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -3245,12 +3249,13 @@ def browse_users():
     return render_template(
         'browse.html',
         user=current_user,
-        users=users,  # ✅ now empty if locked
+        users=users,
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
         profile_pic_url=profile_pic_url,
-        actor_details=actor_details
+        actor_details=actor_details,
+        time_remaining=str(timedelta(seconds=time_remaining_secs)).split('.')[0] if locked else None
     )
         
 UPLOAD_FOLDER = '/var/data'

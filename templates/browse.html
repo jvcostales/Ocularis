@@ -3,6 +3,13 @@
 
 <div class="card">
     <div class="post-title">Browse</div>
+
+    {% if time_remaining %}
+    <div class="cooldown-message" style="text-align: center; margin: 2rem 0;">
+        <h3>⏳ Come back soon!</h3>
+        <p>You can browse again in <strong>{{ time_remaining }}</strong>.</p>
+    </div>
+    {% else %}
     {% for user in users %}
     <div class="profile-more-wrapper-pairup">
         <div class="profile-post-pairup">
@@ -50,6 +57,10 @@
             {% endif %}
         </div>
     </div>
+    {% else %}
+    <p style="text-align: center; margin: 1rem 0;">No users to show right now.</p>
     {% endfor %}
+    {% endif %}
 </div>
+
 {% endblock %}
