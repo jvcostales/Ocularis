@@ -80,14 +80,14 @@
                     </button>
                 </div>
                 <div class="request-icons" style="justify-content: center; gap: 10px;">
-                    <form action="{{ url_for('decline_match', target_id=user.id) }}" method="POST"
+                    <form action="{{ url_for('decline_match', target_id=user.id) }}" method="post"
                         style="display:inline;">
                         <button class="circled-icon-1" type="submit" aria-label="Decline user {{ user.first_name }}">
                             <span class="material-symbols-outlined close-symbol">close</span>
                         </button>
                     </form>
 
-                    <form action="{{ url_for('accept_match', target_id=user.id) }}" method="POST"
+                    <form action="{{ url_for('accept_match', target_id=user.id) }}" method="post"
                         style="display:inline;">
                         <button class="circled-icon-2" type="submit" aria-label="Accept user {{ user.first_name }}">
                             <span class="material-symbols-outlined check-symbol">check</span>
