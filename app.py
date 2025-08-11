@@ -2698,22 +2698,7 @@ def set_lock():
 @app.route('/match', methods=['POST'])
 @login_required
 def match():
-    
     user_id = current_user.id
-    locked, time_remaining_secs = is_locked()
-    if locked:
-        return render_template(
-            "match.html",
-            users=[],
-            notifications=[],
-            requests=[],
-            verified=current_user.verified,
-            profile_pic_url=url_for("static", filename="pfp.jpg"),
-            actor_details={},
-            user=current_user,
-            debug_info={},
-            time_remaining=str(timedelta(seconds=time_remaining_secs)).split('.')[0]
-        )
 
     # --- DB connection ---
     conn = psycopg2.connect(
@@ -2725,11 +2710,11 @@ def match():
     )
     cur = conn.cursor()
 
-    # Get matched IDs
-    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (current_user.id,))
+    # Get matched and declined IDs
+    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
     declined_ids = session.get("declines", [])
-    exclude_ids = matched_ids + declined_ids + [current_user.id]
+    exclude_ids = matched_ids + declined_ids + [user_id]
     if not exclude_ids:
         exclude_ids = [-1]  # prevent SQL syntax error
 
@@ -2740,9 +2725,26 @@ def match():
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
-    session["total_candidates"] = len(rows)
 
-    # Also fetch current user's own data
+    # --- Early lock: no DB candidates at all ---
+    if len(rows) == 0:
+        locked, time_remaining_secs = is_locked(force=True)  # force set lock
+        cur.close()
+        conn.close()
+        return render_template(
+            "match.html",
+            users=[],
+            notifications=[],
+            requests=[],
+            verified=current_user.verified,
+            profile_pic_url=url_for("static", filename="pfp.jpg"),
+            actor_details={},
+            user=current_user,
+            debug_info={"reason": "no candidates left"},
+            time_remaining=str(timedelta(seconds=time_remaining_secs)).split('.')[0]
+        )
+
+    # Append current user's own data for similarity calculation
     cur.execute("""
         SELECT id, skills, preferences, experience_level
         FROM users
@@ -2752,7 +2754,7 @@ def match():
     if self_data:
         rows.append(self_data)
 
-    # Fetch notifications
+    # --- Notifications ---
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
                notifications.action_type,
@@ -2801,7 +2803,7 @@ def match():
                 "email": user[16]
             }
 
-    # Friend requests
+    # --- Friend requests ---
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2811,12 +2813,12 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # Current user profile pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    # --- Current user profile pic ---
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # Prepare recommender data (unchanged)
+    # --- Prepare recommender data ---
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2836,19 +2838,30 @@ def match():
 
     target_index = df[df['user'] == user_id].index[0]
     similar_users_df = get_similar_users(target_index, df)
+
     if similar_users_df.empty:
         cur.close()
         conn.close()
         return render_template("match.html", users=[], debug_info={}, user=current_user)
 
-    # Get recommended user info
+    # --- Get recommended user info ---
     user_ids = similar_users_df['user'].tolist()
     cur.execute("""
         SELECT id, first_name, last_name, role, profile_pic, facebook, email
         FROM users WHERE id = ANY(%s)
     """, (user_ids,))
     name_rows = cur.fetchall()
-    name_map = {row[0]: {"id": row[0], "first_name": row[1], "last_name": row[2], "role": row[3], "profile_pic": row[4], "facebook": row[5], "email": row[6]} for row in name_rows}
+    name_map = {
+        row[0]: {
+            "id": row[0],
+            "first_name": row[1],
+            "last_name": row[2],
+            "role": row[3],
+            "profile_pic": row[4],
+            "facebook": row[5],
+            "email": row[6]
+        } for row in name_rows
+    }
 
     users_list = []
     for user in similar_users_df.to_dict(orient='records'):
@@ -2863,9 +2876,17 @@ def match():
         user.update(details)
         users_list.append(user)
 
+    # --- SECOND lock check: after declines applied ---
+    remaining_candidates = [u for u in users_list if u["id"] not in declined_ids]
+    if not remaining_candidates:
+        cur.close()
+        conn.close()
+        locked, time_remaining_secs = is_locked(force=True)
+        return redirect(url_for("pairup"))
+
     cur.close()
     conn.close()
-    
+
     debug_info = {
         "matched_ids": matched_ids,
         "declined_ids": declined_ids,
@@ -2874,7 +2895,8 @@ def match():
         "similar_users_count": len(similar_users_df) if not similar_users_df.empty else 0,
     }
 
-    return render_template("match.html",
+    return render_template(
+        "match.html",
         current_page='match',
         users=users_list[:3],
         notifications=notifications,
