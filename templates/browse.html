@@ -2,14 +2,9 @@
 {% block content %}
 
 <div class="card">
-    <div class="post-title">Browse</div>
+    <div class="post-title">Pair Up</div>
 
-    {% if time_remaining %}
-    <div class="cooldown-message" style="text-align: center; margin: 2rem 0;">
-        <h3>⏳ Come back soon!</h3>
-        <p>You can browse again in <strong>{{ time_remaining }}</strong>.</p>
-    </div>
-    {% else %}
+    {% if users %}
     {% for user in users %}
     <div class="profile-more-wrapper-pairup">
         <div class="profile-post-pairup">
@@ -21,45 +16,20 @@
                         {{ user.first_name }} {{ user.last_name }}
                     </a>
                 </div>
-                <div class="date">Jan 1</div>
             </div>
         </div>
         <div class="follow-action">
-            {% if user.relationship == 'friends' %}
-            <form action="{{ url_for('unfriend', other_user_id=user.id) }}" method="post">
-                <button type="submit" class="follow-button-profile no-margin">Unfriend</button>
+            <form action="{{ url_for('accept_match', target_id=user.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="follow-button-profile no-margin">Accept</button>
             </form>
-            {% elif user.relationship == 'incoming_pending' %}
-            <div class="response-wrapper" style="margin: 0;">
-                <form action="{{ url_for('accept_request', request_id=user.request_id) }}" method="post">
-                    <button type="submit" class="follow-button-profile no-margin">Confirm</button>
-                </form>
-                <form action="{{ url_for('reject_request', request_id=user.request_id) }}" method="post">
-                    <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
-                </form>
-            </div>
-            {% elif user.relationship == 'outgoing_pending' %}
-            <form action="{{ url_for('cancel_request', user_id=user.id) }}" method="post">
-                <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
+            <form action="{{ url_for('decline_match', target_id=user.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="follow-button-profile-secondary no-margin">Decline</button>
             </form>
-            {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
-            {% if verified %}
-            <form action="{{ url_for('send_request', receiver_id=user.id) }}" method="post">
-                <button type="submit" class="follow-button-profile no-margin">Befriend</button>
-            </form>
-            {% else %}
-            <div title="Verify your email to add friends">
-                <form action="#" method="post">
-                    <button type="submit" class="follow-button-profile-disabled no-margin" disabled>Befriend</button>
-                </form>
-            </div>
-            {% endif %}
-            {% endif %}
         </div>
     </div>
-    {% else %}
-    <p style="text-align: center; margin: 1rem 0;">No users to show right now.</p>
     {% endfor %}
+    {% else %}
+    <p>No more matches available.</p>
     {% endif %}
 </div>
 

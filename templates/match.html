@@ -80,19 +80,14 @@
                     </button>
                 </div>
                 <div class="request-icons" style="justify-content: center; gap: 10px;">
-                    <form action="{{ url_for('decline_match', target_id=user.id) }}" method="post"
-                        style="display:inline;">
-                        <button class="circled-icon-1" type="submit" aria-label="Decline user {{ user.first_name }}">
-                            <span class="material-symbols-outlined close-symbol">close</span>
-                        </button>
-                    </form>
-
-                    <form action="{{ url_for('accept_match', target_id=user.id) }}" method="post"
-                        style="display:inline;">
-                        <button class="circled-icon-2" type="submit" aria-label="Accept user {{ user.first_name }}">
-                            <span class="material-symbols-outlined check-symbol">check</span>
-                        </button>
-                    </form>
+                    <button class="circled-icon-1" data-user-id="{{ user.id }}" type="button"
+                        aria-label="Decline user {{ user.first_name }}">
+                        <span class="material-symbols-outlined close-symbol">close</span>
+                    </button>
+                    <button class="circled-icon-2" data-recipient-id="{{ user.id }}" type="button"
+                        aria-label="Accept user {{ user.first_name }}">
+                        <span class="material-symbols-outlined check-symbol">check</span>
+                    </button>
                 </div>
                 <div class="scroll-indicator" style="justify-self: flex-end;">
                     <div class="scroll-indicator-bar"></div>
@@ -143,6 +138,35 @@
             btn.addEventListener("click", () => {
                 carouselIndex = (carouselIndex - 1 + totalCards) % totalCards;
                 showCard(carouselIndex);
+            });
+        });
+
+        // Accept button
+        document.querySelectorAll(".circled-icon-2").forEach(btn => {
+            btn.addEventListener("click", function () {
+                fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
+                    .then(res => res.json())
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch(err => console.error("Accept error:", err));
+            });
+        });
+
+        // Decline button
+        document.querySelectorAll(".circled-icon-1").forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
+                    .then(res => res.json())
+                    .then(() => {
+                        const card = this.closest(".card-container");
+                        if (card) card.remove();
+                        if (document.querySelectorAll(".card-container").length === 0) {
+                            window.location.href = "/pairup";
+                        }
+                    })
+                    .catch(err => console.error("Decline error:", err));
             });
         });
 
