@@ -80,14 +80,19 @@
                     </button>
                 </div>
                 <div class="request-icons" style="justify-content: center; gap: 10px;">
-                    <button class="circled-icon-1" data-user-id="{{ user.id }}" type="button"
-                        aria-label="Decline user {{ user.first_name }}">
-                        <span class="material-symbols-outlined close-symbol">close</span>
-                    </button>
-                    <button class="circled-icon-2" data-recipient-id="{{ user.id }}" type="button"
-                        aria-label="Accept user {{ user.first_name }}">
-                        <span class="material-symbols-outlined check-symbol">check</span>
-                    </button>
+                    <form action="{{ url_for('decline_match', target_id=user.id) }}" method="POST"
+                        style="display:inline;">
+                        <button class="circled-icon-1" type="submit" aria-label="Decline user {{ user.first_name }}">
+                            <span class="material-symbols-outlined close-symbol">close</span>
+                        </button>
+                    </form>
+
+                    <form action="{{ url_for('accept_match', target_id=user.id) }}" method="POST"
+                        style="display:inline;">
+                        <button class="circled-icon-2" type="submit" aria-label="Accept user {{ user.first_name }}">
+                            <span class="material-symbols-outlined check-symbol">check</span>
+                        </button>
+                    </form>
                 </div>
                 <div class="scroll-indicator" style="justify-self: flex-end;">
                     <div class="scroll-indicator-bar"></div>
@@ -110,14 +115,12 @@
         let carouselIndex = 0;
         const cards = Array.from(document.querySelectorAll(".card-container"));
         const totalCards = cards.length;
-        const stepWidth = 90 / totalCards; // 30px if totalCards = 3
+        const stepWidth = 90 / totalCards;
 
         function updateIndicator(index) {
             const activeCard = cards[index];
             const indicatorBar = activeCard.querySelector(".scroll-indicator-bar");
             if (!indicatorBar) return;
-
-            // Fixed width (1/3 of the total bar), moves horizontally
             indicatorBar.style.width = `${stepWidth}px`;
             indicatorBar.style.transform = `translateX(${index * stepWidth}px)`;
         }
@@ -143,47 +146,6 @@
             });
         });
 
-        // Accept button
-        document.querySelectorAll(".circled-icon-2").forEach(btn => {
-            btn.addEventListener("click", function () {
-                fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === "locked") {
-                            window.location.href = "/pairup";
-                        } else {
-                            // Reload page to update UI after accept
-                            location.reload();
-                        }
-                    })
-                    .catch(err => console.error("Accept error:", err));
-            });
-        });
-
-        // Decline button
-        document.querySelectorAll(".circled-icon-1").forEach(btn => {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === "locked") {
-                            window.location.href = "/pairup";
-                        } else {
-                            const card = this.closest(".card-container");
-                            if (card) card.remove();
-
-                            // If no cards remain, redirect
-                            if (document.querySelectorAll(".card-container").length === 0) {
-                                window.location.href = "/pairup";
-                            }
-                        }
-                    })
-                    .catch(err => console.error("Decline error:", err));
-            });
-        });
-
-        // Initialize on load
         showCard(carouselIndex);
     });
 </script>

@@ -2674,20 +2674,20 @@ def pairup():
 @login_required
 def match():
     user_id = current_user.id
+
     lock_duration_seconds = 3 * 60  # 3 minutes
     lock_time = session.get("match_locked_time")
 
-    # Cooldown check
     if session.get("match_locked") and lock_time:
         now_utc = datetime.now(timezone.utc)
         locked_at = datetime.fromtimestamp(lock_time, timezone.utc)
         elapsed = (now_utc - locked_at).total_seconds()
 
         if elapsed > lock_duration_seconds:
+            # Unlock
             session.pop("match_locked", None)
             session.pop("match_locked_time", None)
             session.pop("declines", None)
-            session.pop("current_batch_ids", None)
         else:
             time_remaining = str(timedelta(seconds=lock_duration_seconds - elapsed)).split('.')[0]
             return render_template(
@@ -2703,12 +2703,11 @@ def match():
                 time_remaining=time_remaining
             )
 
-    # DB connection
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-        dbname="ocularis_db",
-        user="ocularis_db_user",
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+        dbname="ocularis_db", 
+        user="ocularis_db_user", 
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
         port=5432
     )
     cur = conn.cursor()
@@ -2720,7 +2719,7 @@ def match():
     exclude_ids = matched_ids + declined_ids + [user_id]
 
     if not exclude_ids:
-        exclude_ids = [-1]
+        exclude_ids = [-1]  # to prevent SQL error on empty tuple
 
     # Fetch candidates
     cur.execute("""
@@ -2729,8 +2728,11 @@ def match():
         WHERE id NOT IN %s AND is_profile_complete = TRUE
     """, (tuple(exclude_ids),))
     rows = cur.fetchall()
+    
+    # Store total candidates count in session
+    session["total_candidates"] = len(rows)
 
-    # Current user's own data (for recommender)
+    # Also fetch current user's own data
     cur.execute("""
         SELECT id, skills, preferences, experience_level
         FROM users
@@ -2740,7 +2742,7 @@ def match():
     if self_data:
         rows.append(self_data)
 
-    # Notifications
+    # Fetch notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
                notifications.action_type,
@@ -2799,12 +2801,12 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # Profile pic
+    # Current user profile pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # Recommender prep
+    # Prepare recommender data (unchanged)
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2853,22 +2855,18 @@ def match():
 
     cur.close()
     conn.close()
-
-    # Take only first 3 and store their IDs for decline tracking
-    batch_users = users_list[:3]
-    session["current_batch_ids"] = [u["id"] for u in batch_users]
-
+    
     debug_info = {
         "matched_ids": matched_ids,
         "declined_ids": declined_ids,
         "exclude_ids": exclude_ids,
-        "batch_ids": session["current_batch_ids"],
+        "candidate_count": len(rows),
         "similar_users_count": len(similar_users_df) if not similar_users_df.empty else 0,
     }
 
     return render_template("match.html",
         current_page='match',
-        users=batch_users,
+        users=users_list[:3],
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
@@ -2915,32 +2913,41 @@ def accept_match(target_id):
     cur.close()
     conn.close()
 
-    return jsonify({"status": "locked", "cooldown_start": now.isoformat()})
+    # Track decline count in session for batch locking
+    declines = session.get("declines", [])
+    declines.append(target_id)
+    session["declines"] = declines
+    total_candidates = session.get("total_candidates", 3)
+
+    if len(declines) >= total_candidates:
+        return redirect(url_for("pairup"))
+
+    return redirect(url_for("match"))
+
 
 @app.route('/match/decline/<int:target_id>', methods=['POST'])
 @login_required
 def decline_match(target_id):
-    declines = set(session.get("declines", []))
-    declines.add(target_id)
-    session["declines"] = list(declines)
+    declines = session.get("declines", [])
+    declines.append(target_id)
+    session["declines"] = declines
+    total_candidates = session.get("total_candidates", 3)
 
-    current_batch_ids = set(session.get("current_batch_ids", []))
-
-    # Check if all current batch recommendations were declined
-    if current_batch_ids and current_batch_ids.issubset(declines):
+    if len(declines) >= total_candidates:
         now = datetime.now(timezone.utc)
 
         conn = psycopg2.connect(
-            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
-            dbname="ocularis_db",
-            user="ocularis_db_user",
-            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
+            host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
+            dbname="ocularis_db", 
+            user="ocularis_db_user", 
+            password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
             port=5432
         )
         cur = conn.cursor()
 
+        # Record cooldown start in collab_actions
         cur.execute("""
-            INSERT INTO collab_actions (user_id, action_time)
+            INSERT INTO collab_actions (user_id, action_time) 
             VALUES (%s, %s)
         """, (current_user.id, now))
 
@@ -2948,9 +2955,9 @@ def decline_match(target_id):
         cur.close()
         conn.close()
 
-        return jsonify({"status": "locked", "cooldown_start": now.isoformat()})
+        return redirect(url_for("pairup"))
 
-    return jsonify({"status": "continue"})
+    return redirect(url_for("match"))
 
 @app.route('/api/get-countries')
 def get_countries():
