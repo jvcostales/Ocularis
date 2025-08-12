@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     recipient_id INT NOT NULL,
     actor_id INT NOT NULL,
     image_id INT, -- made nullable for notifications that don't relate to images
-    action_type VARCHAR(50) NOT NULL, -- e.g., 'like', 'comment', 'collab_check'
+    action_type VARCHAR(50) NOT NULL, -- e.g., 'like', 'comment', 'match_accept'
     created_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -2896,9 +2896,9 @@ def get_cities():
     return jsonify(filtered)
 
 
-@app.route('/notify/collab_check', methods=['POST'])
+@app.route('/notify/match_accept', methods=['POST'])
 @login_required
-def notify_collab_check():
+def notify_match_accept():
     data = request.get_json()
     try:
         recipient_id = int(data.get('recipient_id'))
@@ -2920,7 +2920,7 @@ def notify_collab_check():
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO notifications (recipient_id, actor_id, action_type)
-                    VALUES (%s, %s, 'collab_check')
+                    VALUES (%s, %s, 'match_accept')
                 """, (recipient_id, actor_id))
 
                 cur.execute("""
@@ -2977,7 +2977,7 @@ def decline_match_api():  # renamed to avoid clash
                 cur.execute("""
                     DELETE FROM notifications
                     WHERE ((recipient_id = %s AND actor_id = %s) OR (recipient_id = %s AND actor_id = %s))
-                        AND action_type = 'collab_check'
+                        AND action_type = 'match_accept'
                 """, (user_id, other_user_id, other_user_id, user_id))
 
         return jsonify({'message': 'Match and notification removed'}), 200

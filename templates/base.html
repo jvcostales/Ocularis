@@ -99,7 +99,7 @@
                                             commented on your <a
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                     style="font-weight: 600; cursor: pointer;">post</span></a>.
-                                            {% elif action == 'collab_check' %}
+                                            {% elif action == 'match_accept' %}
                                             found you as a
                                             <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
@@ -252,7 +252,7 @@
                                             commented on your <a
                                                 href="{{ url_for('view_post', image_id=image_id) }}"><span
                                                     style="font-weight: 600; cursor: pointer;">post</span></a>.
-                                            {% elif action == 'collab_check' %}
+                                            {% elif action == 'match_accept' %}
                                             found you as a
                                             <span class="open-modal"
                                                 onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
@@ -390,7 +390,7 @@
                                     {% elif action == 'comment' %}
                                     commented on your <a href="{{ url_for('view_post', image_id=image_id) }}"><span
                                             style="font-weight: 600; cursor: pointer;">post</span></a>.
-                                    {% elif action == 'collab_check' %}
+                                    {% elif action == 'match_accept' %}
                                     found you as a
                                     <span class="open-modal"
                                         onclick='openMatchModal({{ actor_details[actor_id] | tojson | safe }})'
@@ -2863,7 +2863,7 @@
                 document.getElementById('notify-btn').addEventListener('click', function () {
                     const recipientId = this.getAttribute('data-recipient-id');
 
-                    fetch('/notify/collab_check', {
+                    fetch('/notify/match_accept', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
