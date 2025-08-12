@@ -2705,7 +2705,7 @@ def match():
     # Fetch current user profile pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
-    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
+    profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp_match.jpg')
 
     # Get matched and declined IDs from session and DB
     cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
