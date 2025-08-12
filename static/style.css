@@ -82,14 +82,11 @@ body {
 #match-skills {
     display: flex;
     flex-wrap: wrap;
-    /* allows items to move to next line */
-    gap: 8px;
-    /* space between items */
+    column-gap: 8px;
 }
 
 #match-skills>* {
     flex: 0 0 auto;
-    /* prevents squishing */
 }
 
 @keyframes l3 {
@@ -2786,7 +2783,6 @@ span.delete-symbol:hover {
         display: flex;
         align-items: center;
         justify-content: left;
-        gap: 8px;
     }
 
     .info-one-match {
@@ -5230,7 +5226,6 @@ span.delete-symbol:hover {
         display: flex;
         align-items: center;
         justify-content: left;
-        gap: 8px;
     }
 
     .info-one-match {
@@ -7625,7 +7620,6 @@ span.delete-symbol:hover {
         display: flex;
         align-items: center;
         justify-content: left;
-        gap: 8px;
     }
 
     .info-one-match {
