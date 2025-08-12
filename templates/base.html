@@ -2187,7 +2187,7 @@
                     likeBtn.addEventListener('click', () => {
                         if (!imageId || !scrollableDiv) return;
 
-                        scrollableDiv.innerHTML = `<div class="loader"></div>`;
+                        scrollableDiv.innerHTML = `<div class="loading-msg"></div>`;
 
                         fetch(`/likes/${imageId}`)
                             .then(res => res.json())
@@ -2363,7 +2363,7 @@
         </button>
         <div class="overlay-title">Likes</div>
         <div class="scrollable-div-likes" id="scrollableDivCommentLikes-0" data-comment-id="${comment.comment_id}">
-            <div class="loading" style="display: none;"></div>
+            <div class="loading-msg" style="display: none;"></div>
         </div>
     </div>
 </div>
@@ -2401,7 +2401,7 @@
                     likeBtn.addEventListener('click', () => {
                         if (!commentId || !scrollableDiv) return;
 
-                        scrollableDiv.innerHTML = `<div class="loading"></div>`;
+                        scrollableDiv.innerHTML = `<div class="loading-msg"></div>`;
 
                         fetch(`/comment/likes/${commentId}`)
                             .then(res => res.json())
