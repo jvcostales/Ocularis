@@ -2046,7 +2046,9 @@
                 let matchScrollPosition = 0;
 
                 function openMatchModal(actor) {
-                    const profilePic = actor.profile_pic ? `/profile_pics/${actor.profile_pic}` : '/static/pfp.jpg';
+                    const profilePic = actor.profile_pic
+                        ? `/profile_pics/${actor.profile_pic}`
+                        : '/static/pfp.jpg';
                     const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
                     // Fill modal fields
@@ -2104,7 +2106,9 @@
                 let matchRecentScrollPosition = 0;
 
                 function openMatchRecentModal(actor) {
-                    const profilePic = actor.profile_pic ? `/profile_pics/${actor.profile_pic}` : '/static/pfp.jpg';
+                    const profilePic = actor.profile_pic
+                        ? `/profile_pics/${actor.profile_pic}`
+                        : '/static/pfp.jpg';
                     const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 
                     // Fill modal fields
