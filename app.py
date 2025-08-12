@@ -2760,7 +2760,7 @@ def match():
     if similar_users_df.empty:
         cur.close()
         conn.close()
-        return render_template("match.html", users=[], debug_info={})
+        return render_template("match.html", users=[], debug_info={}, user=current_user)
 
     # Get recommended user info
     user_ids = similar_users_df['user'].tolist()

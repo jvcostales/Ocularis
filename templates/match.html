@@ -141,29 +141,37 @@
             });
         });
 
-        // Accept button
+        // Accept button: always redirect to /pairup
         document.querySelectorAll(".circled-icon-2").forEach(btn => {
             btn.addEventListener("click", function () {
                 fetch(`/match/accept/${this.dataset.recipientId}`, { method: "POST" })
-                    .then(res => res.json())
                     .then(() => {
-                        location.reload();
+                        window.location.href = "/pairup";
                     })
                     .catch(err => console.error("Accept error:", err));
             });
         });
 
-        // Decline button
+        // Decline button: remove card, redirect if no cards left
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
                     .then(res => res.json())
-                    .then(() => {
+                    .then(data => {
+                        if (data.status === "locked") {
+                            window.location.href = "/pairup";
+                            return;
+                        }
                         const card = this.closest(".card-container");
                         if (card) card.remove();
+
                         if (document.querySelectorAll(".card-container").length === 0) {
                             window.location.href = "/pairup";
+                        } else {
+                            // Show next card or first if current was last
+                            carouselIndex = carouselIndex % document.querySelectorAll(".card-container").length;
+                            showCard(carouselIndex);
                         }
                     })
                     .catch(err => console.error("Decline error:", err));
