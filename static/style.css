@@ -79,6 +79,19 @@ body {
     margin: 50px auto;
 }
 
+#match-skills {
+    display: flex;
+    flex-wrap: wrap;
+    /* allows items to move to next line */
+    gap: 8px;
+    /* space between items */
+}
+
+#match-skills>* {
+    flex: 0 0 auto;
+    /* prevents squishing */
+}
+
 @keyframes l3 {
     20% {
         background-position: 0% 0%, 50% 50%, 100% 50%;
