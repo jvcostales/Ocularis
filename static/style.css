@@ -720,6 +720,10 @@ span.delete-symbol:active {
         font-size: 1rem;
     }
 
+    .partner-label-back {
+        font-size: 1rem;
+    }
+
     .lcs {
         display: flex;
         align-items: center;
@@ -3187,6 +3191,10 @@ span.delete-symbol:active {
         font-size: 1rem;
     }
 
+    .partner-label-back {
+        font-size: 1rem;
+    }
+
     .lcs {
         display: flex;
         align-items: center;
@@ -5545,6 +5553,10 @@ span.delete-symbol:active {
     }
 
     .partner-label {
+        display: none;
+    }
+
+    .partner-label-back {
         display: none;
     }
 
