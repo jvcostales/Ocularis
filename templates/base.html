@@ -1081,12 +1081,24 @@
 
                 // ✅ Assign imageId to hidden input
                 document.getElementById('reportImageId').value = imageId;
+
+                // Freeze background scroll
+                const currentScrollY = window.scrollY;
+                document.body.style.top = `-${currentScrollY}px`;
+                document.body.classList.add("no-scrolling");
+                document.body.dataset.scrollY = currentScrollY; // save scroll position
             }
 
             function closeReportModal() {
                 const modal = document.getElementById('reportModal');
                 modal.style.display = 'none';
                 document.body.style.overflow = "";  // reset it
+
+                // Unfreeze background scroll
+                const currentScrollY = parseInt(document.body.dataset.scrollY || "0");
+                document.body.classList.remove("no-scrolling");
+                document.body.style.top = "";
+                window.scrollTo(0, currentScrollY);
             }
 
             document.getElementById('reportForm').addEventListener('submit', function (e) {

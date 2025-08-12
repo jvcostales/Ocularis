@@ -76,6 +76,7 @@ body {
     /* Center horizontally */
     display: block;
     margin: 50px auto;
+    margin-top: 26px !important;
 }
 
 @keyframes l3 {
