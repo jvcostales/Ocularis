@@ -2845,14 +2845,13 @@ def accept_match(target_id):
 @login_required
 def decline_match(target_id):
     declines = session.get("declines", [])
-    declines.append(target_id)
+    if target_id not in declines:
+        declines.append(target_id)
     session["declines"] = declines
 
-    total_candidates = session.get("total_candidates", 3)
+    total_candidates = session.get("total_candidates", 0)
 
-    if len(declines) >= total_candidates:
-        # No cooldown, just reset declines
-        session["declines"] = []
+    if len(declines) >= total_candidates and total_candidates > 0:
         return jsonify({"status": "no_more_candidates"})
 
     return jsonify({"status": "continue"})
