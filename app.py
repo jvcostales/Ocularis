@@ -2635,43 +2635,13 @@ def match():
     user_id = current_user.id
 
     conn = psycopg2.connect(
-        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
-        dbname="ocularis_db", 
-        user="ocularis_db_user", 
-        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY", 
+        host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com",
+        dbname="ocularis_db",
+        user="ocularis_db_user",
+        password="ZMoBB0Iw1QOv8OwaCuFFIT0KRTw3HBoY",
         port=5432
     )
     cur = conn.cursor()
-
-    # Get matched IDs
-    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
-    matched_ids = [row[0] for row in cur.fetchall()]
-    declined_ids = session.get("declines", [])
-    exclude_ids = matched_ids + declined_ids + [user_id]
-
-    if not exclude_ids:
-        exclude_ids = [-1]  # to prevent SQL error on empty tuple
-
-    # Fetch candidates
-    cur.execute("""
-        SELECT id, skills, preferences, experience_level
-        FROM users
-        WHERE id NOT IN %s AND is_profile_complete = TRUE
-    """, (tuple(exclude_ids),))
-    rows = cur.fetchall()
-    
-    # Store total candidates count in session
-    session["total_candidates"] = len(rows)
-
-    # Also fetch current user's own data
-    cur.execute("""
-        SELECT id, skills, preferences, experience_level
-        FROM users
-        WHERE id = %s AND is_profile_complete = TRUE
-    """, (user_id,))
-    self_data = cur.fetchone()
-    if self_data:
-        rows.append(self_data)
 
     # Fetch notifications
     cur.execute("""
@@ -2688,7 +2658,7 @@ def match():
         ORDER BY notifications.created_at DESC
     """, (user_id,))
     notifications = cur.fetchall()
-
+    
     actor_ids = list(set([n[4] for n in notifications]))
     actor_details = {}
     for actor_id in actor_ids:
@@ -2722,7 +2692,7 @@ def match():
                 "email": user[16]
             }
 
-    # Friend requests
+    # Fetch friend requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2732,12 +2702,42 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # Current user profile pic
-    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (current_user.id,))
+    # Fetch current user profile pic
+    cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp.jpg')
 
-    # Prepare recommender data
+    # Get matched and declined IDs from session and DB
+    cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
+    matched_ids = [row[0] for row in cur.fetchall()]
+    declined_ids = session.get("declines", [])
+    exclude_ids = matched_ids + declined_ids + [user_id]
+
+    if not exclude_ids:
+        exclude_ids = [-1]  # prevent SQL error on empty tuple
+
+    # Fetch candidates excluding matched, declined, self
+    cur.execute("""
+        SELECT id, skills, preferences, experience_level
+        FROM users
+        WHERE id NOT IN %s AND is_profile_complete = TRUE
+    """, (tuple(exclude_ids),))
+    rows = cur.fetchall()
+
+    # Store total candidates count for decline logic
+    session["total_candidates"] = len(rows)
+
+    # Also fetch current user's own data and add to candidates (required for similarity)
+    cur.execute("""
+        SELECT id, skills, preferences, experience_level
+        FROM users
+        WHERE id = %s AND is_profile_complete = TRUE
+    """, (user_id,))
+    self_data = cur.fetchone()
+    if self_data:
+        rows.append(self_data)
+
+    # Prepare data for recommender system
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2753,16 +2753,34 @@ def match():
     if user_id not in df["user"].values:
         cur.close()
         conn.close()
-        return "Please complete your profile to get recommendations."
+        return render_template("match.html",
+                               users=[],
+                               notifications=notifications,
+                               requests=requests,
+                               profile_pic_url=profile_pic_url,
+                               user=current_user,
+                               debug_info={"error": "Please complete your profile to get recommendations."})
 
     target_index = df[df['user'] == user_id].index[0]
     similar_users_df = get_similar_users(target_index, df)
+
+    # If no recommendations, render with empty users list but all other data intact
     if similar_users_df.empty:
         cur.close()
         conn.close()
-        return render_template("match.html", users=[], debug_info={}, user=current_user)
+        return render_template("match.html",
+                               users=[],
+                               notifications=notifications,
+                               requests=requests,
+                               profile_pic_url=profile_pic_url,
+                               user=current_user,
+                               debug_info={"matched_ids": matched_ids,
+                                           "declined_ids": declined_ids,
+                                           "exclude_ids": exclude_ids,
+                                           "candidate_count": len(rows),
+                                           "similar_users_count": 0})
 
-    # Get recommended user info
+    # Fetch detailed user info for recommended matches
     user_ids = similar_users_df['user'].tolist()
     cur.execute("""
         SELECT id, first_name, last_name, role, profile_pic, facebook, email
@@ -2786,26 +2804,25 @@ def match():
 
     cur.close()
     conn.close()
-    
+
     debug_info = {
         "matched_ids": matched_ids,
         "declined_ids": declined_ids,
         "exclude_ids": exclude_ids,
         "candidate_count": len(rows),
-        "similar_users_count": len(similar_users_df) if not similar_users_df.empty else 0,
+        "similar_users_count": len(similar_users_df),
     }
 
     return render_template("match.html",
-        current_page='match',
-        users=users_list[:3],
-        notifications=notifications,
-        requests=requests,
-        verified=current_user.verified,
-        profile_pic_url=profile_pic_url,
-        actor_details=actor_details,
-        user=current_user,
-        debug_info=debug_info
-    )
+                           current_page='match',
+                           users=users_list[:3],
+                           notifications=notifications,
+                           requests=requests,
+                           verified=current_user.verified,
+                           profile_pic_url=profile_pic_url,
+                           actor_details=actor_details,
+                           user=current_user,
+                           debug_info=debug_info)
 
 @app.route('/match/accept/<int:target_id>', methods=['POST'])
 @login_required
