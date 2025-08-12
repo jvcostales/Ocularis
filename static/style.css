@@ -89,6 +89,16 @@ body {
     flex: 0 0 auto;
 }
 
+#match-preferences {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+}
+
+#match-preferences>* {
+    flex: 0 0 auto;
+}
+
 @keyframes l3 {
     20% {
         background-position: 0% 0%, 50% 50%, 100% 50%;
