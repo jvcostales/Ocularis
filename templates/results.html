@@ -38,15 +38,16 @@
                     <button type="submit" class="follow-button-profile-cancel no-margin">Cancel Request</button>
                 </form>
                 {% elif user.relationship in ['outgoing_rejected', 'not_friends'] %}
-                {% if user.verified %}
+                {% if current_user.verified %}
                 <form action="{{ url_for('send_request', receiver_id=user.id) }}" method="post">
                     <button type="submit" class="follow-button-profile no-margin">Befriend</button>
                 </form>
                 {% else %}
                 <div title="Verify your email to add friends">
                     <form action="#" method="post">
-                        <button type="submit" class="follow-button-profile-disabled no-margin"
-                            disabled>Befriend</button>
+                        <button type="submit" class="follow-button-profile-disabled no-margin" disabled>
+                            Befriend
+                        </button>
                     </form>
                 </div>
                 {% endif %}
