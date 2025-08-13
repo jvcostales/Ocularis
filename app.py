@@ -3006,55 +3006,56 @@ def get_random_users(current_user_id):
     )
     cur = conn.cursor()
 
-    # Exclude current user and accepted friends
+    # Grab random users (excluding current user)
     cur.execute("""
         SELECT id, first_name, last_name, profile_pic, verified
         FROM users
         WHERE id != %s
-          AND id NOT IN (
-              SELECT CASE 
-                         WHEN sender_id = %s THEN receiver_id
-                         ELSE sender_id
-                     END
-              FROM friend_requests
-              WHERE (sender_id = %s OR receiver_id = %s)
-                AND status = 'accepted'
-          )
         ORDER BY RANDOM()
         LIMIT 12
-    """, (current_user_id, current_user_id, current_user_id, current_user_id))
+    """, (current_user_id,))
     user_rows = cur.fetchall()
 
     users = []
     for uid, fname, lname, pfp, verified in user_rows:
-        # Get relationship status
-        cur.execute("""
-            SELECT sender_id, receiver_id, status, request_id
-            FROM friend_requests
-            WHERE (sender_id = %s AND receiver_id = %s)
-               OR (sender_id = %s AND receiver_id = %s)
-            LIMIT 1
-        """, (current_user_id, uid, uid, current_user_id))
-        row = cur.fetchone()
+        
+        if uid == current_user_id:
+            relationship = 'self'
+            request_id = None
+        else:
+            # Check friendship status
+            cur.execute("""
+                SELECT sender_id, receiver_id, status, request_id
+                FROM friend_requests
+                WHERE (sender_id = %s AND receiver_id = %s)
+                   OR (sender_id = %s AND receiver_id = %s)
+                LIMIT 1
+            """, (current_user_id, uid, uid, current_user_id))
+            row = cur.fetchone()
 
-        relationship = 'not_friends'
-        request_id = None
-        if row:
-            sender, receiver, status, req_id = row
-            request_id = req_id
-            if status == 'pending':
-                if receiver == current_user_id:
-                    relationship = 'incoming_pending'
-                else:
-                    relationship = 'outgoing_pending'
-            elif status == 'rejected':
-                relationship = 'outgoing_rejected'
+            relationship = 'not_friends'
+            request_id = None
+            if row:
+                sender, receiver, status, req_id = row
+                request_id = req_id
+                if status == 'accepted':
+                    relationship = 'friends'
+                elif status == 'pending':
+                    if receiver == current_user_id:
+                        relationship = 'incoming_pending'
+                    else:
+                        relationship = 'outgoing_pending'
+                elif status == 'rejected':
+                    relationship = 'outgoing_rejected'
 
         users.append({
             'id': uid,
             'first_name': fname,
             'last_name': lname,
-            'profile_pic': pfp,
+            'profile_pic': (
+                url_for('profile_pics', filename=pfp) if pfp and pfp != 'pfp.jpg' 
+                else url_for('static', filename='pfp.jpg')
+            ),
             'verified': verified,
             'relationship': relationship,
             'request_id': request_id
