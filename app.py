@@ -282,10 +282,16 @@ def send_verification_email(recipient_email, token):
     <body
         style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 1rem; color: #1a1a1a; text-align: center; background-color: #ffffff; padding: 40px;">
 
-        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 36px;">
+        <table role="presentation" style="margin: 0 auto; padding-bottom: 36px;">
+        <tr>
+            <td style="vertical-align: middle;">
             <img src="https://ocularis.onrender.com/static/Logo-compressed.png" style="height: 56px;">
-            <div style="font-weight: medium; font-size: 1.125rem; color: #1a1a1a;">Ocularis</div>
-        </div>
+            </td>
+            <td style="vertical-align: middle; padding-left: 16px; font-weight: 500; font-size: 1.125rem; color: #1a1a1a;">
+            Ocularis
+            </td>
+        </tr>
+        </table>
 
         <div style="font-size: 1rem; font-weight: 600; margin-bottom: 16px;">
             Verify Your Email Address
@@ -307,7 +313,6 @@ def send_verification_email(recipient_email, token):
                     color: #f6f6f6;
                     text-align: center;
                     text-decoration: none;
-                    font-weight: bold;
                     margin-bottom: 36px;">
             Verify Email
         </a>
