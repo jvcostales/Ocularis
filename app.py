@@ -278,43 +278,50 @@ def send_verification_email(recipient_email, token):
 
     html_body = f"""
     <html>
-    <body style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 1rem; color: #1a1a1a; text-align: center; background-color: #ffffff; padding: 40px;">
 
-        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">
+    <body
+        style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 1rem; color: #1a1a1a; text-align: center; background-color: #ffffff; padding: 40px;">
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 36px;">
+            <img src="https://ocularis.onrender.com/static/Logo-compressed.png" style="height: 56px;">
+            <div style="font-weight: medium; font-size: 1.125rem; color: #1a1a1a;">Ocularis</div>
+        </div>
+
+        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 16px;">
             Verify Your Email Address
         </div>
 
-        <div style="margin-bottom: 24px;">
+        <div style="font-size: 1rem; margin-bottom: 36px;">
             Click the button below to verify your email for Ocularis.
         </div>
 
-        <a href="{confirmation_link}" 
-        style="display: inline-block;
-                font-size: 1rem;
-                font-family: 'Schibsted Grotesk', sans-serif;
-                padding: 12px 24px;
-                box-sizing: border-box;
-                border: none;
-                background-color: #1C46F5;
-                border-radius: 10px;
-                cursor: pointer;
-                color: #f6f6f6;
-                text-align: center;
-                text-decoration: none;
-                font-weight: bold;
-                margin-bottom: 24px;">
+        <a href="{confirmation_link}" style="display: inline-block;
+                    font-size: 1rem;
+                    font-family: 'Schibsted Grotesk', sans-serif;
+                    padding: 12px 24px;
+                    box-sizing: border-box;
+                    border: none;
+                    background-color: #1C46F5;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    color: #f6f6f6;
+                    text-align: center;
+                    text-decoration: none;
+                    font-weight: bold;
+                    margin-bottom: 36px;">
             Verify Email
         </a>
 
-        <div style="margin-top: 24px; font-size: 1rem; color: #a6a6a6;">
+        <div style="margin-bottom: 16px; font-size: 1rem; color: #1a1a1a;">
             If you did not sign up, please ignore this message.
         </div>
 
-        <div style="margin-top: 40px; font-size: 0.75rem; color: #a6a6a6;">
-            © 2025 Jady Nicole Costales. All rights reserved.
+        <div style="font-size: 1rem; color: #a6a6a6;">
+            © 2025 Ocularis. All rights reserved.
         </div>
 
     </body>
+
     </html>
     """
 
