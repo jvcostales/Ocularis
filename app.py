@@ -3256,18 +3256,23 @@ def settings():
                 conn.close()
                 return redirect(url_for('settings'))
             
-        delete_flag = request.form.get("delete_profile_pic") == "1"
-
-        if delete_flag:
-            cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
-            old_filename = cur.fetchone()[0]
-
-            if old_filename and old_filename != "pfp.jpg":
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-
-            cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", ("pfp.jpg", user_id))
+    # Handle delete request (but only on Save Changes submit)
+    if request.form.get('delete_profile_pic') == "1":
+        cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", ("pfp.jpg", user_id))
+    else:
+        # Handle uploads
+        profile_pic = request.files.get('profile_pic')
+        if profile_pic and profile_pic.filename != '':
+            if allowed_file(profile_pic.filename):
+                ext = profile_pic.filename.rsplit('.', 1)[1].lower()
+                filename = f"pfp_user_{user_id}.{ext}"
+                profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (filename, user_id))
+            else:
+                flash("Invalid profile picture file type.", "danger")
+                cur.close()
+                conn.close()
+                return redirect(url_for('settings'))
 
         # Update user info
         cur.execute("""
