@@ -391,7 +391,7 @@ def signup():
             conn.commit()
 
             send_verification_email(email, token)
-            flash("Check your email to verify your account.")
+            flash("Check your email to verify your account. Until then, you won’t be able to add friends, or confirm or decline requests.")
             return redirect(url_for('login'))  # Redirect to login after successful signup
         except Exception as e:
             app.logger.error(f"Signup error: {e}")
@@ -431,10 +431,20 @@ def finalize_verification(token):
             WHERE id = %s
         """, (user[0],))
         conn.commit()
-        return "Email verified successfully! You can now log in."
+        return """
+        <script>
+            alert('Email verified successfully! You may now log in.');
+            window.location.href = '/login';
+        </script>
+        """
     except Exception as e:
         app.logger.error(f"Verification error: {e}")
-        return "An error occurred during verification."
+        return """
+        <script>
+            alert('An error occurred during verification.');
+            window.location.href = '/';
+        </script>
+        """
     finally:
         if 'cur' in locals():
             cur.close()
