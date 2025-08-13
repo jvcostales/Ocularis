@@ -63,7 +63,8 @@ body {
 }
 
 .loading-msg {
-    width: 36px; /* adjusted size */
+    width: 36px;
+    /* adjusted size */
     aspect-ratio: 2;
     --_g: no-repeat radial-gradient(circle closest-side, var(--text-muted) 90%, #0000);
     background:
@@ -80,10 +81,21 @@ body {
 }
 
 @keyframes l3 {
-    20% { background-position: 0% 0%, 50% 50%, 100% 50%; }
-    40% { background-position: 0% 100%, 50% 0%, 100% 50%; }
-    60% { background-position: 0% 50%, 50% 100%, 100% 0%; }
-    80% { background-position: 0% 50%, 50% 50%, 100% 100%; }
+    20% {
+        background-position: 0% 0%, 50% 50%, 100% 50%;
+    }
+
+    40% {
+        background-position: 0% 100%, 50% 0%, 100% 50%;
+    }
+
+    60% {
+        background-position: 0% 50%, 50% 100%, 100% 0%;
+    }
+
+    80% {
+        background-position: 0% 50%, 50% 50%, 100% 100%;
+    }
 }
 
 #match-skills {
@@ -2568,12 +2580,14 @@ span.delete-symbol:hover {
         font-size: 1rem;
         color: var(--highlight);
         font-weight: 400;
+        cursor: pointer;
     }
 
     .update-photo:hover {
         font-size: 1rem;
         color: var(--highlight-hover);
         font-weight: 400;
+        cursor: pointer;
     }
 
     .settings-photo {
@@ -5016,12 +5030,14 @@ span.delete-symbol:hover {
         font-size: 1rem;
         color: var(--highlight);
         font-weight: 400;
+        cursor: pointer;
     }
 
     .update-photo:hover {
         font-size: 1rem;
         color: var(--highlight-hover);
         font-weight: 400;
+        cursor: pointer;
     }
 
     .settings-photo {
@@ -7437,6 +7453,7 @@ span.delete-symbol:hover {
         font-size: 1rem;
         color: var(--highlight-hover);
         font-weight: 400;
+        cursor: pointer;
     }
 
     .settings-photo {

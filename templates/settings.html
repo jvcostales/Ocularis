@@ -28,7 +28,10 @@
                         <div class="sub-sub-wrapper">
                             <img id="preview-photo" class="settings-photo" src="{{ profile_pic_url }}">
                             <div class="edit-photo">
-                                <div class="delete-photo">Delete</div>
+                                <div class="delete-photo" style="cursor: pointer;">Delete</div>
+                                <form id="deleteProfilePicForm" method="POST" style="display:none;">
+                                    <input type="hidden" name="delete_profile_pic" value="1">
+                                </form>                                
                                 <div>
                                     <label for="profile_pic" class="update-photo">Update</label>
                                     <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
@@ -430,6 +433,12 @@
 
 
     <script>
+
+    document.querySelector('.delete-photo').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete your profile picture?')) {
+            document.getElementById('deleteProfilePicForm').submit();
+        }
+    });
 
         function confirmDelete() {
             const confirmed = confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.");

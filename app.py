@@ -3248,6 +3248,19 @@ def settings():
                 cur.close()
                 conn.close()
                 return redirect(url_for('settings'))
+            
+        # Handle profile picture deletion
+        if request.form.get("delete_profile_pic") == "1":
+            cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
+            old_filename = cur.fetchone()[0]
+
+            if old_filename and old_filename != "pfp.jpg":
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+
+            cur.execute("UPDATE users SET profile_pic = %s WHERE id = %s", ("pfp.jpg", user_id))
+            flash("Profile picture reset to default.", "success")
 
         # Update user info
         cur.execute("""
