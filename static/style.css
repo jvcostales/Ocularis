@@ -19,17 +19,20 @@
     --bg-main: #121212;
     --bg-secondary: #1e1e1e;
     --text-main: #ffffff;
-    --text-muted: #e0e0e0;
+    --text-muted: #aaaaaa;
+    /* softer placeholder gray */
     --text-hover: #c4c4c4;
     --highlight: #1C46F5;
     --accent: #D3F36A;
-    --btn-disabled-bg: #DDDEDF;
-    --btn-disabled-text: #A8AAB5;
+    --btn-disabled-bg: #2a2a2a;
+    /* darker disabled buttons */
+    --btn-disabled-text: #777777;
     --highlight-hover: #4F72F7;
     --highlight-active: #152FAE;
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
-    --border-default: #dcdcdc;
+    --border-default: #444444;
+    /* darker border for dark mode */
 }
 
 [data-theme="dark"] .card-pairup {
@@ -166,6 +169,7 @@ input[type="email"]::placeholder,
 input[type="password"]::placeholder,
 textarea::placeholder {
     color: var(--text-muted) !important;
+    opacity: 1;
 }
 
 /* General style for all checkboxes and radio buttons */
