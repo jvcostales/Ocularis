@@ -13,6 +13,7 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
+    --text-placeholder: #c4c4c4;
 }
 
 :root[data-theme="dark"] {
@@ -30,6 +31,7 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
+    --text-placeholder: #1a1a1a;
 }
 
 body {
@@ -126,7 +128,7 @@ p.subtitle {
     border-radius: 10px;
     box-sizing: border-box;
     font-size: 1rem;
-    color: var(--text-main);
+    color: var(--text-placeholder);
 }
 
 .input-group .icon {
