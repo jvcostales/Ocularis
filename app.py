@@ -2792,6 +2792,7 @@ def match():
         conn.close()
         return render_template("match.html",
                                users=[],
+                               actor_details=[],
                                notifications=notifications,
                                requests=requests,
                                profile_pic_url=profile_pic_url,
