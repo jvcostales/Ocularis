@@ -13,7 +13,6 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
-    --text-placeholder: #c4c4c4;
 }
 
 :root[data-theme="dark"] {
@@ -31,7 +30,6 @@
     --accent-hover: #E2F89A;
     --accent-active: #9BB35B;
     --border-default: #dcdcdc;
-    --text-placeholder: #1a1a1a;
 }
 
 [data-theme="dark"] .card-pairup {
@@ -167,7 +165,7 @@ input[type="url"]::placeholder,
 input[type="email"]::placeholder,
 input[type="password"]::placeholder,
 textarea::placeholder {
-    color: var(--text-placeholder) !important;
+    color: var(--text-main) !important;
 }
 
 /* General style for all checkboxes and radio buttons */
