@@ -165,7 +165,7 @@ input[type="url"]::placeholder,
 input[type="email"]::placeholder,
 input[type="password"]::placeholder,
 textarea::placeholder {
-    color: var(--text-main) !important;
+    color: var(--text-muted) !important;
 }
 
 /* General style for all checkboxes and radio buttons */
