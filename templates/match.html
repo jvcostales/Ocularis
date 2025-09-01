@@ -152,7 +152,7 @@
             });
         });
 
-        // Decline button: remove current card, show next if exists, else redirect
+        // Decline button: remove current card, keep others, redirect only if all 3 declined
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -163,25 +163,22 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "no_more_candidates") {
+                            // backend says nothing left
                             window.location.href = "/pairup";
                             return;
                         }
 
                         if (cardElement) {
-                            const nextCard = cardElement.nextElementSibling;
-                            cardElement.remove(); // remove declined card completely
-
-                            if (nextCard) {
-                                // show next hidden card
-                                nextCard.style.display = "block";
-                            } else {
-                                // check if any cards left
-                                const remaining = document.querySelectorAll(".card-container").length;
-                                if (remaining === 0) {
-                                    window.location.href = "/pairup";
-                                }
-                            }
+                            cardElement.remove(); // remove declined card
                         }
+
+                        const remainingCards = document.querySelectorAll(".card-container").length;
+
+                        if (remainingCards === 0) {
+                            // all 3 declined → redirect to pairup
+                            window.location.href = "/pairup";
+                        }
+                        // else: do nothing, just keep showing remaining matches
                     })
                     .catch(err => console.error("Decline error:", err));
             });
