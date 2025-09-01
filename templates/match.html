@@ -152,7 +152,7 @@
             });
         });
 
-        // Decline button: remove card and reveal next, or redirect if none left
+        // Decline button: hide current card and reveal next, or redirect if none left
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -169,15 +169,21 @@
 
                         if (cardElement) {
                             const nextCard = cardElement.nextElementSibling;
-                            cardElement.remove();
+                            // hide current instead of removing it
+                            cardElement.style.display = "none";
 
                             if (nextCard) {
-                                // reveal the next hidden card
+                                // show the next one
                                 nextCard.style.display = "block";
                             } else {
-                                // if nothing left, redirect
-                                const remaining = document.querySelectorAll(".card-container").length;
-                                if (remaining === 0) {
+                                // if nothing left visible, redirect
+                                const remaining = document.querySelectorAll(".card-container")
+                                    .length;
+                                const anyVisible = Array.from(
+                                    document.querySelectorAll(".card-container")
+                                ).some(c => c.style.display !== "none");
+
+                                if (!anyVisible || remaining === 0) {
                                     window.location.href = "/pairup";
                                 }
                             }
