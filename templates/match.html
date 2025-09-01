@@ -152,31 +152,38 @@
             });
         });
 
-        // Decline button: reload page unless last user, then redirect to /pairup
+        // Decline button: remove card unless last user, then redirect to /pairup
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
+
+                const cardElement = this.closest(".card-container");
+
                 fetch(`/match/decline/${this.dataset.userId}`, { method: "POST" })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.status === "locked") {
+                        if (data.status === "no_more_candidates") {
+                            // backend signals all declined → redirect
                             window.location.href = "/pairup";
                             return;
                         }
 
+                        // Remove the declined card
+                        if (cardElement) {
+                            cardElement.remove();
+                        }
+
+                        // Check how many are left
                         const remainingCards = document.querySelectorAll(".card-container").length;
 
-                        if (remainingCards <= 1) {
-                            // Last user declined, redirect to pairup
+                        if (remainingCards === 0) {
+                            // All 3 declined → redirect
                             window.location.href = "/pairup";
-                        } else {
-                            // Not last, reload page to refresh UI
-                            window.location.reload();
                         }
                     })
                     .catch(err => console.error("Decline error:", err));
             });
-        });
+        }); 
 
         showCard(carouselIndex);
     });
