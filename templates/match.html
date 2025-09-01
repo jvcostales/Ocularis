@@ -152,7 +152,7 @@
             });
         });
 
-        // Decline button: remove card unless last user, then redirect to /pairup
+        // Decline button: remove card and reveal next, or redirect if none left
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -163,22 +163,24 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "no_more_candidates") {
-                            // all 3 already declined → backend says stop
                             window.location.href = "/pairup";
                             return;
                         }
 
-                        // Remove the declined card from DOM
                         if (cardElement) {
+                            const nextCard = cardElement.nextElementSibling;
                             cardElement.remove();
-                        }
 
-                        // Count how many cards remain
-                        const remainingCards = document.querySelectorAll(".card-container").length;
-
-                        if (remainingCards === 0) {
-                            // All declined → redirect
-                            window.location.href = "/pairup";
+                            if (nextCard) {
+                                // reveal the next hidden card
+                                nextCard.style.display = "block";
+                            } else {
+                                // if nothing left, redirect
+                                const remaining = document.querySelectorAll(".card-container").length;
+                                if (remaining === 0) {
+                                    window.location.href = "/pairup";
+                                }
+                            }
                         }
                     })
                     .catch(err => console.error("Decline error:", err));
