@@ -163,27 +163,27 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "no_more_candidates") {
-                            // backend signals all declined → redirect
+                            // all 3 already declined → backend says stop
                             window.location.href = "/pairup";
                             return;
                         }
 
-                        // Remove the declined card
+                        // Remove the declined card from DOM
                         if (cardElement) {
                             cardElement.remove();
                         }
 
-                        // Check how many are left
+                        // Count how many cards remain
                         const remainingCards = document.querySelectorAll(".card-container").length;
 
                         if (remainingCards === 0) {
-                            // All 3 declined → redirect
+                            // All declined → redirect
                             window.location.href = "/pairup";
                         }
                     })
                     .catch(err => console.error("Decline error:", err));
             });
-        }); 
+        });
 
         showCard(carouselIndex);
     });
