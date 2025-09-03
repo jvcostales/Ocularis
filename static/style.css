@@ -98,6 +98,26 @@ body {
     }
 }
 
+#match-recent-skills {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+}
+
+#match-recent-skills>* {
+    flex: 0 0 auto;
+}
+
+#match-recent-preferences {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+}
+
+#match-recent-preferences>* {
+    flex: 0 0 auto;
+}
+
 #match-skills {
     display: flex;
     flex-wrap: wrap;
