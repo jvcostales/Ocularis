@@ -2665,7 +2665,7 @@ def match():
     )
     cur = conn.cursor()
 
-    # --- Fetch notifications ---
+    # Fetch notifications
     cur.execute("""
         SELECT users.first_name || ' ' || users.last_name AS display_name,
                notifications.action_type,
@@ -2681,7 +2681,6 @@ def match():
     """, (user_id,))
     notifications = cur.fetchall()
     
-    # --- Get actor details ---
     actor_ids = list(set([n[4] for n in notifications]))
     actor_details = {}
     for actor_id in actor_ids:
@@ -2715,7 +2714,7 @@ def match():
                 "email": user[16]
             }
 
-    # --- Friend requests ---
+    # Fetch friend requests
     cur.execute("""
         SELECT fr.request_id, fr.sender_id, u.first_name, u.last_name, fr.created_at
         FROM friend_requests fr
@@ -2725,12 +2724,12 @@ def match():
     """, (user_id,))
     requests = cur.fetchall()
 
-    # --- Current user profile pic ---
+    # Fetch current user profile pic
     cur.execute("SELECT profile_pic FROM users WHERE id = %s", (user_id,))
     result = cur.fetchone()
     profile_pic_url = url_for('profile_pics', filename=result[0]) if result and result[0] and result[0] != 'pfp.jpg' else url_for('static', filename='pfp_match.jpg')
 
-    # --- Get matched and declined IDs from session + DB ---
+    # Get matched and declined IDs from session and DB
     cur.execute("SELECT matched_user_id FROM recent_matches WHERE user_id = %s", (user_id,))
     matched_ids = [row[0] for row in cur.fetchall()]
     declined_ids = session.get("declines", [])
@@ -2739,7 +2738,7 @@ def match():
     if not exclude_ids:
         exclude_ids = [-1]  # prevent SQL error on empty tuple
 
-    # --- Fetch candidates excluding matched, declined, self ---
+    # Fetch candidates excluding matched, declined, self
     cur.execute("""
         SELECT id, skills, preferences, experience_level
         FROM users
@@ -2750,7 +2749,7 @@ def match():
     # Store total candidates count for decline logic
     session["total_candidates"] = len(rows)
 
-    # Add self data for similarity computation
+    # Also fetch current user's own data and add to candidates (required for similarity)
     cur.execute("""
         SELECT id, skills, preferences, experience_level
         FROM users
@@ -2760,7 +2759,7 @@ def match():
     if self_data:
         rows.append(self_data)
 
-    # --- Recommender system prep ---
+    # Prepare data for recommender system
     users_data = []
     for row in rows:
         uid, skills, prefs, level = row
@@ -2787,7 +2786,7 @@ def match():
     target_index = df[df['user'] == user_id].index[0]
     similar_users_df = get_similar_users(target_index, df)
 
-    # --- No recommendations fallback ---
+    # If no recommendations, render with empty users list but all other data intact
     if similar_users_df.empty:
         cur.close()
         conn.close()
@@ -2804,7 +2803,7 @@ def match():
                                            "candidate_count": len(rows),
                                            "similar_users_count": 0})
 
-    # --- Fetch detailed user info ---
+    # Fetch detailed user info for recommended matches
     user_ids = similar_users_df['user'].tolist()
     cur.execute("""
         SELECT id, first_name, last_name, role, profile_pic, facebook, email
