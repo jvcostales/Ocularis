@@ -2651,7 +2651,7 @@ def pairup():
         match_details=match_details
     )
 
-@app.route('/match', methods=['GET', 'POST'])
+@app.route('/match', methods=['POST'])
 @login_required
 def match():
     user_id = current_user.id
