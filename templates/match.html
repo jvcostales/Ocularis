@@ -163,22 +163,24 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "no_more_candidates") {
-                            // backend says nothing left at all
                             window.location.href = "/pairup";
                             return;
                         }
 
                         if (cardElement) {
-                            cardElement.remove(); // remove declined card only
+                            // find the next hidden card
+                            const nextCard = cardElement.nextElementSibling;
+                            cardElement.remove(); // remove declined card
+
+                            if (nextCard) {
+                                nextCard.style.display = "block"; // show next one
+                            }
                         }
 
                         const remainingCards = document.querySelectorAll(".card-container").length;
-
                         if (remainingCards === 0) {
-                            // all 3 declined → redirect to pairup
                             window.location.href = "/pairup";
                         }
-                        // otherwise: leave the other matches as they are
                     })
                     .catch(err => console.error("Decline error:", err));
             });
