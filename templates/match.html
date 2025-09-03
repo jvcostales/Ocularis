@@ -6,7 +6,7 @@
     {% if users and users|length > 0 %}
     <div id="carousel" class="carousel-container">
         {% for user in users[:3] %}
-        <div class="card-container" style="{% if not loop.first %}display:none;{% endif %}">
+        <div class="card-container">
             <div class="nav-section active card-content">
                 <div class="photo"
                     style="background: url('{{ user.profile_pic_url }}') center center / cover no-repeat;">
@@ -108,36 +108,43 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         let carouselIndex = 0;
-        const cards = Array.from(document.querySelectorAll(".card-container"));
-        const totalCards = cards.length;
-        const stepWidth = 90 / totalCards;
+        let cards = Array.from(document.querySelectorAll(".card-container"));
 
         function updateIndicator(index) {
+            if (cards.length === 0) return;
             const activeCard = cards[index];
             const indicatorBar = activeCard.querySelector(".scroll-indicator-bar");
             if (!indicatorBar) return;
+            const stepWidth = 90 / cards.length;
             indicatorBar.style.width = `${stepWidth}px`;
             indicatorBar.style.transform = `translateX(${index * stepWidth}px)`;
         }
 
         function showCard(index) {
+            if (cards.length === 0) return;
             cards.forEach((card, i) => {
                 card.style.display = (i === index) ? "block" : "none";
             });
             updateIndicator(index);
         }
 
+        // Next button
         document.querySelectorAll(".carousel-next").forEach(btn => {
             btn.addEventListener("click", () => {
-                carouselIndex = (carouselIndex + 1) % totalCards;
-                showCard(carouselIndex);
+                if (cards.length > 0) {
+                    carouselIndex = (carouselIndex + 1) % cards.length;
+                    showCard(carouselIndex);
+                }
             });
         });
 
+        // Prev button
         document.querySelectorAll(".carousel-prev").forEach(btn => {
             btn.addEventListener("click", () => {
-                carouselIndex = (carouselIndex - 1 + totalCards) % totalCards;
-                showCard(carouselIndex);
+                if (cards.length > 0) {
+                    carouselIndex = (carouselIndex - 1 + cards.length) % cards.length;
+                    showCard(carouselIndex);
+                }
             });
         });
 
@@ -168,24 +175,25 @@
                         }
 
                         if (cardElement) {
-                            // find the next hidden card
-                            const nextCard = cardElement.nextElementSibling;
-                            cardElement.remove(); // remove declined card
+                            const removeIndex = cards.indexOf(cardElement);
+                            cardElement.remove();
+                            cards.splice(removeIndex, 1); // update JS list
 
-                            if (nextCard) {
-                                nextCard.style.display = "block"; // show next one
+                            if (cards.length === 0) {
+                                window.location.href = "/pairup";
+                                return;
                             }
-                        }
 
-                        const remainingCards = document.querySelectorAll(".card-container").length;
-                        if (remainingCards === 0) {
-                            window.location.href = "/pairup";
+                            // adjust index to stay in range
+                            carouselIndex = Math.min(removeIndex, cards.length - 1);
+                            showCard(carouselIndex);
                         }
                     })
                     .catch(err => console.error("Decline error:", err));
             });
         });
 
+        // Initial show
         showCard(carouselIndex);
     });
 </script>
