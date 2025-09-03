@@ -152,7 +152,7 @@
             });
         });
 
-        // Decline button: remove current card, keep others, redirect only if all 3 declined
+        // Decline button: remove current card, keep others, redirect only if all declined
         document.querySelectorAll(".circled-icon-1").forEach(btn => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -163,13 +163,13 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.status === "no_more_candidates") {
-                            // backend says nothing left
+                            // backend says nothing left at all
                             window.location.href = "/pairup";
                             return;
                         }
 
                         if (cardElement) {
-                            cardElement.remove(); // remove declined card
+                            cardElement.remove(); // remove declined card only
                         }
 
                         const remainingCards = document.querySelectorAll(".card-container").length;
@@ -178,7 +178,7 @@
                             // all 3 declined → redirect to pairup
                             window.location.href = "/pairup";
                         }
-                        // else: do nothing, just keep showing remaining matches
+                        // otherwise: leave the other matches as they are
                     })
                     .catch(err => console.error("Decline error:", err));
             });
