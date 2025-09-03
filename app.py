@@ -3081,16 +3081,13 @@ def get_random_users(current_user_id):
     conn.close()
     return users
 
-@app.route('/browse', methods=['POST'])
+@app.route('/browse', methods=['GET', 'POST'])
 @login_required
 def browse_users():
     user_id = current_user.id
 
-    # ✅ If match is locked, don't show users
-    if session.get("match_locked"):
-        users = []
-    else:
-        users = get_random_users(user_id)
+    # ✅ Always fetch users (no lock check)
+    users = get_random_users(user_id)
 
     conn = psycopg2.connect(
         host="dpg-cuk76rlumphs73bb4td0-a.oregon-postgres.render.com", 
@@ -3183,7 +3180,7 @@ def browse_users():
     return render_template(
         'browse.html',
         user=current_user,
-        users=users,  # ✅ now empty if locked
+        users=users,  # ✅ always fetches now
         notifications=notifications,
         requests=requests,
         verified=current_user.verified,
